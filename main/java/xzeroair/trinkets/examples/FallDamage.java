@@ -16,7 +16,7 @@ public class FallDamage {
  
         	if (player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() == xzeroair.trinkets.init.ModItems.glowing_ingot)
         	{
-            	event.setCanceled(true); //Sets canceled for ALL players if only one player is wearing the item. See my point?
+            	event.setCanceled(true);
         	}
 	    }
     }

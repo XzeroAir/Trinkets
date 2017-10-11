@@ -11,7 +11,8 @@ public class Reference {
 	
 	public static enum TrinketsItems {
 		
-		GLOWINGINGOT("glowing_ingot", "itemglowing_ingot");
+		GLOWINGINGOT("glowing_ingot", "itemglowing_ingot"),
+		GLOWRING("glow_ring", "itemglow_ring");
 		
 		private String unlocalizedName;
 		private String registryName;

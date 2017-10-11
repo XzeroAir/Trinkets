@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "xat:items/glowing_ingot"
+        "layer0": "xat:items/glow_ring"
      },
      
     "display": {
