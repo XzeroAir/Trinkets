@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#I ",
+    "I I",
+    " I "
+  ],
+  "key": {
+    "#": {
+      "item": "xat:glowing_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "xat:glow_ring"
+  }
+}

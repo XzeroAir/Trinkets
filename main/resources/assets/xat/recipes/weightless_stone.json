@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#S#",
+    "SDS",
+    "#S#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:glowstone_dust"
+         },
+    "D": {
+      "item": "minecraft:diamond"
+         },
+    "S": {
+      "item": "xat:glowing_ingot"
+         }
+  },
+  "result": {
+    "item": "xat:weightless_stone"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#I#",
+    "IDI",
+    "#I#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:glowstone_dust"
+         },
+    "D": {
+      "item": "minecraft:diamond"
+         },
+    "I": {
+      "item": "minecraft:iron_ingot"
+         }
+  },
+  "result": {
+    "item": "xat:glowing_ingot"
+  }
+}

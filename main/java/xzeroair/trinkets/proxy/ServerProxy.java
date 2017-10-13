@@ -1,10 +1,10 @@
 package xzeroair.trinkets.proxy;
 
-public class ServerProxy implements CommonProxy {
+public class ServerProxy extends CommonProxy {
 
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-	}
+//	@Override
+//	public void init() {
+//		// TODO Auto-generated method stub
+//	}
 	
 }
