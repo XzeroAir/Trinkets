@@ -1,11 +1,9 @@
 package xzeroair.trinkets;
 
-import java.util.Random;
-
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -13,8 +11,9 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.items.glowing_ingot;
+import xzeroair.trinkets.client.TextureStitcher;
+import xzeroair.trinkets.emc.emcmapping;
+import xzeroair.trinkets.particles.ParticleGreed;
 import xzeroair.trinkets.proxy.CommonProxy;
 import xzeroair.trinkets.util.Reference;
 
@@ -26,7 +25,6 @@ public class Main {
 	@Instance
 	public static Main instance;
 	
-	
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
 
@@ -34,20 +32,20 @@ public class Main {
 	@EventHandler
 	public static void preInit(FMLPreInitializationEvent event) {
 		
-	//	ModItems.init();
-	//	ModItems.register();
-	//	proxy.init();
+		MinecraftForge.EVENT_BUS.register(new TextureStitcher());
 		
 	}
 	
 	@EventHandler
 	public static void init(FMLInitializationEvent event) {
-		
-		
+
 	}
 	
 	@EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
+		
+		emcmapping.postInit();
+		MinecraftForge.EVENT_BUS.register(new xzeroair.trinkets.util.handlers.EventHandler());
 		
 	}
 }

@@ -2,6 +2,10 @@ itemGroup.trinketstab=Trinkets
 
 
 item.glowing_ingot.name=Glowing Ingot
-item.glow_ring.0.name=Glow Ring
-item.weightless_stone.0.name=Weightless Stone
-item.inertia_stone.0.name=Inertia Stone
+item.glow_ring.0.name=Ring of Enchanted Eyes
+item.weightless_stone.0.name=Stone of Negative Gravity
+item.inertia_stone.0.name=Stone of Inertia Null
+item.great_inertia_stone.0.name=Stone of Greater Inertia
+item.fish_stone.0.name=Stone of the Sea
+item.polarized_stone.0.name=Polarized Stone
+item.dragons_eye.0.name=Dragon's Eye

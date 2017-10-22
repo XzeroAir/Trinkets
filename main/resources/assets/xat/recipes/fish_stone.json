@@ -6,17 +6,18 @@
     "#S#"
   ],
   "key": {
+    "#": {
+      "item": "minecraft:fish",
+      "data": 3
+         },
     "D": {
-      "item": "minecraft:end_stone"
+      "item": "minecraft:prismarine_crystals"
          },
     "S": {
-      "item": "minecraft:compass"
-         },
-    "#": {
       "item": "xat:glowing_ingot"
          }
   },
   "result": {
-    "item": "xat:weightless_stone"
+    "item": "xat:fish_stone"
   }
 }

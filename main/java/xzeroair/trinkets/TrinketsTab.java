@@ -3,7 +3,6 @@ package xzeroair.trinkets;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
 
 public class TrinketsTab extends CreativeTabs {
 	

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SIS",
+    "IDI",
+    "SIS"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:sugar"
+         },
+    "S": {
+      "item": "minecraft:redstone"
+         },
+    "D": {
+      "item": "xat:inertia_stone"
+         }
+  },
+  "result": {
+    "item": "xat:great_inertia_stone"
+  }
+}

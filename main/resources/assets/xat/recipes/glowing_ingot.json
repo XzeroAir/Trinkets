@@ -9,10 +9,10 @@
     "#": {
       "item": "minecraft:glowstone_dust"
          },
-    "D": {
-      "item": "minecraft:diamond"
-         },
     "I": {
+      "item": "minecraft:blaze_powder"
+         },
+    "D": {
       "item": "minecraft:iron_ingot"
          }
   },

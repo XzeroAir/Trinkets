@@ -6,17 +6,17 @@
     "#S#"
   ],
   "key": {
+    "#": {
+      "item": "minecraft:iron_block"
+         },
     "D": {
-      "item": "minecraft:end_stone"
+      "item": "minecraft:redstone_block"
          },
     "S": {
-      "item": "minecraft:compass"
-         },
-    "#": {
       "item": "xat:glowing_ingot"
          }
   },
   "result": {
-    "item": "xat:weightless_stone"
+    "item": "xat:polarized_stone"
   }
 }

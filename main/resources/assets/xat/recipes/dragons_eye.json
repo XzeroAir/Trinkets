@@ -1,22 +1,26 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#S#",
+    "XS#",
     "SDS",
     "#S#"
   ],
   "key": {
     "D": {
-      "item": "minecraft:end_stone"
+      "item": "minecraft:skull",
+      "data": 5
          },
     "S": {
-      "item": "minecraft:compass"
+      "item": "minecraft:diamond_sword"
          },
     "#": {
       "item": "xat:glowing_ingot"
+         },
+    "X": {
+      "item": "xat:glow_ring"
          }
   },
   "result": {
-    "item": "xat:weightless_stone"
+    "item": "xat:dragons_eye"
   }
 }

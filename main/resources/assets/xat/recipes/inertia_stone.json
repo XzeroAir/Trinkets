@@ -1,19 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "IS#",
-    "IDI",
-    "IS#"
+    "SIS",
+    "IFI",
+    "SIS"
   ],
   "key": {
-    "#": {
-      "item": "minecraft:glowstone_dust"
-         },
-    "D": {
-      "item": "minecraft:diamond"
+    "F": {
+      "item": "minecraft:feather"
          },
     "S": {
-      "item": "minecraft:sugar"
+      "item": "minecraft:wool",
+      "data": 32767
          },
     "I": {
       "item": "xat:glowing_ingot"
