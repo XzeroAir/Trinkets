@@ -3,7 +3,7 @@
   	"promos": {
   	  "1.12.2-latest": "0.18",
   	  "1.12.2-recommended": "0.18",
-  	  "latest": "0.18,
+  	  "latest": "0.18",
    	  "recommended": "0.18"
 	}
 }
