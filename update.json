@@ -1,6 +1,6 @@
 {
 	"homepage": "https://minecraft.curseforge.com/projects/trinkets-and-baubles",
-	"<mcversion>": {
+	"1.12.2": {
   		"0.17": "Added support for 1.12 and 1.12.1", 
 		"0.18": "bug fixes and code clean up",
 		"0.19": "Added some AI stuff and a new Item like the pumpkin",
