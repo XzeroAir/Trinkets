@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "#I ",
-    "I I",
+    "ICI",
     " I "
   ],
   "key": {
@@ -11,6 +11,9 @@
     },
     "I": {
       "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:golden_carrot"
     }
   },
   "result": {

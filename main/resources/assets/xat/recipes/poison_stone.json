@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#S#",
+    "SDS",
+    "#S#"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:emerald"
+         },
+    "S": {
+      "item": "minecraft:fermented_spider_eye"
+         },
+    "#": {
+      "item": "xat:glowing_ingot"
+         }
+  },
+  "result": {
+    "item": "xat:poison_stone"
+  }
+}

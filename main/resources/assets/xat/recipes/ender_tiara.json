@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EEE",
+    "RCR",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "xat:glowing_ingot"
+         },
+    "R": {
+      "item": "minecraft:end_rod"
+         },
+    "C": {
+      "item": "minecraft:end_crystal"
+         },
+    "E": {
+      "item": "minecraft:ender_eye"
+         }
+  },
+  "result": {
+    "item": "xat:ender_tiara"
+  }
+}
