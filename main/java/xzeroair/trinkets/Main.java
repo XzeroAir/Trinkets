@@ -28,9 +28,6 @@ public class Main {
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
 
-
-	//	public static SimpleNetworkWrapper network;
-
 	@EventHandler
 	public static void preInit(FMLPreInitializationEvent event) {
 
@@ -44,10 +41,7 @@ public class Main {
 	@EventHandler
 	public static void init(FMLInitializationEvent event) {
 
-		MinecraftForge.EVENT_BUS.register(instance);
 		proxy.init(event);
-
-		proxy.registerEntityRenderers();
 
 	}
 
@@ -59,9 +53,6 @@ public class Main {
 		if (config.hasChanged()) {
 			config.save();
 		}
-
-		// emcmapping.postInit();
-
 
 	}
 }

@@ -5,13 +5,10 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.util.math.AxisAlignedBB;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.util.helpers.TrinketHelper;
-import xzeroair.trinkets.util.helpers.TrinketHelper.TrinketType;
 
 public class EnderQueensKnightAI extends EntityAITarget
 {
@@ -38,8 +35,7 @@ public class EnderQueensKnightAI extends EntityAITarget
 		if(!entLivList.isEmpty()) {
 			for(EntityPlayer stuff : entLivList) {
 				EntityPlayer player = (EntityPlayer) stuff;
-				Item baubleCheck = TrinketHelper.getBaubleType(player, TrinketType.head);
-				if(baubleCheck == ModItems.ender_tiara) {
+				if(TrinketHelper.baubleCheck(player, ModItems.ender_tiara)) {
 					queen = player;
 				}
 			}

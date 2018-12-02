@@ -1,12 +1,10 @@
 package xzeroair.trinkets.compatibilities.ItemCap;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
-import xzeroair.trinkets.util.helpers.TrinketHelper.targetOreType;
 
 public class DefaultItemCapability implements ItemCap {
 
-	int type = 0;
+	int type = -1;
 	boolean on = false;
 
 	public DefaultItemCapability(){

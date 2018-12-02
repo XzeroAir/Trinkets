@@ -26,9 +26,6 @@ public class PlayerRenderAlt extends RenderPlayer {
 	/** this field is used to indicate the 3-pixel wide arms */
 	private static boolean smallArms;
 
-	//	 String s = ((AbstractClientPlayer)entityIn).getSkinType();
-	//     RenderPlayer renderplayer = this.skinMap.get(s);
-
 	public PlayerRenderAlt(RenderManager renderManager)
 	{
 		this(renderManager, false);
@@ -39,24 +36,7 @@ public class PlayerRenderAlt extends RenderPlayer {
 		super(renderManager, useSmallArms);
 		this.smallArms = useSmallArms;
 		this.mainModel = new ModelPlayerAlt(0.0F, useSmallArms);
-		//      this.addLayer(layerbipedarmor);
-		//		this.addLayer(new LayerBipedArmor(this));
-		//		this.addLayer(new LayerHeldItem(this));
-		//		this.addLayer(new LayerArrow(this));
-		//		this.addLayer(new LayerDeadmau5Head(this));
-		//		this.addLayer(new LayerCape(this));
-		//		this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
-		//		this.addLayer(new LayerElytra(this));
-		//		this.addLayer(new LayerEntityOnShoulder(renderManager));
-		this.addLayer(new RenderLayerHandlerAltRenderer(this));
 	}
-
-	//	@Override
-	//	public ModelPlayer getMainModel()
-	//	{
-	//		//		return new ModelPlayerAlt(0.0F, slim);
-	//		return (ModelPlayer) this.mainModel;
-	//	}
 
 	@Override
 	public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks)

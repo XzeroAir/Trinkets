@@ -1,7 +1,5 @@
 package xzeroair.trinkets.compatibilities.sizeCap;
 
-import java.util.concurrent.Callable;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
@@ -47,7 +45,7 @@ public class DeCap implements ICap {
 
 	@Override
 	public void setSize(int size) {
-		size = MathHelper.clamp(size, 0, 100);
+		size = MathHelper.clamp(size, 20, 200);
 		if (this.size != size) {
 			this.size = size;
 		}
@@ -59,7 +57,7 @@ public class DeCap implements ICap {
 
 	@Override
 	public void setTarget(int target) {
-		target = MathHelper.clamp(target, 22, 100);
+		target = MathHelper.clamp(target, 20, 200);
 		if (this.target != target) {
 			this.target = target;
 		}
@@ -72,7 +70,7 @@ public class DeCap implements ICap {
 
 	@Override
 	public void setWidth(float width) {
-		width = MathHelper.clamp(width, 0.1F, 3.0F);
+		width = MathHelper.clamp(width, 0.1F, 1.2F);
 		if(this.width != width){
 			this.width = width;
 		}
@@ -85,7 +83,7 @@ public class DeCap implements ICap {
 
 	@Override
 	public void setHeight(float height) {
-		height = MathHelper.clamp(height, 0.1F, 3.0F);
+		height = MathHelper.clamp(height, 0.1F, 3.6F);
 		if(this.height != height){
 			this.height = height;
 		}

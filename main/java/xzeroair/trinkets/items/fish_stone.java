@@ -1,33 +1,22 @@
 package xzeroair.trinkets.items;
 
 import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import xzeroair.trinkets.Main;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.interfaces.IsModelLoaded;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.items.base.BaubleBase;
 
-public class fish_stone extends Item implements IBauble, IsModelLoaded{
+public class fish_stone extends BaubleBase {
 
 	public fish_stone(String name) {
-
-		setUnlocalizedName(name);
-		setRegistryName(name);
-		setMaxStackSize(1);
-		setMaxDamage(0);
-		setCreativeTab(Main.trinketstab);
-
-		ModItems.ITEMS.add(this);
+		super(name);
 	}
-	@Override
-	public void registerModels() {
-		Main.proxy.registerItemRenderer(this, 0, "inventory");
-	}
-
 	@Override
 	public BaubleType getBaubleType(ItemStack itemstack) {
 		return BaubleType.AMULET;
@@ -35,32 +24,32 @@ public class fish_stone extends Item implements IBauble, IsModelLoaded{
 
 	@Override
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
-		if (itemstack.getItemDamage()==0) {
-			if(player.getAir() < 30)
-			{
+		if (itemstack.getItemDamage() == 0) {
+			if (player.getAir() < 30) {
 				player.setAir(20);
 			}
 		}
 	}
+
 	@Override
-	public boolean hasEffect(ItemStack par1ItemStack) {
-		return true;
-	}
-	@Override
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		return EnumRarity.RARE;
-	}
-	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack)
-	{
-		return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
-	}
-	@Override
-	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
-		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-	}
-	@Override
-	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
-		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
+	@SideOnly(Side.CLIENT)
+	public void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {
+		if (type == RenderType.BODY) {
+			final float scale = 0.2F;
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(180F, 1F, 0F, 0F);
+			GlStateManager.translate(0F, -0.12F, 0.13F);
+			if(player.isSneaking()) {
+				GlStateManager.translate(0F, -0.24F, -0.07F);
+				GlStateManager.rotate(90F / (float) Math.PI, 1.0F, 0.0F, 0.0F);
+			}
+			if (player.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
+				GlStateManager.translate(0F, 0F, 0.06F);
+			}
+			GlStateManager.scale(scale, scale, scale);
+			Minecraft.getMinecraft().getRenderItem().renderItem(getDefaultInstance(), ItemCameraTransforms.TransformType.NONE);
+			GlStateManager.popMatrix();
+
+		}
 	}
 }

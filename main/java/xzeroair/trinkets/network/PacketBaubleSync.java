@@ -55,10 +55,15 @@ public class PacketBaubleSync implements IMessage {
 						EntityPlayer p = (EntityPlayer) Main.proxy.getPlayer(ctx).world.getEntityByID(message.playerId);
 						IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) p);
 						baubles.setStackInSlot(message.slot, message.bauble);
+
+						//if(ctx.side == Side.CLIENT) {
+						//player.sendMessage(new TextComponentString("You Sent A Packet!"));
+						//} else {
+						//player.sendMessage(new TextComponentString("You Recieved A Packet!"));
+						//}
 					}
 				});
 			}
-			// No response packet
 			return null;
 		}
 	}

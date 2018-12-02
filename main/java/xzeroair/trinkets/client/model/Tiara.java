@@ -1,15 +1,16 @@
 package xzeroair.trinkets.client.model;
 
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
+import xzeroair.trinkets.util.Reference;
 
-/**
- * ModelPlayer - Either Mojang or a mod author
- * Created using Tabula 7.0.0
- */
-public class Tiara extends ModelBiped {
+public class Tiara extends ModelBase {
+	
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/ender_tiara_model.png");
+	
 	public ModelRenderer Tiara;
 	public ModelRenderer Tiara1Right;
 	public ModelRenderer Tiara1Left;
@@ -20,12 +21,13 @@ public class Tiara extends ModelBiped {
 	public ModelRenderer Tiara4Right;
 	public ModelRenderer Tiara4Left;
 
-	public Tiara(float scaleFactor) {
+	public Tiara() {
 
-		super(scaleFactor, 0, 32, 32);
+		textureWidth = 32;
+		textureHeight = 32;
 
 		this.Tiara = new ModelRenderer(this, 0, 0);
-		this.Tiara.setRotationPoint(0.0F, -10.0F, 0.0F);
+		this.Tiara.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.Tiara.addBox(-1.0F, -0.0F, -4.05F, 2, 2, 1, 0.0F);
 
 		this.Tiara1Right = new ModelRenderer(this, 0, 3);
@@ -72,48 +74,31 @@ public class Tiara extends ModelBiped {
 		this.Tiara4Left.addBox(-0.1F, -0.0F, -4.0F, 1, 1, 1, 0.0F);
 		this.setRotateAngle(Tiara4Left, 0.0F, -0.5061454830783556F, 0.0F);
 
-
-		this.bipedHead.addChild(this.Tiara);
-		this.Tiara.addChild(this.Tiara2Right);
-		this.Tiara.addChild(this.Tiara3Left);
-		this.Tiara.addChild(this.Tiara1Left);
-		this.Tiara.addChild(this.Tiara3Right);
 		this.Tiara.addChild(this.Tiara1Right);
+		this.Tiara.addChild(this.Tiara1Left);
+		this.Tiara.addChild(this.Tiara2Right);
 		this.Tiara.addChild(this.Tiara2Left);
+		this.Tiara.addChild(this.Tiara3Right);
+		this.Tiara.addChild(this.Tiara3Left);
 		this.Tiara.addChild(this.Tiara4Right);
 		this.Tiara.addChild(this.Tiara4Left);
 	}
 
 	@Override
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-		this.Tiara.render(scaleFactor);
+		Tiara.render(scaleFactor);
 	}
 
 
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
-		super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-		//		boolean flag = (entityIn instanceof EntityLivingBase) && (((EntityLivingBase)entityIn).getTicksElytraFlying() > 4);
-		//		this.Tiara.rotateAngleY = netHeadYaw * 0.017453292F;
-		//
-		//		if (flag)
-		//		{
-		//			this.Tiara.rotateAngleX = -((float)Math.PI / 4F);
-		//		}
-		//		else
-		//		{
-		//			this.Tiara.rotateAngleX = headPitch * 0.017453292F;
-		//		}
-		//		this.Tiara.rotationPointX = 0.0F;
-		//		this.Tiara.rotationPointY = -10.0F;
-		//		this.Tiara.rotationPointZ = 0.0F;
-
+		this.Tiara.rotateAngleX = 0F;
+		this.Tiara.rotateAngleY = 4.7F;
+		this.Tiara.rotateAngleZ = 0F;
 	}
 
-	/**
-	 * This is a helper function from Tabula to set the rotation of model parts
-	 */
 	public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;

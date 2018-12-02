@@ -11,6 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class BounceHandler {
+	
+	
+	// Most of the Code Below was Borrowed from Tinker's Construct Slime Boots
 
 	private static final IdentityHashMap<Entity, BounceHandler> bouncingEntities = new IdentityHashMap<>();
 
@@ -53,7 +56,6 @@ public class BounceHandler {
 			if(!entityLiving.onGround && (entityLiving.ticksExisted != bounceTick)) {
 				if((lastMovX != entityLiving.motionX) || (lastMovZ != entityLiving.motionZ)) {
 					double f = 0.91d + 0.025d;
-					//System.out.println((entityLiving.worldObj.isRemote ? "client: " : "server: ") + entityLiving.motionX);
 					entityLiving.motionX /= f;
 					entityLiving.motionZ /= f;
 					entityLiving.isAirBorne = true;
@@ -70,7 +72,6 @@ public class BounceHandler {
 				else if((entityLiving.ticksExisted - timer) > 5) {
 					MinecraftForge.EVENT_BUS.unregister(this);
 					bouncingEntities.remove(entityLiving);
-					//entityLiving.addChatMessage(new ChatComponentText("removed " + entityLiving.worldObj.isRemote));
 				}
 			}
 			else {

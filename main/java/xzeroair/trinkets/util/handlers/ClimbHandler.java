@@ -16,26 +16,22 @@ public class ClimbHandler {
 		if(player.getHorizontalFacing().getAxisDirection() == player.getHorizontalFacing().getAxisDirection().POSITIVE) {
 			if(player.getHorizontalFacing().getAxis() == player.getHorizontalFacing().getAxis().X) {
 				if(player.motionX > 0) {
-					//					System.out.println("Positive X");
 					return true;
 				}
 			}
 			if(player.getHorizontalFacing().getAxis() == player.getHorizontalFacing().getAxis().Z) {
 				if(player.motionZ > 0) {
-					//					System.out.println("Positive Z");
 					return true;
 				}
 			}
 		} else {
 			if(player.getHorizontalFacing().getAxis() == player.getHorizontalFacing().getAxis().X) {
 				if(player.motionX < 0) {
-					//					System.out.println("Negative X");
 					return true;
 				}
 			}
 			if(player.getHorizontalFacing().getAxis() == player.getHorizontalFacing().getAxis().Z) {
 				if(player.motionZ < 0) {
-					//					System.out.println("Negative Z");
 					return true;
 				}
 			}
@@ -49,7 +45,6 @@ public class ClimbHandler {
 		//North
 		if(player.getHorizontalFacing() == EnumFacing.NORTH) {
 
-			//			System.out.println(block + "  " + front.getBlock() + "  " + pos.north());
 			BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
 			IBlockState front = world.getBlockState(pos.add(0, 0, 0).north());
 			IBlockState top = world.getBlockState(pos.add(0, 1, 0).north());
@@ -182,10 +177,6 @@ public class ClimbHandler {
 					return false;
 				}
 				if((headBlock instanceof BlockPane) && topBlock.isPassable(world, pos.add(0, 1, 0).west())){
-					if(!(block.isPassable(world, pos.west()))){
-						//						if(player.capabilities.)
-						//						return true;
-					}
 					return false;
 				}
 				return true;

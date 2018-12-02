@@ -5,8 +5,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import xzeroair.trinkets.compatibilities.sizeCap.DeCap;
-import xzeroair.trinkets.compatibilities.sizeCap.ICap;
 
 public class ItemProvider implements ICapabilitySerializable<NBTTagCompound>{
 

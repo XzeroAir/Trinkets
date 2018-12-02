@@ -1,12 +1,10 @@
 package xzeroair.trinkets.client.model;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class bowHat extends ModelBiped {
+public class bowHat extends ModelBase {
 
 
 	public ModelRenderer Base;
@@ -21,8 +19,10 @@ public class bowHat extends ModelBiped {
 	public ModelRenderer BowRight3;
 	public ModelRenderer BowRight4;
 
-	public bowHat(float scale) {
-		super(scale, 0, 64, 128);
+	public bowHat() {
+//		super(scale, 0, 64, 128);
+		textureWidth = 64;
+		textureHeight = 128;
 
 		this.Base = new ModelRenderer(this, 0, 64);
 		this.Base.setRotationPoint(0.0F, -9.0F, 0.0F);
@@ -77,28 +77,28 @@ public class bowHat extends ModelBiped {
 		this.setRotateAngle(BowRight1, 0.0F, 0.0F, -2.356194490192345F);
 
 
-		this.bipedHead.addChild(this.Base);
+//		this.bipedHead.addChild(this.Base);
 
-		this.bipedHead.addChild(this.Base2);
-		this.bipedHead.addChild(this.Base3);
+		this.Base.addChild(this.Base2);
+		this.Base.addChild(this.Base3);
 
-		this.bipedHead.addChild(this.BowLeft1);
-		this.bipedHead.addChild(this.BowLeft2);
-		this.bipedHead.addChild(this.BowLeft3);
-		this.bipedHead.addChild(this.BowLeft4);
+		this.Base.addChild(this.BowLeft1);
+		this.Base.addChild(this.BowLeft2);
+		this.Base.addChild(this.BowLeft3);
+		this.Base.addChild(this.BowLeft4);
 
-		this.bipedHead.addChild(this.BowRight1);
-		this.bipedHead.addChild(this.BowRight2);
-		this.bipedHead.addChild(this.BowRight3);
-		this.bipedHead.addChild(this.BowRight4);
+		this.Base.addChild(this.BowRight1);
+		this.Base.addChild(this.BowRight2);
+		this.Base.addChild(this.BowRight3);
+		this.Base.addChild(this.BowRight4);
 
 	}
 
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) { 
-		super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+//		super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 		setRotationAngles(scale, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, entity);
-
+		this.Base.render(scale);
 
 	}
 

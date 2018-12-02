@@ -18,15 +18,20 @@ public class NetworkHandler {
 	public static void init(){
 		INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
 
-		INSTANCE.registerMessage(CapDataToServerHandler.class, CapDataMessage.class, nextId(), Side.SERVER);
-		INSTANCE.registerMessage(CapDataToClientHandler.class, CapDataMessage.class, nextId(), Side.CLIENT);
+		INSTANCE.registerMessage(CapDataMessage.Handler.class, CapDataMessage.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(CapDataMessage.Handler.class, CapDataMessage.class, nextId(), Side.CLIENT);
 
-		INSTANCE.registerMessage(MobCapDataToClientHandler.class, MobCapDataMessage.class, nextId(), Side.CLIENT);
-		INSTANCE.registerMessage(MobCapDataToServerHandler.class, MobCapDataMessage.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(MobCapDataMessage.Handler.class, MobCapDataMessage.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(MobCapDataMessage.Handler.class, MobCapDataMessage.class, nextId(), Side.CLIENT);
 
-		INSTANCE.registerMessage(ItemCapDataToServerHandler.class, ItemCapDataMessage.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(ItemCapDataMessage.Handler.class, ItemCapDataMessage.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(ItemCapDataMessage.Handler.class, ItemCapDataMessage.class, nextId(), Side.CLIENT);
 
+		INSTANCE.registerMessage(PacketBaubleSync.Handler.class, PacketBaubleSync.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(PacketBaubleSync.Handler.class, PacketBaubleSync.class, nextId(), Side.CLIENT);
+
+		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.CLIENT);
 
 	}
 }

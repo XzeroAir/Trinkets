@@ -1,55 +1,47 @@
 package xzeroair.trinkets.client.model;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.util.Reference;
 
 @SideOnly(Side.CLIENT)
-public class Wings extends ModelBiped {
+public class Wings extends ModelBase {
+	
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/fairy_wings.png");
+
 	public ModelRenderer LeftWing;
 	public ModelRenderer RightWing;
 
-	// create an animation cycle
-	// for movement based animations you need to measure distance moved
-	// and perform number of cycles per block distance moved.
 	protected double distanceMovedTotal = 0.0D;
-
-	// don't make this too large or animations will be skipped
-
 
 	protected static final double CYCLES_PER_BLOCK = 3.0D;
 	protected int cycleIndex = 0;
-	protected float[][] undulationCycle = new float[][]
-			{
-		{ 1F, -1F, -1F, 0F, 1F, 1F, 0F, -1F },
-		{ 0F, 1F, -1F, -1F, 0F, 1F, 1F, 0F },
-		{ -0F, 0F, 0F, -0F, -0F, 0F, 0F, 0F },
-		{ -1F, -0.5F, 0F, 0.5F, 1F, -1F, 0F, 1F },
-		{ 0F, -1F, 1F, 1F, 0F, -1F, -1F, 0F },
-		{ 1F, -1F, 0F, 1F, 1F, 0F, -1F, -1F },
-			};
 
-			public Wings(float scale) {
-				super(scale, 0, 32, 32);
+			public Wings() {
+				textureWidth = 32;
+				textureHeight = 32;
 
 				RightWing = new ModelRenderer(this, 0, 0);
 				RightWing.setRotationPoint(-2.0F, 1.0F, 2.0F);
-				RightWing.addBox(0.0F, -2.0F, 0.0F, 1, 16, 8, 0.0F);
+				RightWing.addBox(0.0F, -2.0F, 0.0F, 0, 16, 8, 0.0F);
 				LeftWing = new ModelRenderer(this, 0, 0);
 				LeftWing.mirror = true;
 				LeftWing.setRotationPoint(1.0F, 1.0F, 2.0F);
-				LeftWing.addBox(0.0F, -2.0F, 0.0F, 1, 16, 8, 0.0F);
+				LeftWing.addBox(0.0F, -2.0F, 0.0F, 0, 16, 8, 0.0F);
 
-				//				bipedBody.addChild(LeftWing);
-				//				bipedBody.addChild(RightWing);
 			}
 
 			@Override
 			public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-				//		super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+				
+				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 				setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 				RightWing.render(scale);
 				LeftWing.render(scale);
@@ -71,7 +63,7 @@ public class Wings extends ModelBiped {
 
 					if (!entityIn.onGround && !entityIn.isRiding()) {
 						double time = entityIn.world.getWorldTime() + ageInTicks;
-						//						double time = ageInTicks;
+						
 						float f1 = 16F;
 						float f2 = 32F;
 						float f3 = 48F;

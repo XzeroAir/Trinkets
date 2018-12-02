@@ -1,7 +1,6 @@
 package xzeroair.trinkets.compatibilities.ItemCap;
 
 import net.minecraft.nbt.NBTTagCompound;
-import xzeroair.trinkets.util.helpers.TrinketHelper.targetOreType;
 
 public interface ItemCap {
 

@@ -17,7 +17,5 @@ public class ModKeyBindings {
 		ClientRegistry.registerKeyBinding(TRINKET_TARGET);
 		ClientRegistry.registerKeyBinding(TRINKET_TOGGLE_EFFECT);
 		ClientRegistry.registerKeyBinding(AUX_KEY);
-
-		//		MinecraftForge.EVENT_BUS.register(new ModKeyBindings());
 	}
 }

@@ -1,22 +1,22 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "#S#",
-    "SDS",
-    "#S#"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:iron_block"
-         },
-    "D": {
-      "item": "minecraft:redstone_block"
-         },
-    "S": {
-      "item": "xat:glowing_ingot"
-         }
-  },
-  "result": {
-    "item": "xat:polarized_stone"
-  }
+    "type" : "minecraft:crafting_shaped", 
+    "pattern" : ["#S#", "SDS", "#S#"], 
+
+    "key" : {
+        "#" : {
+            "item" : "minecraft:iron_block"
+        }, 
+
+        "D" : {
+            "item" : "minecraft:redstone_block"
+        }, 
+
+        "S" : {
+            "item" : "xat:glowing_ingot"
+        }
+    }, 
+
+    "result" : {
+        "item" : "xat:polarized_stone"
+    }
 }

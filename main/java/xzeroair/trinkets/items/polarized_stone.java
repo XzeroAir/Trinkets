@@ -24,24 +24,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import xzeroair.trinkets.Main;
 import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.items.base.BaubleBase;
 import xzeroair.trinkets.util.handlers.ItemEffectHandler;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
-public class polarized_stone extends Item implements IBauble, IsModelLoaded {
+public class polarized_stone extends BaubleBase {
 
 	public polarized_stone(String name) {
-
-		setUnlocalizedName(name);
-		setRegistryName(name);
-		setMaxStackSize(1);
-		setMaxDamage(0);
-		setCreativeTab(Main.trinketstab);
-
-		ModItems.ITEMS.add(this);
-	}
-	@Override
-	public void registerModels() {
-		Main.proxy.registerItemRenderer(this, 0, "inventory");
+		super(name);
 	}
 	@Override
 	public BaubleType getBaubleType(ItemStack itemstack) {
@@ -106,20 +96,6 @@ public class polarized_stone extends Item implements IBauble, IsModelLoaded {
 				arrow.motionZ = -0.1;
 			}
 		}
-	}
-	@Override
-	public boolean hasEffect(ItemStack par1ItemStack) {
-		return true;
-	}
-	@Override
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		return EnumRarity.RARE;
-	}
-
-	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack)
-	{
-		return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
 	}
 	@Override
 	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {

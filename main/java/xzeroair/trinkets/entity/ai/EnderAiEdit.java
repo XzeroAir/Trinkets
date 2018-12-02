@@ -5,8 +5,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -19,7 +17,6 @@ import net.minecraft.util.math.Vec3d;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.helpers.TrinketHelper;
-import xzeroair.trinkets.util.helpers.TrinketHelper.TrinketType;
 
 public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 
@@ -38,8 +35,9 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	private boolean shouldAttackPlayer(EntityPlayer player)
 	{
 		ItemStack itemstack = player.inventory.armorInventory.get(3);
-		Item baubleCheck = TrinketHelper.getBaubleType(player, TrinketType.head);
-		if((baubleCheck == ModItems.dragons_eye) || (baubleCheck == ModItems.ender_tiara) || (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))){
+		boolean eye = TrinketHelper.baubleCheck(player, ModItems.dragons_eye);
+		boolean tiara = TrinketHelper.baubleCheck(player, ModItems.ender_tiara);
+		if((tiara == true) || (eye == true) || (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))){
 			return false;
 		}
 		else
@@ -175,14 +173,14 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 			{
 				if (shouldAttackPlayer(targetEntity))
 				{
-					if (targetEntity.getDistanceSq(enderman) < 16.0D)
+					if (targetEntity.getDistanceSqToEntity(enderman) < 16.0D)
 					{
 						teleportRandomly();
 					}
 
 					teleportTime = 0;
 				}
-				else if ((targetEntity.getDistanceSq(enderman) > 256.0D) && (teleportTime++ >= 30) && teleportToEntity(targetEntity))
+				else if ((targetEntity.getDistanceSqToEntity(enderman) > 256.0D) && (teleportTime++ >= 30) && teleportToEntity(targetEntity))
 				{
 					teleportTime = 0;
 				}
