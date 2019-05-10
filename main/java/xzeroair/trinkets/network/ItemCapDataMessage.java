@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Main;
-import xzeroair.trinkets.compatibilities.ItemCap.ItemCap;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.capabilities.ItemCap.IItemCap;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.util.helpers.TrinketHelper;
 
@@ -13,9 +13,9 @@ public class ItemCapDataMessage implements IMessage {
 	// A default constructor is always required
 	public ItemCapDataMessage(){}
 
-	public int type = 0;
-	public boolean on = false;
-	public int entityID = 0;
+	int type = 0;
+	boolean on = false;
+	int entityID = 0;
 
 	public ItemCapDataMessage(int type, boolean on, int entityID) {
 		this.type = type;
@@ -25,9 +25,9 @@ public class ItemCapDataMessage implements IMessage {
 
 	@Override public void toBytes(ByteBuf buf) {
 		// Writes the int into the buf
-		buf.writeInt(type);
-		buf.writeBoolean(on);
-		buf.writeInt(entityID);
+		buf.writeInt(this.type);
+		buf.writeBoolean(this.on);
+		buf.writeInt(this.entityID);
 	}
 
 	@Override public void fromBytes(ByteBuf buf) {
@@ -41,14 +41,14 @@ public class ItemCapDataMessage implements IMessage {
 
 		@Override public IMessage onMessage(ItemCapDataMessage message, MessageContext ctx) {
 
-			Main.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if(Main.proxy.getPlayer(ctx) != null) {
-					if(Main.proxy.getPlayer(ctx).getEntityId() == message.entityID) {
-						ItemCap itemNBT = TrinketHelper.getBaubleCap(TrinketHelper.getBaubleStack(Main.proxy.getPlayer(ctx), ModItems.dragons_eye));
+			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+				if(Trinkets.proxy.getPlayer(ctx) != null) {
+					if(Trinkets.proxy.getPlayer(ctx).getEntityId() == message.entityID) {
+						final IItemCap itemNBT = TrinketHelper.getBaubleCap(TrinketHelper.getBaubleStack(Trinkets.proxy.getPlayer(ctx), ModItems.dragons_eye));
 						if(itemNBT.oreType() != message.type) {
 							itemNBT.setOreType(message.type);
 						}
-						itemNBT.nightVisionOn(message.on);
+						itemNBT.setEffect(message.on);
 					}
 					//if(ctx.side == Side.CLIENT) {
 					//Main.proxy.getPlayer(ctx).sendMessage(new TextComponentString("You Sent A Packet!"));

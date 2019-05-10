@@ -6,89 +6,78 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-import xzeroair.trinkets.compatibilities.ItemCap.ItemCap;
-import xzeroair.trinkets.compatibilities.sizeCap.CapPro;
-import xzeroair.trinkets.compatibilities.sizeCap.ICap;
+import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
+import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
 import xzeroair.trinkets.entity.ai.EnderAiEdit;
 import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
-import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.items.Greater_inertia_stone;
+import xzeroair.trinkets.items.Inertia_null_stone;
+import xzeroair.trinkets.items.dragons_eye;
+import xzeroair.trinkets.items.fairy_ring;
+import xzeroair.trinkets.items.sea_stone;
 import xzeroair.trinkets.network.CapDataMessage;
-import xzeroair.trinkets.network.ItemCapDataMessage;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.PacketConfigSync;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.TrinketHelper;
 
 public class OnWorldJoinHandler {
 
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		if((event.player.world != null) && !event.player.world.isRemote) {
-			EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
-			//			ICap cap = playerMP.getCapability(CapPro.sizeCapability, null);
-			NetworkHandler.INSTANCE.sendTo(new PacketConfigSync(playerMP, TrinketsConfig.SERVER.C04_DE_Chests), playerMP);
-			//			NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), playerMP.getEyeHeight(), playerMP.getEntityId()), playerMP);
+		if((event.player.world != null)) {
+			final EntityPlayer player = event.player;
+			final boolean client = player.world.isRemote;
+			//			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
+			if(!client) {
+				//				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
+				NetworkHandler.INSTANCE.sendTo(new PacketConfigSync(player, TrinketsConfig.SERVER.C04_DE_Chests), (EntityPlayerMP) player);
+				//				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), player.getEyeHeight(), player.getEntityId()), (EntityPlayerMP) player);
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event) {
 		if((event.player.world != null) && !event.player.world.isRemote) {
-			EntityPlayer player = (EntityPlayer) event.player;
-			ICap cap = player.getCapability(CapPro.sizeCapability, null);
-			if((player.getRidingEntity() instanceof EntityMinecart) && (cap.getTrans() == true)) {
-				player.dismountRidingEntity();
-			}
-			if(TrinketHelper.baubleCheck(player, ModItems.dragons_eye)) {
-				if(TrinketHelper.hasCap(TrinketHelper.getBaubleStack(player, ModItems.dragons_eye))) {
-					ItemCap nbt = TrinketHelper.getBaubleCap(TrinketHelper.getBaubleStack(player, ModItems.dragons_eye));
-					if(!player.world.isRemote) {
-						nbt.setOreType(-1);
-					}
+			final EntityPlayer player = event.player;
+			if((player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
+				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
+				if((player.getRidingEntity() instanceof EntityMinecart) && (cap.getTrans() == true)) {
+					player.dismountRidingEntity();
 				}
 			}
+			dragons_eye.onPlayerLogout(player);
+			fairy_ring.onPlayerLogout(player);
+			sea_stone.playerLogout(player);
+			Inertia_null_stone.playerLogout(player);
+			Greater_inertia_stone.playerLogout(player);
 		}
 	}
 
 	@SubscribeEvent
-	public void entityConstructing(EntityConstructing event) {
-	}
-
-	@SubscribeEvent
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-	}
-
-	@SubscribeEvent
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
-		if((event.getEntity() instanceof EntityPlayer) && event.getEntity().hasCapability(CapPro.sizeCapability, null)) {
-			EntityPlayer player = (EntityPlayer) event.getEntity();
-			if(!player.world.isRemote) {
-				EntityPlayerMP playerMP = (EntityPlayerMP) event.getEntity();
-				ICap cap = playerMP.getCapability(CapPro.sizeCapability, null);
+		if((event.getEntity() instanceof EntityPlayer)) {
+			final EntityPlayer player = (EntityPlayer) event.getEntity();
+			final boolean client = player.world.isRemote;
+			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
+				final EntityPlayerMP playerMP = (EntityPlayerMP) event.getEntity();
+				final ISizeCap cap = playerMP.getCapability(SizeCapPro.sizeCapability, null);
 				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), playerMP.getEyeHeight(), playerMP.getEntityId()), playerMP);
-				//				if(TrinketHelper.baubleCheck(playerMP, ModItems.dragons_eye)) {
-				//					if(TrinketHelper.hasCap(TrinketHelper.getBaubleStack(playerMP, ModItems.dragons_eye))) {
-				//						ItemCap itemcap = TrinketHelper.getBaubleCap(TrinketHelper.getBaubleStack(playerMP, ModItems.dragons_eye));
-				//						NetworkHandler.INSTANCE.sendTo(new ItemCapDataMessage(itemcap.oreType(), itemcap.nightVision(), player.getEntityId()), playerMP);
-				//					}
-				//				}
 			}
 		}
 
 		//Add Tiara AI to Enderman
 		if (event.getEntity() instanceof EntityEnderman) {
-			EntityEnderman ender = (EntityEnderman) event.getEntity();
+			final EntityEnderman ender = (EntityEnderman) event.getEntity();
 
-			for (Object a : ender.targetTasks.taskEntries.toArray())
+			for (final Object a : ender.targetTasks.taskEntries.toArray())
 			{
-				EntityAIBase ai = ((EntityAITaskEntry) a).action;
+				final EntityAIBase ai = ((EntityAITaskEntry) a).action;
 				if(ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")){
 					ender.targetTasks.removeTask(ai);
 				}
@@ -100,6 +89,14 @@ public class OnWorldJoinHandler {
 
 	@SubscribeEvent
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
+		if((event.player != null)) {
+			final EntityPlayer player = event.player;
+			final boolean client = player.world.isRemote;
+			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
+				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
+				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), player.getEyeHeight(), player.getEntityId()), (EntityPlayerMP) player);
+			}
+		}
 	}
 
 }

@@ -7,7 +7,7 @@ import xzeroair.trinkets.util.Reference;
 
 public class NetworkHandler {
 
-	public static SimpleNetworkWrapper INSTANCE;
+	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID.toLowerCase());
 
 	private static int ID = 0;
 
@@ -15,8 +15,7 @@ public class NetworkHandler {
 		return ID++;
 	}
 
-	public static void init(){
-		INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
+	public static void init() {
 
 		INSTANCE.registerMessage(CapDataMessage.Handler.class, CapDataMessage.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(CapDataMessage.Handler.class, CapDataMessage.class, nextId(), Side.CLIENT);
@@ -32,6 +31,8 @@ public class NetworkHandler {
 
 		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.CLIENT);
+
+		//		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
 
 	}
 }

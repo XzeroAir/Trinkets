@@ -21,7 +21,7 @@ public class EnderQueensKnightAI extends EntityAITarget
 	{
 		super(theDefendingKnightIn, false);
 		this.knight = theDefendingKnightIn;
-		this.setMutexBits(1);
+		setMutexBits(1);
 	}
 
 	/**
@@ -30,25 +30,25 @@ public class EnderQueensKnightAI extends EntityAITarget
 	@Override
 	public boolean shouldExecute()
 	{
-		AxisAlignedBB bBox = knight.getEntityBoundingBox().grow(16, 4, 16);
-		List<EntityPlayer> entLivList = knight.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
+		final AxisAlignedBB bBox = this.knight.getEntityBoundingBox().grow(16, 4, 16);
+		final List<EntityPlayer> entLivList = this.knight.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
 		if(!entLivList.isEmpty()) {
-			for(EntityPlayer stuff : entLivList) {
-				EntityPlayer player = (EntityPlayer) stuff;
+			for(final EntityPlayer stuff : entLivList) {
+				final EntityPlayer player = stuff;
 				if(TrinketHelper.baubleCheck(player, ModItems.ender_tiara)) {
-					queen = player;
+					this.queen = player;
 				}
 			}
 		}
 
-		if (queen == null)
+		if (this.queen == null)
 		{
 			return false;
 		}
 		else
 		{
-			this.attacker = queen.getRevengeTarget();
-			int i = queen.getRevengeTimer();
+			this.attacker = this.queen.getRevengeTarget();
+			final int i = this.queen.getRevengeTimer();
 			return (i != this.timestamp) && this.isSuitableTarget(this.attacker, false);
 		}
 	}
@@ -60,7 +60,7 @@ public class EnderQueensKnightAI extends EntityAITarget
 	public void startExecuting()
 	{
 		this.taskOwner.setAttackTarget(this.attacker);
-		EntityLivingBase entitylivingbase = queen;
+		final EntityLivingBase entitylivingbase = this.queen;
 
 		if (entitylivingbase != null)
 		{

@@ -6,12 +6,14 @@ import xzeroair.trinkets.init.ModItems;
 
 public class TrinketsTab extends CreativeTabs {
 
+	/**
+	 * @param label
+	 */
 	public TrinketsTab(String label) {
 		super("trinketstab");
-		//this.setBackgroundImageName("trinketstab.png");
 	}
 	@Override
-	public ItemStack getTabIconItem() {
+	public ItemStack createIcon() {
 		return new ItemStack(ModItems.glow_ring);
 	}
 }

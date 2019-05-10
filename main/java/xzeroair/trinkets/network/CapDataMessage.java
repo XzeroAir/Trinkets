@@ -1,14 +1,13 @@
 package xzeroair.trinkets.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Main;
-import xzeroair.trinkets.compatibilities.sizeCap.CapPro;
-import xzeroair.trinkets.compatibilities.sizeCap.ICap;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
+import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
 
 public class CapDataMessage implements IMessage {
 	// A default constructor is always required
@@ -24,14 +23,6 @@ public class CapDataMessage implements IMessage {
 	public float eyeHeight = 1.62F;
 	public int entityID = 0;
 
-	//	public CapDataMessage(int size, boolean trans, int target, float eyeHeight, int entityID) {
-	//		this.size = size;
-	//		this.trans = trans;
-	//		this.target = target;
-	//		this.eyeHeight = eyeHeight;
-	//		this.entityID = entityID;
-	//	}
-
 	public CapDataMessage(int size, boolean trans, int target, float width, float height, float defaultWidth, float defaultHeight, float eyeHeight, int entityID) {
 		this.size = size;
 		this.trans = trans;
@@ -46,15 +37,15 @@ public class CapDataMessage implements IMessage {
 
 	@Override public void toBytes(ByteBuf buf) {
 		// Writes the int into the buf
-		buf.writeInt(size);
-		buf.writeBoolean(trans);
-		buf.writeInt(target);
-		buf.writeFloat(width);
-		buf.writeFloat(height);
-		buf.writeFloat(defaultWidth);
-		buf.writeFloat(defaultHeight);
-		buf.writeFloat(eyeHeight);
-		buf.writeInt(entityID);
+		buf.writeInt(this.size);
+		buf.writeBoolean(this.trans);
+		buf.writeInt(this.target);
+		buf.writeFloat(this.width);
+		buf.writeFloat(this.height);
+		buf.writeFloat(this.defaultWidth);
+		buf.writeFloat(this.defaultHeight);
+		buf.writeFloat(this.eyeHeight);
+		buf.writeInt(this.entityID);
 	}
 
 	@Override public void fromBytes(ByteBuf buf) {
@@ -74,10 +65,10 @@ public class CapDataMessage implements IMessage {
 		@Override public IMessage onMessage(CapDataMessage message, MessageContext ctx) {
 
 			//			if((Minecraft.getMinecraft().world != null) || (Minecraft.getMinecraft().player != null)) {
-			Main.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if(Main.proxy.getPlayer(ctx) != null) {
-					EntityPlayer player = (EntityPlayer) Main.proxy.getPlayer(ctx).world.getEntityByID(message.entityID);
-					ICap cap = player.getCapability(CapPro.sizeCapability, null);
+			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+				if(Trinkets.proxy.getPlayer(ctx) != null) {
+					final EntityPlayer player = (EntityPlayer) Trinkets.proxy.getPlayer(ctx).world.getEntityByID(message.entityID);
+					final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
 
 					cap.setSize(message.size);
 					cap.setTrans(message.trans);

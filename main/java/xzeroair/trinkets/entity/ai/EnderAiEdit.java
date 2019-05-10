@@ -34,28 +34,28 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 
 	private boolean shouldAttackPlayer(EntityPlayer player)
 	{
-		ItemStack itemstack = player.inventory.armorInventory.get(3);
-		boolean eye = TrinketHelper.baubleCheck(player, ModItems.dragons_eye);
-		boolean tiara = TrinketHelper.baubleCheck(player, ModItems.ender_tiara);
+		final ItemStack itemstack = player.inventory.armorInventory.get(3);
+		final boolean eye = TrinketHelper.baubleCheck(player, ModItems.dragons_eye);
+		final boolean tiara = TrinketHelper.baubleCheck(player, ModItems.ender_tiara);
 		if((tiara == true) || (eye == true) || (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))){
 			return false;
 		}
 		else
 		{
-			Vec3d vec3d = player.getLook(1.0F).normalize();
-			Vec3d vec3d1 = new Vec3d(enderman.posX - player.posX, (enderman.getEntityBoundingBox().minY + enderman.getEyeHeight()) - (player.posY + player.getEyeHeight()), enderman.posZ - player.posZ);
-			double d0 = vec3d1.lengthVector();
+			final Vec3d vec3d = player.getLook(1.0F).normalize();
+			Vec3d vec3d1 = new Vec3d(this.enderman.posX - player.posX, (this.enderman.getEntityBoundingBox().minY + this.enderman.getEyeHeight()) - (player.posY + player.getEyeHeight()), this.enderman.posZ - player.posZ);
+			final double d0 = vec3d1.length();
 			vec3d1 = vec3d1.normalize();
-			double d1 = vec3d.dotProduct(vec3d1);
-			return d1 > (1.0D - (0.025D / d0)) ? player.canEntityBeSeen(enderman) : false;
+			final double d1 = vec3d.dotProduct(vec3d1);
+			return d1 > (1.0D - (0.025D / d0)) ? player.canEntityBeSeen(this.enderman) : false;
 		}
 	}
 
 	protected boolean teleportRandomly()
 	{
-		double d0 = enderman.posX + ((Reference.random.nextDouble() - 0.5D) * 64.0D);
-		double d1 = enderman.posY + (Reference.random.nextInt(64) - 32);
-		double d2 = enderman.posZ + ((Reference.random.nextDouble() - 0.5D) * 64.0D);
+		final double d0 = this.enderman.posX + ((Reference.random.nextDouble() - 0.5D) * 64.0D);
+		final double d1 = this.enderman.posY + (Reference.random.nextInt(64) - 32);
+		final double d2 = this.enderman.posZ + ((Reference.random.nextDouble() - 0.5D) * 64.0D);
 		return teleportTo(d0, d1, d2);
 	}
 
@@ -64,27 +64,27 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	 */
 	protected boolean teleportToEntity(Entity p_70816_1_)
 	{
-		Vec3d vec3d = new Vec3d(enderman.posX - p_70816_1_.posX, ((enderman.getEntityBoundingBox().minY + (enderman.height / 2.0F)) - p_70816_1_.posY) + p_70816_1_.getEyeHeight(), enderman.posZ - p_70816_1_.posZ);
+		Vec3d vec3d = new Vec3d(this.enderman.posX - p_70816_1_.posX, ((this.enderman.getEntityBoundingBox().minY + (this.enderman.height / 2.0F)) - p_70816_1_.posY) + p_70816_1_.getEyeHeight(), this.enderman.posZ - p_70816_1_.posZ);
 		vec3d = vec3d.normalize();
-		double d0 = 16.0D;
-		double d1 = (enderman.posX + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.x * 16.0D);
-		double d2 = (enderman.posY + (Reference.random.nextInt(16) - 8)) - (vec3d.y * 16.0D);
-		double d3 = (enderman.posZ + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.z * 16.0D);
+		final double d0 = 16.0D;
+		final double d1 = (this.enderman.posX + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.x * d0);
+		final double d2 = (this.enderman.posY + (Reference.random.nextInt(16) - 8)) - (vec3d.y * 16.0D);
+		final double d3 = (this.enderman.posZ + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.z * d0);
 		return teleportTo(d1, d2, d3);
 	}
 
 	private boolean teleportTo(double x, double y, double z)
 	{
-		net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(enderman, x, y, z, 0);
+		final net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this.enderman, x, y, z, 0);
 		if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 			return false;
 		}
-		boolean flag = enderman.attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+		final boolean flag = this.enderman.attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 
 		if (flag)
 		{
-			enderman.world.playSound((EntityPlayer)null, enderman.prevPosX, enderman.prevPosY, enderman.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, enderman.getSoundCategory(), 1.0F, 1.0F);
-			enderman.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
+			this.enderman.world.playSound((EntityPlayer)null, this.enderman.prevPosX, this.enderman.prevPosY, this.enderman.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, this.enderman.getSoundCategory(), 1.0F, 1.0F);
+			this.enderman.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 		}
 
 		return flag;
@@ -96,8 +96,8 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	@Override
 	public boolean shouldExecute()
 	{
-		double d0 = getTargetDistance();
-		player = enderman.world.getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function)null, new Predicate<EntityPlayer>()
+		final double d0 = getTargetDistance();
+		this.player = this.enderman.world.getNearestAttackablePlayer(this.enderman.posX, this.enderman.posY, this.enderman.posZ, d0, d0, (Function)null, new Predicate<EntityPlayer>()
 		{
 			@Override
 			public boolean apply(@Nullable EntityPlayer p_apply_1_)
@@ -105,7 +105,7 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 				return (p_apply_1_ != null) && EnderAiEdit.this.shouldAttackPlayer(p_apply_1_);
 			}
 		});
-		return player != null;
+		return this.player != null;
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	@Override
 	public void startExecuting()
 	{
-		aggroTime = 5;
-		teleportTime = 0;
+		this.aggroTime = 5;
+		this.teleportTime = 0;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	@Override
 	public void resetTask()
 	{
-		player = null;
+		this.player = null;
 		super.resetTask();
 	}
 
@@ -134,21 +134,21 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	@Override
 	public boolean shouldContinueExecuting()
 	{
-		if (player != null)
+		if (this.player != null)
 		{
-			if (!shouldAttackPlayer(player))
+			if (!shouldAttackPlayer(this.player))
 			{
 				return false;
 			}
 			else
 			{
-				enderman.faceEntity(player, 10.0F, 10.0F);
+				this.enderman.faceEntity(this.player, 10.0F, 10.0F);
 				return true;
 			}
 		}
 		else
 		{
-			return (targetEntity != null) && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
+			return (this.targetEntity != null) && this.targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
 		}
 	}
 
@@ -158,31 +158,31 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 	@Override
 	public void updateTask()
 	{
-		if (player != null)
+		if (this.player != null)
 		{
-			if (--aggroTime <= 0)
+			if (--this.aggroTime <= 0)
 			{
-				targetEntity = player;
-				player = null;
+				this.targetEntity = this.player;
+				this.player = null;
 				super.startExecuting();
 			}
 		}
 		else
 		{
-			if (targetEntity != null)
+			if (this.targetEntity != null)
 			{
-				if (shouldAttackPlayer(targetEntity))
+				if (shouldAttackPlayer(this.targetEntity))
 				{
-					if (targetEntity.getDistanceSqToEntity(enderman) < 16.0D)
+					if (this.targetEntity.getDistanceSq(this.enderman) < 16.0D)
 					{
 						teleportRandomly();
 					}
 
-					teleportTime = 0;
+					this.teleportTime = 0;
 				}
-				else if ((targetEntity.getDistanceSqToEntity(enderman) > 256.0D) && (teleportTime++ >= 30) && teleportToEntity(targetEntity))
+				else if ((this.targetEntity.getDistanceSq(this.enderman) > 256.0D) && (this.teleportTime++ >= 30) && teleportToEntity(this.targetEntity))
 				{
-					teleportTime = 0;
+					this.teleportTime = 0;
 				}
 			}
 

@@ -1,9 +1,7 @@
 package xzeroair.trinkets.items;
 
-import xzeroair.trinkets.Main;
-import xzeroair.trinkets.init.ModItems;
+import net.minecraft.item.ItemStack;
 import xzeroair.trinkets.items.base.ItemBase;
-import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
 public class glowing_ingot extends ItemBase {
 
@@ -11,5 +9,9 @@ public class glowing_ingot extends ItemBase {
 		super(name);
 		setMaxStackSize(1);
 		setMaxDamage(0);
+	}
+	@Override
+	public boolean hasDiscription(ItemStack stack) {
+		return true;
 	}
 }

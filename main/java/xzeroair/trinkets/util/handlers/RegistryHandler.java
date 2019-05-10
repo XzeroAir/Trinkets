@@ -14,9 +14,12 @@ public class RegistryHandler {
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		event.getRegistry().registerAll(ModItems.ITEMS.toArray(new Item[0]));
 	}
+	/**
+	 * @param event
+	 */
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		for(Item item : ModItems.ITEMS) {
+		for(final Item item : ModItems.ITEMS) {
 			if(item instanceof IsModelLoaded) {
 				((IsModelLoaded)item).registerModels();
 			}

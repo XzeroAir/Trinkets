@@ -8,9 +8,9 @@ import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.util.Reference;
 
 public class Tiara extends ModelBase {
-	
+
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/ender_tiara_model.png");
-	
+
 	public ModelRenderer Tiara;
 	public ModelRenderer Tiara1Right;
 	public ModelRenderer Tiara1Left;
@@ -23,8 +23,8 @@ public class Tiara extends ModelBase {
 
 	public Tiara() {
 
-		textureWidth = 32;
-		textureHeight = 32;
+		this.textureWidth = 32;
+		this.textureHeight = 32;
 
 		this.Tiara = new ModelRenderer(this, 0, 0);
 		this.Tiara.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -33,46 +33,46 @@ public class Tiara extends ModelBase {
 		this.Tiara1Right = new ModelRenderer(this, 0, 3);
 		this.Tiara1Right.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara1Right.addBox(-0.9F, -0.0F, -4.0F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara1Right, 0.0F, 0.5061454830783556F, 0.0F);
+		setRotateAngle(this.Tiara1Right, 0.0F, 0.5061454830783556F, 0.0F);
 
 		this.Tiara1Left = new ModelRenderer(this, 0, 3);
 		this.Tiara1Left.mirror = true;
 		this.Tiara1Left.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara1Left.addBox(-1.1F, -0.0F, -4.0F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara1Left, 0.0F, -0.5061454830783556F, 0.0F);
+		setRotateAngle(this.Tiara1Left, 0.0F, -0.5061454830783556F, 0.0F);
 
 		this.Tiara2Right = new ModelRenderer(this, 0, 3);
 		this.Tiara2Right.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara2Right.addBox(-0.8F, -0.0F, -3.9F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara2Right, 0.0F, 1.0122909661567112F, 0.0F);
+		setRotateAngle(this.Tiara2Right, 0.0F, 1.0122909661567112F, 0.0F);
 
 		this.Tiara2Left = new ModelRenderer(this, 0, 3);
 		this.Tiara2Left.mirror = true;
 		this.Tiara2Left.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara2Left.addBox(-1.2F, -0.0F, -3.9F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara2Left, 0.0F, -1.0122909661567112F, 0.0F);
+		setRotateAngle(this.Tiara2Left, 0.0F, -1.0122909661567112F, 0.0F);
 
 		this.Tiara3Left = new ModelRenderer(this, 0, 3);
 		this.Tiara3Left.mirror = true;
 		this.Tiara3Left.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara3Left.addBox(-1.4F, -0.0F, -3.7F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara3Left, 0.0F, -1.5707963267948966F, 0.0F);
+		setRotateAngle(this.Tiara3Left, 0.0F, -1.5707963267948966F, 0.0F);
 
 		this.Tiara3Right = new ModelRenderer(this, 0, 3);
 		this.Tiara3Right.setRotationPoint(0.0F, 1.0F, 0.0F);
 		this.Tiara3Right.addBox(-0.6F, -0.0F, -3.7F, 2, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara3Right, 0.0F, 1.5707963267948966F, 0.0F);
+		setRotateAngle(this.Tiara3Right, 0.0F, 1.5707963267948966F, 0.0F);
 
 		this.Tiara4Right = new ModelRenderer(this, 0, 5);
 		this.Tiara4Right.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.Tiara4Right.addBox(-0.9F, -0.0F, -4.0F, 1, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara4Right, 0.0F, 0.5061454830783556F, 0.0F);
+		setRotateAngle(this.Tiara4Right, 0.0F, 0.5061454830783556F, 0.0F);
 
 		this.Tiara4Left = new ModelRenderer(this, 0, 5);
 		this.Tiara4Left.mirror = true;
 		this.Tiara4Left.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.Tiara4Left.addBox(-0.1F, -0.0F, -4.0F, 1, 1, 1, 0.0F);
-		this.setRotateAngle(Tiara4Left, 0.0F, -0.5061454830783556F, 0.0F);
+		setRotateAngle(this.Tiara4Left, 0.0F, -0.5061454830783556F, 0.0F);
 
 		this.Tiara.addChild(this.Tiara1Right);
 		this.Tiara.addChild(this.Tiara1Left);
@@ -88,7 +88,7 @@ public class Tiara extends ModelBase {
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-		Tiara.render(scaleFactor);
+		this.Tiara.render(scaleFactor);
 	}
 
 

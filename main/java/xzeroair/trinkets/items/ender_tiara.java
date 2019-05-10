@@ -8,14 +8,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Main;
 import xzeroair.trinkets.items.base.BaubleBase;
+import xzeroair.trinkets.util.helpers.CallHelper;
 
 public class ender_tiara extends BaubleBase {
 
@@ -37,18 +35,10 @@ public class ender_tiara extends BaubleBase {
 		return false;
 	}
 	@Override
-	public boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
-		final EntityPlayer user = (EntityPlayer) player;
-		if((EnchantmentHelper.hasBindingCurse(itemstack) == true) && !user.capabilities.isCreativeMode && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
-			return false;
-		}
-		return true;
-	}
-	@Override
 	@SideOnly(Side.CLIENT)
 	public void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {
 		if(type == RenderType.HEAD) {
-			final ModelBase tiara = Main.proxy.getModel("tiara");
+			final ModelBase tiara = CallHelper.getModel("tiara");
 			final float scale = 0.07f;
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(-0.05, -0.63, 0);
@@ -63,5 +53,9 @@ public class ender_tiara extends BaubleBase {
 			tiara.render(player, player.limbSwing, player.limbSwingAmount, player.ticksExisted, player.rotationYaw, player.rotationPitch, 1F);
 			GlStateManager.popMatrix();
 		}
+	}
+	@Override
+	public boolean hasDiscription(ItemStack stack) {
+		return true;
 	}
 }

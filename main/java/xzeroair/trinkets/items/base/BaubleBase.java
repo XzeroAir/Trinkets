@@ -24,9 +24,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.compatibilities.ItemCap.ItemProvider;
-import xzeroair.trinkets.compatibilities.sizeCap.CapPro;
-import xzeroair.trinkets.compatibilities.sizeCap.ICap;
+import xzeroair.trinkets.capabilities.ItemCap.IItemCap;
+import xzeroair.trinkets.capabilities.ItemCap.ItemProvider;
+import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
+import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
 import xzeroair.trinkets.network.CapDataMessage;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.PacketBaubleSync;
@@ -35,6 +36,8 @@ import xzeroair.trinkets.util.interfaces.IBaubleSlotInterface;
 public class BaubleBase extends ItemBase implements IBauble, IRenderBauble, IBaubleSlotInterface {
 
 	private int slot;
+	protected boolean enabled = false;
+	protected int target = -1;
 
 	public BaubleBase(String name) {
 		super(name);
@@ -42,8 +45,16 @@ public class BaubleBase extends ItemBase implements IBauble, IRenderBauble, IBau
 		setMaxDamage(0);
 	}
 
+	public void effectEnabled(ItemStack itemStack, boolean value) {
+		if(itemStack.hasCapability(ItemProvider.itemCapability, null)) {
+			final IItemCap itemNBT = itemStack.getCapability(ItemProvider.itemCapability, null);
+			itemNBT.setEffect(value);
+			this.enabled = value;
+		}
+	}
+
 	@Override
-	public BaubleType getBaubleType(ItemStack itemstack) {
+	public BaubleType getBaubleType(ItemStack par1ItemStack) {
 		return BaubleType.TRINKET;
 	}
 
@@ -51,7 +62,10 @@ public class BaubleBase extends ItemBase implements IBauble, IRenderBauble, IBau
 	public EnumRarity getRarity(ItemStack par1ItemStack) {
 		return EnumRarity.RARE;
 	}
-
+	@Override
+	public boolean hasEffect(ItemStack par1ItemStack) {
+		return false;
+	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
@@ -59,74 +73,74 @@ public class BaubleBase extends ItemBase implements IBauble, IRenderBauble, IBau
 	}
 
 	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack)
-	{
-		return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
+	public String getTranslationKey(ItemStack par1ItemStack) {
+		// Name + Item Damage equals the Lang File Name
+		return super.getTranslationKey() + "." + par1ItemStack.getItemDamage();
 	}
 
 	@Override
-	public boolean isBookEnchantable(ItemStack itemstack, ItemStack book) {
+	public boolean isBookEnchantable(ItemStack par1ItemStack, ItemStack book) {
 		return false;
 	}
 
 	@Override
-	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
+	public void onEquipped(ItemStack par1ItemStack, EntityLivingBase player) {
 		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-		EntityPlayer p = (EntityPlayer) player;
+		final EntityPlayer p = (EntityPlayer) player;
 		if(!p.world.isRemote) {
-			EntityPlayerMP pMP = (EntityPlayerMP) player;
-			NetworkHandler.INSTANCE.sendToAll(new PacketBaubleSync(p, this.getEquippedSlot(itemstack, pMP)));
-			if(p.hasCapability(CapPro.sizeCapability, null)) {
-				ICap cap = pMP.getCapability(CapPro.sizeCapability, null);
+			final EntityPlayerMP pMP = (EntityPlayerMP) player;
+			NetworkHandler.INSTANCE.sendToAll(new PacketBaubleSync(p, getEquippedSlot(par1ItemStack, pMP)));
+			if(p.hasCapability(SizeCapPro.sizeCapability, null)) {
+				final ISizeCap cap = pMP.getCapability(SizeCapPro.sizeCapability, null);
 				NetworkHandler.INSTANCE.sendToAll(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), pMP.getEyeHeight(), pMP.getEntityId()));
 			}
 		}
 	}
 
 	@Override
-	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
+	public void onUnequipped(ItemStack par1ItemStack, EntityLivingBase player) {
 		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
-		EntityPlayer p = (EntityPlayer) player;
+		final EntityPlayer p = (EntityPlayer) player;
 		if(!p.world.isRemote) {
-			EntityPlayerMP pMP = (EntityPlayerMP) player;
-			NetworkHandler.INSTANCE.sendToAll(new PacketBaubleSync(p, this.getEquippedSlot(itemstack, pMP)));
-			if(p.hasCapability(CapPro.sizeCapability, null)) {
-				ICap cap = pMP.getCapability(CapPro.sizeCapability, null);
+			final EntityPlayerMP pMP = (EntityPlayerMP) player;
+			NetworkHandler.INSTANCE.sendToAll(new PacketBaubleSync(p, getEquippedSlot(par1ItemStack, pMP)));
+			if(p.hasCapability(SizeCapPro.sizeCapability, null)) {
+				final ISizeCap cap = pMP.getCapability(SizeCapPro.sizeCapability, null);
 				NetworkHandler.INSTANCE.sendToAll(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), pMP.getEyeHeight(), pMP.getEntityId()));
 			}
 		}
 	}
 
 	@Override
-	public boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
-		EntityPlayer user = (EntityPlayer) player;
-		if((EnchantmentHelper.hasBindingCurse(itemstack) == true) && !user.capabilities.isCreativeMode && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
+	public boolean canUnequip(ItemStack par1ItemStack, EntityLivingBase player) {
+		final EntityPlayer user = (EntityPlayer) player;
+		if((EnchantmentHelper.hasBindingCurse(par1ItemStack) == true) && !user.capabilities.isCreativeMode && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public int getEquippedSlot(ItemStack itemstack, EntityLivingBase player) {
-		IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
+	public int getEquippedSlot(ItemStack par1ItemStack, EntityLivingBase player) {
+		final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
 		for(int i = 0; i < baubles.getSlots(); i++) {
-			if(baubles.getStackInSlot(i) == itemstack) {
-				slot = i;
+			if(baubles.getStackInSlot(i) == par1ItemStack) {
+				this.slot = i;
 			}
 		}
-		return slot;
+		return this.slot;
 	}
 
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+	public ICapabilityProvider initCapabilities(ItemStack par1ItemStack, NBTTagCompound nbt) {
 		return new ItemProvider();
 	}
 
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {
-		
+	public void onPlayerBaubleRender(ItemStack par1ItemStack, EntityPlayer player, RenderType type, float partialTicks) {
+
 	}
 
 }

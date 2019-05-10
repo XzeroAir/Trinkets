@@ -18,8 +18,12 @@ public class glow_ring extends BaubleBase {
 	}
 	@Override
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
-		if ((itemstack.getItemDamage()==0) && ((player.ticksExisted%39)==0)) {
+		if ((itemstack.getItemDamage()==0)) {
 			player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION,240,0,false,false));
 		}
+	}
+	@Override
+	public boolean hasDiscription(ItemStack stack) {
+		return true;
 	}
 }

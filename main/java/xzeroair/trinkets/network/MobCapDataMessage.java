@@ -5,22 +5,22 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Main;
-import xzeroair.trinkets.compatibilities.sizeCap.CapPro;
-import xzeroair.trinkets.compatibilities.sizeCap.ICap;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
+import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
 
 public class MobCapDataMessage implements IMessage {
 	// A default constructor is always required
 	public MobCapDataMessage(){}
 
-	public int size = 100;
-	public boolean trans = false;
-	public int target = 100;
-	public float width = 0.6F;
-	public float height = 1.8F;
-	public float defaultWidth = 0.6F;
-	public float defaultHeight = 1.8F;
-	public int entityID = 0;
+	int size = 100;
+	boolean trans = false;
+	int target = 100;
+	float width = 0.6F;
+	float height = 1.8F;
+	float defaultWidth = 0.6F;
+	float defaultHeight = 1.8F;
+	int entityID = 0;
 
 	public MobCapDataMessage(int size, boolean trans, int target, int entityID) {
 		this.size = size;
@@ -42,14 +42,14 @@ public class MobCapDataMessage implements IMessage {
 
 	@Override public void toBytes(ByteBuf buf) {
 		// Writes the int into the buf
-		buf.writeInt(size);
-		buf.writeBoolean(trans);
-		buf.writeInt(target);
-		buf.writeFloat(width);
-		buf.writeFloat(height);
-		buf.writeFloat(defaultWidth);
-		buf.writeFloat(defaultHeight);
-		buf.writeInt(entityID);
+		buf.writeInt(this.size);
+		buf.writeBoolean(this.trans);
+		buf.writeInt(this.target);
+		buf.writeFloat(this.width);
+		buf.writeFloat(this.height);
+		buf.writeFloat(this.defaultWidth);
+		buf.writeFloat(this.defaultHeight);
+		buf.writeInt(this.entityID);
 	}
 
 	@Override public void fromBytes(ByteBuf buf) {
@@ -68,10 +68,10 @@ public class MobCapDataMessage implements IMessage {
 
 		@Override public IMessage onMessage(MobCapDataMessage message, MessageContext ctx) {
 
-			Main.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if(Main.proxy.getPlayer(ctx).world.getEntityByID(message.entityID) != null) {
-					EntityLiving entity = (EntityLiving) Main.proxy.getPlayer(ctx).world.getEntityByID(message.entityID);
-					ICap cap = entity.getCapability(CapPro.sizeCapability, null);
+			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+				if(Trinkets.proxy.getPlayer(ctx).world.getEntityByID(message.entityID) != null) {
+					final EntityLiving entity = (EntityLiving) Trinkets.proxy.getPlayer(ctx).world.getEntityByID(message.entityID);
+					final ISizeCap cap = entity.getCapability(SizeCapPro.sizeCapability, null);
 
 					cap.setSize(message.size);
 					cap.setTrans(message.trans);

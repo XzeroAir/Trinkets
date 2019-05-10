@@ -1,9 +1,12 @@
 {
     "parent" : "item/generated", 
     "textures" : {
-        "layer0" : "xat:items/polzarized_stone"
-    }, 
-
+        "layer0" : "xat:items/polarized_stone"
+    },
+    "overrides": [
+        { "predicate": { "in_use": 0.0000000 }, "model": "xat:item/polarized_stone" },
+        { "predicate": { "in_use": 1.0000000 }, "model": "xat:item/polarized_stone_alt" }
+    ],
     "display" : {
         "thirdPerson" : {
             "rotation" : [-90, 0, 0], 

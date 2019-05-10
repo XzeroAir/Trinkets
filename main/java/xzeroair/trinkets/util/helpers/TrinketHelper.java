@@ -5,14 +5,14 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import xzeroair.trinkets.compatibilities.ItemCap.ItemCap;
-import xzeroair.trinkets.compatibilities.ItemCap.ItemProvider;
+import xzeroair.trinkets.capabilities.ItemCap.IItemCap;
+import xzeroair.trinkets.capabilities.ItemCap.ItemProvider;
 import xzeroair.trinkets.enums.TargetOreType;
 
 public class TrinketHelper {
 
 	public static boolean baubleCheck(EntityPlayer player, Item item) {
-		IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+		final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 		for(int i = 0; i < baubles.getSlots(); i++) {
 			if(!baubles.getStackInSlot(i).isEmpty() && (baubles.getStackInSlot(i).getItem() == item)) {
 				return true;
@@ -26,7 +26,7 @@ public class TrinketHelper {
 	}
 
 	public static ItemStack getBaubleStack(EntityPlayer player, Item item) {
-		IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+		final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 		for(int i = 0; i < baubles.getSlots(); i++) {
 			if(!baubles.getStackInSlot(i).isEmpty() && (baubles.getStackInSlot(i).getItem() == item)) {
 				return baubles.getStackInSlot(i);
@@ -43,7 +43,7 @@ public class TrinketHelper {
 		}
 	}
 
-	public static ItemCap getBaubleCap(ItemStack itemStack) {
+	public static IItemCap getBaubleCap(ItemStack itemStack) {
 		return itemStack.getCapability(ItemProvider.itemCapability, null);
 	}
 
