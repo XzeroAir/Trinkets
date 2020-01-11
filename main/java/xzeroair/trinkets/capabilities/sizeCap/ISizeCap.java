@@ -8,6 +8,10 @@ public interface ISizeCap {
 
 	void setTrans(boolean transformed);
 
+	String getFood();
+
+	void setFood(String food);
+
 	int getSize();
 
 	void setSize(int size);

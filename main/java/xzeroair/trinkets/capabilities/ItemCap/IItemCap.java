@@ -4,13 +4,29 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public interface IItemCap {
 
-	boolean effect();
+	boolean ability();
 
-	void setEffect(boolean transformed);
+	void setAbility(boolean transformed);
 
-	int oreType();
+	boolean altAbility();
 
-	void setOreType(int type);
+	void setAltAbility(boolean transformed);
+
+	int oreTarget();
+
+	void setOreTarget(int type);
+
+	int hitCount();
+
+	void setHitCount(int hits);
+
+	int storedExp();
+
+	void setStoredExp(int exp);
+
+	int wornSlot();
+
+	void setWornSlot(int slot);
 
 	NBTTagCompound saveNBT();
 

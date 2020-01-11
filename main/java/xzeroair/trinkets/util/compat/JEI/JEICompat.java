@@ -13,12 +13,33 @@ public class JEICompat implements IModPlugin {
 	@Override
 	public void register(IModRegistry registry)
 	{
-		for(final Item item:ModItems.ITEMS) {
+		for(final Item item:ModItems.crafting.ITEMS) {
 			final boolean addDescription = ((IDescriptionInterface)item).hasDiscription(item.getDefaultInstance());
 			final String key = item.getTranslationKey() + ".info";
 			if(addDescription == true) {
 				registry.addDescription(item.getDefaultInstance(), key);
 			}
 		}
+		for(final Item item:ModItems.foods.ITEMS) {
+			final boolean addDescription = ((IDescriptionInterface)item).hasDiscription(item.getDefaultInstance());
+			final String key = item.getTranslationKey() + ".info";
+			if(addDescription == true) {
+				registry.addDescription(item.getDefaultInstance(), key);
+			}
+		}
+		for(final Item item:ModItems.baubles.ITEMS) {
+			final boolean addDescription = ((IDescriptionInterface)item).hasDiscription(item.getDefaultInstance());
+			final String key = item.getTranslationKey() + ".info";
+			if(addDescription == true) {
+				registry.addDescription(item.getDefaultInstance(), key);
+			}
+		}
+		//		for(final Item item:ModItems.trinkets.ITEMS) {
+		//			final boolean addDescription = ((IDescriptionInterface)item).hasDiscription(item.getDefaultInstance());
+		//			final String key = item.getTranslationKey() + ".info";
+		//			if(addDescription == true) {
+		//				registry.addDescription(item.getDefaultInstance(), key);
+		//			}
+		//		}
 	}
 }

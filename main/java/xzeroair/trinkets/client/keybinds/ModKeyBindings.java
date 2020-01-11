@@ -9,13 +9,17 @@ import xzeroair.trinkets.util.Reference;
 
 public class ModKeyBindings {
 
-	public static KeyBinding TRINKET_TARGET = new KeyBinding("key." + Reference.MODID + ".trinket_target.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_P, "key." + Reference.MODID + ".category");
-	public static KeyBinding TRINKET_TOGGLE_EFFECT = new KeyBinding("key." + Reference.MODID + ".trinket_toggle_effect.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_BACKSLASH, "key." + Reference.MODID + ".category");
+	public static KeyBinding TRINKET_GUI = new KeyBinding("key." + Reference.MODID + ".trinket_gui.desc", Keyboard.KEY_P, "key." + Reference.MODID + ".category");
+	public static KeyBinding DRAGONS_EYE_TARGET = new KeyBinding("key." + Reference.MODID + ".trinket_target.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_P, "key." + Reference.MODID + ".category");
+	public static KeyBinding DRAGONS_EYE_ABILITY = new KeyBinding("key." + Reference.MODID + ".trinket_toggle_effect.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_BACKSLASH, "key." + Reference.MODID + ".category");
+	public static KeyBinding POLARIZED_STONE_ABILITY = new KeyBinding("key." + Reference.MODID + ".magnet_toggle_effect.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_BACKSLASH, "key." + Reference.MODID + ".category");
 	public static KeyBinding AUX_KEY = new KeyBinding("key." + Reference.MODID + ".aux_key.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_LCONTROL, "key." + Reference.MODID + ".category");
 
 	public static void init() {
-		ClientRegistry.registerKeyBinding(TRINKET_TARGET);
-		ClientRegistry.registerKeyBinding(TRINKET_TOGGLE_EFFECT);
+		ClientRegistry.registerKeyBinding(TRINKET_GUI);
+		ClientRegistry.registerKeyBinding(DRAGONS_EYE_TARGET);
+		ClientRegistry.registerKeyBinding(DRAGONS_EYE_ABILITY);
+		ClientRegistry.registerKeyBinding(POLARIZED_STONE_ABILITY);
 		ClientRegistry.registerKeyBinding(AUX_KEY);
 	}
 }

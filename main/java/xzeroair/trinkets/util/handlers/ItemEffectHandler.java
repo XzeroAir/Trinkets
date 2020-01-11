@@ -2,6 +2,7 @@ package xzeroair.trinkets.util.handlers;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import xzeroair.trinkets.util.TrinketsConfig;
 
@@ -49,25 +50,25 @@ public class ItemEffectHandler {
 
 	public static void pull(Entity ent, double x, double y, double z)
 	{
-		final double spd = TrinketsConfig.SERVER.C05_Polarized_Stone_Speed;
-		final double dX = x - ent.posX;
-		final double dY = y - ent.posY;
-		final double dZ = z - ent.posZ;
+		final double spd = TrinketsConfig.SERVER.POLARIZED_STONE.Polarized_Stone_Speed;
+		final double dX = (x-0.5) - ent.getPosition().getX();
+		final double dY = y - ent.getPosition().getY();
+		final double dZ = (z-0.5) - ent.getPosition().getZ();
 		final double dist = Math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
 
 		double vel = 1.0 - (dist / 15.0);
-		if (vel > 0.0D)
+		if ((vel > 0.0D) && (vel < 0.95D))
 		{
 			vel *= vel;
-			ent.motionX += (dX / dist) * vel * spd;
-			ent.motionY += (dY / dist) * vel * spd;
-			ent.motionZ += (dZ / dist) * vel * spd;
+			ent.motionX += (dX / dist) * vel * (spd * MathHelper.clamp(dist-0.5, 0, 1));
+			ent.motionY += (dY / dist) * vel * ((spd * 1.25) * MathHelper.clamp(dist-0.5, 0, 1));
+			ent.motionZ += (dZ / dist) * vel * (spd * MathHelper.clamp(dist-0.5, 0, 1));
 		}
 	}
 
 	public static void push(Entity ent, double x, double y, double z)
 	{
-		final double spd = TrinketsConfig.SERVER.C05_Polarized_Stone_Speed;
+		final double spd = TrinketsConfig.SERVER.POLARIZED_STONE.Polarized_Stone_Speed;
 		final double dX = x - ent.posX;
 		final double dY = y - ent.posY;
 		final double dZ = z - ent.posZ;

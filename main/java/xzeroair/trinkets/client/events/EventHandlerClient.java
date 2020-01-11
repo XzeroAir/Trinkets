@@ -2,25 +2,29 @@ package xzeroair.trinkets.client.events;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import xzeroair.trinkets.capabilities.ItemCap.IItemCap;
+import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.capabilities.TrinketCap.TrinketProvider;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.network.ItemCapDataMessage;
+import xzeroair.trinkets.items.effects.EffectsPolarizedStone;
 import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.OpenTrinketGui;
+import xzeroair.trinkets.network.PolarizedStoneSyncPacket;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.OreTrackingHelper;
-import xzeroair.trinkets.util.helpers.TrinketHelper;
+import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class EventHandlerClient {
 
-	boolean toggleNV = true;
-	boolean toggleLoot = true;
-	int typeCheck = 0;
+	int Dragon_Ability = 0;
+	int Polarized_Ability = 0;
 	int TARGET = 0;
 	int AUX = 0;
 
@@ -28,76 +32,120 @@ public class EventHandlerClient {
 	public void clientTickEvent(TickEvent.ClientTickEvent event) {
 		if(event.phase == Phase.END) {
 			final EntityPlayerSP player = Minecraft.getMinecraft().player;
-			if(player != null) {
-				if(TrinketHelper.baubleCheck(player, ModItems.dragons_eye)) {
-					if(TrinketHelper.hasCap(TrinketHelper.getBaubleStack(player, ModItems.dragons_eye))) {
-						final IItemCap itemNBT = TrinketHelper.getBaubleCap(TrinketHelper.getBaubleStack(player, ModItems.dragons_eye));
-						if(ModKeyBindings.TRINKET_TOGGLE_EFFECT.isPressed()) {
-							itemNBT.setEffect(!itemNBT.effect());
-							NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(itemNBT.oreType(), itemNBT.effect(), player.getEntityId()));
-						}
-						if(ModKeyBindings.TRINKET_TARGET.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-							this.TARGET = 1;
-						} else {
-							this.TARGET = 0;
-						}
-						if(ModKeyBindings.AUX_KEY.isKeyDown() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-							this.AUX = 1;
-						} else {
-							this.AUX = 0;
-						}
-						if(TrinketsConfig.CLIENT.effects.C01_Dragon_Eye != false) {
-							final int size = OreTrackingHelper.oreTypesLoaded().size();
-							final int off = size - size -1;
-							final int max = size - 1;
+			if((player != null)) {
+				if(TrinketsConfig.SERVER.GUI.guiEnabled && ModKeyBindings.TRINKET_GUI.isPressed()) {
+					NetworkHandler.INSTANCE.sendToServer(new OpenTrinketGui());
+				}
 
-							if((this.TARGET == 1) && (this.AUX == 0)) {
-								if(itemNBT.oreType() < size){
-									itemNBT.setOreType(itemNBT.oreType()+1);
-								}
-								if(itemNBT.oreType() == size){
-									itemNBT.setOreType(off);
-								}
+				if(ModKeyBindings.POLARIZED_STONE_ABILITY.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
+					Polarized_Ability = 1;
+				} else {
+					Polarized_Ability = 0;
+				}
+				if(ModKeyBindings.DRAGONS_EYE_ABILITY.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
+					Dragon_Ability = 1;
+				} else {
+					Dragon_Ability = 0;
+				}
+				if(ModKeyBindings.DRAGONS_EYE_TARGET.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
+					TARGET = 1;
+				} else {
+					TARGET = 0;
+				}
+				if(ModKeyBindings.AUX_KEY.isKeyDown() && FMLClientHandler.instance().getClient().inGameHasFocus) {
+					AUX = 1;
+				} else {
+					AUX = 0;
+				}
+				if(TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketPolarized)) {
+					final ItemStack stack = TrinketHelper.getAccessory(player, ModItems.trinkets.TrinketPolarized);
+					final IAccessoryInterface iCap = stack.getCapability(TrinketProvider.itemCapability, null);
+					if(FMLClientHandler.instance().getClient().inGameHasFocus) {
+						if((Polarized_Ability == 1) && (AUX == 0)) {
+							iCap.setAbility(!iCap.ability());
+							EffectsPolarizedStone.handleStatus(stack, iCap);
+							if(iCap.ability()) {
+								player.sendMessage(new TextComponentString("Collection Mode on (On)"));
+							} else {
+								player.sendMessage(new TextComponentString("Collection Mode off (off)"));
 							}
-							if((this.TARGET == 1) && (this.AUX == 1)) {
-								if(itemNBT.oreType() > (off-1)){
-									itemNBT.setOreType(itemNBT.oreType()-1);
-								}
-								if(itemNBT.oreType() == (off-1)){
-									itemNBT.setOreType(max);
-								}
+							NetworkHandler.INSTANCE.sendToServer(new PolarizedStoneSyncPacket(player, stack, iCap, true, stack.getItemDamage()));
+						}
+						if((Polarized_Ability == 1) && (AUX == 1)) {
+							iCap.setAltAbility(!iCap.altAbility());
+							EffectsPolarizedStone.handleStatus(stack, iCap);
+							if(iCap.altAbility()) {
+								player.sendMessage(new TextComponentString("Repell Mode on (On)"));
+							} else {
+								player.sendMessage(new TextComponentString("Repell Mode off (off)"));
 							}
-							if(this.TARGET == 1) {
-								if((itemNBT.oreType() != off)) {
-									if((TrinketsConfig.SERVER.C04_DE_Chests == false)) {
-										if(OreTrackingHelper.oreTypesLoaded().get(itemNBT.oreType()).toString().contains("Chest")) {
-											if(!(this.AUX == 1)) {
-												if((itemNBT.oreType()+1) >= size) {
-													itemNBT.setOreType(off);
-												} else {
-													itemNBT.setOreType(itemNBT.oreType()+1);
-												}
-											} else {
-												if((itemNBT.oreType()-1) <= (off-1)) {
-													itemNBT.setOreType(max);
-												} else {
-													itemNBT.setOreType(itemNBT.oreType()-1);
-												}
-											}
-										}
-									}
-									if((itemNBT.oreType() != off)) {
-										final String Type = OreTrackingHelper.oreTypesLoaded().get(itemNBT.oreType()).toString();
-										player.sendMessage(new TextComponentString("I need more " + Type.replace("Ore", "").replace("ore", "").replace("Chest", "Treasure") + " for my treasury"));
-										NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(itemNBT.oreType(), itemNBT.effect(), player.getEntityId()));
-									} else {
-										player.sendMessage(new TextComponentString("I think my Treasury is sufficiently full (off)"));
-										NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(itemNBT.oreType(), itemNBT.effect(), player.getEntityId()));
-									}
+							NetworkHandler.INSTANCE.sendToServer(new PolarizedStoneSyncPacket(player, stack, iCap, true, stack.getItemDamage()));
+						}
+					}
+				}
+				if(TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye)) {
+					final ItemStack stack = TrinketHelper.getAccessory(player, ModItems.trinkets.TrinketDragonsEye);
+					final IAccessoryInterface iCap = stack.getCapability(TrinketProvider.itemCapability, null);
+					if(iCap == null) {
+						return;
+					}
+					if((Dragon_Ability == 1) && (AUX == 0)) {
+						iCap.setAbility(!iCap.ability());
+						NetworkHandler.sendItemDataServer(player, stack, iCap, true);
+					}
+					if((Dragon_Ability == 1) && (AUX == 1)) {
+						iCap.setAltAbility(!iCap.altAbility());
+						NetworkHandler.sendItemDataServer(player, stack, iCap, true);
+					}
+					if(TrinketsConfig.SERVER.DRAGON_EYE.oreFinder != false) {
+						final int size = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.Blocks.length;
+						final int off = size - size -1;
+						final int max = size - 1;
+
+						if((TARGET == 1) && (AUX == 0)) {
+							if(iCap.oreTarget() < size){
+								iCap.setOreTarget(iCap.oreTarget()+1);
+							}
+							if(iCap.oreTarget() == size){
+								iCap.setOreTarget(off);
+							}
+						}
+						if((TARGET == 1) && (AUX == 1)) {
+							if(iCap.oreTarget() > (off-1)){
+								iCap.setOreTarget(iCap.oreTarget()-1);
+							}
+							if(iCap.oreTarget() == (off-1)){
+								iCap.setOreTarget(max);
+							}
+						}
+						if(iCap.oreTarget() > size) {
+							iCap.setOreTarget(off);
+						}
+						if(TARGET == 1) {
+							if((iCap.oreTarget() != off)) {
+								String Type = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.Blocks[iCap.oreTarget()];
+								String getName = "Air";
+								if(Type.contains(":") || Type.contains("[") || Type.contains("]")) {
+									Type = Type.toLowerCase();
+									getName = OreTrackingHelper.translateOreName(Type);
+								} else {
+									Type = Type.replace("ore", "");
+									final String first = Type.substring(0, 1).toUpperCase();
+									final String second = Type.substring(1).toLowerCase();
+									getName = first + second;
+								}
+								if((iCap.oreTarget() != off)) {
+									final String lul = getName.equalsIgnoreCase("Air")?" To Breath?" + TextFormatting.RED + " " + Type + " Doesn't Exist":" for my Treasury";
+									player.sendMessage(new TextComponentString(TextFormatting.GOLD + "I need more " + TextFormatting.WHITE + getName + TextFormatting.GOLD + lul));
+									NetworkHandler.sendItemDataServer(player, stack, iCap, true);
 								} else {
 									player.sendMessage(new TextComponentString("I think my Treasury is sufficiently full (off)"));
-									NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(itemNBT.oreType(), itemNBT.effect(), player.getEntityId()));
+									NetworkHandler.sendItemDataServer(player, stack, iCap, true);
 								}
+								// Here
+							} else { // Is On
+								player.sendMessage(new TextComponentString("I think my Treasury is sufficiently full (off)"));
+								NetworkHandler.sendItemDataServer(player, stack, iCap, true);
 							}
 						}
 					}

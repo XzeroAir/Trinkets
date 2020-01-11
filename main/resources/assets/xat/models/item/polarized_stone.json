@@ -5,23 +5,75 @@
     },
     "overrides": [
         { "predicate": { "in_use": 0.0000000 }, "model": "xat:item/polarized_stone" },
-        { "predicate": { "in_use": 1.0000000 }, "model": "xat:item/polarized_stone_alt" }
+        { "predicate": { "in_use": 1.0000000 }, "model": "xat:item/polarized_stone_magnet" },
+		{ "predicate": { "in_use": 2.0000000 }, "model": "xat:item/polarized_stone_repell" },
+		{ "predicate": { "in_use": 3.0000000 }, "model": "xat:item/polarized_stone_both" }
     ],
-    "display" : {
-        "thirdPerson" : {
-            "rotation" : [-90, 0, 0], 
+        "display" : {
+	
+	     "thirdperson_righthand": {
 
-            "translation" : [0, 1, -3], 
+            "rotation": [ 0, 90, 60 ],
 
-            "scale" : [0.55, 0.55, 0.55]
-        }, 
+            "translation": [ 0, 3, 0 ],
 
-        "firstPerson" : {
-            "rotation" : [0, -135, 25], 
+            "scale": [ 0.6, 0.6, 0.6 ]
 
-            "translation" : [0, 4, 2], 
+        },
 
-            "scale" : [1.7, 1.7, 1.7]
+        "thirdperson_lefthand": {
+
+            "rotation": [ 0, -90, -60 ],
+
+            "translation": [ 0, 3, 0 ],
+
+            "scale": [ 0.6, 0.6, 0.6 ]
+
+        },
+
+        "firstperson_righthand": {
+
+            "rotation": [ 0, 0, 15 ],
+
+            "translation": [ 0, 4, 1.13],
+
+            "scale": [ 0.6, 0.6, 0.6 ]
+
+        },
+
+        "firstperson_lefthand": {
+
+            "rotation": [ 0, 0, -15 ],
+
+            "translation": [ 0, 4, 1.13],
+
+            "scale": [ 0.6, 0.6, 0.6 ]
+
+        },
+		
+		"gui": {
+ 
+            "rotation": [ 0, 0, 0 ],
+
+            "translation": [ 0, 0, 0],
+
+            "scale": [ 1.0, 1.0, 1.0 ]
+        },
+        "ground": {
+     
+            "rotation": [ 0, 0, 0 ],
+
+            "translation": [ 0, 0, 0],
+
+            "scale": [ 1.0, 1.0, 1.0 ]
+        },
+        "f﻿ixed": {
+
+            "rotation": [ 0, 0, 0 ],
+
+            "translation": [ 0, 0, 0],
+
+            "scale": [ 1.0, 1.0, 1.0 ]
         }
     }
 }

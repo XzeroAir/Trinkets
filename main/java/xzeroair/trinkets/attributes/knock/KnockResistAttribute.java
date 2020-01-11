@@ -12,7 +12,7 @@ import xzeroair.trinkets.util.Reference;
 public class KnockResistAttribute {
 	private static final String id = Reference.MODID + ".";
 	private static String name = "KNOCK_RESIST";
-	protected static final UUID uuid = UUID.fromString("b10cb82e-c272-4b1c-8766-519d142b482a");
+	protected static UUID uuid = UUID.fromString("b10cb82e-c272-4b1c-8766-519d142b482a");
 	private static double bonus;
 	private static int operation;
 	private static double getBonus() {
@@ -22,7 +22,13 @@ public class KnockResistAttribute {
 		KnockResistAttribute.bonus = MathHelper.clamp(bonus, 0.0D, 1.0D);
 	}
 	protected static AttributeModifier createModifier() {
-		return new AttributeModifier(uuid, id+name, getBonus(), getOperation());
+		return new AttributeModifier(getUUID(), id+name, getBonus(), getOperation());
+	}
+	private static void setUUID(UUID uuid) {
+		KnockResistAttribute.uuid = uuid;
+	}
+	private static UUID getUUID() {
+		return uuid;
 	}
 	private static int getOperation() {
 		return operation;
@@ -30,15 +36,23 @@ public class KnockResistAttribute {
 	private static void setOperation(int operation) {
 		operation = Reference.getOpModifier(operation);
 	}
-	public static void addModifier(EntityLivingBase entity, double bonus, int operation) {
+	public static void addModifier(EntityLivingBase entity, double bonus, UUID uuid, int operation) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
-		setOperation(operation);
-		setBonus(bonus);
-		if(AttributeInstance.getModifier(uuid) == null) {
-			AttributeInstance.applyModifier(createModifier());
+		if((AttributeInstance.getModifier(uuid) != null)) {
+			if(AttributeInstance.getModifier(uuid).getAmount() != bonus) {
+				removeModifier(entity, uuid);
+			}
+		}
+		if(bonus != 0) {
+			setOperation(operation);
+			setBonus(bonus);
+			setUUID(uuid);
+			if(AttributeInstance.getModifier(uuid) == null) {
+				AttributeInstance.applyModifier(createModifier());
+			}
 		}
 	}
-	public static void removeModifier(EntityLivingBase entity) {
+	public static void removeModifier(EntityLivingBase entity, UUID uuid) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
 		if(AttributeInstance.getModifier(uuid) != null) {
 			AttributeInstance.removeModifier(uuid);

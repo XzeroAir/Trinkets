@@ -13,8 +13,12 @@ public class ItemStorage implements IStorage<IItemCap> {
 	@Override
 	public NBTBase writeNBT(Capability<IItemCap> capability, IItemCap instance, EnumFacing side) {
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("type", instance.oreType());
-		tag.setBoolean("NightVision", instance.effect());
+		tag.setInteger("type", instance.oreTarget());
+		tag.setInteger("slot", instance.wornSlot());
+		tag.setBoolean("NightVision", instance.ability());
+		tag.setBoolean("altAbility", instance.altAbility());
+		tag.setInteger("hits", instance.hitCount());
+		tag.setInteger("exp", instance.storedExp());
 		return tag;
 	}
 
@@ -23,10 +27,22 @@ public class ItemStorage implements IStorage<IItemCap> {
 		if (nbt instanceof NBTTagCompound) {
 			final NBTTagCompound tag = (NBTTagCompound) nbt;
 			if (tag.hasKey("type")) {
-				instance.setOreType(tag.getInteger("type"));
+				instance.setOreTarget(tag.getInteger("type"));
+			}
+			if(tag.hasKey("slot")) {
+				instance.setWornSlot(tag.getInteger("slot"));
 			}
 			if (tag.hasKey("NightVision")) {
-				instance.setEffect(tag.getBoolean("NightVision"));
+				instance.setAbility(tag.getBoolean("NightVision"));
+			}
+			if (tag.hasKey("altAbility")) {
+				instance.setAltAbility(tag.getBoolean("altAbility"));
+			}
+			if (tag.hasKey("hits")) {
+				instance.setHitCount(tag.getInteger("hits"));
+			}
+			if (tag.hasKey("exp")) {
+				instance.setStoredExp(tag.getInteger("exp"));
 			}
 		}
 	}

@@ -1,22 +1,31 @@
 package xzeroair.trinkets.proxy;
 
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.client.events.CameraHandler;
-import xzeroair.trinkets.client.events.EventHandlerClient;
-import xzeroair.trinkets.client.events.RenderHandler;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.client.particles.ParticleGreed;
+import xzeroair.trinkets.client.renderLayers.TrinketsRenderLayer;
+import xzeroair.trinkets.util.registry.EventRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -24,22 +33,28 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
-		super.preInit(e);
 		ModKeyBindings.init();
+		super.preInit(e);
+		EventRegistry.clientPreInit();
 	}
 
 	@Override
 	public void init(FMLInitializationEvent e) {
-		super.init(e);
-		MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
-		MinecraftForge.EVENT_BUS.register(new RenderHandler());
-		MinecraftForge.EVENT_BUS.register(new CameraHandler());
+		final Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+		RenderPlayer render;
+		render = skinMap.get("default");
+		render.addLayer(new TrinketsRenderLayer());
 
+		render = skinMap.get("slim");
+		render.addLayer(new TrinketsRenderLayer());
+		super.init(e);
+		EventRegistry.clientInit();
 	}
 
 	@Override
 	public void postInit(FMLPostInitializationEvent e) {
 		super.postInit(e);
+		EventRegistry.clientPostInit();
 	}
 
 	@Override
@@ -55,11 +70,41 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
+	public void registerEntityRenderers() {
+		//		registerEntityRenderer(EntityCamera.class, RenderCamera.class);
+	}
+
+	private static <E extends Entity> void registerEntityRenderer(Class<E> entityClass, Class<? extends Render<E>> renderClass) {
+		RenderingRegistry.registerEntityRenderingHandler(entityClass, new EntityRenderFactory<>(renderClass));
+	}
+
+	private static class EntityRenderFactory<E extends Entity> implements IRenderFactory<E> {
+		private final Class<? extends Render<E>> renderClass;
+
+		private EntityRenderFactory(Class<? extends Render<E>> renderClass) {
+			this.renderClass = renderClass;
+		}
+
+		@Override
+		public Render<E> createRenderFor(RenderManager manager) {
+			Render<E> renderer = null;
+
+			try {
+				renderer = this.renderClass.getConstructor(RenderManager.class).newInstance(manager);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+
+			return renderer;
+		}
+	}
+
+	@Override
 	public IThreadListener getThreadListener(final MessageContext context) {
 		if (context.side.isClient()) {
 			return Minecraft.getMinecraft();
 		} else {
-			return context.getServerHandler().player.server;
+			return context.getServerHandler().player.getServerWorld();
 		}
 	}
 
@@ -70,5 +115,14 @@ public class ClientProxy extends CommonProxy {
 		} else {
 			return context.getServerHandler().player;
 		}
+	}
+
+	@Override
+	@Nullable
+	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID)
+	{
+		final EntityPlayer player = context.side.isClient() ? Minecraft.getMinecraft().player : context.getServerHandler().player;
+		final Entity entity = player.world.getEntityByID(entityID);
+		return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
 	}
 }

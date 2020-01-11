@@ -14,6 +14,6 @@ public class TrinketsTab extends CreativeTabs {
 	}
 	@Override
 	public ItemStack createIcon() {
-		return new ItemStack(ModItems.glow_ring);
+		return new ItemStack(ModItems.baubles.BaubleGlowRing);
 	}
 }

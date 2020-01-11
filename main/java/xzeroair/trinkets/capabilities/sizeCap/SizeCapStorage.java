@@ -16,6 +16,11 @@ public class SizeCapStorage implements IStorage<ISizeCap> {
 		tag.setInteger("size", instance.getSize());
 		tag.setBoolean("transformed", instance.getTrans());
 		tag.setInteger("target", instance.getTarget());
+		tag.setString("food", instance.getFood());
+		tag.setFloat("height", instance.getHeight());
+		tag.setFloat("width", instance.getWidth());
+		tag.setFloat("default_height", instance.getDefaultHeight());
+		tag.setFloat("default_width", instance.getDefaultWidth());
 		return tag;
 	}
 
@@ -31,6 +36,21 @@ public class SizeCapStorage implements IStorage<ISizeCap> {
 			}
 			if(tag.hasKey("target")) {
 				instance.setTarget(tag.getInteger("target"));
+			}
+			if(tag.hasKey("food")) {
+				instance.setFood(tag.getString("food"));
+			}
+			if(tag.hasKey("height")) {
+				instance.setHeight(tag.getFloat("height"));
+			}
+			if(tag.hasKey("width")) {
+				instance.setWidth(tag.getFloat("width"));
+			}
+			if(tag.hasKey("default_height")) {
+				instance.setDefaultHeight(tag.getFloat("default_height"));
+			}
+			if(tag.hasKey("default_width")) {
+				instance.setDefaultWidth(tag.getFloat("default_width"));
 			}
 		}
 	}

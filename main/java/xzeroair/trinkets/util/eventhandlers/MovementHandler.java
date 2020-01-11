@@ -1,13 +1,16 @@
 package xzeroair.trinkets.util.eventhandlers;
 
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.items.Greater_inertia_stone;
-import xzeroair.trinkets.items.fairy_ring;
-import xzeroair.trinkets.util.helpers.TrinketHelper;
+import xzeroair.trinkets.items.effects.EffectsFairyRing;
+import xzeroair.trinkets.items.foods.Fairy_Food;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class MovementHandler {
 
@@ -15,21 +18,19 @@ public class MovementHandler {
 	public void livingJump(LivingJumpEvent event){
 		if(event.getEntityLiving().world.isRemote && (event.getEntityLiving() instanceof EntityPlayer)){
 			final EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			fairy_ring.playerJump(player);
-			Greater_inertia_stone.playerJump(player);
+			if(player.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE) != null) {
+				final AttributeModifier fairyFood = player.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE).getModifier(Fairy_Food.getUUID());
+				final AttributeModifier fairyPotion = player.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE).getModifier(EffectsFairyRing.getUUID());
+				if(((fairyFood != null) || (fairyPotion != null)) && !TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDwarfRing)) {
+					if((TrinketsConfig.SERVER.FAIRY_RING.step_height != false)){
+						player.motionY = player.motionY*0.5f;
+					}
+				}
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public void livingFall(LivingFallEvent event) {
-		if(event.getEntityLiving() instanceof EntityPlayer) {
-			final EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			if((TrinketHelper.baubleCheck(player, ModItems.inertia_null_stone) || TrinketHelper.baubleCheck(player, ModItems.greater_inertia_stone))){
-				event.setDamageMultiplier(0);
-			}
-			if(TrinketHelper.baubleCheck(player, ModItems.weightless_stone)) {
-				event.setDamageMultiplier((float) player.motionY);
-			}
-		}
 	}
 }

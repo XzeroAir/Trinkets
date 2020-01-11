@@ -4,40 +4,113 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.Item;
-import xzeroair.trinkets.items.Greater_inertia_stone;
-import xzeroair.trinkets.items.Inertia_null_stone;
-import xzeroair.trinkets.items.dragons_eye;
-import xzeroair.trinkets.items.dwarf_ring;
-import xzeroair.trinkets.items.ender_tiara;
-import xzeroair.trinkets.items.fairy_ring;
-import xzeroair.trinkets.items.glow_ring;
-import xzeroair.trinkets.items.glowing_ingot;
-import xzeroair.trinkets.items.poison_stone;
-import xzeroair.trinkets.items.polarized_stone;
-import xzeroair.trinkets.items.sea_stone;
-import xzeroair.trinkets.items.weightless_stone;
-import xzeroair.trinkets.items.wither_ring;
+import xzeroair.trinkets.items.GemGlowing;
+import xzeroair.trinkets.items.IngotGlowing;
+import xzeroair.trinkets.items.PowderGlowing;
+import xzeroair.trinkets.items.baubles.BaubleDamageShield;
+import xzeroair.trinkets.items.baubles.BaubleDragonsEye;
+import xzeroair.trinkets.items.baubles.BaubleDwarfRing;
+import xzeroair.trinkets.items.baubles.BaubleEnderTiara;
+import xzeroair.trinkets.items.baubles.BaubleFairyRing;
+import xzeroair.trinkets.items.baubles.BaubleGlowRing;
+import xzeroair.trinkets.items.baubles.BaubleGreaterInertia;
+import xzeroair.trinkets.items.baubles.BaubleInertiaNull;
+import xzeroair.trinkets.items.baubles.BaublePoison;
+import xzeroair.trinkets.items.baubles.BaublePolarized;
+import xzeroair.trinkets.items.baubles.BaubleSea;
+import xzeroair.trinkets.items.baubles.BaubleWeightless;
+import xzeroair.trinkets.items.baubles.BaubleWitherRing;
+import xzeroair.trinkets.items.foods.Dwarf_Stout;
+import xzeroair.trinkets.items.foods.Fairy_Food;
+import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
+import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
+import xzeroair.trinkets.items.trinkets.TrinketDwarfRing;
+import xzeroair.trinkets.items.trinkets.TrinketEnderTiara;
+import xzeroair.trinkets.items.trinkets.TrinketFairyRing;
+import xzeroair.trinkets.items.trinkets.TrinketGlowRing;
+import xzeroair.trinkets.items.trinkets.TrinketGreaterInertia;
+import xzeroair.trinkets.items.trinkets.TrinketInertiaNull;
+import xzeroair.trinkets.items.trinkets.TrinketPoison;
+import xzeroair.trinkets.items.trinkets.TrinketPolarized;
+import xzeroair.trinkets.items.trinkets.TrinketSea;
+import xzeroair.trinkets.items.trinkets.TrinketWeightless;
+import xzeroair.trinkets.items.trinkets.TrinketWitherRing;
 
 public class ModItems {
 
-	public static final List<Item> ITEMS = new ArrayList<>();
+	public static final String Weightless		= "weightless_stone";
+	public static final String InertiaNull 		= "inertia_null_stone";
+	public static final String GreaterInertia 	= "greater_inertia_stone";
+	public static final String GlowRing			= "glow_ring";
+	public static final String Sea				= "sea_stone";
+	public static final String Polarized 		= "polarized_stone";
+	public static final String DragonsEye 		= "dragons_eye";
+	public static final String FairyRing 		= "fairy_ring";
+	public static final String DwarfRing 		= "dwarf_ring";
+	public static final String WitherRing 		= "wither_ring";
+	public static final String Poison 			= "poison_stone";
+	public static final String EnderTiara 		= "ender_tiara";
+	public static final String DamageShield		= "damage_shield";
+
 	//top of mod class
 
 	//Crafting Materials
-	public static final Item glowing_ingot = new glowing_ingot("glowing_ingot");
+	public static class crafting {
+		public static final List<Item> ITEMS = new ArrayList<>();
+
+		public static final Item glowing_ingot 				= new IngotGlowing("glowing_ingot");
+		public static final Item glowing_powder 			= new PowderGlowing("glowing_powder");
+		public static final Item glowing_gem 				= new GemGlowing("glowing_gem");
+
+	}
+
+	//Foods
+	public static class foods {
+		public static final List<Item> ITEMS = new ArrayList<>();
+
+		public static final Item dwarf_stout 				= new Dwarf_Stout("dwarf_stout");
+		public static final Item fairy_food 				= new Fairy_Food("fairy_dew");
+
+	}
 
 	//Items With effects
-	public static final Item weightless_stone = new weightless_stone("weightless_stone");
-	public static final Item inertia_null_stone = new Inertia_null_stone("inertia_null_stone");
-	public static final Item greater_inertia_stone = new Greater_inertia_stone("greater_inertia_stone");
-	public static final Item glow_ring = new glow_ring("glow_ring");
-	public static final Item sea_stone = new sea_stone("sea_stone");
-	public static final Item polarized_stone = new polarized_stone("polarized_stone");
-	public static final Item dragons_eye = new dragons_eye("dragons_eye");
-	public static final Item fairy_ring = new fairy_ring("fairy_ring");
-	public static final Item dwarf_ring = new dwarf_ring("dwarf_ring");
-	public static final Item wither_ring = new wither_ring("wither_ring");
-	public static final Item poison_stone = new poison_stone("poison_stone");
-	public static final Item ender_tiara = new ender_tiara("ender_tiara");
+
+	//baubles
+	public static class baubles {
+		public static final List<Item> ITEMS = new ArrayList<>();
+
+		public static final Item BaubleWeightless		= new BaubleWeightless(Weightless);
+		public static final Item BaubleInertiaNull 		= new BaubleInertiaNull(InertiaNull);
+		public static final Item baubleGreaterInertia 	= new BaubleGreaterInertia(GreaterInertia);
+		public static final Item BaubleGlowRing			= new BaubleGlowRing(GlowRing);
+		public static final Item BaubleSea 				= new BaubleSea(Sea);
+		public static final Item BaublePolarized 		= new BaublePolarized(Polarized);
+		public static final Item BaubleDragonsEye 		= new BaubleDragonsEye(DragonsEye);
+		public static final Item BaubleFairyRing 		= new BaubleFairyRing(FairyRing);
+		public static final Item BaubleDwarfRing 		= new BaubleDwarfRing(DwarfRing);
+		public static final Item BaubleWitherRing 		= new BaubleWitherRing(WitherRing);
+		public static final Item BaublePoison 			= new BaublePoison(Poison);
+		public static final Item BaubleEnderTiara 		= new BaubleEnderTiara(EnderTiara);
+		public static final Item BaubleDamageShield		= new BaubleDamageShield(DamageShield);
+
+	}
+	//	trinkets
+	public static class trinkets {
+		public static final List<Item> ITEMS = new ArrayList<>();
+
+		public static final Item TrinketWeightless		= new TrinketWeightless(Weightless);
+		public static final Item TrinketInertiaNull 	= new TrinketInertiaNull(InertiaNull);
+		public static final Item TrinketGreaterInertia 	= new TrinketGreaterInertia(GreaterInertia);
+		public static final Item TrinketGlowRing		= new TrinketGlowRing(GlowRing);
+		public static final Item TrinketSea 			= new TrinketSea(Sea);
+		public static final Item TrinketPolarized 		= new TrinketPolarized(Polarized);
+		public static final Item TrinketDragonsEye 		= new TrinketDragonsEye(DragonsEye);
+		public static final Item TrinketFairyRing 		= new TrinketFairyRing(FairyRing);
+		public static final Item TrinketDwarfRing 		= new TrinketDwarfRing(DwarfRing);
+		public static final Item TrinketWitherRing 		= new TrinketWitherRing(WitherRing);
+		public static final Item TrinketPoison 			= new TrinketPoison(Poison);
+		public static final Item TrinketEnderTiara 		= new TrinketEnderTiara(EnderTiara);
+		public static final Item TrinketDamageShield	= new TrinketDamageShield(DamageShield);
+	}
 
 }

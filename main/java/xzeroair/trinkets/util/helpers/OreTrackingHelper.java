@@ -3,20 +3,63 @@ package xzeroair.trinkets.util.helpers;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreTrackingHelper {
 
-	private static List target = new ArrayList<>();
-
-	public static List getTargetOres(String s) {
-		List ores = getOresLoaded();
-		if(!target.isEmpty()) {
-			target.clear();
+	public static String translateOreName(String name) {
+		name = name.toLowerCase();
+		String target = name.toLowerCase();
+		String meta = "";
+		if(name.contains("[")) {
+			final int metaStart = name.indexOf("[");
+			final int metaEnd = name.lastIndexOf("]");
+			target = name.substring(0, metaStart);
+			meta = name.substring(metaStart+1, metaEnd);
 		}
-		for(int i = 0;i < ores.size();i++) {
-			if(ores.get(i).toString().contains(s)) {
-				target.add(ores.get(i));
+		final Item itemTarget = Item.getByNameOrId(target);
+		ItemStack parseName = new ItemStack(itemTarget, 1);
+		if(itemTarget == null) {
+			if(Block.getBlockFromName(target) != null) {
+				target = Block.getBlockFromName(target).getRegistryName().toString();
+			}
+		}
+		target = parseName.getTextComponent().getUnformattedText();
+		if(meta.isEmpty()) {
+			target = target
+					.replace(" Ore", "")
+					.replace("ore", "")
+					.replace(" ore", "")
+					.replace("_", " ")
+					.replace("tile.", "")
+					.replace("Chest", "Treasure Chests")
+					.replace("[", "")
+					.replace("]", "")
+					;
+		}
+		if(!meta.isEmpty() && (itemTarget != null) && itemTarget.getHasSubtypes()) {
+			final NonNullList<ItemStack> parseMeta = NonNullList.create();
+			itemTarget.getSubItems(CreativeTabs.SEARCH, parseMeta);
+			for(final ItemStack t:parseMeta) {
+				if(t.getMetadata() == Integer.parseInt(meta)) {
+					parseName = new ItemStack(itemTarget, 1, Integer.parseInt(meta));
+					target = parseName.getTextComponent().getUnformattedText();
+					target = target
+							.replace(" Ore", "")
+							.replace("ore", "")
+							.replace(" ore", "")
+							.replace("_", " ")
+							.replace("tile.", "")
+							.replace("Chest", "Treasure Chests")
+							.replace("[", "")
+							.replace("]", "")
+							;
+				}
 			}
 		}
 		return target;
@@ -27,7 +70,7 @@ public class OreTrackingHelper {
 	public static final List oreTypesLoaded() {
 		if((ID < 19)) {
 			String s = "None";
-			List ore = getOresLoaded();
+			final List ore = getOresLoaded();
 			if((ID == 0)) {
 				s = "Coal";
 			}
@@ -94,12 +137,21 @@ public class OreTrackingHelper {
 		return OresLoaded;
 	}
 
+	public static String[] getOreNames(ItemStack stack){
+		final int[] ids = OreDictionary.getOreIDs(stack);
+		final String[] list = new String[ids.length];
+		for(int i=0;i<ids.length;i++){
+			list[i] = OreDictionary.getOreName(ids[i]);
+		}
+		return list;
+	}
+
 	private static List totalOresLoaded = new ArrayList<>();
 	private static boolean finished = false;
 
 	public static final List getOresLoaded() {
 		if(finished != true) {
-			for(String ore : OreDictionary.getOreNames()) {
+			for(final String ore : OreDictionary.getOreNames()) {
 				if(ore.contains("ore")) {
 					if(!(ore.contains("Nugget") || ore.contains("Poor") || ore.contains("Clathrate"))) {
 						if(ore.contains("Coal")) {

@@ -7,6 +7,7 @@ public class SizeDefaultCap implements ISizeCap {
 
 	int size = 100;
 	boolean transformed = false;
+	String food = "none";
 	int target = 100;
 	float width;
 	float height;
@@ -17,9 +18,10 @@ public class SizeDefaultCap implements ISizeCap {
 
 	}
 
-	public SizeDefaultCap(int size, boolean transformed, int target, float width, float height, float defaultWidth, float defaultHeight) {
+	public SizeDefaultCap(int size, boolean transformed, String food, int target, float width, float height, float defaultWidth, float defaultHeight) {
 		this.size = size;
 		this.transformed = transformed;
+		this.food = food;
 		this.target = target;
 		this.width = width;
 		this.height = height;
@@ -36,6 +38,17 @@ public class SizeDefaultCap implements ISizeCap {
 	public void setTrans(boolean transformed) {
 		if(this.transformed != transformed) {
 			this.transformed = transformed;
+		}
+	}
+	@Override
+	public String getFood() {
+		return this.food;
+	}
+
+	@Override
+	public void setFood(String food) {
+		if(this.food != food) {
+			this.food = food;
 		}
 	}
 	@Override

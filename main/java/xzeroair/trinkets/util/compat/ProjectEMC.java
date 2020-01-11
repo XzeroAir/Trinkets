@@ -4,7 +4,7 @@ public class ProjectEMC {
 
 	public static void EMC() {
 
-		//		ProjectEAPI.getEMCProxy().registerCustomEMC(ModItems.glowing_ingot, 0);
+		//		ProjectEAPI.getEMCProxy().registerCustomEMC(ModItems.crafting.glowing_ingot, 0);
 
 	}
 

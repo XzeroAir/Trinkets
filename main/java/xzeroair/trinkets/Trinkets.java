@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -14,6 +15,11 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.CapabilitiesHandler;
+import xzeroair.trinkets.client.gui.GuiHandler;
+import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.proxy.CommonProxy;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -25,6 +31,7 @@ import xzeroair.trinkets.util.TrinketsConfig;
 		dependencies = Reference.DEPENDENCIES,
 		acceptedMinecraftVersions = Reference.acceptedMinecraftVersions,
 		updateJSON = Reference.updateJSON
+		//		certificateFingerprint = Reference.FINGERPRINT
 		)
 
 public class Trinkets {
@@ -36,7 +43,7 @@ public class Trinkets {
 	@Instance(value=Reference.MODID)
 	public static Trinkets instance;
 
-	//	public File directory;
+	public static File directory;
 
 	public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
 	public static final int GUI = 0;
@@ -46,18 +53,33 @@ public class Trinkets {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		final File directory = event.getModConfigurationDirectory();
-		config = new Configuration(new File(directory.getPath(), "Trinkets_And_Baubles.cfg"));
+
+		directory = event.getModConfigurationDirectory();
+		config = new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg"));
 		TrinketsConfig.readConfig();
+
+
+		//Capabilities
+		Capabilities.init();
+
+		//Network
+		NetworkHandler.init();
 
 		proxy.preInit(event);
 
-		config.save();
-
+		//		if (config.hasChanged()) {
+		//			System.out.println("This Triggered in pre");
+		//			config.save();
+		//		}
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		//		if(TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.generate) {
+		//			TrinketsConfig.saveBlockList();
+		//		}
+		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		proxy.init(event);
 	}
 
@@ -69,6 +91,16 @@ public class Trinkets {
 		if (config.hasChanged()) {
 			config.save();
 		}
-
 	}
+
+	//	@EventHandler
+	//	public void fingerprintViolated(FMLFingerprintViolationEvent event) {
+	//
+	//		System.err.println("\n\n\nInvalid signature for "+Reference.NAME
+	//				+ "\nSomeone might have messed with the JAR file of the mod"
+	//				+"\nMake sure to only download from the official source"
+	//				+"\nhttps://www.curseforge.com/minecraft/mc-mods/trinkets-and-baubles"
+	//				+ "\n\n");
+	//
+	//	}
 }

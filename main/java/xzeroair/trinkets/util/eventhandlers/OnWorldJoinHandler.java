@@ -1,26 +1,19 @@
 package xzeroair.trinkets.util.eventhandlers;
 
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
 import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
-import xzeroair.trinkets.entity.ai.EnderAiEdit;
-import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
-import xzeroair.trinkets.items.Greater_inertia_stone;
-import xzeroair.trinkets.items.Inertia_null_stone;
-import xzeroair.trinkets.items.dragons_eye;
-import xzeroair.trinkets.items.fairy_ring;
-import xzeroair.trinkets.items.sea_stone;
-import xzeroair.trinkets.network.CapDataMessage;
+import xzeroair.trinkets.network.BlocklistSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.PacketConfigSync;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -28,16 +21,55 @@ import xzeroair.trinkets.util.TrinketsConfig;
 public class OnWorldJoinHandler {
 
 	@SubscribeEvent
+	public void attachAttributes(EntityEvent.EntityConstructing event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			final EntityPlayer player = (EntityPlayer) event.getEntity();
+			final AbstractAttributeMap map = player.getAttributeMap();
+
+			map.registerAttribute(RaceAttribute.ENTITY_RACE);
+		}
+	}
+
+	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
 		if((event.player.world != null)) {
 			final EntityPlayer player = event.player;
 			final boolean client = player.world.isRemote;
-			//			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
+			//config Sync
 			if(!client) {
-				//				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
-				NetworkHandler.INSTANCE.sendTo(new PacketConfigSync(player, TrinketsConfig.SERVER.C04_DE_Chests), (EntityPlayerMP) player);
-				//				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), player.getEyeHeight(), player.getEntityId()), (EntityPlayerMP) player);
+				NetworkHandler.INSTANCE.sendTo(new PacketConfigSync(player,
+						false,
+						TrinketsConfig.SERVER.FAIRY_RING.creative_flight,
+						TrinketsConfig.SERVER.DRAGON_EYE.oreFinder,
+						TrinketsConfig.SERVER.GUI.guiEnabled,
+						TrinketsConfig.SERVER.FAIRY_RING.creative_flight_speed,
+						TrinketsConfig.SERVER.FAIRY_RING.flight_speed,
+						TrinketsConfig.SERVER.GUI.guiEnabled,
+						TrinketsConfig.SERVER.GUI.guiSlotsRows,
+						TrinketsConfig.SERVER.GUI.guiSlotsRowLength,
+						TrinketsConfig.compat.artemislib,
+						TrinketsConfig.compat.baubles,
+						TrinketsConfig.compat.enhancedvisuals,
+						TrinketsConfig.compat.morph,
+						TrinketsConfig.compat.toughasnails,
+						TrinketsConfig.compat.betterdiving
+						) ,(EntityPlayerMP) player);
+
+				final String[] configArray = TrinketsConfig.getBlockListArray(false);
+				String combinedArray = "";
+				for(int i = configArray.length-1;i>=0;--i) {
+					combinedArray = configArray[i] + ", " + combinedArray;
+				}
+				if(!combinedArray.isEmpty()) {
+					final int hd = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.DR.C001_HD;
+					final int vd = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.DR.C00_VD;
+					NetworkHandler.INSTANCE.sendTo(new BlocklistSyncPacket(player, false, combinedArray, 0, hd, vd), (EntityPlayerMP) player);
+				}
 			}
+			// end config Sync
+
 		}
 	}
 
@@ -51,11 +83,6 @@ public class OnWorldJoinHandler {
 					player.dismountRidingEntity();
 				}
 			}
-			dragons_eye.onPlayerLogout(player);
-			fairy_ring.onPlayerLogout(player);
-			sea_stone.playerLogout(player);
-			Inertia_null_stone.playerLogout(player);
-			Greater_inertia_stone.playerLogout(player);
 		}
 	}
 
@@ -63,38 +90,22 @@ public class OnWorldJoinHandler {
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
 		if((event.getEntity() instanceof EntityPlayer)) {
 			final EntityPlayer player = (EntityPlayer) event.getEntity();
-			final boolean client = player.world.isRemote;
-			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
-				final EntityPlayerMP playerMP = (EntityPlayerMP) event.getEntity();
-				final ISizeCap cap = playerMP.getCapability(SizeCapPro.sizeCapability, null);
-				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), playerMP.getEyeHeight(), playerMP.getEntityId()), playerMP);
+			final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
+			final Boolean client = player.world.isRemote;
+			if(!client) {
+				NetworkHandler.sendPlayerDataTo(player, cap, (EntityPlayerMP) player);
 			}
-		}
-
-		//Add Tiara AI to Enderman
-		if (event.getEntity() instanceof EntityEnderman) {
-			final EntityEnderman ender = (EntityEnderman) event.getEntity();
-
-			for (final Object a : ender.targetTasks.taskEntries.toArray())
-			{
-				final EntityAIBase ai = ((EntityAITaskEntry) a).action;
-				if(ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")){
-					ender.targetTasks.removeTask(ai);
-				}
-			}
-			ender.targetTasks.addTask(1, new EnderAiEdit(ender));
-			ender.targetTasks.addTask(2, new EnderQueensKnightAI(ender));
 		}
 	}
 
 	@SubscribeEvent
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
-		if((event.player != null)) {
-			final EntityPlayer player = event.player;
-			final boolean client = player.world.isRemote;
-			if(!client && (player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
-				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
-				NetworkHandler.INSTANCE.sendTo(new CapDataMessage(cap.getSize(), cap.getTrans(), cap.getTarget(), cap.getWidth(), cap.getHeight(), cap.getDefaultWidth(), cap.getDefaultHeight(), player.getEyeHeight(), player.getEntityId()), (EntityPlayerMP) player);
+		final EntityPlayer player = event.player;
+		final Boolean client = player.world.isRemote;
+		if(player instanceof EntityPlayerMP) {
+			final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
+			if(cap != null) {
+				NetworkHandler.sendPlayerDataAll(player, cap);
 			}
 		}
 	}

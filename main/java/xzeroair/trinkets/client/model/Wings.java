@@ -38,7 +38,7 @@ public class Wings extends ModelBase {
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
-		setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
+		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 		this.RightWing.render(scale);
 		this.LeftWing.render(scale);
 	}
@@ -82,8 +82,8 @@ public class Wings extends ModelBase {
 						};
 						this.cycleIndex = (int) ((time*CYCLES_PER_BLOCK) %Cycle.length);
 
-						this.LeftWing.rotateAngleY = degToRad(Cycle[this.cycleIndex][0]);
-						this.RightWing.rotateAngleY = -degToRad(Cycle[this.cycleIndex][0]);
+						this.LeftWing.rotateAngleY = this.degToRad(Cycle[this.cycleIndex][0]);
+						this.RightWing.rotateAngleY = -this.degToRad(Cycle[this.cycleIndex][0]);
 			}
 			if (entityIn.onGround) {
 				this.RightWing.rotateAngleY = -flap;
@@ -114,24 +114,24 @@ public class Wings extends ModelBase {
 
 	protected void setRotation(ModelRenderer model, float rotX, float rotY, float rotZ)
 	{
-		model.rotateAngleX = degToRad(rotX);
-		model.rotateAngleY = degToRad(rotY);
-		model.rotateAngleZ = degToRad(rotZ);
+		model.rotateAngleX = this.degToRad(rotX);
+		model.rotateAngleY = this.degToRad(rotY);
+		model.rotateAngleZ = this.degToRad(rotZ);
 	}
 
 	// spin methods are good for testing and debug rotation points and offsets in the model
 	protected void spinX(ModelRenderer model)
 	{
-		model.rotateAngleX += degToRad(0.5F);
+		model.rotateAngleX += this.degToRad(0.5F);
 	}
 
 	protected void spinY(ModelRenderer model)
 	{
-		model.rotateAngleY += degToRad(0.5F);
+		model.rotateAngleY += this.degToRad(0.5F);
 	}
 
 	protected void spinZ(ModelRenderer model)
 	{
-		model.rotateAngleZ += degToRad(0.5F);
+		model.rotateAngleZ += this.degToRad(0.5F);
 	}
 }

@@ -35,11 +35,15 @@ public class SizeAttribute {
 	public static void addModifier(EntityLivingBase entity, double height, double width, int operation) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT);
 		final IAttributeInstance AttributeInstanceW = entity.getAttributeMap().getAttributeInstance(ArtemisLibAttributes.ENTITY_WIDTH);
+		if((AttributeInstanceW.getModifier(uuidW) != null) || (AttributeInstance.getModifier(uuid) != null)) {
+			if(!(((AttributeInstance.getModifier(uuid)).getAmount() != height) || (AttributeInstanceW.getModifier(uuidW).getAmount() == (width)))) {
+				removeModifier(entity);
+			}
+		}
 		setOperation(operation);
 		if((AttributeInstance.getModifier(uuid) == null) && (height != 0)) {
 			setBonus(height);
 			AttributeInstance.applyModifier(createModifier(uuid));
-			//			System.out.println(AttributeInstance.getAttributeValue());
 		}
 		if((AttributeInstanceW.getModifier(uuidW) == null) && (width != 0)) {
 			setBonus(width);

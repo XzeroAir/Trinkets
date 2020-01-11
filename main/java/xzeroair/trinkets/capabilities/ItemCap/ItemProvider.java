@@ -11,11 +11,11 @@ public class ItemProvider implements ICapabilitySerializable<NBTTagCompound>{
 	private IItemCap capabilityItem = null;
 
 	public ItemProvider() {
-		this.capabilityItem = new DefaultItemCapability();
+		capabilityItem = new DefaultItemCapability();
 	}
 
 	public ItemProvider(IItemCap capability) {
-		this.capabilityItem = capability;
+		capabilityItem = capability;
 	}
 
 	@CapabilityInject(IItemCap.class)
@@ -29,18 +29,20 @@ public class ItemProvider implements ICapabilitySerializable<NBTTagCompound>{
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if ((itemCapability != null) && (capability == itemCapability)) {
-			return (T) this.capabilityItem;
+			return (T) capabilityItem;
 		}
 		return null;
 	}
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return this.capabilityItem.saveNBT();
+		return this.getCapability(ItemProvider.itemCapability, null).saveNBT();
+		//		return this.capabilityItem.saveNBT();
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		this.capabilityItem.loadNBT(nbt);
+		this.getCapability(ItemProvider.itemCapability, null).loadNBT(nbt);
+		//		this.capabilityItem.loadNBT(nbt);
 	}
 }

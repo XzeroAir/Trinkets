@@ -9,10 +9,10 @@ import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
 public class ItemBase extends Item implements IsModelLoaded, IDescriptionInterface {
 	public ItemBase(String name) {
-		setTranslationKey(name);
-		setRegistryName(name);
-		setCreativeTab(Trinkets.trinketstab);
-		ModItems.ITEMS.add(this);
+		this.setTranslationKey(name);
+		this.setRegistryName(name);
+		this.setCreativeTab(Trinkets.trinketstab);
+		ModItems.crafting.ITEMS.add(this);
 	}
 	@Override
 	public void registerModels() {

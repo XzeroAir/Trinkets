@@ -7,8 +7,8 @@ import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
+import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.helpers.TrinketHelper;
 
 public class EnderQueensKnightAI extends EntityAITarget
 {
@@ -20,7 +20,7 @@ public class EnderQueensKnightAI extends EntityAITarget
 	public EnderQueensKnightAI(EntityEnderman theDefendingKnightIn)
 	{
 		super(theDefendingKnightIn, false);
-		this.knight = theDefendingKnightIn;
+		knight = theDefendingKnightIn;
 		setMutexBits(1);
 	}
 
@@ -30,26 +30,28 @@ public class EnderQueensKnightAI extends EntityAITarget
 	@Override
 	public boolean shouldExecute()
 	{
-		final AxisAlignedBB bBox = this.knight.getEntityBoundingBox().grow(16, 4, 16);
-		final List<EntityPlayer> entLivList = this.knight.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
+		final AxisAlignedBB bBox = knight.getEntityBoundingBox().grow(16, 4, 16);
+		final List<EntityPlayer> entLivList = knight.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
 		if(!entLivList.isEmpty()) {
 			for(final EntityPlayer stuff : entLivList) {
 				final EntityPlayer player = stuff;
-				if(TrinketHelper.baubleCheck(player, ModItems.ender_tiara)) {
-					this.queen = player;
+				if(TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
+					queen = player;
+				} else {
+					queen = null;
 				}
 			}
 		}
 
-		if (this.queen == null)
+		if (queen == null)
 		{
 			return false;
 		}
 		else
 		{
-			this.attacker = this.queen.getRevengeTarget();
-			final int i = this.queen.getRevengeTimer();
-			return (i != this.timestamp) && this.isSuitableTarget(this.attacker, false);
+			attacker = queen.getRevengeTarget();
+			final int i = queen.getRevengeTimer();
+			return (i != timestamp) && this.isSuitableTarget(attacker, false);
 		}
 	}
 
@@ -59,12 +61,12 @@ public class EnderQueensKnightAI extends EntityAITarget
 	@Override
 	public void startExecuting()
 	{
-		this.taskOwner.setAttackTarget(this.attacker);
-		final EntityLivingBase entitylivingbase = this.queen;
+		taskOwner.setAttackTarget(attacker);
+		final EntityLivingBase entitylivingbase = queen;
 
 		if (entitylivingbase != null)
 		{
-			this.timestamp = entitylivingbase.getRevengeTimer();
+			timestamp = entitylivingbase.getRevengeTimer();
 		}
 
 		super.startExecuting();
