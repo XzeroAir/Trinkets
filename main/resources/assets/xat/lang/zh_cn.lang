@@ -29,12 +29,12 @@ item.ender_tiara.0.name=末影女皇之冠
 item.damage_shield.0.name=荣耀之盾
 
 item.dwarf_stout.name=矮人烈酒
-item.dwarf_stout.tooltip1=I might be able to remove the effects
-item.dwarf_stout.tooltip2=by drinking some sort of potion
+item.dwarf_stout.tooltip1=我也许能去除这个效果
+item.dwarf_stout.tooltip2=通过饮用某种药水
 
 item.fairy_dew.name=仙露
-item.fairy_dew.tooltip1=I might be able to remove the effects
-item.fairy_dew.tooltip2=by drinking some sort of potion
+item.fairy_dew.tooltip1=我也许能去除这个效果
+item.fairy_dew.tooltip2=通过饮用某种药水
 
 potion.effect.enhanced=增强药水
 splash_potion.effect.enhanced=增强喷溅型药水
