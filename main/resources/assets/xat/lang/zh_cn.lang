@@ -88,9 +88,9 @@ item.sea_stone.0.name=海洋之石
 item.sea_stone.0.tooltip1=@bubbles:
 item.sea_stone.0.tooltip2=@betterswimming:
 item.sea_stone.0.bubbles=#gold:Infinite Oxygen at #reset:[#darkaqua:$bubbles:#reset:]#gold: Bubbles
-item.sea_stone.0.betterswimming=#darkgreen:Enhanced Swimming $betterswimming:
+item.sea_stone.0.betterswimming=#darkgreen:Enhanced Swimming
 item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=#gold:Immunity to Thirst $tanthirst:
+item.sea_stone.0.tanthirst=#gold:Immunity to Thirst
 item.sea_stone.0.compat.enhancedvisuals=Disables the Blur when Entering Water
 
 item.polarized_stone.0.name=磁石
@@ -115,7 +115,7 @@ item.dragons_eye.0.treasurefinder.on=#gold:I need more#white: $target:#gold: for
 item.dragons_eye.0.treasurefinder.notfound=#gold:I need more #red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:
 item.dragons_eye.0.compat.tan=@heatimmune:
-item.dragons_eye.0.heatimmune=#gold:Immunity to Heat $heatimmune:
+item.dragons_eye.0.heatimmune=#gold:Immunity to Heat
 item.dragons_eye.0.compat.enhancedvisuals=Disables Fire Splat effect
 
 item.poison_stone.0.name=剧毒之石
