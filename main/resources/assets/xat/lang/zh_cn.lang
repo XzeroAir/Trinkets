@@ -65,7 +65,7 @@ item.dwarf_ring.0.tooltip1=#gold:体型减小为正常的3/4
 item.dwarf_ring.0.tooltip2=@fortune:
 item.dwarf_ring.0.tooltip3=@skilledminer:
 item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=#gold:Pseudo Fortune $fortune:
+item.dwarf_ring.0.fortune=#gold:伪运 $fortune:
 item.dwarf_ring.0.skilledminer=#darkgreen:Skilled Miner $skilledminer:
 item.dwarf_ring.0.staticminer=#darkgreen:Static Mining Speed $staticminer:
 
@@ -221,11 +221,11 @@ item.inertia_null_stone.info=装备时佩戴者免疫摔落伤害和击退。
 item.greater_inertia_stone.info=装备时佩戴者免疫摔落伤害，增加跳跃高度和疾跑速度。
 item.sea_stone.info=装备时佩戴者可以在水中迅速行动，且不会窒息。
 item.polarized_stone.info=吸引佩戴者周围的物品和经验，持有时阻止弓箭。手持右键切换磁力开关。通过手持潜行+右击来打开和关闭排斥（装备时辅助键+磁力绑定键）。
-item.dragons_eye.info=当佩戴者戴上类似龙的魔法眼睛时，免疫火焰伤害能够夜视和随意找到宝藏。
+item.dragons_eye.info=当佩戴者戴上类似龙的魔法眼睛时，免疫火焰伤害、能够夜视和随意找到宝藏。
 item.poison_stone.info=免疫中毒。
 item.wither_ring.info=免疫凋谢。
-item.ender_tiara.info=佩戴皇冠的人在末影人眼里被视作绝对的王权。如果佩戴者在末影人附近被攻击，他们会来解救。末影人忠于王权，他们会让佩戴者杀死他们而不反击。
-item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。  (如果启用) 忽略多次命中造成的伤害。(如果First Aid已安装并启用)有几率抵消致命的头部伤害。
+item.ender_tiara.info=戴着王冠的人在末影人眼中是绝对的权威。假如穿着者在末影人附近受到袭击，他们将前来救援。末影效忠于王权，他们只允许穿着者杀死他们。
+item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。  (如果启用) 忽略多次命中造成的伤害。(如果 First Aid 已安装并启用)有几率抵消致命的头部伤害。
 
 item.fairy_dew.info=变身为小精灵。
 item.dwarf_stout.info=变身为矮人。
