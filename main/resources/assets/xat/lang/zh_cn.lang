@@ -1,6 +1,22 @@
-itemGroup.trinketstab=饰品
+itemGroup.trinketstab=Trinkets
+xat.config.title=Trinkets and Baubles
+
+xat.exampletext.start= These are informational example text, they do not show up in game.
+xat.exampletext.1= Tooltips for Items go up to 10
+xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
+xat.exampletext.3= There are 3 Compatability Texts per Item, examples are
+xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
+xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
+xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
+xat.exampletext.7= There are Color Codes that can be used to give the text below colors in game
+xat.exampletext.8= Color Codes Start with Hashtag # and end with a Semi colon :, Example: #gold:, #darkgreen:, etc.
+xat.exampletext.8= Colors... "black", "white", "red", "darkred", "blue", "darkblue", "green", "darkgreen", "lightpurple", "darkpurple", "yellow", "aqua", "darkaqua", "gray", "darkgray", "gold", "reset".
+xat.exampletext.9= "strikethrough", "underline", "italic", "bold". Can also be used, Example: #strikethrough:, #bold:, etc.
+xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<按住 Shift>
+xat.holdctrl=<按住 Ctrl>
+xat.noattributes=This Item Doesn't give any Attribute Modifiers
 xat.onequip=装备时：
 xat.tooltip.attackspeed=攻击速度
 xat.tooltip.attackdamage=攻击伤害
@@ -13,6 +29,10 @@ xat.tooltip.swimspeed=游泳速度
 xat.tooltip.stepheight=上坡高度
 xat.tooltip.jumpheight=跳跃高度
 
+xat.tooltip.off=#reset:(#red:Off#reset:)
+xat.tooltip.enabled=#reset:[#green:Enabled#reset:]
+xat.tooltip.disabled=#reset:[#red:Disabled#reset:]
+
 key.xat.category=饰品和装饰物
 key.xat.trinket_target.desc=Cycle Target Treasure
 key.xat.trinket_toggle_effect.desc=切换夜视
@@ -23,50 +43,116 @@ key.xat.trinket_gui.desc=饰品Gui
 gui.xat.button.open=打开
 gui.xat.button.close=关闭
 
+attribute.name.xat.entityrace=
+
 item.glowing_ingot.name=闪耀锭
 item.glowing_powder.name=闪耀粉
 item.glowing_gem.name=闪耀宝石
 
 item.glow_ring.0.name=魔眼之戒
-
+item.glow_ring.0.tooltip1=#darkgreen:Grants Night Vision
+item.glow_ring.0.tooltip2=%blindness:
+item.glow_ring.0.blindness=#gold:Immunity to Blindness
 
 item.fairy_ring.0.name=精灵之戒
-
+item.fairy_ring.0.tooltip1=#gold:Reduces size to 1/4th of normal
+item.fairy_ring.0.tooltip2=@creativeflight:
+item.fairy_ring.0.creativeflight=#gold:Grants Creative Flight $creativeflight:
 
 item.dwarf_ring.0.name=矮人之戒
+item.dwarf_ring.0.tooltip1=#gold:Reduces size to 3/4th of normal
+item.dwarf_ring.0.tooltip2=@fortune:
+item.dwarf_ring.0.tooltip3=@skilledminer:
+item.dwarf_ring.0.tooltip4=@staticminer:
+item.dwarf_ring.0.fortune=#gold:Psudo Fortune $fortune:
+item.dwarf_ring.0.skilledminer=#darkgreen:Skilled Miner $skilledminer:
+item.dwarf_ring.0.staticminer=#darkgreen:Static Mining Speed $staticminer:
 
+item.titan_ring.0.name=Ring of the Titans
+item.titan_ring.0.tooltip1=#gold:Increases player size to 3x of normal
 
 item.weightless_stone.0.name=反重力之石
-
+item.weightless_stone.0.tooltip1=#darkgreen:Makes gravity not affect you when worn
+item.weightless_stone.0.tooltip2=<#yellow:Left Click#reset:> to go #darkgreen:Up
+item.weightless_stone.0.tooltip3=<#yellow:Sneak#reset:> + <#yellow:Left Click#reset:> to go #darkgreen:Down
+item.weightless_stone.0.tooltip4=#green:Grants Levitation while held
 
 item.inertia_null_stone.0.name=零惯性之石
-
+item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold: Resistance to Fall Damage
 
 item.greater_inertia_stone.0.name=巨惯性之石
-
+item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold: Resistance to Fall Damage
 
 item.sea_stone.0.name=海洋之石
-
+item.sea_stone.0.tooltip1=@bubbles:
+item.sea_stone.0.tooltip2=@betterswimming:
+item.sea_stone.0.bubbles=#gold:Infinite Oxygen at #reset:[#darkaqua:$bubbles:#reset:]#gold: Bubbles
+item.sea_stone.0.betterswimming=#darkgreen:Enhanced Swimming $betterswimming:
+item.sea_stone.0.compat.tan=@tanthirst:
+item.sea_stone.0.tanthirst=#gold:Immunity to Thirst $tanthirst:
+item.sea_stone.0.compat.enhancedvisuals=Disables the Blur when Entering Water
 
 item.polarized_stone.0.name=磁石
-
+item.polarized_stone.0.tooltip1=@collect:
+item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset: or #yellow:Right-Click#reset:>
+item.polarized_stone.0.tooltip3=@repel:
+item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#reset: or #yellow:Sneak#reset: + #yellow:Right-Click#reset:>
+item.polarized_stone.0.collect=#gold:Pulls nearby items @collectxp:
+item.polarized_stone.0.collectxp=and XP Orbs $collecttoggle:
+item.polarized_stone.0.repel=#gold:Repels arrows $repeltoggle:
+item.polarized_stone.0.magnetmode=Collection Mode $collecttoggle:
+item.polarized_stone.0.repelmode=Repel Mode $repeltoggle:
 
 item.dragons_eye.0.name=末影龙眼
-
+item.dragons_eye.0.tooltip1=#gold:Grants Fire Resistance
+item.dragons_eye.0.tooltip2=#darkgreen:Grants Night Vision $nightvision: #reset:<#yellow:*denvkb:#reset:>
+item.dragons_eye.0.tooltip3=@treasurefinder:
+item.dragons_eye.0.nightvision=#darkgreen:Grants Night Vision $nightvision:
+item.dragons_eye.0.treasurefinder=#gold:Current Target: #darkaqua:#underline:$target: #reset:<#yellow:*deofkb:#reset:>
+item.dragons_eye.0.blindness=#gold:Immunity to Blindness $blindness:
+item.dragons_eye.0.treasurefinder.on=#gold:I need more#white: $target:#gold: for my Treasury $looking:
+item.dragons_eye.0.treasurefinder.notfound=#gold:I need more #red:$target:#gold: to breathe?
+item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:
+item.dragons_eye.0.compat.tan=@heatimmune:
+item.dragons_eye.0.heatimmune=#gold:Immunity to Heat $heatimmune:
+item.dragons_eye.0.compat.enhancedvisuals=Disables Fire Splat effect
 
 item.poison_stone.0.name=剧毒之石
-
+item.poison_stone.0.tooltip1=#gold:Immunity To Poison
+item.poison_stone.0.tooltip2=#gold:Immunity to Hunger
+item.poison_stone.0.tooltip3=@poison:
+item.poison_stone.0.tooltip4=@bonusdamage:
+item.poison_stone.0.poison=#darkaqua:$poisonchance:#darkgreen: Chance to Poison Enemies
+item.poison_stone.0.bonusdamage=#darkgreen:Deals $damagemultiplier: Damage to poisoned enemies
 
 item.wither_ring.0.name=枯萎之戒
-
+item.wither_ring.0.tooltip1=#gold:Immunity to Wither
+item.wither_ring.0.tooltip2=@wither:
+item.wither_ring.0.tooltip3=@leech:
+item.wither_ring.0.wither=#darkaqua:$witherchance:#darkgreen: Chance to Wither Enemies
+item.wither_ring.0.leech=#darkgreen:Heals #darkaqua:$leechamount:#darkgreen: Hearts when attacking withered enemies
 
 item.ender_tiara.0.name=末影女皇之冠
-
+item.ender_tiara.0.tooltip1=#gold:Royalty
+item.ender_tiara.0.tooltip2=#darkgreen:Endermen fight for you @endermenfollow:
+item.ender_tiara.0.tooltip3=@damageignored:
+item.ender_tiara.0.tooltip4=@endermenchance:
+item.ender_tiara.0.tooltip5=@waterhurts:
+item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:Chance to ignore damage
+item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:Chance to spawn an Enderman
+item.ender_tiara.0.endermenfollow=and follow you
+item.ender_tiara.0.waterhurts=#red:Weakness to water
+item.ender_tiara.0.compat.tan=#gold:Immunity to Cold
+item.ender_tiara.0.compat.enhancedvisuals=Disabled Endermen static effect
 
 item.damage_shield.0.name=荣耀之盾
-item.damage_shield.tooltip1=爆炸保护
-item.damage_shield.tooltip2=免疫伤害：
-item.damage_shield.tooltip3=受到一次伤害后免疫下次伤害
+item.damage_shield.0.tooltip1=@explosionresist:
+item.damage_shield.0.tooltip2=@damageignored:
+item.damage_shield.0.explosionresist=#darkaqua:$explosionresistamount: #gold:Explosion damage resistance 
+item.damage_shield.0.damageignored=#gold:Damage Ignored: #darkaqua:$damageignoredhitcount:
+item.damage_shield.0.compat.firstaid=@headshots:
+item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: Chance to ignore headshot
+item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
 
 item.dwarf_stout.name=矮人烈酒
 item.dwarf_stout.tooltip1=我也许能通过饮用某种药水
@@ -119,3 +205,280 @@ item.damage_shield.info=只有最有成就的战士才配得上它。装备时�
 
 item.fairy_dew.info=变身为小精灵。
 item.dwarf_stout.info=变身为矮人。
+
+xat.config.registry.enabled=Item Enabled
+xat.config.registry.enabled.tooltip=If this Item Should be added to the Registry on Load
+
+xat.config.glow_ring=Ring of Enchanted Eyes Settings
+xat.config.glow_ring.tooltip=
+xat.config.glow_ring.blindness=Prevent Blindness
+xat.config.glow_ring.blindness.tooltip=Should the Ring of Enchanted Eyes Prevent Blindness?
+
+xat.config.weightless_stone=Stone of Negative Gravity Settings
+xat.config.weightless_stone.tooltip=
+
+xat.config.dragons_eye=Dragon's Eye Settings
+xat.config.dragons_eye.tooltip=
+xat.config.dragons_eye.orefinder=Treasure Finder
+xat.config.dragons_eye.orefinder.tooltip=Can The Dragon's Eye Detect Nearby Blocks
+xat.config.dragons_eye.orefinder.range=Treasure Finder Range
+xat.config.dragons_eye.orefinder.range.tooltip=WARNING! SETTING THESE VALUES TOO HIGH WILL CAUSE YOU TO LAG. Try to Keep within a range of 4-16
+xat.config.dragons_eye.orefinder.range.vertical=Vertical Distance
+xat.config.dragons_eye.orefinder.range.vertical.tooltip=How Far Vertically(Up, Down) in Blocks the Dragon's Eye effect triggers. Default 6, MIN 0, MAX 32
+xat.config.dragons_eye.orefinder.range.horizontal=Horizontal Distance
+xat.config.dragons_eye.orefinder.range.horizontal.tooltip=How Far Horizontally(N, E, S, W) in Blocks the Dragon's Eye effect triggers. Default 12, MIN 0, MAX 32
+xat.config.dragons_eye.orefinder.blocks=Block Settings
+xat.config.dragons_eye.orefinder.blocks.tooltip=
+xat.config.dragons_eye.orefinder.blocks.list=Treasure Finder Block list
+xat.config.dragons_eye.orefinder.blocks.list.tooltip=What the Treasure Finding Feature of the Dragon's Eye can Detect
+xat.config.dragons_eye.blindness=Prevent Blindness
+xat.config.dragons_eye.blindness.tooltip=Should the Dragon's Eye Prevent Blindness?
+xat.config.dragons_eye.toughasnails.immunity.heat=Immune to Heat
+xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails is Installed Should the player be Immune to Heat
+
+xat.config.ender_tiara=Ender Queen's Crown Settings
+xat.config.ender_tiara.tooltip=
+xat.config.ender_tiara.waterhurts=Water Hurts
+xat.config.ender_tiara.waterhurts.tooltip=If the Player Should Take Damage when wet
+xat.config.ender_tiara.ignoredamage=Chance to Ignore Damage
+xat.config.ender_tiara.ignoredamage.tooltip=Should taking damage have a chance to be ignored?
+xat.config.ender_tiara.ignoredamage.spawn=Chance for Enderman
+xat.config.ender_tiara.ignoredamage.spawn.tooltip=Should Taking Damage have a chance to Spawn an Enderman?
+xat.config.ender_tiara.ignoredamage.spawn.chance=Enderman Spawn Chance
+xat.config.ender_tiara.ignoredamage.spawn.chance.tooltip=1 in X chance to to ignore damage and spawn an Enderman to fight for you
+xat.config.ender_tiara.endermen.follow=Endermen Follow
+xat.config.ender_tiara.endermen.follow.tooltip=Nearby Endermen Follow you if enabled
+xat.config.ender_tiara.endermen.retaliate=Endermen Retaliate
+xat.config.ender_tiara.endermen.retaliate.tooltip=When Attacking an Enderman should it fight back?
+xat.config.ender_tiara.endermen.exp=Endermen Drop XP
+xat.config.ender_tiara.endermen.exp.tooltip=When Killing an Enderman Should it drop Experience?
+xat.config.ender_tiara.endermen.items=Endermen Drop Items
+xat.config.ender_tiara.endermen.items.tooltip=When Killing an Enderman Should it drop Items?
+xat.config.ender_tiara.toughasnails.immunity.cold=Immune to Cold
+xat.config.ender_tiara.toughasnails.immunity.cold.tooltip=If Tough as Nails is Installed Should the player be Immune to Cold
+
+xat.config.fairy_ring=Ring of the Fairies Settings
+xat.config.fairy_ring.tooltip=
+xat.config.fairy_ring.flight=Creative Flight
+xat.config.fairy_ring.flight.tooltip=Grants the player Creative Flight if Enabled
+xat.config.fairy_ring.flight.speed=Creative Flight Speed
+xat.config.fairy_ring.flight.speed.tooltip=Change the flight speed from the Vanilla Default of 0.05
+xat.config.fairy_ring.flight.speed.amount=Creative Flight Speed Amount
+xat.config.fairy_ring.flight.speed.amount.tooltip=Directly Sets the Movement speed for Creative Flight
+xat.config.fairy_ring.climbing=Climbing
+xat.config.fairy_ring.climbing.tooltip=Should the Player be able to Climb Blocks?
+xat.config.fairy_ring.climbing.blocks.list=Climable Blocks
+xat.config.fairy_ring.climbing.blocks.list.tooltip=List of Blocks the player can Climb when Wearing the Ring of the Fairies
+xat.config.fairy_ring.jumpheight=Jump Height Adjustment
+xat.config.fairy_ring.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
+
+xat.config.dwarf_ring=Ring of the Dwarves Settings
+xat.config.dwarf_ring.tooltip=
+xat.config.dwarf_ring.blocks=Block Settings
+xat.config.dwarf_ring.blocks.tooltip=
+xat.config.dwarf_ring.blocks.xp=Blocks Give XP
+xat.config.dwarf_ring.blocks.xp.tooltip=Should Blocks Give Bonus XP?
+xat.config.dwarf_ring.blocks.xp.min=Bonus XP Min
+xat.config.dwarf_ring.blocks.xp.min.tooltip=
+xat.config.dwarf_ring.blocks.xp.max=Bonus XP Max
+xat.config.dwarf_ring.blocks.xp.max.tooltip=
+xat.config.dwarf_ring.blocks.xp.list=Bonus XP Block List
+xat.config.dwarf_ring.blocks.xp.list.tooltip=Blocks in this List will give bonus XP Randomly between Bonus_XP_Min and Bonus_XP_Max
+xat.config.dwarf_ring.blocks.minimum.xp=Minimum XP Blocks
+xat.config.dwarf_ring.blocks.minimum.xp.tooltip=Should Blocks give at Least 1 XP
+xat.config.dwarf_ring.blocks.minimum.xp.list=Minimum XP Block List
+xat.config.dwarf_ring.blocks.minimum.xp.list.tooltip=Blocks in this List will Always Give 1 XP when Broken
+xat.config.dwarf_ring.fortune=Natural Fortune
+xat.config.dwarf_ring.fortune.tooltip=Should the Ring of the Dwarves Have a Natural Fortune Ability
+xat.config.dwarf_ring.fortune.stacking=Natural Fortune Stacking
+xat.config.dwarf_ring.fortune.stacking.tooltip=Should the Ring of the Dwarves Natural Fortune Ability Stack with the Fortune Enchantment?
+xat.config.dwarf_ring.fortune.blocks.list=Natural Fortune Block List
+xat.config.dwarf_ring.fortune.blocks.list.tooltip=Natural Fortune only works on Blocks in this List
+xat.config.dwarf_ring.skilledminer=Skilled Miner
+xat.config.dwarf_ring.skilledminer.tooltip=Should the Dwarves Ring lower the mining level requirement for pickaxes. IE. an Iron Pickaxe will be able to break Obsidian?
+xat.config.dwarf_ring.static_mining=Static Mining
+xat.config.dwarf_ring.static_mining.tooltip=When Mining, Mining Speed is static at (Block Hardness * 4), Not Including other Modifiers.
+
+xat.config.titan_ring=Ring of the Titans Settings
+xat.config.titan_ring.tooltip=
+xat.config.titan_ring.jumpheight=Jump Height Adjustment
+xat.config.titan_ring.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
+
+xat.config.damage_shield=Shield of Honor Settings
+xat.config.damage_shield.tooltip=
+xat.config.damage_shield.ignore.damage=Ignore Damage
+xat.config.damage_shield.ignore.damage.tooltip=While Enabled, every X Hits, Nullify the Next Incoming Attack
+xat.config.damage_shield.ignore.damage.hits=Required Hits
+xat.config.damage_shield.ignore.damage.hits.tooltip=How many Hits before the Next Attack is Ignored
+xat.config.damage_shield.explosion.resist=Explosion Resistance
+xat.config.damage_shield.explosion.resist.tooltip=Resistance to Explosions
+xat.config.damage_shield.explosion.resist.amount=Explosion Resistance Amount
+xat.config.damage_shield.explosion.resist.amount.tooltip=Multiply Incoming Explosion Source Damage by this Amount
+xat.config.damage_shield.epic.gamer=Epic Pro Gamer
+xat.config.damage_shield.epic.gamer.tooltip=Only Disable this if you're 'The' Epic Pro Gamer (Easter Egg)
+xat.config.damage_shield.firstaid.ignore.headshots=Ignore Headshots
+xat.config.damage_shield.firstaid.ignore.headshots.tooltip=If First aid is installed, Chance to Ignore Fatal Head Damage\nOnly Triggers if the Next Attack was supposed to kill you
+xat.config.damage_shield.firstaid.ignore.headshots.chance=Headshots Ignore Chance
+xat.config.damage_shield.firstaid.ignore.headshots.chance.tooltip=1 in X Chance to Ignore Fatal Headshot Damage
+
+xat.config.inertia_null_stone=Stone of Inertia Null Settings
+xat.config.inertia_null_stone.tooltip=
+xat.config.inertia_null_stone.falldamage=Modify Fall Damage
+xat.config.inertia_null_stone.falldamage.tooltip=Should the Stone of Inertia Null Modify Fall Damage?
+xat.config.inertia_null_stone.falldamage.amount=Modified Fall Damage Amount
+xat.config.inertia_null_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
+
+xat.config.greater_inertia_stone=Stone of Greater Inertia
+xat.config.greater_inertia_stone.tooltip=
+xat.config.greater_inertia_stone.falldamage=Modify Fall Damage
+xat.config.greater_inertia_stone.falldamage.tooltip=Should the Stone of Greater Inertia Modify Fall Damage?
+xat.config.greater_inertia_stone.falldamage.amount=Modified Fall Damage Amount
+xat.config.greater_inertia_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
+xat.config.greater_inertia_stone.jumpheight=Modify Jump Height
+xat.config.greater_inertia_stone.jumpheight.tooltip=
+xat.config.greater_inertia_stone.jumpheight.amount=Modified Jump Height Amount
+xat.config.greater_inertia_stone.jumpheight.amount.tooltip=
+
+xat.config.poison_stone=Poison Stone Settings
+xat.config.poison_stone.tooltip=
+xat.config.poison_stone.damagebonus=Bonus Damage
+xat.config.poison_stone.damagebonus.tooltip=If an Enemy is Poisoned, Do Extra Damage?
+xat.config.poison_stone.damagebonus.amount=Bonus Damage Amount
+xat.config.poison_stone.damagebonus.amount.tooltip=When an Enemy is Poisoned, Multiply damage dealt to them By this
+xat.config.poison_stone.poison=Can Poison
+xat.config.poison_stone.poison.tooltip=Can the Poison Stone Poison Enemies?
+xat.config.poison_stone.poison.chance=Poison Chance
+xat.config.poison_stone.poison.chance.tooltip=1 in X chance to Poison an Enemy on Attack for 2 seconds
+
+xat.config.polarized_stone=Polarized Stone Settings
+xat.config.polarized_stone.tooltip=
+xat.config.polarized_stone.collection.instant=Instant Pickup
+xat.config.polarized_stone.collection.instant.tooltip=Should the Polarized Stone Instantly Pickup Items
+xat.config.polarized_stone.collection.range=Collection Range
+xat.config.polarized_stone.collection.range.tooltip=WARNING! SETTING THESE VALUES TOO HIGH WILL CAUSE YOU TO LAG. Try to Keep within a range of 4-16
+xat.config.polarized_stone.collection.range.vertical=Vertical Distance
+xat.config.polarized_stone.collection.range.vertical.tooltip=How Far Vertically(Up, Down) in Blocks the Polarized Stone can Effect. Default 6, MIN 0, MAX 32
+xat.config.polarized_stone.collection.range.horizontal=Horizontal Distance
+xat.config.polarized_stone.collection.range.horizontal.tooltip=How Far Horizontally(N, E, S, W) in Blocks the Polarized Stone can Effect. Default 12, MIN 0, MAX 32
+xat.config.polarized_stone.collection.xp=Effect EXP
+xat.config.polarized_stone.collection.xp.tooltip=Should the Polarized Stone Effect XP
+xat.config.polarized_stone.collection.speed=Pull Mode Force
+xat.config.polarized_stone.collection.speed.tooltip=How Much Force used when Things are Pulled Toward the player if Instant Pickup is disabled
+xat.config.polarized_stone.repel=Repel Projectiles
+xat.config.polarized_stone.repel.tooltip=Should The Polarized Stone Repel Projectiles
+xat.config.polarized_stone.repel.exhaust=Repel Costs Hunger
+xat.config.polarized_stone.repel.exhaust.tooltip=Should It Cost Hunger to Repel Projectiles
+xat.config.polarized_stone.repel.exhaust.amount=Hunger Cost
+xat.config.polarized_stone.repel.exhaust.amount.tooltip=How much Hunger per Tick
+xat.config.polarized_stone.repel.exhaust.speed=Hunger Cost Tick Rate
+xat.config.polarized_stone.repel.exhaust.speed.tooltip=How often in Ticks Hunger is Reduced while Repel Mode is Active
+
+xat.config.sea_stone=Stone of the Sea Settings
+xat.config.sea_stone.tooltip=
+xat.config.sea_stone.betterswimming=Better Swimming
+xat.config.sea_stone.betterswimming.tooltip=When Enabled applies tweaks to Water movement to make swimming easier
+xat.config.sea_stone.waterbreathing=Water Breathing
+xat.config.sea_stone.waterbreathing.tooltip=When Enabled Gives Infinite Oxygen
+xat.config.sea_stone.waterbreathing.bubbles=Full Bubbles
+xat.config.sea_stone.waterbreathing.bubbles.tooltip=When Infinite Oxygen is Enabled, Should it Trigger at Full Oxygen Bubbles, or when on the Final Oxygen Bubble
+xat.config.sea_stone.toughasnails.thirst=Prevent TAN Thirst Poisoning
+xat.config.sea_stone.toughasnails.thirst.tooltip=If Tough as Nails is installed, Should the Stone of the Sea Prevent the Thirst Effect?
+
+xat.config.wither_ring=Wither Ring Settings
+xat.config.wither_ring.tooltip=
+xat.config.wither_ring.leech=Leech
+xat.config.wither_ring.leech.tooltip=If The Enemy Has Wither, Should you be able to leech health from them
+xat.config.wither_ring.leech.amount=Leech Amount
+xat.config.wither_ring.leech.amount.tooltip=How Much Leech Per Hit in half hearts
+xat.config.wither_ring.wither=Wither Enemy
+xat.config.wither_ring.wither.tooltip=Is it Possible to Wither an Enemy?
+xat.config.wither_ring.wither.chance=Wither Chance
+xat.config.wither_ring.wither.chance.tooltip=1 in X Chance to Wither an Enemy on Attack for 2 Seconds
+
+xat.config.compatability=Compatability Settings
+xat.config.compatability.tooltip=
+
+xat.config.toughasnails=Tough as Nails
+xat.config.toughasnails.tooltip=If the Mod Tough as Nails is Installed
+
+xat.config.firstaid=First Aid Settings
+xat.config.firstaid.tooltip=
+
+xat.config.baubles=Baubles
+xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+
+xat.config.baubles.type=Bauble Type
+xat.config.baubles.type.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+
+xat.config.attributes=Attributes
+xat.config.attributes.tooltip="For Mor Information on Attributes"\n"https://minecraft.gamepedia.com/Attribute"
+
+xat.config.attributes.armor.tooltip=Enable Attribute Modifier
+xat.config.attributes.armor=Armor
+xat.config.attributes.armor.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.armor.amount=Armor Amount
+xat.config.attributes.armor.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.armor.operation=Armor Operation
+
+xat.config.attributes.armortoughness.tooltip=Enable Attribute Modifier
+xat.config.attributes.armortoughness=Armor Toughness
+xat.config.attributes.armortoughness.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.armortoughness.amount=Armor Toughness Amount
+xat.config.attributes.armortoughness.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.armortoughness.operation=Armor Toughness Operation
+
+xat.config.attributes.attackspeed.tooltip=Enable Attribute Modifier
+xat.config.attributes.attackspeed=Attack Speed
+xat.config.attributes.attackspeed.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.attackspeed.amount=Attack Speed Amount
+xat.config.attributes.attackspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.attackspeed.operation=Attack Speed Operation
+
+xat.config.attributes.damage.tooltip=Enable Attribute Modifier
+xat.config.attributes.damage=Damage
+xat.config.attributes.damage.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.damage.amount=Damage Amount
+xat.config.attributes.damage.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.damage.operation=Damage Operation
+
+xat.config.attributes.health.tooltip=Enable Attribute Modifier
+xat.config.attributes.health=Health
+xat.config.attributes.health.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.health.amount=Health Amount
+xat.config.attributes.health.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.health.operation=Health Operation
+
+xat.config.attributes.knockback.tooltip=Enable Attribute Modifier
+xat.config.attributes.knockback=Knockback
+xat.config.attributes.knockback.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.knockback.amount=Knockback Amount
+xat.config.attributes.knockback.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.knockback.operation=Knockback Operation
+
+xat.config.attributes.luck.tooltip=Enable Attribute Modifier
+xat.config.attributes.luck=Luck
+xat.config.attributes.luck.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.luck.amount=Luck Amount
+xat.config.attributes.luck.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.luck.operation=Luck Operation
+
+xat.config.attributes.reach.tooltip=Enable Attribute Modifier
+xat.config.attributes.reach=Reach
+xat.config.attributes.reach.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.reach.amount=Reach Amount
+xat.config.attributes.reach.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.reach.operation=Reach Operation
+
+xat.config.attributes.movementspeed.tooltip=Enable Attribute Modifier
+xat.config.attributes.movementspeed=Movement Speed
+xat.config.attributes.movementspeed.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.movementspeed.amount=Movement Speed Amount
+xat.config.attributes.movementspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.movementspeed.operation=Movement Speed Operation
+
+xat.config.attributes.swimspeed.tooltip=Enable Attribute Modifier
+xat.config.attributes.swimspeed=Swim Speed
+xat.config.attributes.swimspeed.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.swimspeed.amount=Swim Speed Amount
+xat.config.attributes.swimspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.swimspeed.operation=Swim Speed Operation
