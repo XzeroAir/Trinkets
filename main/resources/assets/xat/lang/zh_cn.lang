@@ -29,6 +29,7 @@ xat.tooltip.swimspeed=游泳速度
 xat.tooltip.stepheight=上坡高度
 xat.tooltip.jumpheight=跳跃高度
 
+xat.tooltip.on=#reset:(#green:On#reset:)
 xat.tooltip.off=#reset:(#red:Off#reset:)
 xat.tooltip.enabled=#reset:[#green:Enabled#reset:]
 xat.tooltip.disabled=#reset:[#red:Disabled#reset:]
