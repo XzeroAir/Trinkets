@@ -66,46 +66,46 @@ item.dwarf_ring.0.tooltip2=@fortune:
 item.dwarf_ring.0.tooltip3=@skilledminer:
 item.dwarf_ring.0.tooltip4=@staticminer:
 item.dwarf_ring.0.fortune=#gold:伪运 $fortune:
-item.dwarf_ring.0.skilledminer=#darkgreen:Skilled Miner $skilledminer:
-item.dwarf_ring.0.staticminer=#darkgreen:Static Mining Speed $staticminer:
+item.dwarf_ring.0.skilledminer=#darkgreen:熟练矿工 $skilledminer:
+item.dwarf_ring.0.staticminer=#darkgreen:固定挖掘速度 $staticminer:
 
 item.titan_ring.0.name=泰坦之戒
-item.titan_ring.0.tooltip1=#gold:Increases player size to 3x of normal
+item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
 
 item.weightless_stone.0.name=反重力之石
-item.weightless_stone.0.tooltip1=#darkgreen:Makes gravity not affect you when worn
+item.weightless_stone.0.tooltip1=#darkgreen:装备时忽略重力
 item.weightless_stone.0.tooltip2=<#yellow:Left Click#reset:> to go #darkgreen:Up
 item.weightless_stone.0.tooltip3=<#yellow:Sneak#reset:> + <#yellow:Left Click#reset:> to go #darkgreen:Down
-item.weightless_stone.0.tooltip4=#green:Grants Levitation while held
+item.weightless_stone.0.tooltip4=#green:持有时获得漂浮
 
 item.inertia_null_stone.0.name=零惯性之石
-item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold: Resistance to Fall Damage
+item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold:降低摔落伤害
 
 item.greater_inertia_stone.0.name=巨惯性之石
-item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold: Resistance to Fall Damage
+item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold:降低摔落伤害
 
 item.sea_stone.0.name=海洋之石
 item.sea_stone.0.tooltip1=@bubbles:
 item.sea_stone.0.tooltip2=@betterswimming:
 item.sea_stone.0.bubbles=#gold:Infinite Oxygen at #reset:[#darkaqua:$bubbles:#reset:]#gold: Bubbles
-item.sea_stone.0.betterswimming=#darkgreen:Enhanced Swimming
+item.sea_stone.0.betterswimming=#darkgreen:增强游泳
 item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=#gold:Immunity to Thirst
-item.sea_stone.0.compat.enhancedvisuals=Disables the Blur when Entering Water
+item.sea_stone.0.tanthirst=#gold:免疫脱水
+item.sea_stone.0.compat.enhancedvisuals=禁用水下模糊
 
 item.polarized_stone.0.name=磁石
 item.polarized_stone.0.tooltip1=@collect:
 item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset: or #yellow:Right-Click#reset:>
 item.polarized_stone.0.tooltip3=@repel:
 item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#reset: or #yellow:Sneak#reset: + #yellow:Right-Click#reset:>
-item.polarized_stone.0.collect=#gold:Pulls nearby items @collectxp:
-item.polarized_stone.0.collectxp=and XP Orbs $collecttoggle:
-item.polarized_stone.0.repel=#gold:Repels arrows $repeltoggle:
-item.polarized_stone.0.magnetmode=Collection Mode $collecttoggle:
-item.polarized_stone.0.repelmode=Repel Mode $repeltoggle:
+item.polarized_stone.0.collect=#gold:吸引附近的物品 @collectxp:
+item.polarized_stone.0.collectxp=和经验球 $collecttoggle:
+item.polarized_stone.0.repel=#gold:排斥箭矢 $repeltoggle:
+item.polarized_stone.0.magnetmode=收集模式 $collecttoggle:
+item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
 item.dragons_eye.0.name=末影龙眼
-item.dragons_eye.0.tooltip1=#gold:Grants Fire Resistance
+item.dragons_eye.0.tooltip1=#gold:获得防火
 item.dragons_eye.0.tooltip2=#darkgreen:Grants Night Vision $nightvision: #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:Grants Night Vision $nightvision:
@@ -220,7 +220,7 @@ item.weightless_stone.info=装备时佩戴者漂浮在空中，手持时导致�
 item.inertia_null_stone.info=装备时佩戴者免疫摔落伤害和击退。
 item.greater_inertia_stone.info=装备时佩戴者免疫摔落伤害，增加跳跃高度和疾跑速度。
 item.sea_stone.info=装备时佩戴者可以在水中迅速行动，且不会窒息。
-item.polarized_stone.info=吸引佩戴者周围的物品和经验，持有时阻止弓箭。手持右键切换磁力开关。通过手持潜行+右击来打开和关闭排斥（装备时辅助键+磁力绑定键）。
+item.polarized_stone.info=吸引佩戴者周围的物品和经验，持有时排斥箭矢。手持右键切换磁力开关。通过手持潜行+右击来打开和关闭排斥（装备时辅助键+磁力绑定键）。
 item.dragons_eye.info=当佩戴者戴上类似龙的魔法眼睛时，免疫火焰伤害、能够夜视和随意找到宝藏。
 item.poison_stone.info=免疫中毒。
 item.wither_ring.info=免疫凋谢。
