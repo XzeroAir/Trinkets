@@ -1,17 +1,17 @@
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
 
-xat.exampletext.start= These are informational example text, they do not show up in game.
-xat.exampletext.1= Tooltips for Items go up to 10
-xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 Compatability Texts per Item, examples are
-xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
-xat.exampletext.7= There are Color Codes that can be used to give the text below colors in game
-xat.exampletext.8= Color Codes Start with Hashtag # and end with a Semi colon :, Example: #gold:, #darkgreen:, etc.
-xat.exampletext.8= Colors... "black", "white", "red", "darkred", "blue", "darkblue", "green", "darkgreen", "lightpurple", "darkpurple", "yellow", "aqua", "darkaqua", "gray", "darkgray", "gold", "reset".
-xat.exampletext.9= "strikethrough", "underline", "italic", "bold". Can also be used, Example: #strikethrough:, #bold:, etc.
+xat.exampletext.start= 这些信息是示例文本,他们不会在游戏中显示。
+xat.exampletext.1= 物品提示最多 10 条
+xat.exampletext.2= item.item.glow_ring.0.tooltip1，item.glow_ring.0.tooltip2，等。
+xat.exampletext.3= 每个物品可以有 3 条联动其他 mod 的文本，比如
+xat.exampletext.4= item.item.glow_ring.0.compat.tan=联动 Tough as Nails
+xat.exampletext.5= item.item.glow_ring.0.compat.firstaid=联动 First Aid
+xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals=联动 EnhancedVisuals
+xat.exampletext.7= 这些是可以在游戏内使文字变色的颜色代码
+xat.exampletext.8= 颜色代码以标签 # 开头，半角符号 : 结尾，如 #gold:，#darkgreen:，等。
+xat.exampletext.8= 颜色……"black"， "white", "red"，"darkred"，"blue"，"darkblue"，"green"，"darkgreen" "lightpurple"，"darkpurple"，"yellow"，"aqua"，"darkaqua"， "gray"，"darkgray"，"gold"，"reset"。
+xat.exampletext.9= "strikethrough"，"underline"，"italic"，"bold"。也可以使用，如： #strikethrough:，#bold:，等。
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<按住 Shift>
@@ -134,24 +134,24 @@ item.wither_ring.0.leech=#darkgreen:敌人凋零时治疗#darkaqua:$leechamount:
 
 item.ender_tiara.0.name=末影女皇之冠
 item.ender_tiara.0.tooltip1=#gold:王权
-item.ender_tiara.0.tooltip2=#darkgreen:Endermen fight for you @endermenfollow:
+item.ender_tiara.0.tooltip2=#darkgreen:末影人为你作战 @endermenfollow:
 item.ender_tiara.0.tooltip3=@damageignored:
 item.ender_tiara.0.tooltip4=@endermenchance:
 item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:Chance to ignore damage
-item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:Chance to spawn an Enderman
-item.ender_tiara.0.endermenfollow=and follow you
-item.ender_tiara.0.waterhurts=#red:Weakness to water
-item.ender_tiara.0.compat.tan=#gold:Immunity to Cold
+item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:有几率免疫伤害
+item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:有几率刷新一个末影人
+item.ender_tiara.0.endermenfollow=并跟随你
+item.ender_tiara.0.waterhurts=#red:弱水
+item.ender_tiara.0.compat.tan=#gold:免疫寒冷
 item.ender_tiara.0.compat.enhancedvisuals=Disabled Endermen static effect
 
 item.damage_shield.0.name=荣耀之盾
 item.damage_shield.0.tooltip1=@explosionresist:
 item.damage_shield.0.tooltip2=@damageignored:
-item.damage_shield.0.explosionresist=#darkaqua:$explosionresistamount: #gold:Explosion damage resistance
-item.damage_shield.0.damageignored=#gold:Damage Ignored: #darkaqua:$damageignoredhitcount:
+item.damage_shield.0.explosionresist=#darkaqua:$explosionresistamount: #gold:降低爆炸伤害
+item.damage_shield.0.damageignored=#gold:伤害免疫: #darkaqua:$damageignoredhitcount:
 item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: Chance to ignore headshot
+item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率无视爆头
 item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
 
 item.dwarf_stout.name=矮人烈酒
