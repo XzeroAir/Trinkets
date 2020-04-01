@@ -224,7 +224,7 @@ item.dragons_eye.info=当佩戴者戴上类似龙的魔法眼睛时，免疫火�
 item.poison_stone.info=免疫中毒。
 item.wither_ring.info=免疫凋谢。
 item.ender_tiara.info=戴着王冠的人在末影人眼中是绝对的权威。假如穿着者在末影人附近受到袭击，他们将前来救援。末影效忠于王权，他们只允许穿着者杀死他们。
-item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。  (如果启用) 忽略多次命中造成的伤害。(如果 First Aid 已安装并启用)有几率抵消致命的头部伤害。
+item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。（如果启用）忽略多次命中造成的伤害。（如果 First Aid 已安装并启用）有几率抵消致命的头部伤害。
 
 item.fairy_dew.info=变身为仙女。
 item.dwarf_stout.info=变身为矮人。
@@ -262,45 +262,45 @@ xat.config.food.registry.enabled.tooltip=这个 Trinkets and Baubles 的食物�
 xat.config.food.tranformation.effect=变形效果
 xat.config.food.tranformation.effect.tooltip=魔法食物是否使玩家变形。
 xat.config.food.tranformation.effect.keep=保持效果
-xat.config.food.tranformation.effect.keep.tooltip=Should the player keep the tranformation effect even on death, essentially making the Tranformation permanant.
+xat.config.food.tranformation.effect.keep.tooltip=玩家死亡时是否保留变形效果，即永久变形
 
-xat.config.potion.registry.enabled=Potions Enabled
-xat.config.potion.registry.enabled.tooltip=Should Trinkets and Baubles Potions Be Added to the Registry on Load
+xat.config.potion.registry.enabled=启用药水
+xat.config.potion.registry.enabled.tooltip=加载时是否注册 Trinkets and Baubles 的药水
 xat.config.potion.toughasnails.water=Potions Give Water
 xat.config.potion.toughasnails.water.tooltip=If Tough as Nails is installed, Potions give water
 xat.config.potion.catalyst.restorative=Restoration Potion Catalyst
-xat.config.potion.catalyst.restorative.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
+xat.config.potion.catalyst.restorative.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.fairy.duration=Fairy Effect Duration
-xat.config.potion.fairy.duration.tooltip=How Long in Ticks the Tranformation Lasts
+xat.config.potion.fairy.duration.tooltip=变形持续多少 ticks
 xat.config.potion.catalyst.fairy=Fairy Potion Catalyst
-xat.config.potion.catalyst.fairy.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
+xat.config.potion.catalyst.fairy.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.dwarf.duration=Dwarf Effect Duration
-xat.config.potion.dwarf.duration.tooltip=How Long in Ticks the Tranformation Lasts
+xat.config.potion.dwarf.duration.tooltip=变形持续多少 ticks
 xat.config.potion.catalyst.dwarf=Dwarf Potion Catalyst
-xat.config.potion.catalyst.dwarf.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
+xat.config.potion.catalyst.dwarf.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.titan.duration=Titan Effect Duration
-xat.config.potion.titan.duration.tooltip=How Long in Ticks the Tranformation Lasts
+xat.config.potion.titan.duration.tooltip=变形持续多少 ticks
 xat.config.potion.catalyst.titan=Titan Potion Catalyst
-xat.config.potion.catalyst.titan.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
+xat.config.potion.catalyst.titan.tooltip=这个物品用于酿造台中酿造药水
 
-xat.config.glow_ring=Ring of Enchanted Eyes Settings
+xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
-xat.config.glow_ring.blindness=Prevent Blindness
-xat.config.glow_ring.blindness.tooltip=Should the Ring of Enchanted Eyes Prevent Blindness?
+xat.config.glow_ring.blindness=免疫失明
+xat.config.glow_ring.blindness.tooltip=魔眼之戒是否免疫失明
 
-xat.config.weightless_stone=Stone of Negative Gravity Settings
+xat.config.weightless_stone=反重力之石
 xat.config.weightless_stone.tooltip=
 
-xat.config.dragons_eye=Dragon's Eye Settings
+xat.config.dragons_eye=末影龙眼设置
 xat.config.dragons_eye.tooltip=
-xat.config.dragons_eye.orefinder=Treasure Finder
-xat.config.dragons_eye.orefinder.tooltip=Can The Dragon's Eye Detect Nearby Blocks
-xat.config.dragons_eye.orefinder.range=Treasure Finder Range
-xat.config.dragons_eye.orefinder.range.tooltip=WARNING! SETTING THESE VALUES TOO HIGH WILL CAUSE YOU TO LAG. Try to Keep within a range of 4-16
-xat.config.dragons_eye.orefinder.range.vertical=Vertical Distance
+xat.config.dragons_eye.orefinder=寻宝
+xat.config.dragons_eye.orefinder.tooltip=末影龙眼是否检测附近的区块
+xat.config.dragons_eye.orefinder.range=寻宝范围
+xat.config.dragons_eye.orefinder.range.tooltip=警告！这些值设置过高将导致延迟。尽量设置在4-16范围内
+xat.config.dragons_eye.orefinder.range.vertical=垂直距离
 xat.config.dragons_eye.orefinder.range.vertical.tooltip=How Far Vertically(Up, Down) in Blocks the Dragon's Eye effect triggers. Default 6, MIN 0, MAX 32
 xat.config.dragons_eye.orefinder.range.horizontal=Horizontal Distance
 xat.config.dragons_eye.orefinder.range.horizontal.tooltip=How Far Horizontally(N, E, S, W) in Blocks the Dragon's Eye effect triggers. Default 12, MIN 0, MAX 32
