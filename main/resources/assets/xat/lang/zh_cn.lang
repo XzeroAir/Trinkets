@@ -38,7 +38,7 @@ key.xat.trinket_target.desc=Cycle Target Treasure
 key.xat.trinket_toggle_effect.desc=切换夜视
 key.xat.magnet_toggle_effect.desc=切换磁力
 key.xat.aux_key.desc=辅助键
-key.xat.trinket_gui.desc=饰品Gui
+key.xat.trinket_gui.desc=饰品 Gui
 
 gui.xat.button.open=打开
 gui.xat.button.close=关闭
@@ -54,7 +54,7 @@ item.glow_ring.0.tooltip1=#darkgreen:获得夜视
 item.glow_ring.0.tooltip2=%blindness:
 item.glow_ring.0.blindness=#gold:免疫失明
 
-item.fairy_ring.0.name=精灵之戒
+item.fairy_ring.0.name=仙女之戒
 item.fairy_ring.0.tooltip1=#gold:体型减小为正常的1/4
 item.fairy_ring.0.tooltip2=@creativeflight:
 item.fairy_ring.0.creativeflight=#gold:能够创造飞行 $creativeflight:
@@ -143,7 +143,7 @@ item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:有几率刷新一个
 item.ender_tiara.0.endermenfollow=并跟随你
 item.ender_tiara.0.waterhurts=#red:弱水
 item.ender_tiara.0.compat.tan=#gold:免疫寒冷
-item.ender_tiara.0.compat.enhancedvisuals=Disabled Endermen static effect
+item.ender_tiara.0.compat.enhancedvisuals=禁用末影人的静电干扰效果
 
 item.damage_shield.0.name=荣耀之盾
 item.damage_shield.0.tooltip1=@explosionresist:
@@ -152,69 +152,69 @@ item.damage_shield.0.explosionresist=#darkaqua:$explosionresistamount: #gold:降
 item.damage_shield.0.damageignored=#gold:伤害免疫: #darkaqua:$damageignoredhitcount:
 item.damage_shield.0.compat.firstaid=@headshots:
 item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率无视爆头
-item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
+item.damage_shield.0.compat.enhancedvisuals=禁用爆炸模糊
 
 item.dwarf_stout.name=矮人烈酒
 item.dwarf_stout.tooltip1=#aqua:我也许能通过饮用某种药水
 item.dwarf_stout.tooltip2=#aqua:来移除这种效果
-item.dwarf_stout.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.dwarf_stout.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
 item.fairy_dew.name=仙露
 item.fairy_dew.tooltip1=#aqua:我也许能通过饮用某种药水
 item.fairy_dew.tooltip2=#aqua:来移除这种效果
-item.fairy_dew.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.fairy_dew.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.titan_spirit.name=Titan's Spirit
+item.titan_spirit.name=泰坦之灵
 item.titan_spirit.tooltip1=#aqua:我也许能通过饮用某种药水
 item.titan_spirit.tooltip2=#aqua:来移除这种效果
-item.titan_spirit.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.titan_spirit.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
 potion.effect.enhanced=增强药水
 splash_potion.effect.enhanced=增强喷溅型药水
 lingering_potion.effect.enhanced=增强滞留型药水
 tipped_arrow.effect.enhanced=增强箭矢
-effect.enhanced=Enhanced
-xat.item.potion.enhanced.tooltip1=#gold:Heals 2.5 hearts
-xat.item.potion.enhanced.tooltip2=#green:Used to craft the Potion of Restoration
-xat.item.potion.enhanced.tooltip3=#green:Used to craft the Fairy Transformation Potion
-xat.item.potion.enhanced.tooltip4=#green:Used to craft the Dwarf Transformation Potion
+effect.enhanced=增强
+xat.item.potion.enhanced.tooltip1=#gold:治疗 2.5 心
+xat.item.potion.enhanced.tooltip2=#green:用于制作恢复药水
+xat.item.potion.enhanced.tooltip3=#green:用于制作仙女变形药水
+xat.item.potion.enhanced.tooltip4=#green:用于制作矮人变形药水
 
 potion.effect.restorative=恢复药水
 splash_potion.effect.restorative=恢复喷溅型药水
 lingering_potion.effect.restorative=恢复滞留型药水
 tipped_arrow.effect.restorative=恢复箭矢
-effect.restorative=Restorative
-xat.item.potion.restorative.tooltip1=#gold:Heals 10 Hearts
-xat.item.potion.restorative.tooltip2=#gold:Removes Potion Effects
-xat.item.potion.restorative.tooltip3=#gold:Removes Transformative Effects from Enchanted Food
+effect.restorative=恢复
+xat.item.potion.restorative.tooltip1=#gold:治疗 10 心
+xat.item.potion.restorative.tooltip2=#gold:移除药水效果
+xat.item.potion.restorative.tooltip3=#gold:移除魔法食物的变形效果
 
-potion.effect.fairy=仙女转换药水
-splash_potion.effect.fairy=喷溅型药水仙女转换
-lingering_potion.effect.fairy=滞留型药水仙女转换
-tipped_arrow.effect.fairy=仙女转换之箭
-effect.fairy=仙女转换
-xat.item.potion.fairy.tooltip1=Become a Fairy for $fairyticks: seconds
+potion.effect.fairy=仙女变形药水
+splash_potion.effect.fairy=喷溅型仙女变形药水
+lingering_potion.effect.fairy=滞留型仙女变形药水
+tipped_arrow.effect.fairy=仙女变形之箭
+effect.fairy=仙女变形
+xat.item.potion.fairy.tooltip1=变形为仙女 $fairyticks: 秒
 
-potion.effect.dwarf=矮人转换药水
-splash_potion.effect.dwarf=喷溅型矮人转换药水
-lingering_potion.effect.dwarf=滞留型矮人转换药水
-tipped_arrow.effect.dwarf=矮人转换之箭
-effect.dwarf=矮人转换
-xat.item.potion.dwarf.tooltip1=Become a Dwarf for $dwarfticks: seconds
+potion.effect.dwarf=矮人变形药水
+splash_potion.effect.dwarf=喷溅型矮人变形药水
+lingering_potion.effect.dwarf=滞留型矮人变形药水
+tipped_arrow.effect.dwarf=矮人变形之箭
+effect.dwarf=矮人变形
+xat.item.potion.dwarf.tooltip1=变形为矮人 $dwarfticks: 秒
 
-potion.effect.titan=Titan Transformation Potion
-splash_potion.effect.titan=Splash Potion of Titan Transformation
-lingering_potion.effect.titan=Lingering Potion of Titan Transformation
-tipped_arrow.effect.titan=Tipped Arrow of Titan Transformation
-effect.titan=Titan Transformation
-xat.item.potion.titan.tooltip1=Become a Titan for $titanticks: seconds
+potion.effect.titan=泰坦变形药水
+splash_potion.effect.titan=喷溅型泰坦变形药水
+lingering_potion.effect.titan=滞留型泰坦变形药水
+tipped_arrow.effect.titan=泰坦变形之箭
+effect.titan=泰坦变形
+xat.item.potion.titan.tooltip1=变形为泰坦 $titanticks: 秒
 
 item.glowing_ingot.info=制作材料
 item.glowing_powder.info=制作材料
 item.glowing_gem.info=制作材料
 item.glow_ring.info=装备时给予夜视效果
-item.fairy_ring.info=佩戴者获得仙女的特征。能力包括飞行、攀爬和微小的体型。
-item.dwarf_ring.info=佩戴者获得矮人的特征。能力包括增强挖掘技术,简化挖掘和保护矿物。
+item.fairy_ring.info=佩戴者获得仙女的能力。能力包括飞行、攀爬和微小的体型。
+item.dwarf_ring.info=佩戴者获得矮人的能力。能力包括加强采矿技术以简化挖掘并保护矿物。
 item.weightless_stone.info=装备时佩戴者漂浮在空中，手持时导致持有人失控地漂浮到空中。
 item.inertia_null_stone.info=装备时佩戴者免疫摔落伤害和击退。
 item.greater_inertia_stone.info=装备时佩戴者免疫摔落伤害，增加跳跃高度和疾跑速度。
@@ -226,42 +226,42 @@ item.wither_ring.info=免疫凋谢。
 item.ender_tiara.info=戴着王冠的人在末影人眼中是绝对的权威。假如穿着者在末影人附近受到袭击，他们将前来救援。末影效忠于王权，他们只允许穿着者杀死他们。
 item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。  (如果启用) 忽略多次命中造成的伤害。(如果 First Aid 已安装并启用)有几率抵消致命的头部伤害。
 
-item.fairy_dew.info=变身为小精灵。
+item.fairy_dew.info=变身为仙女。
 item.dwarf_stout.info=变身为矮人。
 
-xat.config.client.settings=Client Settings
+xat.config.client.settings=客户端设置
 xat.config.client.settings.tooltip=
 
-xat.config.client.gui.settings=Trinkets Gui
+xat.config.client.gui.settings=饰品 Gui
 xat.config.client.gui.settings.tooltip=
 
-xat.config.client.food.settings=Magic Food Settings
+xat.config.client.food.settings=魔法食物设置
 xat.config.client.food.settings.tooltip=
 
-xat.config.client.potion.settings=Potion Settings
+xat.config.client.potion.settings=药水设置
 xat.config.client.potion.settings.tooltip=
 
-xat.config.server.settings=Server Settings
+xat.config.server.settings=服务端设置
 xat.config.server.settings.tooltip=
 
-xat.config.server.gui.settings=Trinkets Gui
+xat.config.server.gui.settings=饰品 Gui
 xat.config.server.gui.settings.tooltip=
-xat.config.server.gui.settings.enabled=Trinkets Gui Enabled
-xat.config.server.gui.settings.enabled.tooltip=Should Trinkets and Baubles Container be Enabled\nIf Disabled, please use "Baubles" by Azanor, Otherwise you wont be able to use this mod
+xat.config.server.gui.settings.enabled=饰品 Gui 启用
+xat.config.server.gui.settings.enabled.tooltip=是否启用 Trinkets and Baubles Container\n如果禁用请使用 Azanor 的 Baubles，否则此模组无法使用。
 
-xat.config.registry.enabled=Item Enabled
-xat.config.registry.enabled.tooltip=If this Item Should be added to the Registry on Load
+xat.config.registry.enabled=物品启用
+xat.config.registry.enabled.tooltip=这个物品是否在加载时注册
 
-xat.config.render.trinkets.all=Render Trinkets
-xat.config.render.trinkets.all.tooltip=Main Render Control for all Trinkets
-xat.config.render.trinkets=Render Trinket
-xat.config.render.trinkets.tooltip=Render Trinket effects on the player
+xat.config.render.trinkets.all=饰品渲染
+xat.config.render.trinkets.all.tooltip=所有饰品的主要渲染控制
+xat.config.render.trinkets=饰品渲染
+xat.config.render.trinkets.tooltip=渲染饰品在玩家上的效果
 
-xat.config.food.registry.enabled=Foods Enabled
-xat.config.food.registry.enabled.tooltip=If Trinkets and Baubles Food Items Should be added to the Registry on Load
-xat.config.food.tranformation.effect=Transformative Effects
-xat.config.food.tranformation.effect.tooltip=Should the Magical Foods Tranform the player.
-xat.config.food.tranformation.effect.keep=Keep Effect
+xat.config.food.registry.enabled=启用食物
+xat.config.food.registry.enabled.tooltip=这个 Trinkets and Baubles 的食物是否在加载时注册
+xat.config.food.tranformation.effect=变形效果
+xat.config.food.tranformation.effect.tooltip=魔法食物是否使玩家变形。
+xat.config.food.tranformation.effect.keep=保持效果
 xat.config.food.tranformation.effect.keep.tooltip=Should the player keep the tranformation effect even on death, essentially making the Tranformation permanant.
 
 xat.config.potion.registry.enabled=Potions Enabled
@@ -562,8 +562,8 @@ xat.config.attributes.movementspeed.operation.tooltip=Determines the Math used f
 xat.config.attributes.movementspeed.operation=Movement Speed Operation
 
 xat.config.attributes.swimspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.swimspeed=Swim Speed
+xat.config.attributes.swimspeed=游泳速度
 xat.config.attributes.swimspeed.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.swimspeed.amount=Swim Speed Amount
 xat.config.attributes.swimspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.swimspeed.operation=Swim Speed Operation
+xat.config.attributes.swimspeed.operation=游泳速度设置
