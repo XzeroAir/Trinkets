@@ -103,7 +103,7 @@ item.polarized_stone.0.repel=#gold:排斥箭矢 $repeltoggle:
 item.polarized_stone.0.magnetmode=收集模式 $collecttoggle:
 item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
-item.dragons_eye.0.name=末影龙眼
+item.dragons_eye.0.name=巨龙之眼
 item.dragons_eye.0.tooltip1=#gold:获得防火
 item.dragons_eye.0.tooltip2=#darkgreen:获得夜视$nightvision: #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
@@ -294,10 +294,10 @@ xat.config.glow_ring.blindness.tooltip=魔眼之戒是否免疫失明
 xat.config.weightless_stone=反重力之石
 xat.config.weightless_stone.tooltip=
 
-xat.config.dragons_eye=末影龙眼设置
+xat.config.dragons_eye=巨龙之眼设置
 xat.config.dragons_eye.tooltip=
 xat.config.dragons_eye.orefinder=寻宝
-xat.config.dragons_eye.orefinder.tooltip=末影龙眼是否检测附近的区块
+xat.config.dragons_eye.orefinder.tooltip=巨龙之眼是否检测附近的区块
 xat.config.dragons_eye.orefinder.range=寻宝范围
 xat.config.dragons_eye.orefinder.range.tooltip=警告！这些值设置过高将导致延迟。尽量设置在4-16范围内
 xat.config.dragons_eye.orefinder.range.vertical=垂直距离
