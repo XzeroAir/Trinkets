@@ -321,9 +321,9 @@ xat.config.dragons_eye.client.growl.volume.tooltip=Dragon's Growl Volume Control
 xat.config.dragons_eye.client.orefinder.refresh.rate=Refresh Rate
 xat.config.dragons_eye.client.orefinder.refresh.rate.tooltip=Determines of Often the Treasure Finder Pings for Treasure
 
-xat.config.ender_tiara=Ender Queen's Crown Settings
+xat.config.ender_tiara=末影女皇之冠设置
 xat.config.ender_tiara.tooltip=
-xat.config.ender_tiara.waterhurts=Water Hurts
+xat.config.ender_tiara.waterhurts=水伤害
 xat.config.ender_tiara.waterhurts.tooltip=If the Player Should Take Damage when wet
 xat.config.ender_tiara.ignoredamage=Chance to Ignore Damage
 xat.config.ender_tiara.ignoredamage.tooltip=Should taking damage have a chance to be ignored?
