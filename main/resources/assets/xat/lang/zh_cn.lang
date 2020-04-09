@@ -235,11 +235,11 @@ xat.config.client.settings.tooltip=
 xat.config.client.gui.settings=饰品 Gui
 xat.config.client.gui.settings.tooltip=
 
-xat.config.client.food.settings=魔法食物设置
-xat.config.client.food.settings.tooltip=
+xat.config.server.food.settings=魔法食物设置
+xat.config.server.food.settings.tooltip=
 
-xat.config.client.potion.settings=药水设置
-xat.config.client.potion.settings.tooltip=
+xat.config.server.potion.settings=药水设置
+xat.config.server.potion.settings.tooltip=
 
 xat.config.server.settings=服务端设置
 xat.config.server.settings.tooltip=
@@ -252,17 +252,17 @@ xat.config.server.gui.settings.enabled.tooltip=是否启用 Trinkets and Baubles
 xat.config.registry.enabled=物品启用
 xat.config.registry.enabled.tooltip=这个物品是否在加载时注册
 
-xat.config.render.trinkets.all=饰品渲染
-xat.config.render.trinkets.all.tooltip=所有饰品的主要渲染控制
-xat.config.render.trinkets=饰品渲染
-xat.config.render.trinkets.tooltip=渲染饰品在玩家上的效果
+xat.config.client.render.trinkets.all=饰品渲染
+xat.config.client.render.trinkets.all.tooltip=所有饰品的主要渲染控制
+xat.config.client.render.trinket=饰品渲染
+xat.config.client.render.trinket.tooltip=渲染饰品在玩家上的效果
 
 xat.config.food.registry.enabled=启用食物
 xat.config.food.registry.enabled.tooltip=这个 Trinkets and Baubles 的食物是否在加载时注册
-xat.config.food.tranformation.effect=变形效果
-xat.config.food.tranformation.effect.tooltip=魔法食物是否使玩家变形。
-xat.config.food.tranformation.effect.keep=保持效果
-xat.config.food.tranformation.effect.keep.tooltip=玩家死亡时是否保留变形效果，即永久变形
+xat.config.food.transformation.effect=变形效果
+xat.config.food.transformation.effect.tooltip=魔法食物是否使玩家变形。
+xat.config.food.transformation.effect.keep=保持效果
+xat.config.food.transformation.effect.keep.tooltip=玩家死亡时是否保留变形效果，即永久变形
 
 xat.config.potion.registry.enabled=启用药水
 xat.config.potion.registry.enabled.tooltip=加载时是否注册 Trinkets and Baubles 的药水
