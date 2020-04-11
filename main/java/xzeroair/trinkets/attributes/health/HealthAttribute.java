@@ -6,56 +6,75 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidCompat;
 
 public class HealthAttribute {
 
 	private static final String id = Reference.MODID + ".";
 	private static String name = "HEALTH";
 	protected static UUID uuid = UUID.fromString("cc79ab38-34fc-43e2-80f8-ed9440e11bdf");
-	private static double bonus;
+	private static double amount;
 	private static int operation;
-	private static double getBonus() {
-		return bonus;
+
+	private static double getAmount() {
+		return amount;
 	}
-	private static void setBonus(double bonus) {
-		HealthAttribute.bonus = MathHelper.clamp(bonus, -18, 1024.0D);
+
+	private static void setAmount(double amount) {
+		HealthAttribute.amount = amount;
 	}
+
 	protected static AttributeModifier createModifier() {
-		return new AttributeModifier(getUUID(), id+name, getBonus(), getOperation());
+		return new AttributeModifier(getUUID(), id + name, getAmount(), getOperation());
 	}
+
 	private static void setUUID(UUID uuid) {
 		HealthAttribute.uuid = uuid;
 	}
+
 	private static UUID getUUID() {
 		return uuid;
 	}
+
 	private static int getOperation() {
 		return operation;
 	}
+
 	private static void setOperation(int operation) {
-		operation = Reference.getOpModifier(operation);
+		HealthAttribute.operation = operation;
 	}
-	public static void addModifier(EntityLivingBase entity, double bonus, UUID uuid, int operation) {
+
+	public static void addModifier(EntityLivingBase entity, double amount, UUID uuid, int operation) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH);
-		if((AttributeInstance.getModifier(uuid) != null)) {
-			if(AttributeInstance.getModifier(uuid).getAmount() != bonus) {
+		if (AttributeInstance == null) {
+			return;
+		}
+		if ((AttributeInstance.getModifier(uuid) != null)) {
+			if ((AttributeInstance.getModifier(uuid).getAmount() != amount) || (getOperation() != operation)) {
 				removeModifier(entity, uuid);
 			}
 		}
-		if(bonus != 0) {
+		if (amount != 0) {
 			setOperation(operation);
-			setBonus(bonus);
+			setAmount(amount);
 			setUUID(uuid);
-			if(AttributeInstance.getModifier(uuid) == null) {
+			if (AttributeInstance.getModifier(uuid) == null) {
 				AttributeInstance.applyModifier(createModifier());
+				if (Loader.isModLoaded("firstaid")) {
+					FirstAidCompat.resetHP(entity);
+				}
 			}
 		}
 	}
+
 	public static void removeModifier(EntityLivingBase entity, UUID uuid) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH);
-		if(AttributeInstance.getModifier(uuid) != null) {
+		if (AttributeInstance == null) {
+			return;
+		}
+		if (AttributeInstance.getModifier(uuid) != null) {
 			AttributeInstance.removeModifier(uuid);
 		}
 	}

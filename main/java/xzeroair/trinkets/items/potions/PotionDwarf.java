@@ -1,9 +1,9 @@
 package xzeroair.trinkets.items.potions;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.items.base.BasePotion;
@@ -17,21 +17,33 @@ public class PotionDwarf extends BasePotion {
 	public PotionDwarf(String name) {
 		super(name, 10832170);
 		this.setIconIndex(1, 0);
-		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, EffectsDwarfRing.getUUID().toString(), 2, 2);
+		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, EffectsDwarfRing.getUUID().toString(), 1, 0);
+	}
+
+	@Override
+	public boolean isReady(int duration, int amplifier) {
+		return duration <= 1;
+	}
+
+	@Override
+	public boolean isInstant() {
+		return false;
 	}
 
 	@Override
 	public void performEffect(EntityLivingBase entity, int amplifier) {
-		super.performEffect(entity, amplifier);
+	}
+
+	// works if instant on all Potion Types
+	@Override
+	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entityLivingBaseIn, int amplifier, double health) {
+
 	}
 
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entity, AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
-		if(entity instanceof EntityPlayer) {
-			EffectsDwarfRing.DwarfUnequip(null, (EntityPlayer) entity);
-			//			RaceAttribute.removeModifier(entity, Dwarf_Ring_Effects.getUUID());
-		}
+		EffectsDwarfRing.DwarfUnequip(null, entity);
 	}
 
 	@Override

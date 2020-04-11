@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.capabilities.InventoryContainerCapability.IContainerHandler;
+import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerProvider;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
@@ -50,17 +50,6 @@ public class BaubleEventHandler {
 		//		if(event.phase == Phase.END) {
 		//			final EntityPlayerSP player = Minecraft.getMinecraft().player;
 		//			if((player != null)) {
-		//				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
-		//				for (int i = 0; i < baubles.getSlots(); i++) {
-		//					final ItemStack stack = baubles.getStackInSlot(i);
-		//					if (stack.getItem() instanceof IAccessoryInterface) {
-		//						final IAccessoryInterface bauble = (IAccessoryInterface) stack.getItem();
-		//						final IAccessoryInterface ICap = stack.getCapability(TrinketProvider.itemCapability, null);
-		//						if(ICap.wornSlot() != i) {
-		//							ICap.setWornSlot(i);
-		//						}
-		//					}
-		//				}
 		//			}
 		//		}
 	}
@@ -99,7 +88,7 @@ public class BaubleEventHandler {
 					bauble.eventPlayerTick(stack, player);
 				}
 			}
-			final IContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+			final ITrinketContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
 			if(Trinket != null) {
 				for (int i = 0; i < Trinket.getSlots(); i++) {
 					final ItemStack stack = Trinket.getStackInSlot(i);

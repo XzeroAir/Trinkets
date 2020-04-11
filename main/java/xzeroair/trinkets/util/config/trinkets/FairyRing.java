@@ -1,76 +1,49 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
+import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.config.trinkets.shared.Attribs;
+import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 
 public class FairyRing {
 
-	@Config.Comment("Health Modifications. Set to False to Disable. Default True")
-	@Name("01. Health")
-	public boolean health = true;
-
-	@Config.Comment("Health Modification Amount When Transformed. Negative Values mean you have Less Health")
-	@Name("02. Health Amount")
-	@Config.RangeDouble(min = -18D, max = 40D)
-	public double health_amount = -12D;
-
-	@Config.Comment("Damage Modifications. Set to False to Disable. Default True")
-	@Name("03. Damage")
-	public boolean damage = true;
-
-	@Config.Comment("Damage Modification Amount When Transformed. Negative Values mean you do Less Damage")
-	@Name("04. Damage Amount")
-	@Config.RangeDouble(min = -1D, max = 40D)
-	public double damage_amount = -0.75D;
-
-	@Config.Comment("Armor Modifications. Set to true to Enable. Default False")
-	@Name("05. Armor")
-	public boolean armor = false;
-
-	@Config.Comment("Armor Modification Amount When Transformed. Negative Values mean you have Less Armor")
-	@Name("06. Armor Amount")
-	@Config.RangeDouble(min = -20D, max = 40D)
-	public double armor_amount = -10D;
-
-	@Config.Comment("Toughness Modifications. Set to true to Enable. Default False")
-	@Name("07. Toughness")
-	public boolean toughness = false;
-
-	@Config.Comment("Toughness Modification Amount When Transformed. Negative Values mean you have Less Armor Toughness")
-	@Name("08. Toughness Amount")
-	@Config.RangeDouble(min = -40D, max = 40D)
-	public double toughness_amount = 0D;
-
-	@Config.Comment("Speed Modifications. Set to true to Enable. Default False")
-	@Name("09. Speed")
-	public boolean speed = false;
-
-	@Config.Comment("Speed Modification Amount When Transformed. Negative Values mean you move slower")
-	@Name("10. Speed Amount")
-	@Config.RangeDouble(min = -0.1D, max = 10D)
-	public double speed_amount = 0D;
+	private final String name = "fairy_ring";
+	private final String PREFIX = Reference.MODID + ".config." + name;
+	private final String registry = Reference.MODID + ".config.registry";
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Creative Flight when wearing the Fairies Ring. Set to False to Disable. Default True")
-	@Name("11. Creative Flight")
+	@Name("01. Creative Flight")
+	@LangKey(PREFIX + ".flight")
 	public boolean creative_flight = true;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Change the flight speed from the Vanilla Default of 0.05")
-	@Name("12. Change Flight Speed")
+	@Name("02. Change Flight Speed")
+	@LangKey(PREFIX + ".flight.speed")
 	public boolean creative_flight_speed = false;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("How Fast the player moves when in Creative Flight. Vanilla Default 0.05. Default 0.02")
-	@Name("13. Creative Flight Speed")
+	@Name("03. Creative Flight Speed")
 	@Config.RangeDouble(min = 0.01, max = 1)
+	@LangKey(PREFIX + ".flight.speed.amount")
 	public double flight_speed = 0.02;
 
+	@Config.Comment("Jump Height Adjustment when wearing Race Rings. Set to False to Disable. Default True")
+	@Name("04. Jump Height")
+	@LangKey(PREFIX + ".jumpheight")
+	public boolean step_height = true;
+
 	@Config.Comment("Fairy's Ring Climbing Ability. Set to False to Disable. Default True")
-	@Name("14. Climbing")
+	@Name("05. Climbing")
+	@LangKey(PREFIX + ".climbing")
 	public boolean climbing = true;
 
-	@Name("15. Climable Blocks")
+	@Name("06. Climable Blocks")
+	@LangKey(PREFIX + ".climbing.blocks.list")
 	public String[] allowedBlocks = new String[] {
 			"minecraft:dirt",
 			"minecraft:grass",
@@ -97,17 +70,86 @@ public class FairyRing {
 			"minecraft:purpur_slab"
 	};
 
-	@Config.Comment("Jump Height Adjustment when wearing Race Rings. Set to False to Disable. Default True")
-	@Name("16. Jump Height")
-	public boolean step_height = true;
-
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")
+	@LangKey(registry + ".enabled")
 	public boolean enabled = true;
 
-	@Config.Comment("If the mod Baubles is installed what bauble slot should it use")
-	@Name("99. Bauble Type")
-	public String bauble_type = "ring";
+	@Name("Compatability Settings")
+	@LangKey(Reference.MODID + ".config.compatability")
+	public Compatability compat = new Compatability();
+	public class Compatability {
+
+		@Name("Tough as Nails Compatability")
+		@LangKey(Reference.MODID + ".config.toughasnails")
+		private TANCompat tan = new TANCompat();
+		public class TANCompat {
+
+		}
+
+		@Name("Baubles Compatability")
+		@Config.Comment({
+			"If the mod Baubles is installed what bauble slot should it use",
+			"Available Types:",
+			"Trinket, Any, All",
+			"Amulet, Necklace, Pendant",
+			"Ring, Rings",
+			"Belt",
+			"Head, Hat",
+			"Body, Chest",
+			"Charm"
+		})
+		@LangKey(Reference.MODID + ".config.baubles")
+		public BaubleCompat baubles = new BaubleCompat("ring");
+	}
+
+	private final boolean 	armor = true;
+	private final double 	armorAmount = -0.5D;
+	private final int		armorOperation = 2;
+	private final boolean 	attackSpeed = false;
+	private final double 	attackSpeedAmount = 0;
+	private final int		attackSpeedOperation = 0;
+	private final boolean 	damage = true;
+	private final double 	damageAmount = -0.5D;
+	private final int		damageOperation = 2;
+	private final boolean 	health = true;
+	private final double 	healthAmount = -0.5D;
+	private final int		healthOperation = 2;
+	private final boolean 	knockback = false;
+	private final double 	knockbackAmount = 0;
+	private final int		knockbackOperation = 0;
+	private final boolean 	speed = true;
+	private final double 	speedAmount = -0.25D;
+	private final int		speedOperation = 2;
+	private final boolean 	swimSpeed = true;
+	private final double 	swimSpeedAmount = -0.5D;
+	private final int		swimSpeedOperation = 2;
+	private final boolean 	toughness = true;
+	private final double 	toughnessAmount = -0.25D;
+	private final int		toughnessOperation = 2;
+	private final boolean	luck = false;
+	private final double	luckAmount = 0;
+	private final int		luckOperation = 0;
+	private final boolean	reach = true;
+	private final double	reachAmount = -0.35D;
+	private final int		reachOperation = 2;
+
+
+	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
+	@Name("Attributes")
+	@LangKey(Reference.MODID + ".config.attributes")
+	public Attribs Attributes = new Attribs(
+			armor, 			armorAmount, 		armorOperation,
+			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
+			damage, 		damageAmount, 		damageOperation,
+			health, 		healthAmount, 		healthOperation,
+			knockback, 		knockbackAmount, 	knockbackOperation,
+			speed, 			speedAmount, 		speedOperation,
+			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
+			toughness, 		toughnessAmount, 	toughnessOperation,
+			luck,			luckAmount,			luckOperation,
+			reach,			reachAmount,		reachOperation
+			);
 
 }

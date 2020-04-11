@@ -6,10 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
+import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.capabilities.race.RaceProperties;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.compat.firstaid.FirstAidSyncHPPacket;
-import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class NetworkHandler {
 
@@ -47,41 +47,43 @@ public class NetworkHandler {
 		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(OpenDefaultInventory.class, OpenDefaultInventory.class, nextId(), Side.SERVER);
 
-		//		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
+		// INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class,
+		// nextId(), Side.SERVER);
 
 	}
 
 	// Item Data
-	public static void sendItemDataTo(EntityLivingBase send, ItemStack stack, IAccessoryInterface capSend, boolean isTrinket, EntityPlayerMP recieve) {
+	public static void sendItemDataTo(EntityLivingBase send, ItemStack stack, TrinketProperties capSend, boolean isTrinket, EntityPlayerMP recieve) {
 		NetworkHandler.INSTANCE.sendTo(new ItemCapDataMessage(send, stack, capSend, isTrinket), recieve);
 	}
 
-	public static void sendItemDataTracking(EntityLivingBase entity, ItemStack stack, IAccessoryInterface capSend, boolean isTrinket) {
+	public static void sendItemDataTracking(EntityLivingBase entity, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
 		NetworkHandler.INSTANCE.sendToAllTracking(new ItemCapDataMessage(entity, stack, capSend, isTrinket), entity);
 	}
 
-	public static void sendItemDataAll(EntityLivingBase entity, ItemStack stack, IAccessoryInterface capSend, boolean isTrinket) {
+	public static void sendItemDataAll(EntityLivingBase entity, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
 		NetworkHandler.INSTANCE.sendToAll(new ItemCapDataMessage(entity, stack, capSend, isTrinket));
 	}
 
-	public static void sendItemDataServer(EntityLivingBase send, ItemStack stack, IAccessoryInterface capSend, boolean isTrinket) {
+	public static void sendItemDataServer(EntityLivingBase send, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
 		NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(send, stack, capSend, isTrinket));
 	}
 
 	// Player Data
-	public static void sendPlayerDataTo(EntityLivingBase send, ISizeCap capSend, EntityPlayerMP recieve) {
+	public static void sendPlayerDataTo(EntityLivingBase send, RaceProperties capSend, EntityPlayerMP recieve) {
 		NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(send, capSend), recieve);
 	}
 
-	public static void sendPlayerDataTracking(EntityLivingBase entity, ISizeCap cap) {
+	public static void sendPlayerDataTracking(EntityLivingBase entity, RaceProperties cap) {
 		NetworkHandler.INSTANCE.sendToAllTracking(new SizeDataPacket(entity, cap), entity);
 	}
+
 	// If Entity Instanceof EntityPlayerMP
-	public static void sendPlayerDataAll(EntityLivingBase entity, ISizeCap cap) {
+	public static void sendPlayerDataAll(EntityLivingBase entity, RaceProperties cap) {
 		NetworkHandler.INSTANCE.sendToAll(new SizeDataPacket(entity, cap));
 	}
 
-	public static void sendPlayerDataServer(EntityLivingBase entity, ISizeCap cap) {
+	public static void sendPlayerDataServer(EntityLivingBase entity, RaceProperties cap) {
 		NetworkHandler.INSTANCE.sendToServer(new SizeDataPacket(entity, cap));
 	}
 }

@@ -32,64 +32,69 @@ public class ClimbHandler {
 	}
 
 	public static boolean Climb(EntityPlayer player) {
-		//		Player = player;
-		//		PlayerHeight = player.height;
-		if((player != null) && !player.isDead) {
+//		final EnumFacing facing = player.getHorizontalFacing();
+//		final BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
+//		final IBlockState state = player.world.getBlockState(pos.add(0, 0, 0).offset(facing));
+//		final Block block = state.getBlock();
+//		final boolean canPass = block.isPassable(player.world, pos.offset(facing));
+		// Player = player;
+		// PlayerHeight = player.height;
+		if ((player != null) && !player.isDead) {
 			world = player.world;
 
 			playerPos = new BlockPos(player.posX, player.posY, player.posZ);
 			facing = player.getHorizontalFacing();
 			bodyPos = playerPos;
-			//		headSpacePos = playerPos.add(0, player.height, 0);
-			//		headPos = playerPos.add(0, 1, 0);
+			// headSpacePos = playerPos.add(0, player.height, 0);
+			// headPos = playerPos.add(0, 1, 0);
 			frontBodyPos = playerPos.add(0, 0, 0).offset(facing);
-			//		frontHeadPos = playerPos.add(0, 1, 0).offset(facing);
+			// frontHeadPos = playerPos.add(0, 1, 0).offset(facing);
 			body = world.getBlockState(bodyPos);
-			//		headSpace = world.getBlockState(headSpacePos);
-			//		head = world.getBlockState(headPos);
+			// headSpace = world.getBlockState(headSpacePos);
+			// head = world.getBlockState(headPos);
 			frontBody = world.getBlockState(frontBodyPos);
-			//		frontHead = world.getBlockState(frontHeadPos);
+			// frontHead = world.getBlockState(frontHeadPos);
 
-			for(final String blocks:TrinketsConfig.SERVER.FAIRY_RING.allowedBlocks) {
-				if(body.getBlock().getRegistryName().toString().contentEquals(blocks) || frontBody.getBlock().getRegistryName().toString().contentEquals(blocks)) {
+			for (final String blocks : TrinketsConfig.SERVER.FAIRY_RING.allowedBlocks) {
+				if (body.getBlock().getRegistryName().toString().contentEquals(blocks) || frontBody.getBlock().getRegistryName().toString().contentEquals(blocks)) {
 					return true;
 				}
 			}
 		}
 
-		//		if (Body() && Head() && FrontBody() && FrontHead()) {
-		//			//			System.out.println("true");
-		//			return true;
-		//		}
-		//		validHeadSpace(player);
+		// if (Body() && Head() && FrontBody() && FrontHead()) {
+		// // System.out.println("true");
+		// return true;
+		// }
+		// validHeadSpace(player);
 		return false;
 	}
 
 	public static void validHeadSpace(EntityPlayer player) {
 		final AxisAlignedBB bb = player.getEntityBoundingBox();
 		final AxisAlignedBB headSpaceTest = head.getSelectedBoundingBox(world, headPos);
-		if(headSpaceTest.intersects(bb)) {
-			if(!(headSpace.getBlock() instanceof BlockAir)) {
-				//				System.out.println(headSpace.getBlock());
+		if (headSpaceTest.intersects(bb)) {
+			if (!(headSpace.getBlock() instanceof BlockAir)) {
+				// System.out.println(headSpace.getBlock());
 			}
 		}
 	}
 
 	private static boolean Body() {
-		//		final IBlockState iblockstate = world.getBlockState(pos);
+		// final IBlockState iblockstate = world.getBlockState(pos);
 		final IBlockState Body = body;
-		//		return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
-		if((Body.getBlock() instanceof BlockPane) || (Body.getBlock() instanceof BlockFence) || (Body.getBlock() instanceof BlockWall)) {
+		// return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
+		if ((Body.getBlock() instanceof BlockPane) || (Body.getBlock() instanceof BlockFence) || (Body.getBlock() instanceof BlockWall)) {
 			return true;
 		}
-		if(Body.getBlock() instanceof BlockStairs) {
-			if((Body.getValue(BlockStairs.FACING) == facing) && (Body.getValue(BlockStairs.HALF) != EnumHalf.TOP)) {
+		if (Body.getBlock() instanceof BlockStairs) {
+			if ((Body.getValue(BlockStairs.FACING) == facing) && (Body.getValue(BlockStairs.HALF) != EnumHalf.TOP)) {
 				return true;
 			}
 		}
-		if((Body.getBlock() instanceof BlockSlab)) {
-			if(!Body.isNormalCube()){
-				if(Body.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
+		if ((Body.getBlock() instanceof BlockSlab)) {
+			if (!Body.isNormalCube()) {
+				if (Body.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
 					return true;
 				}
 			}
@@ -98,32 +103,33 @@ public class ClimbHandler {
 	}
 
 	private static boolean Head() {
-		//		final IBlockState iblockstate = world.getBlockState(pos.add(0, Player.height, 0));
+		// final IBlockState iblockstate = world.getBlockState(pos.add(0, Player.height,
+		// 0));
 		final IBlockState Head = head;
-		//		return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
+		// return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
 		// Check for Body
-		if(((Head.getBlock() instanceof BlockPane) || (Head.getBlock() instanceof BlockFence) || (Head.getBlock() instanceof BlockWall))) {
-			if((body.getBlock() instanceof BlockStairs)) {
-				if(body.getValue(BlockStairs.FACING) == facing) {
+		if (((Head.getBlock() instanceof BlockPane) || (Head.getBlock() instanceof BlockFence) || (Head.getBlock() instanceof BlockWall))) {
+			if ((body.getBlock() instanceof BlockStairs)) {
+				if (body.getValue(BlockStairs.FACING) == facing) {
 					return true;
 				}
 			}
 			return false;
 		}
-		if((Head.getBlock() instanceof BlockStairs)) {
-			if((Head.getValue(BlockStairs.FACING) == facing.getOpposite()) && (Head.getValue(BlockStairs.HALF) != EnumHalf.BOTTOM)) {
+		if ((Head.getBlock() instanceof BlockStairs)) {
+			if ((Head.getValue(BlockStairs.FACING) == facing.getOpposite()) && (Head.getValue(BlockStairs.HALF) != EnumHalf.BOTTOM)) {
 				return true;
 			}
 		}
-		if((Head.getBlock() instanceof BlockSlab)) {
-			if(!Head.isNormalCube()){
-				if(Head.getValue(BlockSlab.HALF) == EnumBlockHalf.TOP) {
+		if ((Head.getBlock() instanceof BlockSlab)) {
+			if (!Head.isNormalCube()) {
+				if (Head.getValue(BlockSlab.HALF) == EnumBlockHalf.TOP) {
 					return true;
 				}
 			}
 		}
 		return Head.getBlock().isPassable(world, headPos);
-		//		return false;
+		// return false;
 	}
 
 	private static boolean HeadSpace() {
@@ -131,69 +137,63 @@ public class ClimbHandler {
 	}
 
 	private static boolean FrontBody() {
-		//		final IBlockState iblockstate = world.getBlockState(pos.offset(facing));
+		// final IBlockState iblockstate = world.getBlockState(pos.offset(facing));
 		final IBlockState FrontBody = frontBody;
-		//		if(iblockstate.isOpaqueCube()) {
+		// if(iblockstate.isOpaqueCube()) {
 		//
-		//		}
-		if((body.getBlock() instanceof BlockStairs) && FrontBody.getBlock().isPassable(world, frontBodyPos)) {
-			if(body.getValue(BlockStairs.FACING) == facing) {
+		// }
+		if ((body.getBlock() instanceof BlockStairs) && FrontBody.getBlock().isPassable(world, frontBodyPos)) {
+			if (body.getValue(BlockStairs.FACING) == facing) {
 				return true;
 			}
 		}
-		if(((body.getBlock() instanceof BlockPane) || (body.getBlock() instanceof BlockFence) || (body.getBlock() instanceof BlockWall)) && Head()) {
-			//			System.out.println("Trigger");
+		if (((body.getBlock() instanceof BlockPane) || (body.getBlock() instanceof BlockFence) || (body.getBlock() instanceof BlockWall)) && Head()) {
+			// System.out.println("Trigger");
 			return true;
 		}
-		//		if(iblockstate.getBlock() instanceof BlockSlab) {
-		//			if(!iblockstate.isNormalCube()){
-		//				if(iblockstate.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
+		// if(iblockstate.getBlock() instanceof BlockSlab) {
+		// if(!iblockstate.isNormalCube()){
+		// if(iblockstate.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
 		//
-		//				}
-		//			}
-		//		}
+		// }
+		// }
+		// }
 		return !FrontBody.getBlock().isPassable(world, frontBodyPos);
 	}
 
 	private static boolean FrontHead() {
-		//		final IBlockState iblockstate = world.getBlockState(pos.add(0, 1, 0).offset(facing));
+		// final IBlockState iblockstate = world.getBlockState(pos.add(0, 1,
+		// 0).offset(facing));
 		final IBlockState FrontHead = frontHead;
-		if(FrontHead.getBlock() instanceof BlockStairs) {
-			if((FrontHead.getValue(BlockStairs.FACING) == facing.getOpposite()) || (FrontHead.getValue(BlockStairs.FACING) == facing)) {
+		if (FrontHead.getBlock() instanceof BlockStairs) {
+			if ((FrontHead.getValue(BlockStairs.FACING) == facing.getOpposite()) || (FrontHead.getValue(BlockStairs.FACING) == facing)) {
 				return true;
 			}
 		}
-		//		if((body.getBlock() instanceof BlockStairs)) {
-		//			if(body.getValue(BlockStairs.FACING) == facing) {
-		//				if(Head()) {
-		//					return true;
-		//				}
-		//			}
-		//		}
-		if(Body() && FrontBody() && !FrontHead.isNormalCube()) {
+		// if((body.getBlock() instanceof BlockStairs)) {
+		// if(body.getValue(BlockStairs.FACING) == facing) {
+		// if(Head()) {
+		// return true;
+		// }
+		// }
+		// }
+		if (Body() && FrontBody() && !FrontHead.isNormalCube()) {
 			return true;
 		}
 		return FrontHead.getBlock().isPassable(world, frontHeadPos);
 	}
 
-
-
-
-
-
-
 	public static boolean movingForward(EntityLivingBase player, EnumFacing facing) {
 		if (((facing.getDirectionVec().getX() * player.motionX) > 0) || ((facing.getDirectionVec().getZ() * player.motionZ) > 0)) {
 			return true;
 		}
-		//		return ((facing.getDirectionVec().getX() * player.motionX) + (facing.getDirectionVec().getZ() * player.motionZ)) > 0;
+		// return ((facing.getDirectionVec().getX() * player.motionX) +
+		// (facing.getDirectionVec().getZ() * player.motionZ)) > 0;
 		return false;
 	}
 
-	public static boolean isHeadspaceFree(World world, BlockPos pos, int height)
-	{
-		for (int y = 0; y < (height); y++)
-		{
+	public static boolean isHeadspaceFree(World world, BlockPos pos, int height) {
+		for (int y = 0; y < (height); y++) {
 			if (!isOpenBlockSpace(world, pos.add(0, y, 0))) {
 				return false;
 			}
@@ -201,12 +201,10 @@ public class ClimbHandler {
 		return true;
 	}
 
-	private static boolean isOpenBlockSpace(World world, BlockPos pos)
-	{
+	private static boolean isOpenBlockSpace(World world, BlockPos pos) {
 		final IBlockState iblockstate = world.getBlockState(pos);
 		return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
 	}
-
 
 	public static boolean canClimb(EntityPlayer player, EnumFacing facing) {
 		final World world = player.getEntityWorld();
@@ -224,46 +222,46 @@ public class ClimbHandler {
 		final boolean hbpass = hb.isPassable(world, pos.add(0, 1, 0));
 		final boolean bbpass = bb.isPassable(world, pos);
 
-		//if Body Block is Passable Continue
-		if(bbpass) {
-			//if Front Block Is Not Passable Continue
-			//You Have something to Climb on
-			if(!fbpass) {
-				if(!hbpass) {
-					if((tb instanceof BlockPane)) {
+		// if Body Block is Passable Continue
+		if (bbpass) {
+			// if Front Block Is Not Passable Continue
+			// You Have something to Climb on
+			if (!fbpass) {
+				if (!hbpass) {
+					if ((tb instanceof BlockPane)) {
 
 					}
-					if((hb instanceof BlockStairs)) {
-						if(h.getValue(BlockStairs.FACING) == facing.getOpposite()) {
+					if ((hb instanceof BlockStairs)) {
+						if (h.getValue(BlockStairs.FACING) == facing.getOpposite()) {
 							return true;
 						}
 					}
-					if((hb instanceof BlockSlab)) {
-						if(!h.isNormalCube()){
-							if(h.getValue(BlockSlab.HALF) == EnumBlockHalf.TOP) {
+					if ((hb instanceof BlockSlab)) {
+						if (!h.isNormalCube()) {
+							if (h.getValue(BlockSlab.HALF) == EnumBlockHalf.TOP) {
 								return true;
 							}
 						}
 					}
-					//					return false;
+					// return false;
 				}
-				if(!tbpass) {
-					if((tb instanceof BlockStairs)) {
-						if((t.getValue(BlockStairs.FACING) == facing.getOpposite()) || (t.getValue(BlockStairs.FACING) == facing)) {
+				if (!tbpass) {
+					if ((tb instanceof BlockStairs)) {
+						if ((t.getValue(BlockStairs.FACING) == facing.getOpposite()) || (t.getValue(BlockStairs.FACING) == facing)) {
 							return true;
 						}
 					}
 				}
-				if(tbpass && hbpass) {
+				if (tbpass && hbpass) {
 					return true;
 				}
 			}
-			if((fb instanceof BlockSlab)) {
-				if(!f.isNormalCube()){
-					if(f.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
-						if(hbpass) {
-							if((tb instanceof BlockStairs)) {
-								if(t.getValue(BlockStairs.FACING) == facing.getOpposite()) {
+			if ((fb instanceof BlockSlab)) {
+				if (!f.isNormalCube()) {
+					if (f.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
+						if (hbpass) {
+							if ((tb instanceof BlockStairs)) {
+								if (t.getValue(BlockStairs.FACING) == facing.getOpposite()) {
 									return true;
 								}
 							}
@@ -272,17 +270,17 @@ public class ClimbHandler {
 				}
 			}
 		}
-		if((bb instanceof BlockPane) && !(hb instanceof BlockPane)) {
+		if ((bb instanceof BlockPane) && !(hb instanceof BlockPane)) {
 			return true;
 		}
-		if(bb instanceof BlockStairs) {
-			if((b.getValue(BlockStairs.FACING) == facing) && (b.getValue(BlockStairs.HALF) != EnumHalf.TOP)) {
+		if (bb instanceof BlockStairs) {
+			if ((b.getValue(BlockStairs.FACING) == facing) && (b.getValue(BlockStairs.HALF) != EnumHalf.TOP)) {
 				return true;
 			}
 		}
-		if((bb instanceof BlockSlab)) {
-			if(!h.isNormalCube()){
-				if(b.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
+		if ((bb instanceof BlockSlab)) {
+			if (!h.isNormalCube()) {
+				if (b.getValue(BlockSlab.HALF) == EnumBlockHalf.BOTTOM) {
 					return true;
 				}
 			}

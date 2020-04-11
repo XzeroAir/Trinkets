@@ -21,32 +21,32 @@ public class BaubleGreaterInertia extends TrinketGreaterInertia implements IBaub
 	}
 	@Override
 	public BaubleType getBaubleType(ItemStack itemstack) {
-		return BaubleHelper.getBaubleType(TrinketsConfig.SERVER.GREATER_INERTIA.bauble_type);
+		return BaubleHelper.getBaubleType(TrinketsConfig.SERVER.GREATER_INERTIA.compat.baubles.bauble_type);
 	}
 	@Override
 	public boolean canEquip(ItemStack itemstack, EntityLivingBase player) {
 		if(player instanceof EntityPlayer) {
-			return super.playerCanEquip(itemstack, (EntityPlayer) player);
+			return super.playerCanEquip(itemstack, player);
 		}
 		return true;
 	}
 	@Override
 	public boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
 		if(player instanceof EntityPlayer) {
-			return super.playerCanUnequip(itemstack, (EntityPlayer)player);
+			return super.playerCanUnequip(itemstack, player);
 		}
 		return true;
 	}
 	@Override
 	public void onEquipped(ItemStack stack, EntityLivingBase player) {
 		if(player instanceof EntityPlayer) {
-			super.playerEquipped(stack, (EntityPlayer)player);
+			super.playerEquipped(stack, player);
 		}
 	}
 	@Override
 	public void onUnequipped(ItemStack stack, EntityLivingBase player) {
 		if(player instanceof EntityPlayer) {
-			super.playerUnequipped(stack, (EntityPlayer)player);
+			super.playerUnequipped(stack, player);
 		}
 	}
 }

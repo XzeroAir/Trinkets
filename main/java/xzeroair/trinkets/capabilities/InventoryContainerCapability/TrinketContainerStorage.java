@@ -5,17 +5,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-public class TrinketContainerStorage implements IStorage<IContainerHandler> {
+public class TrinketContainerStorage implements IStorage<ITrinketContainerHandler> {
 
 	public final static TrinketContainerStorage storage = new TrinketContainerStorage();
 
 	@Override
-	public NBTBase writeNBT(Capability<IContainerHandler> capability, IContainerHandler instance, EnumFacing side) {
+	public NBTBase writeNBT(Capability<ITrinketContainerHandler> capability, ITrinketContainerHandler instance, EnumFacing side) {
 		return null;
 	}
 
 	@Override
-	public void readNBT(Capability<IContainerHandler> capability, IContainerHandler instance, EnumFacing side, NBTBase nbt) {
+	public void readNBT(Capability<ITrinketContainerHandler> capability, ITrinketContainerHandler instance, EnumFacing side, NBTBase nbt) {
 	}
 
 }

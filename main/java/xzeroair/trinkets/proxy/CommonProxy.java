@@ -8,16 +8,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.container.TrinketInventoryContainer;
 import xzeroair.trinkets.util.compat.OreDictionaryCompat;
 import xzeroair.trinkets.util.registry.EventRegistry;
 
 @EventBusSubscriber
-public class CommonProxy {
+public class CommonProxy implements IGuiHandler {
 
 	public void preInit(FMLPreInitializationEvent e) {
 		//Other Mod Compatibility
@@ -33,10 +38,12 @@ public class CommonProxy {
 	public void init(FMLInitializationEvent e) {
 		OreDictionaryCompat.registerOres();
 
+		EventRegistry.serverInit();
 		EventRegistry.init();
 
 		EventRegistry.modCompatInit();
 	}
+
 	public void postInit(FMLPostInitializationEvent e) {
 		EventRegistry.postInit();
 	}
@@ -54,7 +61,7 @@ public class CommonProxy {
 	}
 
 	public IThreadListener getThreadListener(final MessageContext context) {
-		if(context.side.isServer()) {
+		if (context.side.isServer()) {
 			return context.getServerHandler().player.getServerWorld();
 		} else {
 			throw new WrongSideException("Tried to get the IThreadListener from a client-side MessageContext on the dedicated server");
@@ -68,11 +75,10 @@ public class CommonProxy {
 			throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
 		}
 	}
+
 	@Nullable
-	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID)
-	{
-		if(context.side.isServer())
-		{
+	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID) {
+		if (context.side.isServer()) {
 			final Entity entity = context.getServerHandler().player.world.getEntityByID(entityID);
 			return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
 		}
@@ -87,5 +93,21 @@ public class CommonProxy {
 		public WrongSideException(final String message, final Throwable cause) {
 			super(message, cause);
 		}
+	}
+
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		return null;
+	}
+
+	@Override
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		if (world instanceof WorldServer) {
+			switch (ID) {
+			case Trinkets.GUI:
+				return new TrinketInventoryContainer(player.inventory, !world.isRemote, player);
+			}
+		}
+		return null;
 	}
 }

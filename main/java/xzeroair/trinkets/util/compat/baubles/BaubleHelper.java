@@ -5,7 +5,7 @@ import baubles.api.BaubleType;
 public class BaubleHelper {
 
 	public static BaubleType getBaubleType(String string) {
-		string.toLowerCase();
+		string = string.toLowerCase();
 		if(string.contentEquals("trinket") || string.contentEquals("any") || string.contentEquals("all")) {
 			return BaubleType.TRINKET;
 		}

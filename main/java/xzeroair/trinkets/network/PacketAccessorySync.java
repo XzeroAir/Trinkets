@@ -10,7 +10,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.capabilities.InventoryContainerCapability.IContainerHandler;
+import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerProvider;
 
 public class PacketAccessorySync implements IMessage {
@@ -28,7 +29,7 @@ public class PacketAccessorySync implements IMessage {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 			Accessory = baubles.getStackInSlot(slot);
 		} else {
-			final IContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+			final ITrinketContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
 			Accessory = Trinket.getStackInSlot(slot);
 		}
 		this.slot = (byte) slot;
@@ -60,7 +61,6 @@ public class PacketAccessorySync implements IMessage {
 		@Override
 		public IMessage onMessage(PacketAccessorySync message, MessageContext ctx) {
 
-			//			if((Minecraft.getMinecraft().world != null) || (Minecraft.getMinecraft().player != null)) {
 			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
 				if(Trinkets.proxy.getPlayer(ctx) != null) {
 					final EntityPlayer player = (EntityPlayer) Trinkets.proxy.getPlayer(ctx).world.getEntityByID(message.playerId);
@@ -74,7 +74,7 @@ public class PacketAccessorySync implements IMessage {
 							}
 						}
 					} else {
-						final IContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+						final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler(player);
 						if(message.slot >= 0) {
 							if(message.equipped) {
 								Trinket.setStackInSlot(message.slot, message.Accessory);

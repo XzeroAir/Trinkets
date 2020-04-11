@@ -1,9 +1,9 @@
 package xzeroair.trinkets.items.potions;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.items.base.BasePotion;
@@ -17,21 +17,34 @@ public class PotionFairy extends BasePotion {
 	public PotionFairy(String name) {
 		super(name, 12514535);
 		this.setIconIndex(0, 0);
-		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, EffectsFairyRing.getUUID().toString(), 1, 2);
+		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, EffectsFairyRing.getUUID().toString(), 1, 0);
+	}
+
+	@Override
+	public boolean isReady(int duration, int amplifier) {
+		return duration <= 1;
+	}
+
+	@Override
+	public boolean isInstant() {
+		return false;
 	}
 
 	@Override
 	public void performEffect(EntityLivingBase entity, int amplifier) {
-		super.performEffect(entity, amplifier);
+
+	}
+
+	// works if instant on all Potion Types
+	@Override
+	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entityLivingBaseIn, int amplifier, double health) {
+
 	}
 
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entity, AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
-		if(entity instanceof EntityPlayer) {
-			EffectsFairyRing.FairyUnequip(null, (EntityPlayer) entity);
-			//			RaceAttribute.removeModifier(entity, Fairy_Ring_Effects.getUUID());
-		}
+		EffectsFairyRing.FairyUnequip(null, entity);
 	}
 
 	@Override

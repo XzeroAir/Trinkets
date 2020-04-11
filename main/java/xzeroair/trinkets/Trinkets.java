@@ -18,35 +18,38 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilitiesHandler;
-import xzeroair.trinkets.client.gui.GuiHandler;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.proxy.CommonProxy;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 
+// @formatter:off
 @Mod(
 		modid = Reference.MODID,
 		name = Reference.NAME,
 		version = Reference.VERSION,
+		//		guiFactory = Reference.GUIFACTORY,
 		dependencies = Reference.DEPENDENCIES,
 		acceptedMinecraftVersions = Reference.acceptedMinecraftVersions,
 		updateJSON = Reference.updateJSON
 		//		certificateFingerprint = Reference.FINGERPRINT
 		)
-
+// @formatter:on
 public class Trinkets {
 
 	public static final CreativeTabs trinketstab = new TrinketsTab("trinketstab");
 
 	public static Configuration config;
 
-	@Instance(value=Reference.MODID)
+	@Instance(value = Reference.MODID)
 	public static Trinkets instance;
 
 	public static File directory;
 
 	public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
 	public static final int GUI = 0;
+
+	private static boolean checkedPlayerID = false;
 
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
@@ -57,7 +60,6 @@ public class Trinkets {
 		directory = event.getModConfigurationDirectory();
 		config = new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg"));
 		TrinketsConfig.readConfig();
-
 
 		//Capabilities
 		Capabilities.init();
@@ -75,7 +77,7 @@ public class Trinkets {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 		//		if(TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.generate) {
 		//			TrinketsConfig.saveBlockList();
 		//		}

@@ -9,8 +9,8 @@ import xzeroair.trinkets.container.TrinketContainerHandler;
 
 public class TrinketContainerProvider implements ICapabilitySerializable<NBTTagCompound> {
 
-	@CapabilityInject(IContainerHandler.class)
-	public static final Capability<IContainerHandler> containerCap = null;
+	@CapabilityInject(ITrinketContainerHandler.class)
+	public static final Capability<ITrinketContainerHandler> containerCap = null;
 
 	private final TrinketContainerHandler container;
 

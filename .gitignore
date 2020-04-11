@@ -1,22 +1,12 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
-# idea
-out
-*.ipr
-*.iws
-*.iml
-.idea
-
-# gradle
-build
-.gradle
-
-# other
-eclipse
-run
+/runGradlewBuild.bat
+/runGradlewSetup.bat
+/settings.gradle.back
+/src - Copy/
+/libsBack/
+/libs/
+/build/
+/bin/
+/.settings/
+/.project
+/.gradle/
+/.classpath

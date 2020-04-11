@@ -15,13 +15,16 @@ import xzeroair.trinkets.items.baubles.BaubleFairyRing;
 import xzeroair.trinkets.items.baubles.BaubleGlowRing;
 import xzeroair.trinkets.items.baubles.BaubleGreaterInertia;
 import xzeroair.trinkets.items.baubles.BaubleInertiaNull;
+import xzeroair.trinkets.items.baubles.BaubleLightningBoots;
 import xzeroair.trinkets.items.baubles.BaublePoison;
 import xzeroair.trinkets.items.baubles.BaublePolarized;
 import xzeroair.trinkets.items.baubles.BaubleSea;
+import xzeroair.trinkets.items.baubles.BaubleTitanRing;
 import xzeroair.trinkets.items.baubles.BaubleWeightless;
 import xzeroair.trinkets.items.baubles.BaubleWitherRing;
 import xzeroair.trinkets.items.foods.Dwarf_Stout;
 import xzeroair.trinkets.items.foods.Fairy_Food;
+import xzeroair.trinkets.items.foods.Titan_Spirit;
 import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
 import xzeroair.trinkets.items.trinkets.TrinketDwarfRing;
@@ -30,14 +33,16 @@ import xzeroair.trinkets.items.trinkets.TrinketFairyRing;
 import xzeroair.trinkets.items.trinkets.TrinketGlowRing;
 import xzeroair.trinkets.items.trinkets.TrinketGreaterInertia;
 import xzeroair.trinkets.items.trinkets.TrinketInertiaNull;
+import xzeroair.trinkets.items.trinkets.TrinketLightningBoots;
 import xzeroair.trinkets.items.trinkets.TrinketPoison;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.items.trinkets.TrinketSea;
+import xzeroair.trinkets.items.trinkets.TrinketTitanRing;
 import xzeroair.trinkets.items.trinkets.TrinketWeightless;
 import xzeroair.trinkets.items.trinkets.TrinketWitherRing;
 
+// @formatter:off
 public class ModItems {
-
 	public static final String Weightless		= "weightless_stone";
 	public static final String InertiaNull 		= "inertia_null_stone";
 	public static final String GreaterInertia 	= "greater_inertia_stone";
@@ -51,6 +56,8 @@ public class ModItems {
 	public static final String Poison 			= "poison_stone";
 	public static final String EnderTiara 		= "ender_tiara";
 	public static final String DamageShield		= "damage_shield";
+	public static final String LightningBoots	= "lightning_boots";
+	public static final String TitanRing		= "titan_ring";
 
 	//top of mod class
 
@@ -70,6 +77,7 @@ public class ModItems {
 
 		public static final Item dwarf_stout 				= new Dwarf_Stout("dwarf_stout");
 		public static final Item fairy_food 				= new Fairy_Food("fairy_dew");
+		public static final Item titan_spirit				= new Titan_Spirit("titan_spirit");
 
 	}
 
@@ -92,6 +100,8 @@ public class ModItems {
 		public static final Item BaublePoison 			= new BaublePoison(Poison);
 		public static final Item BaubleEnderTiara 		= new BaubleEnderTiara(EnderTiara);
 		public static final Item BaubleDamageShield		= new BaubleDamageShield(DamageShield);
+		public static final Item BaubleLightningBoots	= new BaubleLightningBoots(LightningBoots);
+		public static final Item BaubleTitanRing		= new BaubleTitanRing(TitanRing);
 
 	}
 	//	trinkets
@@ -111,6 +121,8 @@ public class ModItems {
 		public static final Item TrinketPoison 			= new TrinketPoison(Poison);
 		public static final Item TrinketEnderTiara 		= new TrinketEnderTiara(EnderTiara);
 		public static final Item TrinketDamageShield	= new TrinketDamageShield(DamageShield);
+		public static final Item TrinketLightningBoots	= new TrinketLightningBoots(LightningBoots);
+		public static final Item TrinketTitanRing		= new TrinketTitanRing(TitanRing);
 	}
 
 }

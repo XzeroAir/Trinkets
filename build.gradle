@@ -1,49 +1,83 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "https://files.minecraftforge.net/maven" }
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-version = "1.0"
-group = "xzeroair.xat" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Trinkets and Baubles"
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
-minecraft {
-    version = "1.12.2-14.23.5.2838"
-    runDir = "run"
+ext.configFile = file('build.properties')
+ext.config = parseConfig(configFile)
 
-	mappings = "stable_39"
-	
+version = "${config.version}-${config.build_number}"
+group = "xzeroair.xat" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = config.mod_name
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.4' 
+}
+
+minecraft {
+    version = "${config.mc_version}-${config.forge_version}"
+    runDir = "eclipse/assets"
+
+    mappings = config.mc_mappings
+    replace 'GRADLE:BUILD', config.build_number
+    replace 'GRADLE:VERSION', config.version
+
+    // Scala: not even once
+    replace 'scala.actors.threadpool.Arrays', 'java.util.Arrays'
+
+    makeObfSourceJar = false
+}
+
+jar {
+    exclude "**/*.bat"
+    exclude "**/*.psd"
+    exclude "**/*.exe"
+    exclude "**/unused"
 }
 
 dependencies {
 
-	deobfProvided "mezz.jei:jei_${mc_version}:${jei_version}:api"
+	deobfProvided "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
 	// at runtime, use the full JEI jar
 
-	deobfCompile "com.github.azanor:Baubles:7035b13"
-	deobfCompile "artemislib:ArtemisLib:1.12.2:v1.0.2"
+	//deobfCompile "com.github.azanor:Baubles:7035b13"
+    //compile files(
+    //    'Baubles-deobf.jar'
+	//)
+	//compile fileTree(dir: 'libraries', include: [':Baubles API', ':ArtemisLib'])
+	//deobfProvided project(':Baubles API')
+	//deobfProvided project(':ArtemisLib')
+	
+	//compile project(':Baubles API')
+	//compile project(':ArtemisLib')
+	
 	compile fileTree(dir: 'lib', include: '*.jar')
 	
 	// compile against the JEI API but do not include it at runtime
-	runtime "mezz.jei:jei_${mc_version}:${jei_version}"
+	runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    //inputs.property "version", project.version
+    //inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
@@ -53,9 +87,9 @@ processResources {
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else except the mcmod.info
+    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude 'mcmod.info', '**/psd/**'
     }
 }
 
@@ -92,6 +126,38 @@ repositories {
 	}
 }
 
+task deobfJar(type: Jar) {
+    from(sourceSets.main.output)
+    archiveName = "${baseName}-${version}-deobf.${extension}"
+}
+
+artifacts {
+    archives deobfJar
+}
+
+/**
+ * Increments the buildnumber in your config file, and saves it
+ */
+task incrementBuildNumber {
+    config.build_number = (config.build_number.toString().toInteger()) + 1
+    configFile.withWriter {
+        config.toProperties().store(it, "")
+    }
+}
+
+task sort(type: Delete) {
+    dependsOn "outputDeobf"
+    delete "${config.dir_output}/${deobfJar.archiveName}", "${config.dir_output}/wtf"
+}
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
 task signJar(type: SignJar, dependsOn: reobfJar) {
 
     onlyIf {
@@ -106,4 +172,6 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-build.dependsOn signJar
+//build.dependsOn signJar
+
+defaultTasks 'clean', 'build', 'sort', 'incrementBuildNumber'

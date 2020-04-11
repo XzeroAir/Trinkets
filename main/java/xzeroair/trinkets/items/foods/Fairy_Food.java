@@ -17,10 +17,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
-import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
-import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
 import xzeroair.trinkets.items.base.FoodBase;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class Fairy_Food extends FoodBase {
 
@@ -28,18 +27,14 @@ public class Fairy_Food extends FoodBase {
 
 	public Fairy_Food(String name) {
 		super(name, 5, 0);
-		setAlwaysEdible();
+		this.setAlwaysEdible();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-
-		final String value = "I might be able to remove the effects";
-		final String value2 = "by drinking some sort of potion";
-		tooltip.add(value);
-		tooltip.add(value2);
+		TranslationHelper.addTooltips(stack, tooltip);
 	}
 
 	public static UUID getUUID() {
@@ -47,55 +42,44 @@ public class Fairy_Food extends FoodBase {
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack stack)
-	{
+	public int getMaxItemUseDuration(ItemStack stack) {
 		return 16;
 	}
+
 	@Override
 	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
 		super.onFoodEaten(stack, worldIn, player);
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving)
-	{
-		if(entityLiving instanceof EntityPlayer) {
-			if(TrinketsConfig.SERVER.Food.food_effects) {
+	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		if (entityLiving instanceof EntityPlayer) {
+			if (TrinketsConfig.SERVER.Food.food_effects) {
 				RaceAttribute.removeModifier(entityLiving, Dwarf_Stout.getUUID());
-				RaceAttribute.addModifier(entityLiving, 1, uuid, 2);
+				RaceAttribute.removeModifier(entityLiving, Titan_Spirit.getUUID());
+				RaceAttribute.addModifier(entityLiving, 1, uuid, 0);
 			}
 		}
-		setCooldown(20);
+		this.setCooldown(20);
 		super.onItemUseFinish(stack, worldIn, entityLiving);
 		return stack;
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-	{
-		final ItemStack itemstack = playerIn.getHeldItem(handIn);
-		boolean flag = getEdible();
-		final ISizeCap cap = playerIn.getCapability(SizeCapPro.sizeCapability, null);
-		if(playerIn instanceof EntityPlayer) {
-			if((cap != null) && (cap.getFood().contains("dwarf_stout"))) {
-				flag = false;
-			}
-		}
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
+		final ItemStack itemstack = player.getHeldItem(handIn);
+		boolean flag = this.getEdible();
 
-		if (playerIn.canEat(flag))
-		{
-			playerIn.setActiveHand(handIn);
+		if (player.canEat(flag)) {
+			player.setActiveHand(handIn);
 			return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
-		}
-		else
-		{
+		} else {
 			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
 		}
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack stack)
-	{
+	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.DRINK;
 	}
 

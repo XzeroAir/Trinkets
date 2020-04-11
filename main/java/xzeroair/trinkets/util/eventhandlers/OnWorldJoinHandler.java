@@ -1,5 +1,6 @@
 package xzeroair.trinkets.util.eventhandlers;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,22 +12,23 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensio
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
-import xzeroair.trinkets.capabilities.sizeCap.ISizeCap;
-import xzeroair.trinkets.capabilities.sizeCap.SizeCapPro;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.race.RaceProperties;
 import xzeroair.trinkets.network.BlocklistSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.PacketConfigSync;
+import xzeroair.trinkets.network.SizeDataPacket;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class OnWorldJoinHandler {
 
+	private boolean check, check2, check3 = false;
+
 	@SubscribeEvent
-	public void attachAttributes(EntityEvent.EntityConstructing event)
-	{
-		if(event.getEntity() instanceof EntityPlayer)
-		{
-			final EntityPlayer player = (EntityPlayer) event.getEntity();
-			final AbstractAttributeMap map = player.getAttributeMap();
+	public void attachAttributes(EntityEvent.EntityConstructing event) {
+		if (event.getEntity() instanceof EntityLivingBase) {
+			final EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+			final AbstractAttributeMap map = entity.getAttributeMap();
 
 			map.registerAttribute(RaceAttribute.ENTITY_RACE);
 		}
@@ -34,35 +36,38 @@ public class OnWorldJoinHandler {
 
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		if((event.player.world != null)) {
+		if ((event.player.world != null)) {
 			final EntityPlayer player = event.player;
 			final boolean client = player.world.isRemote;
-			//config Sync
-			if(!client) {
-				NetworkHandler.INSTANCE.sendTo(new PacketConfigSync(player,
-						false,
-						TrinketsConfig.SERVER.FAIRY_RING.creative_flight,
-						TrinketsConfig.SERVER.DRAGON_EYE.oreFinder,
-						TrinketsConfig.SERVER.GUI.guiEnabled,
-						TrinketsConfig.SERVER.FAIRY_RING.creative_flight_speed,
-						TrinketsConfig.SERVER.FAIRY_RING.flight_speed,
-						TrinketsConfig.SERVER.GUI.guiEnabled,
-						TrinketsConfig.SERVER.GUI.guiSlotsRows,
-						TrinketsConfig.SERVER.GUI.guiSlotsRowLength,
-						TrinketsConfig.compat.artemislib,
-						TrinketsConfig.compat.baubles,
-						TrinketsConfig.compat.enhancedvisuals,
-						TrinketsConfig.compat.morph,
-						TrinketsConfig.compat.toughasnails,
-						TrinketsConfig.compat.betterdiving
-						) ,(EntityPlayerMP) player);
+			// config Sync
+			if (!client) {
+				NetworkHandler.INSTANCE.sendTo(
+						new PacketConfigSync(
+								player,
+								false,
+								TrinketsConfig.SERVER.FAIRY_RING.creative_flight,
+								TrinketsConfig.SERVER.DRAGON_EYE.oreFinder,
+								TrinketsConfig.SERVER.GUI.guiEnabled,
+								TrinketsConfig.SERVER.FAIRY_RING.creative_flight_speed,
+								TrinketsConfig.SERVER.FAIRY_RING.flight_speed,
+								TrinketsConfig.SERVER.GUI.guiEnabled,
+								TrinketsConfig.SERVER.GUI.guiSlotsRows,
+								TrinketsConfig.SERVER.GUI.guiSlotsRowLength,
+								TrinketsConfig.compat.artemislib,
+								TrinketsConfig.compat.baubles,
+								TrinketsConfig.compat.enhancedvisuals,
+								TrinketsConfig.compat.morph,
+								TrinketsConfig.compat.toughasnails,
+								TrinketsConfig.compat.betterdiving
+						), (EntityPlayerMP) player
+				);
 
 				final String[] configArray = TrinketsConfig.getBlockListArray(false);
 				String combinedArray = "";
-				for(int i = configArray.length-1;i>=0;--i) {
+				for (int i = configArray.length - 1; i >= 0; --i) {
 					combinedArray = configArray[i] + ", " + combinedArray;
 				}
-				if(!combinedArray.isEmpty()) {
+				if (!combinedArray.isEmpty()) {
 					final int hd = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.DR.C001_HD;
 					final int vd = TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.DR.C00_VD;
 					NetworkHandler.INSTANCE.sendTo(new BlocklistSyncPacket(player, false, combinedArray, 0, hd, vd), (EntityPlayerMP) player);
@@ -75,11 +80,11 @@ public class OnWorldJoinHandler {
 
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event) {
-		if((event.player.world != null) && !event.player.world.isRemote) {
+		if ((event.player.world != null) && !event.player.world.isRemote) {
 			final EntityPlayer player = event.player;
-			if((player.getCapability(SizeCapPro.sizeCapability, null) != null)) {
-				final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
-				if((player.getRidingEntity() instanceof EntityMinecart) && (cap.getTrans() == true)) {
+			RaceProperties cap = Capabilities.getEntityRace(player);
+			if (cap != null) {
+				if ((player.getRidingEntity() instanceof EntityMinecart) && (cap.getTrans() == true)) {
 					player.dismountRidingEntity();
 				}
 			}
@@ -88,24 +93,19 @@ public class OnWorldJoinHandler {
 
 	@SubscribeEvent
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
-		if((event.getEntity() instanceof EntityPlayer)) {
-			final EntityPlayer player = (EntityPlayer) event.getEntity();
-			final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
-			final Boolean client = player.world.isRemote;
-			if(!client) {
-				NetworkHandler.sendPlayerDataTo(player, cap, (EntityPlayerMP) player);
-			}
-		}
+
 	}
 
 	@SubscribeEvent
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
-		final EntityPlayer player = event.player;
-		final Boolean client = player.world.isRemote;
-		if(player instanceof EntityPlayerMP) {
-			final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
-			if(cap != null) {
-				NetworkHandler.sendPlayerDataAll(player, cap);
+		if (event.player != null) {
+			final EntityPlayer player = event.player;
+			final boolean client = player.world.isRemote;
+			if (event.player.hasCapability(Capabilities.ENTITY_RACE, null)) {
+				RaceProperties cap = Capabilities.getEntityRace(player);
+				if (!client) {
+					NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(player, cap), (EntityPlayerMP) player);
+				}
 			}
 		}
 	}
