@@ -1,0 +1,28 @@
+{
+	"homepage": "https://minecraft.curseforge.com/projects/trinkets-and-baubles",
+  	"promos": {
+  	  "1.12-latest": "0.17",
+  	  "1.12-recommended": "0.17",
+	  "1.12.1-latest": "0.17",
+  	  "1.12.1-recommended": "0.17",
+	  "1.12.2-latest": "0.29.2",
+  	  "1.12.2-recommended": "0.29.2"
+	},
+	"1.12.2": {
+  		"0.17": "Added support for 1.12 and 1.12.1", 
+		"0.18": "bug fixes and code clean up",
+		"0.19": "Added some AI stuff and a new Item like the pumpkin"
+		"0.22": "Fixed issues with Lycanite mobs, and stopped support for 1.12.1 and earlier"
+		"0.25.1": "Fixed Bugs"
+		"0.25.2": "Fixed More Bugs"
+		"0.28.1": "Added Tons of Config options and added support for Enhanced Visuals"
+		"0.29.1": "Hotfix for a crash, more support for other mods and tons more configs"
+		"0.29.2": "More bug fixes and crash fixes"
+	},
+	"1.12.1": {
+  		"0.17": "Added support for 1.12 and 1.12.1"
+	},
+	"1.12": {
+  		"0.17": "Added support for 1.12 and 1.12.1"
+	}
+}
