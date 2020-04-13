@@ -224,7 +224,7 @@ item.dragons_eye.info=当佩戴者戴上类似龙的魔法眼睛时，免疫火�
 item.poison_stone.info=免疫中毒。
 item.wither_ring.info=免疫凋谢。
 item.ender_tiara.info=戴着王冠的人在末影人眼中是绝对的权威。假如穿着者在末影人附近受到袭击，他们将前来救援。末影效忠于王权，他们只允许穿着者杀死他们。
-item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。（如果启用）免疫多次命中造成的伤害。（如果 First Aid 已安装并启用）有几率抵消致命的头部伤害。
+item.damage_shield.info=只有最有成就的战士才配得上它。装备时给予抗性提升。（如果启用）免疫多次命中造成的伤害。（如果已安装并启用 First Aid）有几率抵消致命的头部伤害。
 
 item.fairy_dew.info=变身为仙女。
 item.dwarf_stout.info=变身为矮人。
@@ -266,24 +266,24 @@ xat.config.food.transformation.effect.keep.tooltip=玩家死亡时是否保留�
 
 xat.config.potion.registry.enabled=启用药水
 xat.config.potion.registry.enabled.tooltip=加载时是否注册 Trinkets and Baubles 的药水
-xat.config.potion.toughasnails.water=Potions Give Water
-xat.config.potion.toughasnails.water.tooltip=If Tough as Nails is installed, Potions give water
-xat.config.potion.catalyst.restorative=Restoration Potion Catalyst
+xat.config.potion.toughasnails.water=药水补充水分
+xat.config.potion.toughasnails.water.tooltip=如果已安装 Tough as Nails，药水是否补充水分
+xat.config.potion.catalyst.restorative=恢复药水触媒
 xat.config.potion.catalyst.restorative.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.fairy.duration=Fairy Effect Duration
 xat.config.potion.fairy.duration.tooltip=变形持续多少 ticks
-xat.config.potion.catalyst.fairy=Fairy Potion Catalyst
+xat.config.potion.catalyst.fairy=仙女药水触媒
 xat.config.potion.catalyst.fairy.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.dwarf.duration=Dwarf Effect Duration
 xat.config.potion.dwarf.duration.tooltip=变形持续多少 ticks
-xat.config.potion.catalyst.dwarf=Dwarf Potion Catalyst
+xat.config.potion.catalyst.dwarf=矮人药水触媒
 xat.config.potion.catalyst.dwarf.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.titan.duration=Titan Effect Duration
 xat.config.potion.titan.duration.tooltip=变形持续多少 ticks
-xat.config.potion.catalyst.titan=Titan Potion Catalyst
+xat.config.potion.catalyst.titan=泰坦药水触媒
 xat.config.potion.catalyst.titan.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.glow_ring=魔眼之戒设置
@@ -311,7 +311,7 @@ xat.config.dragons_eye.orefinder.blocks.list.tooltip=末影龙之眼的寻宝功
 xat.config.dragons_eye.blindness=免疫失明
 xat.config.dragons_eye.blindness.tooltip=末影龙之眼是否免疫失明？
 xat.config.dragons_eye.toughasnails.immunity.heat=免疫炽热
-xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=如果 Tough as Nails 已安装，玩家是否免疫炽热
+xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=如果已安装 Tough as Nails，玩家是否免疫炽热
 xat.config.dragons_eye.client.growl.enabled=巨龙咆哮
 xat.config.dragons_eye.client.growl.enabled.tooltip=寻宝功能启用时，是否有咆哮声以标记宝藏
 xat.config.dragons_eye.client.growl.activation=触发巨龙咆哮
@@ -340,7 +340,7 @@ xat.config.ender_tiara.endermen.exp.tooltip=击杀末影人时是否掉落经验
 xat.config.ender_tiara.endermen.items=末影人掉落物品
 xat.config.ender_tiara.endermen.items.tooltip=击杀末影人是否掉落物品？
 xat.config.ender_tiara.toughasnails.immunity.cold=免疫寒冷
-xat.config.ender_tiara.toughasnails.immunity.cold.tooltip=如果 Tough as Nails 已安装，玩家是否免疫寒冷？
+xat.config.ender_tiara.toughasnails.immunity.cold.tooltip=如果已安装 Tough as Nails，玩家是否免疫寒冷？
 
 xat.config.fairy_ring=仙女之戒设置
 xat.config.fairy_ring.tooltip=
@@ -354,8 +354,8 @@ xat.config.fairy_ring.climbing=攀爬
 xat.config.fairy_ring.climbing.tooltip=玩家是否能在方块上攀爬
 xat.config.fairy_ring.climbing.blocks.list=可攀爬的方块
 xat.config.fairy_ring.climbing.blocks.list.tooltip=玩家装备仙女之戒时可攀爬的方块
-xat.config.fairy_ring.jumpheight=跳跃高度调整
-xat.config.fairy_ring.jumpheight.tooltip=调整玩家的跳跃高度和步长以适应体型
+xat.config.fairy_ring.jumpheight=修改跳跃高度
+xat.config.fairy_ring.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 
 xat.config.dwarf_ring=矮人之戒设置
 xat.config.dwarf_ring.tooltip=
@@ -386,8 +386,8 @@ xat.config.dwarf_ring.static_mining.tooltip=When Mining, Mining Speed is static 
 
 xat.config.titan_ring=泰坦之戒设置
 xat.config.titan_ring.tooltip=
-xat.config.titan_ring.jumpheight=跳跃高度调整
-xat.config.titan_ring.jumpheight.tooltip=调整玩家的跳跃高度和步长以适应体型
+xat.config.titan_ring.jumpheight=修改跳跃高度
+xat.config.titan_ring.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 
 xat.config.damage_shield=荣耀之盾设置
 xat.config.damage_shield.tooltip=
@@ -408,7 +408,7 @@ xat.config.damage_shield.firstaid.ignore.headshots.chance.tooltip=x 分之 1 的
 
 xat.config.inertia_null_stone=Stone of Inertia Null Settings
 xat.config.inertia_null_stone.tooltip=
-xat.config.inertia_null_stone.falldamage=调整摔落伤害
+xat.config.inertia_null_stone.falldamage=修改摔落伤害
 xat.config.inertia_null_stone.falldamage.tooltip=Should the Stone of Inertia Null Modify Fall Damage?
 xat.config.inertia_null_stone.falldamage.amount=Modified Fall Damage Amount
 xat.config.inertia_null_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
@@ -467,7 +467,7 @@ xat.config.sea_stone.waterbreathing.tooltip=装备时获得无限的氧气
 xat.config.sea_stone.waterbreathing.bubbles=Full Bubbles
 xat.config.sea_stone.waterbreathing.bubbles.tooltip=When Infinite Oxygen is Enabled, Should it Trigger at Full Oxygen Bubbles, or when on the Final Oxygen Bubble
 xat.config.sea_stone.toughasnails.thirst=Prevent TAN Thirst Poisoning
-xat.config.sea_stone.toughasnails.thirst.tooltip=If Tough as Nails is installed, Should the Stone of the Sea Prevent the Thirst Effect?
+xat.config.sea_stone.toughasnails.thirst.tooltip=如果已安装 Tough as Nails，海洋之石是否免疫脱水？
 
 xat.config.wither_ring=枯萎之戒
 xat.config.wither_ring.tooltip=
@@ -489,32 +489,32 @@ xat.config.toughasnails.tooltip=如果已安装 Tough as Nails
 xat.config.firstaid=First Aid 设置
 xat.config.firstaid.tooltip=
 
-xat.config.baubles=Baubles
-xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+xat.config.baubles=饰品
+xat.config.baubles.tooltip=如果已安装饰品栏模组，它应该使用哪个栏位\n可用的类型：\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
 
-xat.config.baubles.type=Bauble Type
-xat.config.baubles.type.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+xat.config.baubles.type=饰品类型
+xat.config.baubles.type.tooltip=如果已安装饰品栏模组，它应该使用哪个栏位\n可用的类型：\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
 
-xat.config.attributes=Attributes
-xat.config.attributes.tooltip="For Mor Information on Attributes"\n"https://minecraft.gamepedia.com/Attribute"
+xat.config.attributes=属性
+xat.config.attributes.tooltip="更多关于属性的信息"\n"https://minecraft.gamepedia.com/Attribute"
 
-xat.config.attributes.armor.tooltip=Enable Attribute Modifier
-xat.config.attributes.armor=Armor
-xat.config.attributes.armor.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.armor.amount=Armor Amount
-xat.config.attributes.armor.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.armor.operation=Armor Operation
+xat.config.attributes.armor.tooltip=启用属性修改
+xat.config.attributes.armor=护甲
+xat.config.attributes.armor.amount.tooltip=属性修改量
+xat.config.attributes.armor.amount=护甲值
+xat.config.attributes.armor.operation.tooltip=决定修改护甲所用的数字
+xat.config.attributes.armor.operation=护甲 Operation
 
-xat.config.attributes.armortoughness.tooltip=Enable Attribute Modifier
-xat.config.attributes.armortoughness=Armor Toughness
-xat.config.attributes.armortoughness.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.armortoughness.amount=Armor Toughness Amount
-xat.config.attributes.armortoughness.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.armortoughness.tooltip=启用属性修改
+xat.config.attributes.armortoughness=护甲韧性
+xat.config.attributes.armortoughness.amount.tooltip=属性修改量
+xat.config.attributes.armortoughness.amount=护甲韧性量
+xat.config.attributes.armortoughness.operation.tooltip=决定修改护甲韧性所用的数字
 xat.config.attributes.armortoughness.operation=Armor Toughness Operation
 
-xat.config.attributes.attackspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.attackspeed=Attack Speed
-xat.config.attributes.attackspeed.amount.tooltip=Attribute Modifier Amount
+xat.config.attributes.attackspeed.tooltip=启用属性修改
+xat.config.attributes.attackspeed=攻击速度
+xat.config.attributes.attackspeed.amount.tooltip=属性修改量
 xat.config.attributes.attackspeed.amount=Attack Speed Amount
 xat.config.attributes.attackspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.attackspeed.operation=Attack Speed Operation
