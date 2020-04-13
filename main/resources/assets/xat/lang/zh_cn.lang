@@ -388,6 +388,8 @@ xat.config.titan_ring=泰坦之戒设置
 xat.config.titan_ring.tooltip=
 xat.config.titan_ring.jumpheight=跳跃高度调整
 xat.config.titan_ring.jumpheight.tooltip=调整玩家的跳跃高度和步长以适应体型
+xat.config.titan_ring.heavy=Heavy Player
+xat.config.titan_ring.heavy.tooltip=
 
 xat.config.damage_shield=荣耀之盾设置
 xat.config.damage_shield.tooltip=

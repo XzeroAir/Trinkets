@@ -48,7 +48,9 @@ public class TrinketTitanRing extends AccessoryBase {
 
 	@Override
 	public void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase player) {
-		EffectsTitanRing.TitanFall(event, player);
+		if (TrinketsConfig.SERVER.TITAN_RING.step_height) {
+			EffectsTitanRing.TitanFall(event, player);
+		}
 	}
 
 	@Override

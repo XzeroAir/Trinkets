@@ -7,6 +7,7 @@ import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.trinkets.shared.Attribs;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 
+//@formatter:off
 public class TitanRing {
 
 	private final String name = "titan_ring";
@@ -17,6 +18,11 @@ public class TitanRing {
 	@Name("01. Jump Height")
 	@LangKey(PREFIX + ".jumpheight")
 	public boolean step_height = true;
+
+	@Config.Comment("If the player should be too heavy to stay afloat")
+	@Name("02. Heavy Player")
+	@LangKey(PREFIX + "")
+	public boolean sink = true;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")

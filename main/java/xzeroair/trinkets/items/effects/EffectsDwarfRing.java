@@ -75,12 +75,6 @@ public class EffectsDwarfRing {
 		if (!TrinketHelper.AccessoryCheck(player, incompatible)) {
 			AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.DWARF_RING.Attributes, uuid);
 		}
-		//		if ((Loader.isModLoaded("artemislib"))) {
-		//			SizeAttribute.removeModifier(player);
-		//		}
-		//		if (TrinketHelper.AccessoryCheck(player, incompatible)) {
-		//			DwarfUnequip(stack, player);
-		//		}
 	}
 
 	public static void DwarfUnequip(ItemStack stack, EntityLivingBase player) {

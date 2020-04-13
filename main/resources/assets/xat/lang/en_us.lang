@@ -388,6 +388,8 @@ xat.config.titan_ring=Ring of the Titans Settings
 xat.config.titan_ring.tooltip=
 xat.config.titan_ring.jumpheight=Jump Height Adjustment
 xat.config.titan_ring.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
+xat.config.titan_ring.heavy=Heavy Player
+xat.config.titan_ring.heavy.tooltip=
 
 xat.config.damage_shield=Shield of Honor Settings
 xat.config.damage_shield.tooltip=

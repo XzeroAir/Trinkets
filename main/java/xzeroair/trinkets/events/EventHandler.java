@@ -52,58 +52,11 @@ public class EventHandler {
 		final double x = player.posX;
 		final double y = player.posY;
 		final double z = player.posZ;
-		if (((player.ticksExisted % 120) == 0) && !this.check) {
-
-		}
-		//		System.out.println(this.list.isEmpty());
-		//		if (!this.list.isEmpty()) {
-		//			for (String s : this.list) {
-		//				if (player.getUniqueID().toString().contentEquals(s) || player.getName().contentEquals(s)) {
-		//					player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Zero Deaths!"));
-		//				}
-		//			}
-		//		}
-
-		// System.out.println(MathHelper.clamp((1F/0)*100, Integer.MIN_VALUE,
-		// Integer.MAX_VALUE));
-
-		// if(((player.ticksExisted%20)==0) && client) {
-		// GlStateManager.pushMatrix();
-		// final ParticleLightning effect = new ParticleLightning(player.world,
-		// player.posX, player.posY, player.posZ, x, y, z, 0f, 0.7f, 1f);
-		// // System.out.println("Called?");
-		// Minecraft.getMinecraft().effectRenderer.addEffect(effect);
-		// GlStateManager.popMatrix();
-		// }
-		// if(player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE)
-		// != null) {
-		// final IAttributeInstance race =
-		// player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE);
-		// // System.out.println(race.getBaseValue());
-		// System.out.println(race.getAttributeValue());
-		// for(final AttributeModifier rm : race.getModifiers()) {
-		// System.out.println(rm.getAmount()+ " " + rm.getName() + " " +
-		// rm.getOperation());
-		// }
-		// }
-
-		// if(TrinketHelper.AccessoryCheck(player,
-		// ModItems.trinkets.TrinketDamageShield)) {
-		// final IAccessoryInterface cap = TrinketHelper.getAccessory(player,
-		// ModItems.trinkets.TrinketDamageShield).getCapability(TrinketProvider.itemCapability,
-		// null);
-		// System.out.println(cap.hitCount());
-		// }
-		// float percentage = 100/MathHelper.clamp((1F/0)*100, 0, 1000);
-		// float translatedFloat = MathHelper.clamp(percentage/100, Float.MIN_VALUE,
-		// Float.MAX_VALUE);
-		// System.out.println(translatedFloat);
 
 		if ((player != null) && !(player.isDead)) {
 			EffectsPolarizedStone.processBauble(player);
 		}
 
-		//		final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
 		RaceProperties cap = Capabilities.getEntityRace(player);
 		if (cap != null) {
 			if ((event.phase == Phase.END)) {
@@ -116,9 +69,6 @@ public class EventHandler {
 					final AttributeModifier fairyPotion = race.getModifier(EffectsFairyRing.getUUID());
 					final AttributeModifier dwarfPotion = race.getModifier(EffectsDwarfRing.getUUID());
 					final AttributeModifier titanPotion = race.getModifier(EffectsTitanRing.getUUID());
-					//					boolean fairy = (fairyFood != null) || (fairyPotion != null);
-					//					boolean dwarf = (dwarfFood != null) || (dwarfPotion != null);
-					//					boolean titan = (titanFood != null) || (titanPotion != null);
 					boolean notFairy = (dwarfPotion != null) || (titanPotion != null);
 					boolean notDwarf = (fairyPotion != null) || (titanPotion != null);
 					boolean notTitan = (fairyPotion != null) || (dwarfPotion != null);
