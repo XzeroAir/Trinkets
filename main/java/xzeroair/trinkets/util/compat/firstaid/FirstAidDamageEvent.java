@@ -1,5 +1,8 @@
 package xzeroair.trinkets.util.compat.firstaid;
 
+import java.util.List;
+import java.util.Map;
+
 import ichttt.mods.firstaid.api.CapabilityExtendedHealthSystem;
 import ichttt.mods.firstaid.api.damagesystem.AbstractPlayerDamageModel;
 import ichttt.mods.firstaid.api.event.FirstAidLivingDamageEvent;
@@ -9,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import xzeroair.trinkets.VIPHandler;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
@@ -20,8 +24,38 @@ public class FirstAidDamageEvent {
 	@SubscribeEvent
 	public void DamageEvent(FirstAidLivingDamageEvent event) {
 		if (event.getEntityPlayer() instanceof EntityPlayer) {
+			final EntityPlayer player = event.getEntityPlayer();
+			String string = "Ouch!";
+			if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getBro())) {
+				string = "Zero Deaths!";
+				if (!VIPHandler.getBro().isEmpty()) {
+					Map<String, List<String>> map = VIPHandler.getBro().get(0);
+					List<String> list = map.get(player.getUniqueID().toString());
+					if (!list.isEmpty() && (list.size() >= 2)) {
+						string = list.get(1);
+					}
+				}
+			} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
+				string = "The Panda Queen calls me!";
+				if (!VIPHandler.getPanda().isEmpty()) {
+					Map<String, List<String>> map = VIPHandler.getPanda().get(0);
+					List<String> list = map.get(player.getUniqueID().toString());
+					if (!list.isEmpty() && (list.size() >= 2)) {
+						string = list.get(1);
+					}
+				}
+			} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
+				string = "Nani!";
+				if (!VIPHandler.getVIP().isEmpty()) {
+					Map<String, List<String>> map = VIPHandler.getVIP().get(0);
+					List<String> list = map.get(player.getUniqueID().toString());
+					if (!list.isEmpty() && (list.size() >= 2)) {
+						string = list.get(1);
+					}
+				}
+			}
+			TextComponentString message = new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + string);
 			if (event.getSource().getTrueSource() instanceof EntityLiving) {
-				final EntityPlayer player = event.getEntityPlayer();
 				final AbstractPlayerDamageModel aidCap = player.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
 				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDamageShield)) {
 					final ItemStack stack = TrinketHelper.getAccessory(player, ModItems.trinkets.TrinketDamageShield);
@@ -34,29 +68,9 @@ public class FirstAidDamageEvent {
 								}
 								if (event.isCanceled()) {
 									if (TrinketsConfig.SERVER.DAMAGE_SHIELD.special) {
-										if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") || player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb")) {
-											player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Zero Deaths!"));
-										} else if (player.getUniqueID().toString().contentEquals("854adc0b-ae55-48d6-b7ba-e641a1eebf42")) {
-											player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Not Today Furries!"));
-										}
+										player.sendMessage(message);
 									}
 									aidCap.scheduleResync();
-								}
-							}
-						}
-						if (!TrinketsConfig.SERVER.DAMAGE_SHIELD.damage_ignore && TrinketsConfig.SERVER.DAMAGE_SHIELD.special) {
-							if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2")) {
-								// ||
-																														// player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb"))
-																														// {
-								if ((event.getAfterDamage().HEAD.currentHealth < 1) || (event.getAfterDamage().BODY.currentHealth < 1)) {
-									if (iCap.StoredExp() == 0) {
-										event.setCanceled(true);
-									}
-									if (event.isCanceled()) {
-										player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Zero Deaths!"));
-										aidCap.scheduleResync();
-									}
 								}
 							}
 						}

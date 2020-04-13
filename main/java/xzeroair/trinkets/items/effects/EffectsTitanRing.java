@@ -55,6 +55,9 @@ public class EffectsTitanRing {
 							SizeHandler.setSize(player, cap);
 						}
 					}
+					if (player.isInWater()) {
+						player.motionY -= 0.1f;
+					}
 					if (TrinketsConfig.SERVER.TITAN_RING.step_height != false) {
 						final float step = player.stepHeight;
 						final float f = 1.2f;

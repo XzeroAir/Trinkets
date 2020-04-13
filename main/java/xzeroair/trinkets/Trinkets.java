@@ -49,7 +49,7 @@ public class Trinkets {
 	public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
 	public static final int GUI = 0;
 
-	private static boolean checkedPlayerID = false;
+	private static boolean gotVIPs = false;
 
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
@@ -66,6 +66,12 @@ public class Trinkets {
 
 		//Network
 		NetworkHandler.init();
+
+		if (gotVIPs != true) {
+			System.out.println("Trinkets and Baubles: Generating VIP List");
+			VIPHandler.popVIPList();
+			gotVIPs = true;
+		}
 
 		proxy.preInit(event);
 

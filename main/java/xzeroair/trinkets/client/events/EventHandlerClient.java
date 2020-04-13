@@ -35,11 +35,14 @@ public class EventHandlerClient {
 	int TARGET = 0;
 	int AUX = 0;
 
+	private boolean check, check2, check3 = false;
+
 	@SubscribeEvent
 	public void clientTickEvent(TickEvent.ClientTickEvent event) {
 		if ((event.side == Side.CLIENT) && (event.phase == Phase.START)) {
 			final EntityPlayerSP player = Minecraft.getMinecraft().player;
 			if ((player != null)) {
+
 				if (TrinketsConfig.SERVER.GUI.guiEnabled && ModKeyBindings.TRINKET_GUI.isPressed()) {
 					NetworkHandler.INSTANCE.sendToServer(new OpenTrinketGui());
 				}
@@ -48,7 +51,6 @@ public class EventHandlerClient {
 		if (event.phase == Phase.END) {
 			final EntityPlayerSP player = Minecraft.getMinecraft().player;
 			if ((player != null)) {
-
 				if (ModKeyBindings.POLARIZED_STONE_ABILITY.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
 					this.Polarized_Ability = 1;
 				} else {

@@ -27,6 +27,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.VIPHandler;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
@@ -146,12 +147,12 @@ public class TrinketDamageShield extends AccessoryBase {
 		Minecraft.getMinecraft().getRenderItem().renderItem(this.getDefaultInstance(), ItemCameraTransforms.TransformType.NONE);
 		GlStateManager.popMatrix();
 
-		if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("cdfccefb-1a2e-4fb8-a3b5-041da27fde61")) {// ||
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield.png");
-		} else if (player.getName().contentEquals("XzeroAir")) {
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_potasticp.png");
-		} else if (player.getUniqueID().toString().contentEquals("854adc0b-ae55-48d6-b7ba-e641a1eebf42")) {
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_potasticp.png");
+		if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getBro())) {
+			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_bro.png");
+		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
+			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_panda.png");
+		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
+			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_vip.png");
 		} else {
 			this.background = null;
 		}
