@@ -388,10 +388,10 @@ xat.config.titan_ring=泰坦之戒设置
 xat.config.titan_ring.tooltip=
 xat.config.titan_ring.jumpheight=修改跳跃高度
 xat.config.titan_ring.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
-xat.config.titan_ring.heavy=Heavy Player
-xat.config.titan_ring.heavy.tooltip=If Enabled the player will sink faster in water and make it more difficult to swim up
-xat.config.titan_ring.trample=Trample Farmland
-xat.config.titan_ring.trample.tooltip=If Enabled the player will trample farmland in a 3x3 under the player
+xat.config.titan_ring.heavy=沉重的玩家
+xat.config.titan_ring.heavy.tooltip=如果启用玩家更快下沉且更难上浮。
+xat.config.titan_ring.trample=践踏耕地
+xat.config.titan_ring.trample.tooltip=如果启用玩家破坏身下 3 x 3 的耕地
 
 xat.config.damage_shield=荣耀之盾设置
 xat.config.damage_shield.tooltip=
