@@ -55,6 +55,16 @@ public class EffectsTitanRing {
 							SizeHandler.setSize(player, cap);
 						}
 					}
+					if (TrinketsConfig.SERVER.TITAN_RING.sink && player.isInWater()) {
+						if (player instanceof EntityPlayer) {
+							EntityPlayer playerEntity = (EntityPlayer) player;
+							if (!playerEntity.isCreative()) {
+								player.motionY -= 0.2f;
+							}
+						} else {
+							player.motionY -= 0.1f;
+						}
+					}
 					if (TrinketsConfig.SERVER.TITAN_RING.step_height != false) {
 						final float step = player.stepHeight;
 						final float f = 1.2f;
@@ -97,12 +107,6 @@ public class EffectsTitanRing {
 		if (!TrinketHelper.AccessoryCheck(player, incompatible)) {
 			AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.TITAN_RING.Attributes, uuid);
 		}
-		//		if ((Loader.isModLoaded("artemislib"))) {
-		//			SizeAttribute.removeModifier(player);
-		//		}
-		//		if (TrinketHelper.AccessoryCheck(player, incompatible)) {
-		//			TitanUnequip(stack, player);
-		//		}
 	}
 
 	public static void TitanUnequip(ItemStack stack, EntityLivingBase player) {

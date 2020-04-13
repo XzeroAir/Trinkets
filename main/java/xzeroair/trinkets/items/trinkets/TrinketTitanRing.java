@@ -42,13 +42,14 @@ public class TrinketTitanRing extends AccessoryBase {
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.TITAN_RING.Attributes, uuid);
 		EffectsTitanRing.TitansTicks(player);
 	}
 
 	@Override
 	public void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase player) {
-		EffectsTitanRing.TitanFall(event, player);
+		if (TrinketsConfig.SERVER.TITAN_RING.step_height) {
+			EffectsTitanRing.TitanFall(event, player);
+		}
 	}
 
 	@Override

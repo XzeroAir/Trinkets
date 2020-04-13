@@ -140,6 +140,6 @@ public class TrinketEnderTiara extends AccessoryBase {
 
 	@Override
 	public boolean hasDiscription(ItemStack stack) {
-		return true;
+		return false;
 	}
 }

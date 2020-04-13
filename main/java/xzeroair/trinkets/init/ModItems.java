@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import xzeroair.trinkets.items.GemGlowing;
 import xzeroair.trinkets.items.IngotGlowing;
 import xzeroair.trinkets.items.PowderGlowing;
+import xzeroair.trinkets.items.baubles.BaubleArcingOrb;
 import xzeroair.trinkets.items.baubles.BaubleDamageShield;
 import xzeroair.trinkets.items.baubles.BaubleDragonsEye;
 import xzeroair.trinkets.items.baubles.BaubleDwarfRing;
@@ -15,7 +16,6 @@ import xzeroair.trinkets.items.baubles.BaubleFairyRing;
 import xzeroair.trinkets.items.baubles.BaubleGlowRing;
 import xzeroair.trinkets.items.baubles.BaubleGreaterInertia;
 import xzeroair.trinkets.items.baubles.BaubleInertiaNull;
-import xzeroair.trinkets.items.baubles.BaubleLightningBoots;
 import xzeroair.trinkets.items.baubles.BaublePoison;
 import xzeroair.trinkets.items.baubles.BaublePolarized;
 import xzeroair.trinkets.items.baubles.BaubleSea;
@@ -25,6 +25,7 @@ import xzeroair.trinkets.items.baubles.BaubleWitherRing;
 import xzeroair.trinkets.items.foods.Dwarf_Stout;
 import xzeroair.trinkets.items.foods.Fairy_Food;
 import xzeroair.trinkets.items.foods.Titan_Spirit;
+import xzeroair.trinkets.items.trinkets.TrinketArcingOrb;
 import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
 import xzeroair.trinkets.items.trinkets.TrinketDwarfRing;
@@ -33,7 +34,6 @@ import xzeroair.trinkets.items.trinkets.TrinketFairyRing;
 import xzeroair.trinkets.items.trinkets.TrinketGlowRing;
 import xzeroair.trinkets.items.trinkets.TrinketGreaterInertia;
 import xzeroair.trinkets.items.trinkets.TrinketInertiaNull;
-import xzeroair.trinkets.items.trinkets.TrinketLightningBoots;
 import xzeroair.trinkets.items.trinkets.TrinketPoison;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.items.trinkets.TrinketSea;
@@ -57,6 +57,7 @@ public class ModItems {
 	public static final String EnderTiara 		= "ender_tiara";
 	public static final String DamageShield		= "damage_shield";
 	public static final String LightningBoots	= "lightning_boots";
+	public static final String ArcingOrb		= "arcing_orb";
 	public static final String TitanRing		= "titan_ring";
 
 	//top of mod class
@@ -100,7 +101,7 @@ public class ModItems {
 		public static final Item BaublePoison 			= new BaublePoison(Poison);
 		public static final Item BaubleEnderTiara 		= new BaubleEnderTiara(EnderTiara);
 		public static final Item BaubleDamageShield		= new BaubleDamageShield(DamageShield);
-		public static final Item BaubleLightningBoots	= new BaubleLightningBoots(LightningBoots);
+		public static final Item BaubleLightningBoots	= new BaubleArcingOrb(ArcingOrb);
 		public static final Item BaubleTitanRing		= new BaubleTitanRing(TitanRing);
 
 	}
@@ -121,7 +122,7 @@ public class ModItems {
 		public static final Item TrinketPoison 			= new TrinketPoison(Poison);
 		public static final Item TrinketEnderTiara 		= new TrinketEnderTiara(EnderTiara);
 		public static final Item TrinketDamageShield	= new TrinketDamageShield(DamageShield);
-		public static final Item TrinketLightningBoots	= new TrinketLightningBoots(LightningBoots);
+		public static final Item TrinketLightningBoots	= new TrinketArcingOrb(LightningBoots);
 		public static final Item TrinketTitanRing		= new TrinketTitanRing(TitanRing);
 	}
 

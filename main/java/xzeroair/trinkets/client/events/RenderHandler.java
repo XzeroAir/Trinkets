@@ -84,12 +84,16 @@ public class RenderHandler {
 			if ((cap.getTrans() == true)) {
 				GlStateManager.pushMatrix();
 				if ((Loader.isModLoaded("artemislib")) && TrinketsConfig.compat.artemislib) {
+					float W = 1F;
+					if (cap.getSize() < 30) {
+						W = 0.5F;
+					}
 					if (cap.getSize() != cap.getTarget()) {
-						GlStateManager.scale(scale, scale, scale);
+						GlStateManager.scale(scale * W, scale, scale * W);
 						GlStateManager.translate((event.getX() / scale) - event.getX(), (event.getY() / scale) - event.getY(), (event.getZ() / scale) - event.getZ());
 					} else {
 						if (cap.getSize() == 25) {
-							GlStateManager.scale(0.5, 1, 0.5);
+							GlStateManager.scale(W, 1, W);
 						}
 					}
 					if (player.isSneaking()) {

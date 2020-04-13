@@ -373,7 +373,7 @@ xat.config.dwarf_ring.blocks.minimum.xp=最低额外经验
 xat.config.dwarf_ring.blocks.minimum.xp.tooltip=方块是否至少给予 1 经验
 xat.config.dwarf_ring.blocks.minimum.xp.list=最低经验方块列表
 xat.config.dwarf_ring.blocks.minimum.xp.list.tooltip=这个列表里的方块在被破坏后总会给予 1 经验
-xat.config.dwarf_ring.fortune=Natural Fortune
+xat.config.dwarf_ring.fortune=自然财富
 xat.config.dwarf_ring.fortune.tooltip=Should the Ring of the Dwarves Have a Natural Fortune Ability
 xat.config.dwarf_ring.fortune.stacking=Natural Fortune Stacking
 xat.config.dwarf_ring.fortune.stacking.tooltip=Should the Ring of the Dwarves Natural Fortune Ability Stack with the Fortune Enchantment?
@@ -506,62 +506,62 @@ xat.config.attributes.armor.operation.tooltip=决定修改护甲所用的数字
 xat.config.attributes.armor.operation=护甲 Operation
 
 xat.config.attributes.armortoughness.tooltip=启用属性修改
-xat.config.attributes.armortoughness=护甲韧性
+xat.config.attributes.armortoughness=韧性
 xat.config.attributes.armortoughness.amount.tooltip=属性修改量
-xat.config.attributes.armortoughness.amount=护甲韧性量
+xat.config.attributes.armortoughness.amount=韧性量
 xat.config.attributes.armortoughness.operation.tooltip=决定修改护甲韧性所用的数字
-xat.config.attributes.armortoughness.operation=Armor Toughness Operation
+xat.config.attributes.armortoughness.operation=韧性 Operation
 
 xat.config.attributes.attackspeed.tooltip=启用属性修改
 xat.config.attributes.attackspeed=攻击速度
 xat.config.attributes.attackspeed.amount.tooltip=属性修改量
-xat.config.attributes.attackspeed.amount=Attack Speed Amount
-xat.config.attributes.attackspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
+xat.config.attributes.attackspeed.amount=攻击速度值
+xat.config.attributes.attackspeed.operation.tooltip=决定修改攻击速度所用的数字
 xat.config.attributes.attackspeed.operation=Attack Speed Operation
 
-xat.config.attributes.damage.tooltip=Enable Attribute Modifier
-xat.config.attributes.damage=Damage
+xat.config.attributes.damage.tooltip=启用属性修改
+xat.config.attributes.damage=伤害
 xat.config.attributes.damage.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.damage.amount=Damage Amount
 xat.config.attributes.damage.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.damage.operation=Damage Operation
 
-xat.config.attributes.health.tooltip=Enable Attribute Modifier
-xat.config.attributes.health=Health
+xat.config.attributes.health.tooltip=启用属性修改
+xat.config.attributes.health=生命
 xat.config.attributes.health.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.health.amount=Health Amount
 xat.config.attributes.health.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.health.operation=Health Operation
 
-xat.config.attributes.knockback.tooltip=Enable Attribute Modifier
-xat.config.attributes.knockback=Knockback
+xat.config.attributes.knockback.tooltip=启用属性修改
+xat.config.attributes.knockback=击退
 xat.config.attributes.knockback.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.knockback.amount=Knockback Amount
 xat.config.attributes.knockback.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.knockback.operation=Knockback Operation
 
-xat.config.attributes.luck.tooltip=Enable Attribute Modifier
-xat.config.attributes.luck=Luck
+xat.config.attributes.luck.tooltip=启用属性修改
+xat.config.attributes.luck=幸运
 xat.config.attributes.luck.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.luck.amount=Luck Amount
 xat.config.attributes.luck.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.luck.operation=Luck Operation
 
-xat.config.attributes.reach.tooltip=Enable Attribute Modifier
+xat.config.attributes.reach.tooltip=启用属性修改
 xat.config.attributes.reach=Reach
 xat.config.attributes.reach.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.reach.amount=Reach Amount
 xat.config.attributes.reach.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.reach.operation=Reach Operation
 
-xat.config.attributes.movementspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.movementspeed=Movement Speed
+xat.config.attributes.movementspeed.tooltip=启用属性修改
+xat.config.attributes.movementspeed=移动速度
 xat.config.attributes.movementspeed.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.movementspeed.amount=Movement Speed Amount
 xat.config.attributes.movementspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.movementspeed.operation=Movement Speed Operation
 
-xat.config.attributes.swimspeed.tooltip=Enable Attribute Modifier
+xat.config.attributes.swimspeed.tooltip=启用属性修改
 xat.config.attributes.swimspeed=游泳速度
 xat.config.attributes.swimspeed.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.swimspeed.amount=Swim Speed Amount

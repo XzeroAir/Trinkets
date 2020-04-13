@@ -23,9 +23,9 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.items.base.AccessoryBase;
 
-public class TrinketLightningBoots extends AccessoryBase {
+public class TrinketArcingOrb extends AccessoryBase {
 
-	public TrinketLightningBoots(String name) {
+	public TrinketArcingOrb(String name) {
 		super(name);
 	}
 

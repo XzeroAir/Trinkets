@@ -1,5 +1,8 @@
 package xzeroair.trinkets.items.effects;
 
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,6 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import scala.util.Random;
+import xzeroair.trinkets.VIPHandler;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -41,15 +45,41 @@ public class EffectsDamageShield {
 		if (event.getSource().canHarmInCreative()) {
 			return;
 		}
+		String string = "Ow!";
+		if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getBro())) {
+			string = "Reeeeeeeee!";
+			if (!VIPHandler.getBro().isEmpty()) {
+				Map<String, List<String>> map = VIPHandler.getBro().get(0);
+				List<String> list = map.get(player.getUniqueID().toString());
+				if (!list.isEmpty()) {
+					string = list.get(0);
+				}
+			}
+		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
+			string = "For The Panda Queen!";
+			if (!VIPHandler.getPanda().isEmpty()) {
+				Map<String, List<String>> map = VIPHandler.getPanda().get(0);
+				List<String> list = map.get(player.getUniqueID().toString());
+				if (!list.isEmpty()) {
+					string = list.get(0);
+				}
+			}
+		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
+			string = "Omae wa mou shindeiru!";
+			if (!VIPHandler.getVIP().isEmpty()) {
+				Map<String, List<String>> map = VIPHandler.getVIP().get(0);
+				List<String> list = map.get(player.getUniqueID().toString());
+				if (!list.isEmpty()) {
+					string = list.get(0);
+				}
+			}
+		}
+		TextComponentString message = new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + string);
 		TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 		int rChance = new Random().nextInt(TrinketsConfig.SERVER.DAMAGE_SHIELD.compat.firstaid.chance_headshots);
 		if (TrinketsConfig.SERVER.DAMAGE_SHIELD.damage_ignore) {
 			if (TrinketsConfig.SERVER.DAMAGE_SHIELD.compat.firstaid.chance_ignore) {
 				iCap.setStoredExp(rChance);
-				if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb")) {
-					rChance = new Random().nextInt(4);
-					iCap.setStoredExp(rChance);
-				}
 			}
 			if (iCap.Count() < TrinketsConfig.SERVER.DAMAGE_SHIELD.hits) {
 				if (event.getAmount() > 1) {
@@ -61,29 +91,7 @@ public class EffectsDamageShield {
 				iCap.setCount(0);
 				CapabilityProperties.setDamageShield_HitCount(iCap.Count());
 				if (TrinketsConfig.SERVER.DAMAGE_SHIELD.special) {
-					if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") || player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb")) {
-						player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Reeeeee!"));
-					} else if (player.getUniqueID().toString().contentEquals("854adc0b-ae55-48d6-b7ba-e641a1eebf42")) {
-						player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "1, 2, 3, no, 4 Furries!"));
-					}
-				}
-				event.setAmount(0);
-			}
-		}
-		if (!TrinketsConfig.SERVER.DAMAGE_SHIELD.damage_ignore && TrinketsConfig.SERVER.DAMAGE_SHIELD.special) {
-			if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb")) {
-				rChance = new Random().nextInt(4);
-				iCap.setStoredExp(rChance);
-			}
-			if (iCap.Count() < 4) {
-				if (event.getAmount() > 1) {
-					iCap.setCount(iCap.Count() + 1);
-				}
-			}
-			if (iCap.Count() >= 4) {
-				iCap.setCount(0);
-				if (player.getUniqueID().toString().contentEquals("7f184d63-9f9c-47a7-be03-8382145fb2c2") || player.getUniqueID().toString().contentEquals("f5f28614-4e8b-4788-ae78-b020493dc5cb")) {
-					player.sendMessage(new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + "Reeeeee!"));
+					player.sendMessage(message);
 				}
 				event.setAmount(0);
 			}
