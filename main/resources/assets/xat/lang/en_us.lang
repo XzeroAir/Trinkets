@@ -389,7 +389,9 @@ xat.config.titan_ring.tooltip=
 xat.config.titan_ring.jumpheight=Jump Height Adjustment
 xat.config.titan_ring.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
 xat.config.titan_ring.heavy=Heavy Player
-xat.config.titan_ring.heavy.tooltip=
+xat.config.titan_ring.heavy.tooltip=If Enabled the player will sink faster in water and make it more difficult to swim up
+xat.config.titan_ring.trample=Trample Farmland
+xat.config.titan_ring.trample.tooltip=If Enabled the player will trample farmland in a 3x3 under the player
 
 xat.config.damage_shield=Shield of Honor Settings
 xat.config.damage_shield.tooltip=
