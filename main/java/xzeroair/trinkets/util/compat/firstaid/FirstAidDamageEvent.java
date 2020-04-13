@@ -34,7 +34,7 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getBro().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getBro().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty()) {
+							if (!list.isEmpty() && (list.size() >= 2)) {
 								string = list.get(1);
 							}
 						}
@@ -43,7 +43,7 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getPanda().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getPanda().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty()) {
+							if (!list.isEmpty() && (list.size() >= 2)) {
 								string = list.get(1);
 							}
 						}
@@ -52,7 +52,7 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getVIP().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getVIP().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty()) {
+							if (!list.isEmpty() && (list.size() >= 2)) {
 								string = list.get(1);
 							}
 						}

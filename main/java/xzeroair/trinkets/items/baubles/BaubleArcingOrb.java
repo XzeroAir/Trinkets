@@ -6,11 +6,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.items.trinkets.TrinketLightningBoots;
+import xzeroair.trinkets.items.trinkets.TrinketArcingOrb;
 
-public class BaubleLightningBoots extends TrinketLightningBoots implements IBauble {
+public class BaubleArcingOrb extends TrinketArcingOrb implements IBauble {
 
-	public BaubleLightningBoots(String name) {
+	public BaubleArcingOrb(String name) {
 		super(name);
 		if(ModItems.trinkets.ITEMS.contains(this)) {
 			ModItems.trinkets.ITEMS.remove(this);

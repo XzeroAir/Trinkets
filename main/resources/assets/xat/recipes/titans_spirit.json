@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#!#",
+        "*@*",
+        "#$#"
+    ],
+    "key": {
+        "#": {
+            "item": "xat:glowing_gem"
+        },
+        "@": {
+            "item": "xat:titan_ring"
+        }, 
+        "*": {
+            "item": "minecraft:dragon_breath"
+        },
+        "!": {
+            "item": "minecraft:potato"
+        },
+        "$": {
+            "item": "minecraft:golden_apple",
+            "data": 0
+        }
+    },
+    "result": {
+        "item": "xat:titan_spirit"
+    }
+}

@@ -56,21 +56,21 @@ public class TrinketDamageShield extends AccessoryBase {
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.DAMAGE_SHIELD.Attributes, this.uuid);
+		AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.DAMAGE_SHIELD.Attributes, uuid);
 		if (!player.isPotionActive(MobEffects.RESISTANCE)) {
 			player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 200, 0, false, false));
-			this.hasResist = false;
+			hasResist = false;
 		}
 		if (player.isPotionActive(MobEffects.RESISTANCE)) {
 			final int dur = player.getActivePotionEffect(MobEffects.RESISTANCE).getDuration();
 			final int amp = player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier();
-			if ((dur < 200) && !(amp > 0) && (this.hasResist == false)) {
+			if ((dur < 200) && !(amp > 0) && (hasResist == false)) {
 				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 200, 0, false, false));
-				this.hasResist = false;
+				hasResist = false;
 			}
-			if (((dur > 200) && (amp < 2)) && (this.hasResist == false)) {
+			if (((dur > 200) && (amp < 2)) && (hasResist == false)) {
 				player.getActivePotionEffect(MobEffects.RESISTANCE).combine(new PotionEffect(MobEffects.RESISTANCE, dur + 1, amp + 1, false, false));
-				this.hasResist = true;
+				hasResist = true;
 			}
 		}
 	}
@@ -96,7 +96,7 @@ public class TrinketDamageShield extends AccessoryBase {
 
 	@Override
 	public void eventPlayerLogout(ItemStack stack, EntityLivingBase player) {
-		AttributeHelper.removeAttributes(player, this.uuid);
+		AttributeHelper.removeAttributes(player, uuid);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class TrinketDamageShield extends AccessoryBase {
 				super.playerEquipped(stack, player);
 			} else {
 				player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-				AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.DAMAGE_SHIELD.Attributes, this.uuid);
+				AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.DAMAGE_SHIELD.Attributes, uuid);
 			}
 		}
 	}
@@ -119,10 +119,10 @@ public class TrinketDamageShield extends AccessoryBase {
 			if (player.isPotionActive(MobEffects.RESISTANCE)) {
 				player.removeActivePotionEffect(MobEffects.RESISTANCE);
 				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 30, 0, false, false));
-				this.hasResist = false;
+				hasResist = false;
 			}
 		}
-		AttributeHelper.removeAttributes(player, this.uuid);
+		AttributeHelper.removeAttributes(player, uuid);
 		super.playerUnequipped(stack, player);
 	}
 
@@ -148,21 +148,21 @@ public class TrinketDamageShield extends AccessoryBase {
 		GlStateManager.popMatrix();
 
 		if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getBro())) {
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_bro.png");
+			background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_bro.png");
 		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_panda.png");
+			background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_panda.png");
 		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
-			this.background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_vip.png");
+			background = new ResourceLocation("xat:textures/awesomesauce/damage_shield_vip.png");
 		} else {
-			this.background = null;
+			background = null;
 		}
-		if (this.background != null) {
+		if (background != null) {
 			GlStateManager.pushMatrix();
 			if (player.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
 				GlStateManager.translate(0F, 0F, -0.07F);
 			}
 			GlStateManager.translate(0, 0, -0.95F);
-			Minecraft.getMinecraft().renderEngine.bindTexture(this.background);
+			Minecraft.getMinecraft().renderEngine.bindTexture(background);
 			final float size = 0.165f;
 			Draw(0.065, 0.14, 0.8, 0, 0, size, size, 6.0f, 1, 1, 1, 1);
 			GlStateManager.popMatrix();
