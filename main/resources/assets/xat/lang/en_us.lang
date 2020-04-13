@@ -16,8 +16,8 @@ xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Hold Shift>
 xat.holdctrl=<Hold Ctrl>
-xat.noattributes=This Item Doesn't give any Attribute Modifiers
-xat.onequip=While Equipped:
+xat.noattributes=This item doesn't give any attribute modifiers.
+xat.onequip=While equipped:
 xat.tooltip.attackspeed=Attack Speed
 xat.tooltip.attackdamage=Attack Damage
 xat.tooltip.health=Health
@@ -57,40 +57,40 @@ item.glow_ring.0.blindness=#gold:Immunity to Blindness
 item.fairy_ring.0.name=Ring of the Fairies
 item.fairy_ring.0.tooltip1=#gold:Reduces size to 1/4th of normal
 item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=#gold:Grants Creative Flight
+item.fairy_ring.0.creativeflight=#gold:Grants Creative flight
 
 item.dwarf_ring.0.name=Ring of the Dwarves
 item.dwarf_ring.0.tooltip1=#gold:Reduces size to 3/4th of normal
 item.dwarf_ring.0.tooltip2=@fortune:
 item.dwarf_ring.0.tooltip3=@skilledminer:
 item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=#gold:Pseudo Fortune
-item.dwarf_ring.0.skilledminer=#darkgreen:Skilled Miner
-item.dwarf_ring.0.staticminer=#darkgreen:Static Mining Speed
+item.dwarf_ring.0.fortune=#gold:Pseudo-Fortune
+item.dwarf_ring.0.skilledminer=#darkgreen:Skilled miner
+item.dwarf_ring.0.staticminer=#darkgreen:Static mining speed
 
 item.titan_ring.0.name=Ring of the Titans
 item.titan_ring.0.tooltip1=#gold:Increases player size to 3x of normal
 
 item.weightless_stone.0.name=Stone of Negative Gravity
 item.weightless_stone.0.tooltip1=#darkgreen:Makes gravity not affect you when worn
-item.weightless_stone.0.tooltip2=<#yellow:Left Click#reset:> to go #darkgreen:Up
-item.weightless_stone.0.tooltip3=<#yellow:Sneak#reset:> + <#yellow:Left Click#reset:> to go #darkgreen:Down
+item.weightless_stone.0.tooltip2=<#yellow:Left Click#reset:> to go #darkgreen:up
+item.weightless_stone.0.tooltip3=<#yellow:Sneak#reset:> + <#yellow:Left Click#reset:> to go #darkgreen:down
 item.weightless_stone.0.tooltip4=#green:Grants Levitation while held
 
 item.inertia_null_stone.0.name=Stone of Inertia Null
-item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold: Resistance to Fall Damage
+item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold: Resistance to fall damage
 
 item.greater_inertia_stone.0.name=Stone of Greater Inertia
-item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold: Resistance to Fall Damage
+item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold: Resistance to fall damage
 
 item.sea_stone.0.name=Stone of the Sea
 item.sea_stone.0.tooltip1=@bubbles:
 item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=#gold:Infinite Oxygen at #reset:[#darkaqua:$bubbles:#reset:]#gold: Bubbles
+item.sea_stone.0.bubbles=#gold:Infinite oxygen at #reset:[#darkaqua:$bubbles:#reset:]#gold: bubbles
 item.sea_stone.0.betterswimming=#darkgreen:Enhanced Swimming
 item.sea_stone.0.compat.tan=@tanthirst:
 item.sea_stone.0.tanthirst=#gold:Immunity to Thirst
-item.sea_stone.0.compat.enhancedvisuals=Disables the Blur when Entering Water
+item.sea_stone.0.compat.enhancedvisuals=Disables the blur when entering water
 
 item.polarized_stone.0.name=Polarized Stone
 item.polarized_stone.0.tooltip1=@collect:
@@ -100,8 +100,8 @@ item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#res
 item.polarized_stone.0.collect=#gold:Pulls nearby items @collectxp:
 item.polarized_stone.0.collectxp=and XP Orbs $collecttoggle:
 item.polarized_stone.0.repel=#gold:Repels arrows $repeltoggle:
-item.polarized_stone.0.magnetmode=Collection Mode $collecttoggle:
-item.polarized_stone.0.repelmode=Repel Mode $repeltoggle:
+item.polarized_stone.0.magnetmode=Collection mode $collecttoggle:
+item.polarized_stone.0.repelmode=Repel mode $repeltoggle:
 
 item.dragons_eye.0.name=Dragon's Eye
 item.dragons_eye.0.tooltip1=#gold:Grants Fire Resistance
@@ -114,23 +114,23 @@ item.dragons_eye.0.treasurefinder.on=#gold:I need more#white: $target:#gold: for
 item.dragons_eye.0.treasurefinder.notfound=#gold:I need more #red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:
 item.dragons_eye.0.compat.tan=@heatimmune:
-item.dragons_eye.0.heatimmune=#gold:Immunity to Heat
-item.dragons_eye.0.compat.enhancedvisuals=Disables Fire Splat effect
+item.dragons_eye.0.heatimmune=#gold:Immunity to heat
+item.dragons_eye.0.compat.enhancedvisuals=Disables fire splat effect
 
 item.poison_stone.0.name=Poison Stone
 item.poison_stone.0.tooltip1=#gold:Immunity To Poison
 item.poison_stone.0.tooltip2=#gold:Immunity to Hunger
 item.poison_stone.0.tooltip3=@poison:
 item.poison_stone.0.tooltip4=@bonusdamage:
-item.poison_stone.0.poison=#darkaqua:$poisonchance:#darkgreen: Chance to Poison Enemies
+item.poison_stone.0.poison=#darkaqua:$poisonchance:#darkgreen: Chance to poison enemies
 item.poison_stone.0.bonusdamage=#darkgreen:Deals $damagemultiplier: Damage to poisoned enemies
 
 item.wither_ring.0.name=Wither Ring
 item.wither_ring.0.tooltip1=#gold:Immunity to Wither
 item.wither_ring.0.tooltip2=@wither:
 item.wither_ring.0.tooltip3=@leech:
-item.wither_ring.0.wither=#darkaqua:$witherchance:#darkgreen: Chance to Wither Enemies
-item.wither_ring.0.leech=#darkgreen:Heals #darkaqua:$leechamount:#darkgreen: Hearts when attacking withered enemies
+item.wither_ring.0.wither=#darkaqua:$witherchance:#darkgreen: Chance to wither enemies
+item.wither_ring.0.leech=#darkgreen:Heals #darkaqua:$leechamount:#darkgreen: hearts when attacking withered enemies
 
 item.ender_tiara.0.name=Ender Queen's Crown
 item.ender_tiara.0.tooltip1=#gold:Royalty
@@ -142,14 +142,14 @@ item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:Chance to ignore damag
 item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:Chance to spawn an Enderman
 item.ender_tiara.0.endermenfollow=and follow you
 item.ender_tiara.0.waterhurts=#red:Weakness to water
-item.ender_tiara.0.compat.tan=#gold:Immunity to Cold
-item.ender_tiara.0.compat.enhancedvisuals=Disabled Endermen static effect
+item.ender_tiara.0.compat.tan=#gold:Immunity to cold
+item.ender_tiara.0.compat.enhancedvisuals=Disabled endermen static effect
 
 item.damage_shield.0.name=Shield of Honor
 item.damage_shield.0.tooltip1=@explosionresist:
 item.damage_shield.0.tooltip2=@damageignored:
 item.damage_shield.0.explosionresist=#darkaqua:$explosionresistamount: #gold:Explosion damage resistance 
-item.damage_shield.0.damageignored=#gold:Damage Ignored: #darkaqua:$damageignoredhitcount:
+item.damage_shield.0.damageignored=#gold:Damage ignored: #darkaqua:$damageignoredhitcount:
 item.damage_shield.0.compat.firstaid=@headshots:
 item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: Chance to ignore headshot
 item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
@@ -179,30 +179,30 @@ xat.item.potion.enhanced.tooltip2=#green:Used to craft the Potion of Restoration
 xat.item.potion.enhanced.tooltip3=#green:Used to craft the Fairy Transformation Potion
 xat.item.potion.enhanced.tooltip4=#green:Used to craft the Dwarf Transformation Potion
 
-potion.effect.restorative=Restoration Potion
+potion.effect.restorative=Potion of Restoration
 splash_potion.effect.restorative=Splash Potion of Restoration
 lingering_potion.effect.restorative=Lingering Potion of Restoration
 tipped_arrow.effect.restorative=Tipped Arrow of Restoration
 effect.restorative=Restorative
-xat.item.potion.restorative.tooltip1=#gold:Heals 10 Hearts
-xat.item.potion.restorative.tooltip2=#gold:Removes Potion Effects
-xat.item.potion.restorative.tooltip3=#gold:Removes Transformative Effects from Enchanted Food
+xat.item.potion.restorative.tooltip1=#gold:Heals 10 hearts
+xat.item.potion.restorative.tooltip2=#gold:Removes potion effects
+xat.item.potion.restorative.tooltip3=#gold:Removes transformative effects from enchanted food
 
-potion.effect.fairy=Fairy Transformation Potion
+potion.effect.fairy=Potion of Fairy Transformation
 splash_potion.effect.fairy=Splash Potion of Fairy Transformation
 lingering_potion.effect.fairy=Lingering Potion of Fairy Transformation
 tipped_arrow.effect.fairy=Tipped Arrow of Fairy Transformation
 effect.fairy=Fairy Transformation
 xat.item.potion.fairy.tooltip1=Become a Fairy for $fairyticks: seconds
 
-potion.effect.dwarf=Dwarf Transformation Potion
+potion.effect.dwarf=Potion of Dwarf Transformation
 splash_potion.effect.dwarf=Splash Potion of Dwarf Transformation
 lingering_potion.effect.dwarf=Lingering Potion of Dwarf Transformation
 tipped_arrow.effect.dwarf=Tipped Arrow of Dwarf Transformation
 effect.dwarf=Dwarf Transformation
 xat.item.potion.dwarf.tooltip1=Become a Dwarf for $dwarfticks: seconds
 
-potion.effect.titan=Titan Transformation Potion
+potion.effect.titan=Potion of Titan Transformation
 splash_potion.effect.titan=Splash Potion of Titan Transformation
 lingering_potion.effect.titan=Lingering Potion of Titan Transformation
 tipped_arrow.effect.titan=Tipped Arrow of Titan Transformation
