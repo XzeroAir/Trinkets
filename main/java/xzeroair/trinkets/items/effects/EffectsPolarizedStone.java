@@ -5,11 +5,11 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import xzeroair.trinkets.api.TrinketHelper;
@@ -153,7 +153,7 @@ public class EffectsPolarizedStone {
 				final AxisAlignedBB bBox = entity.getEntityBoundingBox();
 				final List<Entity> entityList = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(2));
 				for (final Entity arrow : entityList) {
-					if (arrow instanceof IProjectile) {
+					if (arrow instanceof EntityArrow) {
 						arrow.motionX = 0;
 						arrow.motionZ = 0;
 						arrow.motionY *= 1;
@@ -165,8 +165,8 @@ public class EffectsPolarizedStone {
 
 	public static boolean onHotbar(EntityPlayer player) {
 		boolean onHotBar = false;
-//		for (int i = 0; i < player.inventory.getHotbarSize(); i++) {
-//			if (player.inventory.isHotbar(i)) {
+		//		for (int i = 0; i < player.inventory.getHotbarSize(); i++) {
+		//			if (player.inventory.isHotbar(i)) {
 		for (int i = 0; i < InventoryPlayer.getHotbarSize(); i++) {
 			if (InventoryPlayer.isHotbar(i)) {
 				if (player.inventory.getStackInSlot(i).getItem() instanceof TrinketPolarized) {
