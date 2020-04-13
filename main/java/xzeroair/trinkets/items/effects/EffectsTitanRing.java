@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.api.TrinketHelper;
@@ -53,6 +58,22 @@ public class EffectsTitanRing {
 								SizeAttribute.removeModifier(player);
 							}
 							SizeHandler.setSize(player, cap);
+						}
+					}
+					if (TrinketsConfig.SERVER.TITAN_RING.trample) {
+						AxisAlignedBB aabb = player.getEntityBoundingBox().expand(1, 0, 1);
+						final int i = MathHelper.floor(aabb.minX);
+						final int j = MathHelper.floor(aabb.maxX + 1.0D);
+						final int i1 = MathHelper.floor(aabb.minZ);
+						final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
+						for (int k1 = i; k1 < j; ++k1) {
+							for (int i2 = i1; i2 < j1; ++i2) {
+								final BlockPos pos = new BlockPos(k1, player.getPosition().getY() - 1, i2);
+								IBlockState block = player.world.getBlockState(pos);
+								if (player.world.getBlockState(pos) == Blocks.FARMLAND.getDefaultState()) {
+									player.world.setBlockState(pos, Blocks.DIRT.getDefaultState());
+								}
+							}
 						}
 					}
 					if (TrinketsConfig.SERVER.TITAN_RING.sink && player.isInWater()) {

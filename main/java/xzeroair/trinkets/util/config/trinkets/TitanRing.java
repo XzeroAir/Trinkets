@@ -21,8 +21,13 @@ public class TitanRing {
 
 	@Config.Comment("If the player should be too heavy to stay afloat")
 	@Name("02. Heavy Player")
-	@LangKey(PREFIX + "")
+	@LangKey(PREFIX + ".heavy")
 	public boolean sink = true;
+
+	@Config.Comment("If Enabled the player will trample farmland")
+	@Name("03. Trample Farmland")
+	@LangKey(PREFIX + ".trample")
+	public boolean trample = true;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
