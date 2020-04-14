@@ -51,6 +51,16 @@ public class TrinketsConfig {
 		@Name("Render Trinkets")
 		@LangKey(PREFIX + ".client.render.trinkets.all")
 		public boolean rendering = true;
+		
+		@Config.Comment("When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?")
+		@Name("Replace EntityRenderer")
+		@LangKey(PREFIX + ".client.entity.renderer.replace")
+		public boolean entityRenderer = true;
+		
+		@Config.Comment("When Trinket and Baubles Replaces the EntityRenderer is breaks some settings with Optifine, Specifically Fog, use this to turn Fog on or off")
+		@Name("EntityRenderer Fog")
+		@LangKey(PREFIX + ".client.entity.renderer.replace.fog")
+		public boolean RendererFog = true;
 
 		@Name("Dragon's Eye Settings")
 		@LangKey(PREFIX + ".dragons_eye")

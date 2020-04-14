@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.EntityRaceHelper;
 
 public class ChangeViewRenderEvent {
@@ -15,22 +16,24 @@ public class ChangeViewRenderEvent {
 
 	@SubscribeEvent
 	public void RenderTick(RenderTickEvent event) {
-		EntityPlayer player = this.mc.player;
-		if (player != null) {
-			if (TrinketHelper.AccessoryCheck(player, TrinketHelper.SizeTrinkets) || !EntityRaceHelper.getRace(player).contentEquals("none")) {
-				if (this.renderer == null) {
-					this.renderer = new TrinketsViewRenderEntity(this.mc, this.mc.getResourceManager(), 4F);
+		if (TrinketsConfig.CLIENT.entityRenderer) {
+			EntityPlayer player = mc.player;
+			if (player != null) {
+				if (TrinketHelper.AccessoryCheck(player, TrinketHelper.SizeTrinkets) || !EntityRaceHelper.getRace(player).contentEquals("none")) {
+					if (renderer == null) {
+						renderer = new TrinketsViewRenderEntity(mc, mc.getResourceManager(), 4F);
+					}
+					if (mc.entityRenderer != renderer) {
+						// be sure to store the previous renderer
+						prevRenderer = mc.entityRenderer;
+						mc.entityRenderer = renderer;
+					}
+				} else if ((prevRenderer != null) && (mc.entityRenderer != prevRenderer)) {
+					// reset the renderer
+					mc.entityRenderer = prevRenderer;
+					renderer = null;
+					prevRenderer = null;
 				}
-				if (this.mc.entityRenderer != this.renderer) {
-					// be sure to store the previous renderer
-					this.prevRenderer = this.mc.entityRenderer;
-					this.mc.entityRenderer = this.renderer;
-				}
-			} else if ((this.prevRenderer != null) && (this.mc.entityRenderer != this.prevRenderer)) {
-				// reset the renderer
-				this.mc.entityRenderer = this.prevRenderer;
-				this.renderer = null;
-				this.prevRenderer = null;
 			}
 		}
 	}

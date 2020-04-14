@@ -257,6 +257,11 @@ xat.config.client.render.trinkets.all.tooltip=Main Render Control for all Trinke
 xat.config.client.render.trinket=Render Trinket
 xat.config.client.render.trinket.tooltip=Render Trinket effects on the player
 
+xat.config.client.render.entity.renderer.replace=Replace EntityRenderer
+xat.config.client.render.entity.renderer.replace.tooltip=When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?
+xat.config.client.render.entity.renderer.replace.fog=EntityRenderer Fog
+xat.config.client.render.entity.renderer.replace.fog.tooltip=When Trinket and Baubles Replaces the EntityRenderer is breaks some settings with Optifine, Specifically Fog, use this to turn Fog on or off
+
 xat.config.food.registry.enabled=Foods Enabled
 xat.config.food.registry.enabled.tooltip=If Trinkets and Baubles Food Items Should be added to the Registry on Load
 xat.config.food.transformation.effect=Transformative Effects

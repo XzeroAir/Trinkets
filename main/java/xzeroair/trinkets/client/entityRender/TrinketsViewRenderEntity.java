@@ -85,22 +85,11 @@ import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.effects.EffectsDwarfRing;
 import xzeroair.trinkets.items.effects.EffectsFairyRing;
 import xzeroair.trinkets.items.effects.EffectsTitanRing;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.EntityRaceHelper;
 
 public class TrinketsViewRenderEntity extends EntityRenderer {
 
-	//
-	// @Override
-	// public void updateCameraAndRender(float partialTicks, long nanoTime) {
-	// if((mc.player == null) || mc.player.isPlayerSleeping()) {
-	// super.updateCameraAndRender(partialTicks, nanoTime);
-	// return;
-	// }
-	// System.out.println("Hmm?");
-	// // mc.player.eyeHeight -= offsetY;
-	// super.updateCameraAndRender(partialTicks, nanoTime);
-	// // mc.player.eyeHeight = mc.player.getDefaultEyeHeight();
-	// }
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final ResourceLocation RAIN_TEXTURES = new ResourceLocation("textures/environment/rain.png");
 	private static final ResourceLocation SNOW_TEXTURES = new ResourceLocation("textures/environment/snow.png");
@@ -214,46 +203,44 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		super(mc, resourceManager);
 		this.mc = mc;
 		this.resourceManager = resourceManager;
-		this.shaderIndex = SHADER_COUNT;
-		this.itemRenderer = mc.getItemRenderer();
-		this.mapItemRenderer = new MapItemRenderer(mc.getTextureManager());
-		this.lightmapTexture = new DynamicTexture(16, 16);
-		this.locationLightMap = mc.getTextureManager().getDynamicTextureLocation("lightMap", this.lightmapTexture);
-		this.lightmapColors = this.lightmapTexture.getTextureData();
-		this.shaderGroup = null;
+		shaderIndex = SHADER_COUNT;
+		itemRenderer = mc.getItemRenderer();
+		mapItemRenderer = new MapItemRenderer(mc.getTextureManager());
+		lightmapTexture = new DynamicTexture(16, 16);
+		locationLightMap = mc.getTextureManager().getDynamicTextureLocation("lightMap", lightmapTexture);
+		lightmapColors = lightmapTexture.getTextureData();
+		shaderGroup = null;
 		this.cameraDistance = cameraDistance;
-		//
-		// for (int i = 0; i < 32; ++i)
-		// {
-		// for (int j = 0; j < 32; ++j)
-		// {
-		// float f = (float)(j - 16);
-		// float f1 = (float)(i - 16);
-		// float f2 = MathHelper.sqrt(f * f + f1 * f1);
-		// this.rainXCoords[i << 5 | j] = -f1 / f2;
-		// this.rainYCoords[i << 5 | j] = f / f2;
-		// }
-		// }
+
+		for (int i = 0; i < 32; ++i) {
+			for (int j = 0; j < 32; ++j) {
+				float f = j - 16;
+				float f1 = i - 16;
+				float f2 = MathHelper.sqrt((f * f) + (f1 * f1));
+				rainXCoords[(i << 5) | j] = -f1 / f2;
+				rainYCoords[(i << 5) | j] = f / f2;
+			}
+		}
 	}
 
 	@Override
 	public boolean isShaderActive() {
-		return OpenGlHelper.shadersSupported && (this.shaderGroup != null);
+		return OpenGlHelper.shadersSupported && (shaderGroup != null);
 	}
 
 	@Override
 	public void stopUseShader() {
-		if (this.shaderGroup != null) {
-			this.shaderGroup.deleteShaderGroup();
+		if (shaderGroup != null) {
+			shaderGroup.deleteShaderGroup();
 		}
 
-		this.shaderGroup = null;
-		this.shaderIndex = SHADER_COUNT;
+		shaderGroup = null;
+		shaderIndex = SHADER_COUNT;
 	}
 
 	@Override
 	public void switchUseShader() {
-		this.useShader = !this.useShader;
+		useShader = !useShader;
 	}
 
 	/**
@@ -262,11 +249,11 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	@Override
 	public void loadEntityShader(@Nullable Entity entityIn) {
 		if (OpenGlHelper.shadersSupported) {
-			if (this.shaderGroup != null) {
-				this.shaderGroup.deleteShaderGroup();
+			if (shaderGroup != null) {
+				shaderGroup.deleteShaderGroup();
 			}
 
-			this.shaderGroup = null;
+			shaderGroup = null;
 
 			if (entityIn instanceof EntityCreeper) {
 				this.loadShader(new ResourceLocation("shaders/post/creeper.json"));
@@ -283,35 +270,35 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	@Override
 	public void loadShader(ResourceLocation resourceLocationIn) {
 		try {
-			this.shaderGroup = new ShaderGroup(
-					this.mc.getTextureManager(), this.resourceManager,
-					this.mc.getFramebuffer(), resourceLocationIn
+			shaderGroup = new ShaderGroup(
+					mc.getTextureManager(), resourceManager,
+					mc.getFramebuffer(), resourceLocationIn
 			);
-			this.shaderGroup.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
-			this.useShader = true;
+			shaderGroup.createBindFramebuffers(mc.displayWidth, mc.displayHeight);
+			useShader = true;
 		} catch (final IOException ioexception) {
 			LOGGER.warn("Failed to load shader: {}", resourceLocationIn, ioexception);
-			this.shaderIndex = SHADER_COUNT;
-			this.useShader = false;
+			shaderIndex = SHADER_COUNT;
+			useShader = false;
 		} catch (final JsonSyntaxException jsonsyntaxexception) {
 			LOGGER.warn("Failed to load shader: {}", resourceLocationIn, jsonsyntaxexception);
-			this.shaderIndex = SHADER_COUNT;
-			this.useShader = false;
+			shaderIndex = SHADER_COUNT;
+			useShader = false;
 		}
 	}
 
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
-		if (this.shaderGroup != null) {
-			this.shaderGroup.deleteShaderGroup();
+		if (shaderGroup != null) {
+			shaderGroup.deleteShaderGroup();
 		}
 
-		this.shaderGroup = null;
+		shaderGroup = null;
 
-		if (this.shaderIndex == SHADER_COUNT) {
-			this.loadEntityShader(this.mc.getRenderViewEntity());
+		if (shaderIndex == SHADER_COUNT) {
+			this.loadEntityShader(mc.getRenderViewEntity());
 		} else {
-			this.loadShader(SHADERS_TEXTURES[this.shaderIndex]);
+			this.loadShader(SHADERS_TEXTURES[shaderIndex]);
 		}
 	}
 
@@ -326,71 +313,71 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 		this.updateFovModifierHand();
 		this.updateTorchFlicker();
-		this.fogColor2 = this.fogColor1;
-		this.thirdPersonDistancePrev = this.cameraDistance;
+		fogColor2 = fogColor1;
+		thirdPersonDistancePrev = cameraDistance;
 
-		if (this.mc.gameSettings.smoothCamera) {
-			final float f = (this.mc.gameSettings.mouseSensitivity * 0.6F) + 0.2F;
+		if (mc.gameSettings.smoothCamera) {
+			final float f = (mc.gameSettings.mouseSensitivity * 0.6F) + 0.2F;
 			final float f1 = f * f * f * 8.0F;
-			this.smoothCamFilterX = this.mouseFilterXAxis.smooth(this.smoothCamYaw, 0.05F * f1);
-			this.smoothCamFilterY = this.mouseFilterYAxis.smooth(this.smoothCamPitch, 0.05F * f1);
-			this.smoothCamPartialTicks = 0.0F;
-			this.smoothCamYaw = 0.0F;
-			this.smoothCamPitch = 0.0F;
+			smoothCamFilterX = mouseFilterXAxis.smooth(smoothCamYaw, 0.05F * f1);
+			smoothCamFilterY = mouseFilterYAxis.smooth(smoothCamPitch, 0.05F * f1);
+			smoothCamPartialTicks = 0.0F;
+			smoothCamYaw = 0.0F;
+			smoothCamPitch = 0.0F;
 		} else {
-			this.smoothCamFilterX = 0.0F;
-			this.smoothCamFilterY = 0.0F;
-			this.mouseFilterXAxis.reset();
-			this.mouseFilterYAxis.reset();
+			smoothCamFilterX = 0.0F;
+			smoothCamFilterY = 0.0F;
+			mouseFilterXAxis.reset();
+			mouseFilterYAxis.reset();
 		}
 
-		if (this.mc.getRenderViewEntity() == null) {
-			this.mc.setRenderViewEntity(this.mc.player);
+		if (mc.getRenderViewEntity() == null) {
+			mc.setRenderViewEntity(mc.player);
 		}
 
-		final float f3 = this.mc.world
-				.getLightBrightness(new BlockPos(this.mc.getRenderViewEntity().getPositionEyes(1F))); // Forge: fix
-																										// MC-51150
-		final float f4 = this.mc.gameSettings.renderDistanceChunks / 32.0F;
+		final float f3 = mc.world
+				.getLightBrightness(new BlockPos(mc.getRenderViewEntity().getPositionEyes(1F))); // Forge: fix
+																															// MC-51150
+		final float f4 = mc.gameSettings.renderDistanceChunks / 32.0F;
 		final float f2 = (f3 * (1.0F - f4)) + f4;
-		this.fogColor1 += (f2 - this.fogColor1) * 0.1F;
-		++this.rendererUpdateCount;
-		this.itemRenderer.updateEquippedItem();
+		fogColor1 += (f2 - fogColor1) * 0.1F;
+		++rendererUpdateCount;
+		itemRenderer.updateEquippedItem();
 		this.addRainParticles();
-		this.bossColorModifierPrev = this.bossColorModifier;
+		bossColorModifierPrev = bossColorModifier;
 
-		if (this.mc.ingameGUI.getBossOverlay().shouldDarkenSky()) {
-			this.bossColorModifier += 0.05F;
+		if (mc.ingameGUI.getBossOverlay().shouldDarkenSky()) {
+			bossColorModifier += 0.05F;
 
-			if (this.bossColorModifier > 1.0F) {
-				this.bossColorModifier = 1.0F;
+			if (bossColorModifier > 1.0F) {
+				bossColorModifier = 1.0F;
 			}
-		} else if (this.bossColorModifier > 0.0F) {
-			this.bossColorModifier -= 0.0125F;
+		} else if (bossColorModifier > 0.0F) {
+			bossColorModifier -= 0.0125F;
 		}
 
-		if (this.itemActivationTicks > 0) {
-			--this.itemActivationTicks;
+		if (itemActivationTicks > 0) {
+			--itemActivationTicks;
 
-			if (this.itemActivationTicks == 0) {
-				this.itemActivationItem = null;
+			if (itemActivationTicks == 0) {
+				itemActivationItem = null;
 			}
 		}
 	}
 
 	@Override
 	public ShaderGroup getShaderGroup() {
-		return this.shaderGroup;
+		return shaderGroup;
 	}
 
 	@Override
 	public void updateShaderGroupSize(int width, int height) {
 		if (OpenGlHelper.shadersSupported) {
-			if (this.shaderGroup != null) {
-				this.shaderGroup.createBindFramebuffers(width, height);
+			if (shaderGroup != null) {
+				shaderGroup.createBindFramebuffers(width, height);
 			}
 
-			this.mc.renderGlobal.createBindEntityOutlineFbs(width, height);
+			mc.renderGlobal.createBindEntityOutlineFbs(width, height);
 		}
 	}
 
@@ -399,20 +386,20 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 */
 	@Override
 	public void getMouseOver(float partialTicks) {
-		final Entity entity = this.mc.getRenderViewEntity();
+		final Entity entity = mc.getRenderViewEntity();
 
 		if (entity != null) {
-			if (this.mc.world != null) {
-				this.mc.profiler.startSection("pick");
-				this.mc.pointedEntity = null;
-				double d0 = this.mc.playerController.getBlockReachDistance();
-				this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
+			if (mc.world != null) {
+				mc.profiler.startSection("pick");
+				mc.pointedEntity = null;
+				double d0 = mc.playerController.getBlockReachDistance();
+				mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
 				final Vec3d vec3d = entity.getPositionEyes(partialTicks);
 				boolean flag = false;
 				final int i = 3;
 				double d1 = d0;
 
-				if (this.mc.playerController.extendedReach()) {
+				if (mc.playerController.extendedReach()) {
 					d1 = 6.0D;
 					d0 = d1;
 				} else {
@@ -421,16 +408,16 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					}
 				}
 
-				if (this.mc.objectMouseOver != null) {
-					d1 = this.mc.objectMouseOver.hitVec.distanceTo(vec3d);
+				if (mc.objectMouseOver != null) {
+					d1 = mc.objectMouseOver.hitVec.distanceTo(vec3d);
 				}
 
 				final Vec3d vec3d1 = entity.getLook(1.0F);
 				final Vec3d vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
-				this.pointedEntity = null;
+				pointedEntity = null;
 				Vec3d vec3d3 = null;
 				final float f = 1.0F;
-				final List<Entity> list = this.mc.world.getEntitiesInAABBexcluding(
+				final List<Entity> list = mc.world.getEntitiesInAABBexcluding(
 						entity, entity.getEntityBoundingBox().expand(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0)
 								.grow(1.0D, 1.0D, 1.0D),
 						Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
@@ -449,7 +436,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 					if (axisalignedbb.contains(vec3d)) {
 						if (d2 >= 0.0D) {
-							this.pointedEntity = entity1;
+							pointedEntity = entity1;
 							vec3d3 = raytraceresult == null ? vec3d : raytraceresult.hitVec;
 							d2 = 0.0D;
 						}
@@ -460,11 +447,11 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 							if ((entity1.getLowestRidingEntity() == entity.getLowestRidingEntity())
 									&& !entity1.canRiderInteract()) {
 								if (d2 == 0.0D) {
-									this.pointedEntity = entity1;
+									pointedEntity = entity1;
 									vec3d3 = raytraceresult.hitVec;
 								}
 							} else {
-								this.pointedEntity = entity1;
+								pointedEntity = entity1;
 								vec3d3 = raytraceresult.hitVec;
 								d2 = d3;
 							}
@@ -472,24 +459,24 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					}
 				}
 
-				if ((this.pointedEntity != null) && flag && (vec3d.distanceTo(vec3d3) > 3.0D)) {
-					this.pointedEntity = null;
-					this.mc.objectMouseOver = new RayTraceResult(
+				if ((pointedEntity != null) && flag && (vec3d.distanceTo(vec3d3) > 3.0D)) {
+					pointedEntity = null;
+					mc.objectMouseOver = new RayTraceResult(
 							RayTraceResult.Type.MISS, vec3d3, (EnumFacing) null,
 							new BlockPos(vec3d3)
 					);
 				}
 
-				if ((this.pointedEntity != null) && ((d2 < d1) || (this.mc.objectMouseOver == null))) {
-					this.mc.objectMouseOver = new RayTraceResult(this.pointedEntity, vec3d3);
+				if ((pointedEntity != null) && ((d2 < d1) || (mc.objectMouseOver == null))) {
+					mc.objectMouseOver = new RayTraceResult(pointedEntity, vec3d3);
 
-					if ((this.pointedEntity instanceof EntityLivingBase)
-							|| (this.pointedEntity instanceof EntityItemFrame)) {
-						this.mc.pointedEntity = this.pointedEntity;
+					if ((pointedEntity instanceof EntityLivingBase)
+							|| (pointedEntity instanceof EntityItemFrame)) {
+						mc.pointedEntity = pointedEntity;
 					}
 				}
 
-				this.mc.profiler.endSection();
+				mc.profiler.endSection();
 			}
 		}
 	}
@@ -500,20 +487,20 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	private void updateFovModifierHand() {
 		float f = 1.0F;
 
-		if (this.mc.getRenderViewEntity() instanceof AbstractClientPlayer) {
-			final AbstractClientPlayer abstractclientplayer = (AbstractClientPlayer) this.mc.getRenderViewEntity();
+		if (mc.getRenderViewEntity() instanceof AbstractClientPlayer) {
+			final AbstractClientPlayer abstractclientplayer = (AbstractClientPlayer) mc.getRenderViewEntity();
 			f = abstractclientplayer.getFovModifier();
 		}
 
-		this.fovModifierHandPrev = this.fovModifierHand;
-		this.fovModifierHand += (f - this.fovModifierHand) * 0.5F;
+		fovModifierHandPrev = fovModifierHand;
+		fovModifierHand += (f - fovModifierHand) * 0.5F;
 
-		if (this.fovModifierHand > 1.5F) {
-			this.fovModifierHand = 1.5F;
+		if (fovModifierHand > 1.5F) {
+			fovModifierHand = 1.5F;
 		}
 
-		if (this.fovModifierHand < 0.1F) {
-			this.fovModifierHand = 0.1F;
+		if (fovModifierHand < 0.1F) {
+			fovModifierHand = 0.1F;
 		}
 	}
 
@@ -522,15 +509,15 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * or not
 	 */
 	private float getFOVModifier(float partialTicks, boolean useFOVSetting) {
-		if (this.debugView) {
+		if (debugView) {
 			return 90.0F;
 		} else {
-			final Entity entity = this.mc.getRenderViewEntity();
+			final Entity entity = mc.getRenderViewEntity();
 			float f = 70.0F;
 
 			if (useFOVSetting) {
-				f = this.mc.gameSettings.fovSetting;
-				f = f * (this.fovModifierHandPrev + ((this.fovModifierHand - this.fovModifierHandPrev) * partialTicks));
+				f = mc.gameSettings.fovSetting;
+				f = f * (fovModifierHandPrev + ((fovModifierHand - fovModifierHandPrev) * partialTicks));
 			}
 
 			if ((entity instanceof EntityLivingBase) && (((EntityLivingBase) entity).getHealth() <= 0.0F)) {
@@ -539,7 +526,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			}
 
 			final IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(
-					this.mc.world, entity,
+					mc.world, entity,
 					partialTicks
 			);
 
@@ -558,8 +545,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	}
 
 	private void hurtCameraEffect(float partialTicks) {
-		if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
-			final EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
+		if (mc.getRenderViewEntity() instanceof EntityLivingBase) {
+			final EntityLivingBase entitylivingbase = (EntityLivingBase) mc.getRenderViewEntity();
 			float f = entitylivingbase.hurtTime - partialTicks;
 
 			if (entitylivingbase.getHealth() <= 0.0F) {
@@ -584,8 +571,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * Updates the bobbing render effect of the player.
 	 */
 	private void applyBobbing(float partialTicks) {
-		if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-			final EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
+		if (mc.getRenderViewEntity() instanceof EntityPlayer) {
+			final EntityPlayer entityplayer = (EntityPlayer) mc.getRenderViewEntity();
 			final float f = entityplayer.distanceWalkedModified - entityplayer.prevDistanceWalkedModified;
 			final float f1 = -(entityplayer.distanceWalkedModified + (f * partialTicks));
 			final float f2 = entityplayer.prevCameraYaw
@@ -609,7 +596,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * sets up player's eye (or camera in third person mode)
 	 */
 	private void orientCamera(float partialTicks) {
-		final Entity entity = this.mc.getRenderViewEntity();
+		final Entity entity = mc.getRenderViewEntity();
 		float f = entity.getEyeHeight();
 		double d0 = entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks);
 		double d1 = entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks) + f;
@@ -621,11 +608,11 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			f = (float) (f + 1.0D);
 			GlStateManager.translate(0.0F, 0.3F, 0.0F);
 
-			if (!this.mc.gameSettings.debugCamEnable) {
+			if (!mc.gameSettings.debugCamEnable) {
 				final BlockPos blockpos = new BlockPos(entity);
-				final IBlockState iblockstate = this.mc.world.getBlockState(blockpos);
+				final IBlockState iblockstate = mc.world.getBlockState(blockpos);
 				net.minecraftforge.client.ForgeHooksClient.orientBedCamera(
-						this.mc.world, blockpos, iblockstate,
+						mc.world, blockpos, iblockstate,
 						entity
 				);
 
@@ -639,26 +626,26 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 						-1.0F, 0.0F, 0.0F
 				);
 			}
-		} else if (this.mc.gameSettings.thirdPersonView > 0) {
-			EntityPlayer player = this.mc.player;
+		} else if (mc.gameSettings.thirdPersonView > 0) {
+			EntityPlayer player = mc.player;
 			if ((TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketFairyRing) || EntityRaceHelper.getRace(player).contentEquals("fairy_dew")) && !TrinketHelper.AccessoryCheck(player, EffectsFairyRing.incompatible)) {
-				this.cameraDistance = 1F;
+				cameraDistance = 1F;
 			} else if ((TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDwarfRing) || EntityRaceHelper.getRace(player).contentEquals("dwarf_stout")) && !TrinketHelper.AccessoryCheck(player, EffectsDwarfRing.incompatible)) {
-				this.cameraDistance = 2.5F;
+				cameraDistance = 2.5F;
 			} else if ((TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketTitanRing) || EntityRaceHelper.getRace(player).contentEquals("titan_spirit")) && !TrinketHelper.AccessoryCheck(player, EffectsTitanRing.incompatible)) {
-				this.cameraDistance = 8F;
+				cameraDistance = 8F;
 			} else {
-				this.cameraDistance = 4F;
+				cameraDistance = 4F;
 			}
-			double d3 = this.cameraDistance + ((this.cameraDistance - this.cameraDistance) * partialTicks);
+			double d3 = cameraDistance + ((cameraDistance - cameraDistance) * partialTicks);
 
-			if (this.mc.gameSettings.debugCamEnable) {
+			if (mc.gameSettings.debugCamEnable) {
 				GlStateManager.translate(0.0F, 0.0F, (float) (-d3));
 			} else {
 				final float f1 = entity.rotationYaw;
 				float f2 = entity.rotationPitch;
 
-				if (this.mc.gameSettings.thirdPersonView == 2) {
+				if (mc.gameSettings.thirdPersonView == 2) {
 					f2 += 180.0F;
 				}
 
@@ -674,7 +661,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					f3 = f3 * 0.1F;
 					f4 = f4 * 0.1F;
 					f5 = f5 * 0.1F;
-					final RayTraceResult raytraceresult = this.mc.world.rayTraceBlocks(
+					final RayTraceResult raytraceresult = mc.world.rayTraceBlocks(
 							new Vec3d(d0 + f3, d1 + f4, d2 + f5),
 							new Vec3d((d0 - d4) + f3 + f5, (d1 - d6) + f4, (d2 - d5) + f5)
 					);
@@ -695,7 +682,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					}
 				}
 
-				if (this.mc.gameSettings.thirdPersonView == 2) {
+				if (mc.gameSettings.thirdPersonView == 2) {
 					GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
 				}
 
@@ -709,7 +696,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			GlStateManager.translate(0.0F, 0.0F, 0.05F);
 		}
 
-		if (!this.mc.gameSettings.debugCamEnable) {
+		if (!mc.gameSettings.debugCamEnable) {
 			float yaw = entity.prevRotationYaw + ((entity.rotationYaw - entity.prevRotationYaw) * partialTicks)
 					+ 180.0F;
 			final float pitch = entity.prevRotationPitch
@@ -721,7 +708,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 						+ ((entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks) + 180.0F;
 			}
 			final IBlockState state = ActiveRenderInfo.getBlockStateAtEntityViewpoint(
-					this.mc.world, entity,
+					mc.world, entity,
 					partialTicks
 			);
 			final net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup event = new net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup(
@@ -737,7 +724,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		d0 = entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks);
 		d1 = entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks) + f;
 		d2 = entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks);
-		this.cloudFog = this.mc.renderGlobal.hasCloudFog(d0, d1, d2, partialTicks);
+		cloudFog = mc.renderGlobal.hasCloudFog(d0, d1, d2, partialTicks);
 	}
 
 	/**
@@ -745,59 +732,59 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 */
 	@SuppressWarnings("unused")
 	private void setupCameraTransform(float partialTicks, int pass) {
-		this.farPlaneDistance = this.mc.gameSettings.renderDistanceChunks * 16;
+		farPlaneDistance = TrinketsConfig.CLIENT.RendererFog ? mc.gameSettings.renderDistanceChunks * 16 : -1;
 		GlStateManager.matrixMode(5889);
 		GlStateManager.loadIdentity();
 		final float f = 0.07F;
 
-		if (this.mc.gameSettings.anaglyph) {
+		if (mc.gameSettings.anaglyph) {
 			GlStateManager.translate((-((pass * 2) - 1)) * 0.07F, 0.0F, 0.0F);
 		}
 
-		if (this.cameraZoom != 1.0D) {
-			GlStateManager.translate((float) this.cameraYaw, (float) (-this.cameraPitch), 0.0F);
-			GlStateManager.scale(this.cameraZoom, this.cameraZoom, 1.0D);
+		if (cameraZoom != 1.0D) {
+			GlStateManager.translate((float) cameraYaw, (float) (-cameraPitch), 0.0F);
+			GlStateManager.scale(cameraZoom, cameraZoom, 1.0D);
 		}
 
 		Project.gluPerspective(
 				this.getFOVModifier(partialTicks, true),
-				(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F,
-				this.farPlaneDistance * MathHelper.SQRT_2
+				(float) mc.displayWidth / (float) mc.displayHeight, 0.05F,
+				farPlaneDistance * MathHelper.SQRT_2
 		);
 		GlStateManager.matrixMode(5888);
 		GlStateManager.loadIdentity();
 
-		if (this.mc.gameSettings.anaglyph) {
+		if (mc.gameSettings.anaglyph) {
 			GlStateManager.translate(((pass * 2) - 1) * 0.1F, 0.0F, 0.0F);
 		}
 
 		this.hurtCameraEffect(partialTicks);
 
-		if (this.mc.gameSettings.viewBobbing) {
+		if (mc.gameSettings.viewBobbing) {
 			this.applyBobbing(partialTicks);
 		}
 
-		final float f1 = this.mc.player.prevTimeInPortal
-				+ ((this.mc.player.timeInPortal - this.mc.player.prevTimeInPortal) * partialTicks);
+		final float f1 = mc.player.prevTimeInPortal
+				+ ((mc.player.timeInPortal - mc.player.prevTimeInPortal) * partialTicks);
 
 		if (f1 > 0.0F) {
 			int i = 20;
 
-			if (this.mc.player.isPotionActive(MobEffects.NAUSEA)) {
+			if (mc.player.isPotionActive(MobEffects.NAUSEA)) {
 				i = 7;
 			}
 
 			float f2 = (5.0F / ((f1 * f1) + 5.0F)) - (f1 * 0.04F);
 			f2 = f2 * f2;
-			GlStateManager.rotate((this.rendererUpdateCount + partialTicks) * i, 0.0F, 1.0F, 1.0F);
+			GlStateManager.rotate((rendererUpdateCount + partialTicks) * i, 0.0F, 1.0F, 1.0F);
 			GlStateManager.scale(1.0F / f2, 1.0F, 1.0F);
-			GlStateManager.rotate(-(this.rendererUpdateCount + partialTicks) * i, 0.0F, 1.0F, 1.0F);
+			GlStateManager.rotate(-(rendererUpdateCount + partialTicks) * i, 0.0F, 1.0F, 1.0F);
 		}
 
 		this.orientCamera(partialTicks);
 
-		if (this.debugView) {
-			switch (this.debugViewDirection) {
+		if (debugView) {
+			switch (debugViewDirection) {
 			case 0:
 				GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
 				break;
@@ -820,56 +807,56 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * Render player hand
 	 */
 	private void renderHand(float partialTicks, int pass) {
-		if (!this.debugView) {
+		if (!debugView) {
 			GlStateManager.matrixMode(5889);
 			GlStateManager.loadIdentity();
 			final float f = 0.07F;
 
-			if (this.mc.gameSettings.anaglyph) {
+			if (mc.gameSettings.anaglyph) {
 				GlStateManager.translate((-((pass * 2) - 1)) * 0.07F, 0.0F, 0.0F);
 			}
 
 			Project.gluPerspective(
 					this.getFOVModifier(partialTicks, false),
-					(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 2.0F
+					(float) mc.displayWidth / (float) mc.displayHeight, 0.05F, farPlaneDistance * 2.0F
 			);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.loadIdentity();
 
-			if (this.mc.gameSettings.anaglyph) {
+			if (mc.gameSettings.anaglyph) {
 				GlStateManager.translate(((pass * 2) - 1) * 0.1F, 0.0F, 0.0F);
 			}
 
 			GlStateManager.pushMatrix();
 			this.hurtCameraEffect(partialTicks);
 
-			if (this.mc.gameSettings.viewBobbing) {
+			if (mc.gameSettings.viewBobbing) {
 				this.applyBobbing(partialTicks);
 			}
 
-			final boolean flag = (this.mc.getRenderViewEntity() instanceof EntityLivingBase)
-					&& ((EntityLivingBase) this.mc.getRenderViewEntity()).isPlayerSleeping();
+			final boolean flag = (mc.getRenderViewEntity() instanceof EntityLivingBase)
+					&& ((EntityLivingBase) mc.getRenderViewEntity()).isPlayerSleeping();
 
 			if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(
-					this.mc.renderGlobal, partialTicks,
+					mc.renderGlobal, partialTicks,
 					pass
 			)) {
-				if ((this.mc.gameSettings.thirdPersonView == 0) && !flag && !this.mc.gameSettings.hideGUI
-						&& !this.mc.playerController.isSpectator()) {
+				if ((mc.gameSettings.thirdPersonView == 0) && !flag && !mc.gameSettings.hideGUI
+						&& !mc.playerController.isSpectator()) {
 					this.enableLightmap();
-					this.itemRenderer.renderItemInFirstPerson(partialTicks);
+					itemRenderer.renderItemInFirstPerson(partialTicks);
 					this.disableLightmap();
 				}
 			}
 
 			GlStateManager.popMatrix();
 
-			if ((this.mc.gameSettings.thirdPersonView == 0) && !flag) {
-				this.itemRenderer.renderOverlays(partialTicks);
+			if ((mc.gameSettings.thirdPersonView == 0) && !flag) {
+				itemRenderer.renderOverlays(partialTicks);
 				this.hurtCameraEffect(partialTicks);
 			}
 
-			if (this.mc.gameSettings.viewBobbing) {
+			if (mc.gameSettings.viewBobbing) {
 				this.applyBobbing(partialTicks);
 			}
 		}
@@ -891,7 +878,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		GlStateManager.scale(0.00390625F, 0.00390625F, 0.00390625F);
 		GlStateManager.translate(8.0F, 8.0F, 8.0F);
 		GlStateManager.matrixMode(5888);
-		this.mc.getTextureManager().bindTexture(this.locationLightMap);
+		mc.getTextureManager().bindTexture(locationLightMap);
 		GlStateManager.glTexParameteri(3553, 10241, 9729);
 		GlStateManager.glTexParameteri(3553, 10240, 9729);
 		GlStateManager.glTexParameteri(3553, 10242, 10496);
@@ -905,17 +892,17 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * Recompute a random value that is applied to block color in updateLightmap()
 	 */
 	private void updateTorchFlicker() {
-		this.torchFlickerDX = (float) (this.torchFlickerDX
+		torchFlickerDX = (float) (torchFlickerDX
 				+ ((Math.random() - Math.random()) * Math.random() * Math.random()));
-		this.torchFlickerDX = (float) (this.torchFlickerDX * 0.9D);
-		this.torchFlickerX += this.torchFlickerDX - this.torchFlickerX;
-		this.lightmapUpdateNeeded = true;
+		torchFlickerDX = (float) (torchFlickerDX * 0.9D);
+		torchFlickerX += torchFlickerDX - torchFlickerX;
+		lightmapUpdateNeeded = true;
 	}
 
 	private void updateLightmap(float partialTicks) {
-		if (this.lightmapUpdateNeeded) {
-			this.mc.profiler.startSection("lightTex");
-			final World world = this.mc.world;
+		if (lightmapUpdateNeeded) {
+			mc.profiler.startSection("lightTex");
+			final World world = mc.world;
 
 			if (world != null) {
 				final float f = world.getSunBrightness(1.0F);
@@ -924,7 +911,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 				for (int i = 0; i < 256; ++i) {
 					float f2 = world.provider.getLightBrightnessTable()[i / 16] * f1;
 					final float f3 = world.provider.getLightBrightnessTable()[i % 16]
-							* ((this.torchFlickerX * 0.1F) + 1.5F);
+							* ((torchFlickerX * 0.1F) + 1.5F);
 
 					if (world.getLastLightningBolt() > 0) {
 						f2 = world.provider.getLightBrightnessTable()[i / 16];
@@ -941,9 +928,9 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					f9 = (f9 * 0.96F) + 0.03F;
 					f10 = (f10 * 0.96F) + 0.03F;
 
-					if (this.bossColorModifier > 0.0F) {
-						final float f11 = this.bossColorModifierPrev
-								+ ((this.bossColorModifier - this.bossColorModifierPrev) * partialTicks);
+					if (bossColorModifier > 0.0F) {
+						final float f11 = bossColorModifierPrev
+								+ ((bossColorModifier - bossColorModifierPrev) * partialTicks);
 						f8 = (f8 * (1.0F - f11)) + (f8 * 0.7F * f11);
 						f9 = (f9 * (1.0F - f11)) + (f9 * 0.6F * f11);
 						f10 = (f10 * (1.0F - f11)) + (f10 * 0.6F * f11);
@@ -966,8 +953,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					f9 = MathHelper.clamp(f9, 0f, 1f);
 					f10 = MathHelper.clamp(f10, 0f, 1f);
 
-					if (this.mc.player.isPotionActive(MobEffects.NIGHT_VISION)) {
-						final float f15 = this.getNightVisionBrightness(this.mc.player, partialTicks);
+					if (mc.player.isPotionActive(MobEffects.NIGHT_VISION)) {
+						final float f15 = this.getNightVisionBrightness(mc.player, partialTicks);
 						float f12 = 1.0F / f8;
 
 						if (f12 > (1.0F / f9)) {
@@ -995,7 +982,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 						f10 = 1.0F;
 					}
 
-					final float f16 = this.mc.gameSettings.gammaSetting;
+					final float f16 = mc.gameSettings.gammaSetting;
 					float f17 = 1.0F - f8;
 					float f13 = 1.0F - f9;
 					float f14 = 1.0F - f10;
@@ -1037,12 +1024,12 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					final int k = (int) (f8 * 255.0F);
 					final int l = (int) (f9 * 255.0F);
 					final int i1 = (int) (f10 * 255.0F);
-					this.lightmapColors[i] = -16777216 | (k << 16) | (l << 8) | i1;
+					lightmapColors[i] = -16777216 | (k << 16) | (l << 8) | i1;
 				}
 
-				this.lightmapTexture.updateDynamicTexture();
-				this.lightmapUpdateNeeded = false;
-				this.mc.profiler.endSection();
+				lightmapTexture.updateDynamicTexture();
+				lightmapUpdateNeeded = false;
+				mc.profiler.endSection();
 			}
 		}
 	}
@@ -1056,126 +1043,126 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	public void updateCameraAndRender(float partialTicks, long nanoTime) {
 		final boolean flag = Display.isActive();
 
-		if (!flag && this.mc.gameSettings.pauseOnLostFocus
-				&& (!this.mc.gameSettings.touchscreen || !Mouse.isButtonDown(1))) {
-			if ((Minecraft.getSystemTime() - this.prevFrameTime) > 500L) {
-				this.mc.displayInGameMenu();
+		if (!flag && mc.gameSettings.pauseOnLostFocus
+				&& (!mc.gameSettings.touchscreen || !Mouse.isButtonDown(1))) {
+			if ((Minecraft.getSystemTime() - prevFrameTime) > 500L) {
+				mc.displayInGameMenu();
 			}
 		} else {
-			this.prevFrameTime = Minecraft.getSystemTime();
+			prevFrameTime = Minecraft.getSystemTime();
 		}
 
-		this.mc.profiler.startSection("mouse");
+		mc.profiler.startSection("mouse");
 
-		if (flag && Minecraft.IS_RUNNING_ON_MAC && this.mc.inGameHasFocus && !Mouse.isInsideWindow()) {
+		if (flag && Minecraft.IS_RUNNING_ON_MAC && mc.inGameHasFocus && !Mouse.isInsideWindow()) {
 			Mouse.setGrabbed(false);
 			Mouse.setCursorPosition(Display.getWidth() / 2, (Display.getHeight() / 2) - 20);
 			Mouse.setGrabbed(true);
 		}
 
-		if (this.mc.inGameHasFocus && flag) {
-			this.mc.mouseHelper.mouseXYChange();
-			this.mc.getTutorial().handleMouse(this.mc.mouseHelper);
-			final float f = (this.mc.gameSettings.mouseSensitivity * 0.6F) + 0.2F;
+		if (mc.inGameHasFocus && flag) {
+			mc.mouseHelper.mouseXYChange();
+			mc.getTutorial().handleMouse(mc.mouseHelper);
+			final float f = (mc.gameSettings.mouseSensitivity * 0.6F) + 0.2F;
 			final float f1 = f * f * f * 8.0F;
-			float f2 = this.mc.mouseHelper.deltaX * f1;
-			float f3 = this.mc.mouseHelper.deltaY * f1;
+			float f2 = mc.mouseHelper.deltaX * f1;
+			float f3 = mc.mouseHelper.deltaY * f1;
 			int i = 1;
 
-			if (this.mc.gameSettings.invertMouse) {
+			if (mc.gameSettings.invertMouse) {
 				i = -1;
 			}
 
-			if (this.mc.gameSettings.smoothCamera) {
-				this.smoothCamYaw += f2;
-				this.smoothCamPitch += f3;
-				final float f4 = partialTicks - this.smoothCamPartialTicks;
-				this.smoothCamPartialTicks = partialTicks;
-				f2 = this.smoothCamFilterX * f4;
-				f3 = this.smoothCamFilterY * f4;
-				this.mc.player.turn(f2, f3 * i);
+			if (mc.gameSettings.smoothCamera) {
+				smoothCamYaw += f2;
+				smoothCamPitch += f3;
+				final float f4 = partialTicks - smoothCamPartialTicks;
+				smoothCamPartialTicks = partialTicks;
+				f2 = smoothCamFilterX * f4;
+				f3 = smoothCamFilterY * f4;
+				mc.player.turn(f2, f3 * i);
 			} else {
-				this.smoothCamYaw = 0.0F;
-				this.smoothCamPitch = 0.0F;
-				this.mc.player.turn(f2, f3 * i);
+				smoothCamYaw = 0.0F;
+				smoothCamPitch = 0.0F;
+				mc.player.turn(f2, f3 * i);
 			}
 		}
 
-		this.mc.profiler.endSection();
+		mc.profiler.endSection();
 
-		if (!this.mc.skipRenderWorld) {
-			anaglyphEnable = this.mc.gameSettings.anaglyph;
-			final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+		if (!mc.skipRenderWorld) {
+			anaglyphEnable = mc.gameSettings.anaglyph;
+			final ScaledResolution scaledresolution = new ScaledResolution(mc);
 			final int i1 = scaledresolution.getScaledWidth();
 			final int j1 = scaledresolution.getScaledHeight();
-			final int k1 = (Mouse.getX() * i1) / this.mc.displayWidth;
-			final int l1 = j1 - ((Mouse.getY() * j1) / this.mc.displayHeight) - 1;
-			final int i2 = this.mc.gameSettings.limitFramerate;
+			final int k1 = (Mouse.getX() * i1) / mc.displayWidth;
+			final int l1 = j1 - ((Mouse.getY() * j1) / mc.displayHeight) - 1;
+			final int i2 = mc.gameSettings.limitFramerate;
 
-			if (this.mc.world != null) {
-				this.mc.profiler.startSection("level");
+			if (mc.world != null) {
+				mc.profiler.startSection("level");
 				int j = Math.min(Minecraft.getDebugFPS(), i2);
 				j = Math.max(j, 60);
 				final long k = System.nanoTime() - nanoTime;
 				final long l = Math.max((1000000000 / j / 4) - k, 0L);
 				this.renderWorld(partialTicks, System.nanoTime() + l);
 
-				if (this.mc.isSingleplayer() && (this.timeWorldIcon < (Minecraft.getSystemTime() - 1000L))) {
-					this.timeWorldIcon = Minecraft.getSystemTime();
+				if (mc.isSingleplayer() && (timeWorldIcon < (Minecraft.getSystemTime() - 1000L))) {
+					timeWorldIcon = Minecraft.getSystemTime();
 
-					if (!this.mc.getIntegratedServer().isWorldIconSet()) {
+					if (!mc.getIntegratedServer().isWorldIconSet()) {
 						// createWorldIcon();
 					}
 				}
 
 				if (OpenGlHelper.shadersSupported) {
-					this.mc.renderGlobal.renderEntityOutlineFramebuffer();
+					mc.renderGlobal.renderEntityOutlineFramebuffer();
 
-					if ((this.shaderGroup != null) && this.useShader) {
+					if ((shaderGroup != null) && useShader) {
 						GlStateManager.matrixMode(5890);
 						GlStateManager.pushMatrix();
 						GlStateManager.loadIdentity();
-						this.shaderGroup.render(partialTicks);
+						shaderGroup.render(partialTicks);
 						GlStateManager.popMatrix();
 					}
 
-					this.mc.getFramebuffer().bindFramebuffer(true);
+					mc.getFramebuffer().bindFramebuffer(true);
 				}
 
-				this.renderEndNanoTime = System.nanoTime();
-				this.mc.profiler.endStartSection("gui");
+				renderEndNanoTime = System.nanoTime();
+				mc.profiler.endStartSection("gui");
 
-				if (!this.mc.gameSettings.hideGUI || (this.mc.currentScreen != null)) {
+				if (!mc.gameSettings.hideGUI || (mc.currentScreen != null)) {
 					GlStateManager.alphaFunc(516, 0.1F);
 					this.setupOverlayRendering();
 					this.renderItemActivation(i1, j1, partialTicks);
-					this.mc.ingameGUI.renderGameOverlay(partialTicks);
+					mc.ingameGUI.renderGameOverlay(partialTicks);
 				}
 
-				this.mc.profiler.endSection();
+				mc.profiler.endSection();
 			} else {
-				GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
+				GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 				GlStateManager.matrixMode(5889);
 				GlStateManager.loadIdentity();
 				GlStateManager.matrixMode(5888);
 				GlStateManager.loadIdentity();
 				this.setupOverlayRendering();
-				this.renderEndNanoTime = System.nanoTime();
+				renderEndNanoTime = System.nanoTime();
 				// Forge: Fix MC-112292
-				net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.instance.renderEngine = this.mc
+				net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.instance.renderEngine = mc
 						.getTextureManager();
 				// Forge: also fix rendering text before entering world (not part of MC-112292,
 				// but the same reason)
-				net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRenderer;
+				net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher.instance.fontRenderer = mc.fontRenderer;
 			}
 
-			if (this.mc.currentScreen != null) {
+			if (mc.currentScreen != null) {
 				GlStateManager.clear(256);
 
 				try {
 					net.minecraftforge.client.ForgeHooksClient.drawScreen(
-							this.mc.currentScreen, k1, l1,
-							this.mc.getTickLength()
+							mc.currentScreen, k1, l1,
+							mc.getTickLength()
 					);
 				} catch (final Throwable throwable) {
 					final CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");
@@ -1183,7 +1170,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 					crashreportcategory.addDetail("Screen name", new ICrashReportDetail<String>() {
 						@Override
 						public String call() throws Exception {
-							return TrinketsViewRenderEntity.this.mc.currentScreen.getClass().getCanonicalName();
+							return mc.currentScreen.getClass().getCanonicalName();
 						}
 					});
 					crashreportcategory.addDetail("Mouse location", new ICrashReportDetail<String>() {
@@ -1201,8 +1188,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 							return String.format(
 									"Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d",
 									scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(),
-									TrinketsViewRenderEntity.this.mc.displayWidth,
-									TrinketsViewRenderEntity.this.mc.displayHeight, scaledresolution.getScaleFactor()
+									mc.displayWidth,
+									mc.displayHeight, scaledresolution.getScaleFactor()
 							);
 						}
 					});
@@ -1218,23 +1205,23 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	}
 
 	private boolean isDrawBlockOutline() {
-		if (!this.drawBlockOutline) {
+		if (!drawBlockOutline) {
 			return false;
 		} else {
-			final Entity entity = this.mc.getRenderViewEntity();
-			boolean flag = (entity instanceof EntityPlayer) && !this.mc.gameSettings.hideGUI;
+			final Entity entity = mc.getRenderViewEntity();
+			boolean flag = (entity instanceof EntityPlayer) && !mc.gameSettings.hideGUI;
 
 			if (flag && !((EntityPlayer) entity).capabilities.allowEdit) {
 				final ItemStack itemstack = ((EntityPlayer) entity).getHeldItemMainhand();
 
-				if ((this.mc.objectMouseOver != null)
-						&& (this.mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)) {
-					final BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
-					final Block block = this.mc.world.getBlockState(blockpos).getBlock();
+				if ((mc.objectMouseOver != null)
+						&& (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)) {
+					final BlockPos blockpos = mc.objectMouseOver.getBlockPos();
+					final Block block = mc.world.getBlockState(blockpos).getBlock();
 
-					if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR) {
-						flag = block.hasTileEntity(this.mc.world.getBlockState(blockpos))
-								&& (this.mc.world.getTileEntity(blockpos) instanceof IInventory);
+					if (mc.playerController.getCurrentGameType() == GameType.SPECTATOR) {
+						flag = block.hasTileEntity(mc.world.getBlockState(blockpos))
+								&& (mc.world.getTileEntity(blockpos) instanceof IInventory);
 					} else {
 						flag = !itemstack.isEmpty() && (itemstack.canDestroy(block) || itemstack.canPlaceOn(block));
 					}
@@ -1249,17 +1236,17 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	public void renderWorld(float partialTicks, long finishTimeNano) {
 		this.updateLightmap(partialTicks);
 
-		if (this.mc.getRenderViewEntity() == null) {
-			this.mc.setRenderViewEntity(this.mc.player);
+		if (mc.getRenderViewEntity() == null) {
+			mc.setRenderViewEntity(mc.player);
 		}
 
 		this.getMouseOver(partialTicks);
 		GlStateManager.enableDepth();
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(516, 0.5F);
-		this.mc.profiler.startSection("center");
+		mc.profiler.startSection("center");
 
-		if (this.mc.gameSettings.anaglyph) {
+		if (mc.gameSettings.anaglyph) {
 			anaglyphField = 0;
 			GlStateManager.colorMask(false, true, true, false);
 			this.renderWorldPass(0, partialTicks, finishTimeNano);
@@ -1271,52 +1258,52 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			this.renderWorldPass(2, partialTicks, finishTimeNano);
 		}
 
-		this.mc.profiler.endSection();
+		mc.profiler.endSection();
 	}
 
 	private void renderWorldPass(int pass, float partialTicks, long finishTimeNano) {
-		final RenderGlobal renderglobal = this.mc.renderGlobal;
-		final ParticleManager particlemanager = this.mc.effectRenderer;
+		final RenderGlobal renderglobal = mc.renderGlobal;
+		final ParticleManager particlemanager = mc.effectRenderer;
 		final boolean flag = this.isDrawBlockOutline();
 		GlStateManager.enableCull();
-		this.mc.profiler.endStartSection("clear");
-		GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
+		mc.profiler.endStartSection("clear");
+		GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 		this.updateFogColor(partialTicks);
 		GlStateManager.clear(16640);
-		this.mc.profiler.endStartSection("camera");
+		mc.profiler.endStartSection("camera");
 		this.setupCameraTransform(partialTicks, pass);
-		ActiveRenderInfo.updateRenderInfo(this.mc.getRenderViewEntity(), this.mc.gameSettings.thirdPersonView == 2); // Forge:
-																														// MC-46445
-																														// Spectator
-																														// mode
-																														// particles
-																														// and
-																														// sounds
-																														// computed
-																														// from
-																														// where
-																														// you
-																														// have
-																														// been
-																														// before
-		this.mc.profiler.endStartSection("frustum");
+		ActiveRenderInfo.updateRenderInfo(mc.getRenderViewEntity(), mc.gameSettings.thirdPersonView == 2); // Forge:
+																											// MC-46445
+																											// Spectator
+																											// mode
+																											// particles
+																											// and
+																											// sounds
+																											// computed
+																											// from
+																											// where
+																											// you
+																											// have
+																											// been
+																											// before
+		mc.profiler.endStartSection("frustum");
 		ClippingHelperImpl.getInstance();
-		this.mc.profiler.endStartSection("culling");
+		mc.profiler.endStartSection("culling");
 		final ICamera icamera = new Frustum();
-		final Entity entity = this.mc.getRenderViewEntity();
+		final Entity entity = mc.getRenderViewEntity();
 		final double d0 = entity.lastTickPosX + ((entity.posX - entity.lastTickPosX) * partialTicks);
 		final double d1 = entity.lastTickPosY + ((entity.posY - entity.lastTickPosY) * partialTicks);
 		final double d2 = entity.lastTickPosZ + ((entity.posZ - entity.lastTickPosZ) * partialTicks);
 		icamera.setPosition(d0, d1, d2);
 
-		if (this.mc.gameSettings.renderDistanceChunks >= 4) {
+		if (mc.gameSettings.renderDistanceChunks >= 4) {
 			this.setupFog(-1, partialTicks);
-			this.mc.profiler.endStartSection("sky");
+			mc.profiler.endStartSection("sky");
 			GlStateManager.matrixMode(5889);
 			GlStateManager.loadIdentity();
 			Project.gluPerspective(
 					this.getFOVModifier(partialTicks, true),
-					(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 2.0F
+					(float) mc.displayWidth / (float) mc.displayHeight, 0.05F, farPlaneDistance * 2.0F
 			);
 			GlStateManager.matrixMode(5888);
 			renderglobal.renderSky(partialTicks, pass);
@@ -1324,8 +1311,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			GlStateManager.loadIdentity();
 			Project.gluPerspective(
 					this.getFOVModifier(partialTicks, true),
-					(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F,
-					this.farPlaneDistance * MathHelper.SQRT_2
+					(float) mc.displayWidth / (float) mc.displayHeight, 0.05F,
+					farPlaneDistance * MathHelper.SQRT_2
 			);
 			GlStateManager.matrixMode(5888);
 		}
@@ -1337,43 +1324,43 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
 		}
 
-		this.mc.profiler.endStartSection("prepareterrain");
+		mc.profiler.endStartSection("prepareterrain");
 		this.setupFog(0, partialTicks);
-		this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
-		this.mc.profiler.endStartSection("terrain_setup");
-		renderglobal.setupTerrain(entity, partialTicks, icamera, this.frameCount++, this.mc.player.isSpectator());
+		mc.profiler.endStartSection("terrain_setup");
+		renderglobal.setupTerrain(entity, partialTicks, icamera, frameCount++, mc.player.isSpectator());
 
 		if ((pass == 0) || (pass == 2)) {
-			this.mc.profiler.endStartSection("updatechunks");
-			this.mc.renderGlobal.updateChunks(finishTimeNano);
+			mc.profiler.endStartSection("updatechunks");
+			mc.renderGlobal.updateChunks(finishTimeNano);
 		}
 
-		this.mc.profiler.endStartSection("terrain");
+		mc.profiler.endStartSection("terrain");
 		GlStateManager.matrixMode(5888);
 		GlStateManager.pushMatrix();
 		GlStateManager.disableAlpha();
 		renderglobal.renderBlockLayer(BlockRenderLayer.SOLID, partialTicks, pass, entity);
 		GlStateManager.enableAlpha();
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(
 				false,
-				this.mc.gameSettings.mipmapLevels > 0
+				mc.gameSettings.mipmapLevels > 0
 		); // FORGE: fix flickering leaves when mods mess up the blurMipmap
-			// settings
+																																		// settings
 		renderglobal.renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks, pass, entity);
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
 		renderglobal.renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks, pass, entity);
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
 		GlStateManager.shadeModel(7424);
 		GlStateManager.alphaFunc(516, 0.1F);
 
-		if (!this.debugView) {
+		if (!debugView) {
 			GlStateManager.matrixMode(5888);
 			GlStateManager.popMatrix();
 			GlStateManager.pushMatrix();
 			RenderHelper.enableStandardItemLighting();
-			this.mc.profiler.endStartSection("entities");
+			mc.profiler.endStartSection("entities");
 			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
 			renderglobal.renderEntities(entity, icamera, partialTicks);
 			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
@@ -1384,51 +1371,51 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		GlStateManager.matrixMode(5888);
 		GlStateManager.popMatrix();
 
-		if (flag && (this.mc.objectMouseOver != null) && !entity.isInsideOfMaterial(Material.WATER)) {
+		if (flag && (mc.objectMouseOver != null) && !entity.isInsideOfMaterial(Material.WATER)) {
 			final EntityPlayer entityplayer = (EntityPlayer) entity;
 			GlStateManager.disableAlpha();
-			this.mc.profiler.endStartSection("outline");
+			mc.profiler.endStartSection("outline");
 			if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(
 					renderglobal, entityplayer,
-					this.mc.objectMouseOver, 0, partialTicks
+					mc.objectMouseOver, 0, partialTicks
 			)) {
-				renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
+				renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, partialTicks);
 			}
 			GlStateManager.enableAlpha();
 		}
 
-		if (this.mc.debugRenderer.shouldRender()) {
-			this.mc.debugRenderer.renderDebug(partialTicks, finishTimeNano);
+		if (mc.debugRenderer.shouldRender()) {
+			mc.debugRenderer.renderDebug(partialTicks, finishTimeNano);
 		}
 
-		this.mc.profiler.endStartSection("destroyProgress");
+		mc.profiler.endStartSection("destroyProgress");
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(
 				GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO
 		);
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
 		renderglobal.drawBlockDamageTexture(
 				Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), entity,
 				partialTicks
 		);
-		this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
 		GlStateManager.disableBlend();
 
-		if (!this.debugView) {
+		if (!debugView) {
 			this.enableLightmap();
-			this.mc.profiler.endStartSection("litParticles");
+			mc.profiler.endStartSection("litParticles");
 			particlemanager.renderLitParticles(entity, partialTicks);
 			RenderHelper.disableStandardItemLighting();
 			this.setupFog(0, partialTicks);
-			this.mc.profiler.endStartSection("particles");
+			mc.profiler.endStartSection("particles");
 			particlemanager.renderParticles(entity, partialTicks);
 			this.disableLightmap();
 		}
 
 		GlStateManager.depthMask(false);
 		GlStateManager.enableCull();
-		this.mc.profiler.endStartSection("weather");
+		mc.profiler.endStartSection("weather");
 		this.renderRainSnow(partialTicks);
 		GlStateManager.depthMask(true);
 		renderglobal.renderWorldBorder(entity, partialTicks);
@@ -1443,14 +1430,14 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		this.setupFog(0, partialTicks);
 		GlStateManager.enableBlend();
 		GlStateManager.depthMask(false);
-		this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		GlStateManager.shadeModel(7425);
-		this.mc.profiler.endStartSection("translucent");
+		mc.profiler.endStartSection("translucent");
 		renderglobal.renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks, pass, entity);
-		if (!this.debugView) // Only render if render pass 0 happens as well.
+		if (!debugView) // Only render if render pass 0 happens as well.
 		{
 			RenderHelper.enableStandardItemLighting();
-			this.mc.profiler.endStartSection("entities");
+			mc.profiler.endStartSection("entities");
 			net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
 			renderglobal.renderEntities(entity, icamera, partialTicks);
 			// restore blending function changed by RenderGlobal.preRenderDamagedBlocks
@@ -1469,16 +1456,16 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		GlStateManager.disableFog();
 
 		if ((entity.posY + entity.getEyeHeight()) >= 128.0D) {
-			this.mc.profiler.endStartSection("aboveClouds");
+			mc.profiler.endStartSection("aboveClouds");
 			this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
 		}
 
-		this.mc.profiler.endStartSection("forge_render_last");
+		mc.profiler.endStartSection("forge_render_last");
 		net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(renderglobal, partialTicks);
 
-		this.mc.profiler.endStartSection("hand");
+		mc.profiler.endStartSection("hand");
 
-		if (this.renderHand) {
+		if (renderHand) {
 			GlStateManager.clear(256);
 			this.renderHand(partialTicks, pass);
 		}
@@ -1486,13 +1473,13 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 	private void renderCloudsCheck(RenderGlobal renderGlobalIn, float partialTicks, int pass, double x, double y,
 			double z) {
-		if (this.mc.gameSettings.shouldRenderClouds() != 0) {
-			this.mc.profiler.endStartSection("clouds");
+		if (mc.gameSettings.shouldRenderClouds() != 0) {
+			mc.profiler.endStartSection("clouds");
 			GlStateManager.matrixMode(5889);
 			GlStateManager.loadIdentity();
 			Project.gluPerspective(
 					this.getFOVModifier(partialTicks, true),
-					(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 4.0F
+					(float) mc.displayWidth / (float) mc.displayHeight, 0.05F, farPlaneDistance * 4.0F
 			);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.pushMatrix();
@@ -1504,24 +1491,24 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			GlStateManager.loadIdentity();
 			Project.gluPerspective(
 					this.getFOVModifier(partialTicks, true),
-					(float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F,
-					this.farPlaneDistance * MathHelper.SQRT_2
+					(float) mc.displayWidth / (float) mc.displayHeight, 0.05F,
+					farPlaneDistance * MathHelper.SQRT_2
 			);
 			GlStateManager.matrixMode(5888);
 		}
 	}
 
 	private void addRainParticles() {
-		float f = this.mc.world.getRainStrength(1.0F);
+		float f = mc.world.getRainStrength(1.0F);
 
-		if (!this.mc.gameSettings.fancyGraphics) {
+		if (!mc.gameSettings.fancyGraphics) {
 			f /= 2.0F;
 		}
 
 		if (f != 0.0F) {
-			this.random.setSeed(this.rendererUpdateCount * 312987231L);
-			final Entity entity = this.mc.getRenderViewEntity();
-			final World world = this.mc.world;
+			random.setSeed(rendererUpdateCount * 312987231L);
+			final Entity entity = mc.getRenderViewEntity();
+			final World world = mc.world;
 			final BlockPos blockpos = new BlockPos(entity);
 			final int i = 10;
 			double d0 = 0.0D;
@@ -1530,16 +1517,16 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			int j = 0;
 			int k = (int) (100.0F * f * f);
 
-			if (this.mc.gameSettings.particleSetting == 1) {
+			if (mc.gameSettings.particleSetting == 1) {
 				k >>= 1;
-			} else if (this.mc.gameSettings.particleSetting == 2) {
+			} else if (mc.gameSettings.particleSetting == 2) {
 				k = 0;
 			}
 
 			for (int l = 0; l < k; ++l) {
 				final BlockPos blockpos1 = world
-						.getPrecipitationHeight(blockpos.add(this.random.nextInt(10) - this.random.nextInt(10), 0,
-								this.random.nextInt(10) - this.random.nextInt(10)
+						.getPrecipitationHeight(blockpos.add(random.nextInt(10) - random.nextInt(10), 0,
+								random.nextInt(10) - random.nextInt(10)
 						));
 				final Biome biome = world.getBiome(blockpos1);
 				final BlockPos blockpos2 = blockpos1.down();
@@ -1547,28 +1534,28 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 				if ((blockpos1.getY() <= (blockpos.getY() + 10)) && (blockpos1.getY() >= (blockpos.getY() - 10))
 						&& biome.canRain() && (biome.getTemperature(blockpos1) >= 0.15F)) {
-					final double d3 = this.random.nextDouble();
-					final double d4 = this.random.nextDouble();
+					final double d3 = random.nextDouble();
+					final double d4 = random.nextDouble();
 					final AxisAlignedBB axisalignedbb = iblockstate.getBoundingBox(world, blockpos2);
 
 					if ((iblockstate.getMaterial() != Material.LAVA) && (iblockstate.getBlock() != Blocks.MAGMA)) {
 						if (iblockstate.getMaterial() != Material.AIR) {
 							++j;
 
-							if (this.random.nextInt(j) == 0) {
+							if (random.nextInt(j) == 0) {
 								d0 = blockpos2.getX() + d3;
 								d1 = (blockpos2.getY() + 0.1F + axisalignedbb.maxY) - 1.0D;
 								d2 = blockpos2.getZ() + d4;
 							}
 
-							this.mc.world.spawnParticle(
+							mc.world.spawnParticle(
 									EnumParticleTypes.WATER_DROP, blockpos2.getX() + d3,
 									blockpos2.getY() + 0.1F + axisalignedbb.maxY, blockpos2.getZ() + d4, 0.0D, 0.0D,
 									0.0D, new int[0]
 							);
 						}
 					} else {
-						this.mc.world.spawnParticle(
+						mc.world.spawnParticle(
 								EnumParticleTypes.SMOKE_NORMAL, blockpos1.getX() + d3,
 								(blockpos1.getY() + 0.1F) - axisalignedbb.minY, blockpos1.getZ() + d4, 0.0D, 0.0D, 0.0D,
 								new int[0]
@@ -1577,17 +1564,17 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 				}
 			}
 
-			if ((j > 0) && (this.random.nextInt(3) < this.rainSoundCounter++)) {
-				this.rainSoundCounter = 0;
+			if ((j > 0) && (random.nextInt(3) < rainSoundCounter++)) {
+				rainSoundCounter = 0;
 
 				if ((d1 > (blockpos.getY() + 1))
 						&& (world.getPrecipitationHeight(blockpos).getY() > MathHelper.floor(blockpos.getY()))) {
-					this.mc.world.playSound(
+					mc.world.playSound(
 							d0, d1, d2, SoundEvents.WEATHER_RAIN_ABOVE, SoundCategory.WEATHER, 0.1F,
 							0.5F, false
 					);
 				} else {
-					this.mc.world.playSound(
+					mc.world.playSound(
 							d0, d1, d2, SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, 0.2F, 1.0F,
 							false
 					);
@@ -1601,18 +1588,18 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 */
 	@Override
 	protected void renderRainSnow(float partialTicks) {
-		final net.minecraftforge.client.IRenderHandler renderer = this.mc.world.provider.getWeatherRenderer();
+		final net.minecraftforge.client.IRenderHandler renderer = mc.world.provider.getWeatherRenderer();
 		if (renderer != null) {
-			renderer.render(partialTicks, this.mc.world, this.mc);
+			renderer.render(partialTicks, mc.world, mc);
 			return;
 		}
 
-		final float f = this.mc.world.getRainStrength(partialTicks);
+		final float f = mc.world.getRainStrength(partialTicks);
 
 		if (f > 0.0F) {
 			this.enableLightmap();
-			final Entity entity = this.mc.getRenderViewEntity();
-			final World world = this.mc.world;
+			final Entity entity = mc.getRenderViewEntity();
+			final World world = mc.world;
 			final int i = MathHelper.floor(entity.posX);
 			final int j = MathHelper.floor(entity.posY);
 			final int k = MathHelper.floor(entity.posZ);
@@ -1633,12 +1620,12 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			final int l = MathHelper.floor(d1);
 			int i1 = 5;
 
-			if (this.mc.gameSettings.fancyGraphics) {
+			if (mc.gameSettings.fancyGraphics) {
 				i1 = 10;
 			}
 
 			int j1 = -1;
-			final float f1 = this.rendererUpdateCount + partialTicks;
+			final float f1 = rendererUpdateCount + partialTicks;
 			bufferbuilder.setTranslation(-d0, -d1, -d2);
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
@@ -1646,8 +1633,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			for (int k1 = k - i1; k1 <= (k + i1); ++k1) {
 				for (int l1 = i - i1; l1 <= (i + i1); ++l1) {
 					final int i2 = (((((k1 - k) + 16) * 32) + l1) - i) + 16;
-					final double d3 = this.rainXCoords[i2] * 0.5D;
-					final double d4 = this.rainYCoords[i2] * 0.5D;
+					final double d3 = rainXCoords[i2] * 0.5D;
+					final double d4 = rainYCoords[i2] * 0.5D;
 					blockpos$mutableblockpos.setPos(l1, 0, k1);
 					final Biome biome = world.getBiome(blockpos$mutableblockpos);
 
@@ -1671,7 +1658,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 						}
 
 						if (k2 != l2) {
-							this.random.setSeed(
+							random.setSeed(
 									((l1 * l1 * 3121) + (l1 * 45238971)) ^ ((k1 * k1 * 418711) + (k1 * 13761))
 							);
 							blockpos$mutableblockpos.setPos(l1, k2, k1);
@@ -1684,13 +1671,13 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 									}
 
 									j1 = 0;
-									this.mc.getTextureManager().bindTexture(RAIN_TEXTURES);
+									mc.getTextureManager().bindTexture(RAIN_TEXTURES);
 									bufferbuilder.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 								}
 
-								final double d5 = (-((double) ((this.rendererUpdateCount + (l1 * l1 * 3121)
+								final double d5 = (-((double) ((rendererUpdateCount + (l1 * l1 * 3121)
 										+ (l1 * 45238971) + (k1 * k1 * 418711) + (k1 * 13761)) & 31)
-										+ (double) partialTicks) / 32.0D) * (3.0D + this.random.nextDouble());
+										+ (double) partialTicks) / 32.0D) * (3.0D + random.nextDouble());
 								final double d6 = (l1 + 0.5F) - entity.posX;
 								final double d7 = (k1 + 0.5F) - entity.posZ;
 								final float f3 = MathHelper.sqrt((d6 * d6) + (d7 * d7)) / i1;
@@ -1714,15 +1701,15 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 									}
 
 									j1 = 1;
-									this.mc.getTextureManager().bindTexture(SNOW_TEXTURES);
+									mc.getTextureManager().bindTexture(SNOW_TEXTURES);
 									bufferbuilder.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 								}
 
-								final double d8 = -((this.rendererUpdateCount & 511) + partialTicks) / 512.0F;
-								final double d9 = this.random.nextDouble()
-										+ (f1 * 0.01D * ((float) this.random.nextGaussian()));
-								final double d10 = this.random.nextDouble()
-										+ (f1 * (float) this.random.nextGaussian() * 0.001D);
+								final double d8 = -((rendererUpdateCount & 511) + partialTicks) / 512.0F;
+								final double d9 = random.nextDouble()
+										+ (f1 * 0.01D * ((float) random.nextGaussian()));
+								final double d10 = random.nextDouble()
+										+ (f1 * (float) random.nextGaussian() * 0.001D);
 								final double d11 = (l1 + 0.5F) - entity.posX;
 								final double d12 = (k1 + 0.5F) - entity.posZ;
 								final float f6 = MathHelper.sqrt((d11 * d11) + (d12 * d12)) / i1;
@@ -1767,7 +1754,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 */
 	@Override
 	public void setupOverlayRendering() {
-		final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+		final ScaledResolution scaledresolution = new ScaledResolution(mc);
 		GlStateManager.clear(256);
 		GlStateManager.matrixMode(5889);
 		GlStateManager.loadIdentity();
@@ -1784,20 +1771,20 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * calculates fog and calls glClearColor
 	 */
 	private void updateFogColor(float partialTicks) {
-		final World world = this.mc.world;
-		final Entity entity = this.mc.getRenderViewEntity();
-		float f = 0.25F + ((0.75F * this.mc.gameSettings.renderDistanceChunks) / 32.0F);
+		final World world = mc.world;
+		final Entity entity = mc.getRenderViewEntity();
+		float f = 0.25F + ((0.75F * mc.gameSettings.renderDistanceChunks) / 32.0F);
 		f = 1.0F - (float) Math.pow(f, 0.25D);
-		final Vec3d vec3d = world.getSkyColor(this.mc.getRenderViewEntity(), partialTicks);
+		final Vec3d vec3d = world.getSkyColor(mc.getRenderViewEntity(), partialTicks);
 		final float f1 = (float) vec3d.x;
 		final float f2 = (float) vec3d.y;
 		final float f3 = (float) vec3d.z;
 		final Vec3d vec3d1 = world.getFogColor(partialTicks);
-		this.fogColorRed = (float) vec3d1.x;
-		this.fogColorGreen = (float) vec3d1.y;
-		this.fogColorBlue = (float) vec3d1.z;
+		fogColorRed = (float) vec3d1.x;
+		fogColorGreen = (float) vec3d1.y;
+		fogColorBlue = (float) vec3d1.z;
 
-		if (this.mc.gameSettings.renderDistanceChunks >= 4) {
+		if (mc.gameSettings.renderDistanceChunks >= 4) {
 			final double d0 = MathHelper.sin(world.getCelestialAngleRadians(partialTicks)) > 0.0F ? -1.0D : 1.0D;
 			final Vec3d vec3d2 = new Vec3d(d0, 0.0D, 0.0D);
 			float f5 = (float) entity.getLook(partialTicks).dotProduct(vec3d2);
@@ -1814,64 +1801,64 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 				if (afloat != null) {
 					f5 = f5 * afloat[3];
-					this.fogColorRed = (this.fogColorRed * (1.0F - f5)) + (afloat[0] * f5);
-					this.fogColorGreen = (this.fogColorGreen * (1.0F - f5)) + (afloat[1] * f5);
-					this.fogColorBlue = (this.fogColorBlue * (1.0F - f5)) + (afloat[2] * f5);
+					fogColorRed = (fogColorRed * (1.0F - f5)) + (afloat[0] * f5);
+					fogColorGreen = (fogColorGreen * (1.0F - f5)) + (afloat[1] * f5);
+					fogColorBlue = (fogColorBlue * (1.0F - f5)) + (afloat[2] * f5);
 				}
 			}
 		}
 
-		this.fogColorRed += (f1 - this.fogColorRed) * f;
-		this.fogColorGreen += (f2 - this.fogColorGreen) * f;
-		this.fogColorBlue += (f3 - this.fogColorBlue) * f;
+		fogColorRed += (f1 - fogColorRed) * f;
+		fogColorGreen += (f2 - fogColorGreen) * f;
+		fogColorBlue += (f3 - fogColorBlue) * f;
 		final float f8 = world.getRainStrength(partialTicks);
 
 		if (f8 > 0.0F) {
 			final float f4 = 1.0F - (f8 * 0.5F);
 			final float f10 = 1.0F - (f8 * 0.4F);
-			this.fogColorRed *= f4;
-			this.fogColorGreen *= f4;
-			this.fogColorBlue *= f10;
+			fogColorRed *= f4;
+			fogColorGreen *= f4;
+			fogColorBlue *= f10;
 		}
 
 		final float f9 = world.getThunderStrength(partialTicks);
 
 		if (f9 > 0.0F) {
 			final float f11 = 1.0F - (f9 * 0.5F);
-			this.fogColorRed *= f11;
-			this.fogColorGreen *= f11;
-			this.fogColorBlue *= f11;
+			fogColorRed *= f11;
+			fogColorGreen *= f11;
+			fogColorBlue *= f11;
 		}
 
 		final IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(
-				this.mc.world, entity,
+				mc.world, entity,
 				partialTicks
 		);
 
-		if (this.cloudFog) {
+		if (cloudFog) {
 			final Vec3d vec3d3 = world.getCloudColour(partialTicks);
-			this.fogColorRed = (float) vec3d3.x;
-			this.fogColorGreen = (float) vec3d3.y;
-			this.fogColorBlue = (float) vec3d3.z;
+			fogColorRed = (float) vec3d3.x;
+			fogColorGreen = (float) vec3d3.y;
+			fogColorBlue = (float) vec3d3.z;
 		} else {
 			// Forge Moved to Block.
 			final Vec3d viewport = ActiveRenderInfo.projectViewFromEntity(entity, partialTicks);
 			final BlockPos viewportPos = new BlockPos(viewport);
-			final IBlockState viewportState = this.mc.world.getBlockState(viewportPos);
+			final IBlockState viewportState = mc.world.getBlockState(viewportPos);
 			final Vec3d inMaterialColor = viewportState.getBlock().getFogColor(
-					this.mc.world, viewportPos,
-					viewportState, entity, new Vec3d(this.fogColorRed, this.fogColorGreen, this.fogColorBlue),
+					mc.world, viewportPos,
+					viewportState, entity, new Vec3d(fogColorRed, fogColorGreen, fogColorBlue),
 					partialTicks
 			);
-			this.fogColorRed = (float) inMaterialColor.x;
-			this.fogColorGreen = (float) inMaterialColor.y;
-			this.fogColorBlue = (float) inMaterialColor.z;
+			fogColorRed = (float) inMaterialColor.x;
+			fogColorGreen = (float) inMaterialColor.y;
+			fogColorBlue = (float) inMaterialColor.z;
 		}
 
-		final float f13 = this.fogColor2 + ((this.fogColor1 - this.fogColor2) * partialTicks);
-		this.fogColorRed *= f13;
-		this.fogColorGreen *= f13;
-		this.fogColorBlue *= f13;
+		final float f13 = fogColor2 + ((fogColor1 - fogColor2) * partialTicks);
+		fogColorRed *= f13;
+		fogColorGreen *= f13;
+		fogColorBlue *= f13;
 		double d1 = (entity.lastTickPosY + ((entity.posY - entity.lastTickPosY) * partialTicks))
 				* world.provider.getVoidFogYFactor();
 
@@ -1891,30 +1878,30 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			}
 
 			d1 = d1 * d1;
-			this.fogColorRed = (float) (this.fogColorRed * d1);
-			this.fogColorGreen = (float) (this.fogColorGreen * d1);
-			this.fogColorBlue = (float) (this.fogColorBlue * d1);
+			fogColorRed = (float) (fogColorRed * d1);
+			fogColorGreen = (float) (fogColorGreen * d1);
+			fogColorBlue = (float) (fogColorBlue * d1);
 		}
 
-		if (this.bossColorModifier > 0.0F) {
-			final float f14 = this.bossColorModifierPrev
-					+ ((this.bossColorModifier - this.bossColorModifierPrev) * partialTicks);
-			this.fogColorRed = (this.fogColorRed * (1.0F - f14)) + (this.fogColorRed * 0.7F * f14);
-			this.fogColorGreen = (this.fogColorGreen * (1.0F - f14)) + (this.fogColorGreen * 0.6F * f14);
-			this.fogColorBlue = (this.fogColorBlue * (1.0F - f14)) + (this.fogColorBlue * 0.6F * f14);
+		if (bossColorModifier > 0.0F) {
+			final float f14 = bossColorModifierPrev
+					+ ((bossColorModifier - bossColorModifierPrev) * partialTicks);
+			fogColorRed = (fogColorRed * (1.0F - f14)) + (fogColorRed * 0.7F * f14);
+			fogColorGreen = (fogColorGreen * (1.0F - f14)) + (fogColorGreen * 0.6F * f14);
+			fogColorBlue = (fogColorBlue * (1.0F - f14)) + (fogColorBlue * 0.6F * f14);
 		}
 
 		if ((entity instanceof EntityLivingBase)
 				&& ((EntityLivingBase) entity).isPotionActive(MobEffects.NIGHT_VISION)) {
 			final float f15 = this.getNightVisionBrightness((EntityLivingBase) entity, partialTicks);
-			float f6 = 1.0F / this.fogColorRed;
+			float f6 = 1.0F / fogColorRed;
 
-			if (f6 > (1.0F / this.fogColorGreen)) {
-				f6 = 1.0F / this.fogColorGreen;
+			if (f6 > (1.0F / fogColorGreen)) {
+				f6 = 1.0F / fogColorGreen;
 			}
 
-			if (f6 > (1.0F / this.fogColorBlue)) {
-				f6 = 1.0F / this.fogColorBlue;
+			if (f6 > (1.0F / fogColorBlue)) {
+				f6 = 1.0F / fogColorBlue;
 			}
 
 			// Forge: fix MC-4647 and MC-10480
@@ -1922,31 +1909,31 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 				f6 = Math.nextAfter(f6, 0.0);
 			}
 
-			this.fogColorRed = (this.fogColorRed * (1.0F - f15)) + (this.fogColorRed * f6 * f15);
-			this.fogColorGreen = (this.fogColorGreen * (1.0F - f15)) + (this.fogColorGreen * f6 * f15);
-			this.fogColorBlue = (this.fogColorBlue * (1.0F - f15)) + (this.fogColorBlue * f6 * f15);
+			fogColorRed = (fogColorRed * (1.0F - f15)) + (fogColorRed * f6 * f15);
+			fogColorGreen = (fogColorGreen * (1.0F - f15)) + (fogColorGreen * f6 * f15);
+			fogColorBlue = (fogColorBlue * (1.0F - f15)) + (fogColorBlue * f6 * f15);
 		}
 
-		if (this.mc.gameSettings.anaglyph) {
-			final float f16 = ((this.fogColorRed * 30.0F) + (this.fogColorGreen * 59.0F) + (this.fogColorBlue * 11.0F))
+		if (mc.gameSettings.anaglyph) {
+			final float f16 = ((fogColorRed * 30.0F) + (fogColorGreen * 59.0F) + (fogColorBlue * 11.0F))
 					/ 100.0F;
-			final float f17 = ((this.fogColorRed * 30.0F) + (this.fogColorGreen * 70.0F)) / 100.0F;
-			final float f7 = ((this.fogColorRed * 30.0F) + (this.fogColorBlue * 70.0F)) / 100.0F;
-			this.fogColorRed = f16;
-			this.fogColorGreen = f17;
-			this.fogColorBlue = f7;
+			final float f17 = ((fogColorRed * 30.0F) + (fogColorGreen * 70.0F)) / 100.0F;
+			final float f7 = ((fogColorRed * 30.0F) + (fogColorBlue * 70.0F)) / 100.0F;
+			fogColorRed = f16;
+			fogColorGreen = f17;
+			fogColorBlue = f7;
 		}
 
 		final net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(
-				this, entity, iblockstate, partialTicks, this.fogColorRed, this.fogColorGreen, this.fogColorBlue
+				this, entity, iblockstate, partialTicks, fogColorRed, fogColorGreen, fogColorBlue
 		);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 
-		this.fogColorRed = event.getRed();
-		this.fogColorGreen = event.getGreen();
-		this.fogColorBlue = event.getBlue();
+		fogColorRed = event.getRed();
+		fogColorGreen = event.getGreen();
+		fogColorBlue = event.getBlue();
 
-		GlStateManager.clearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);
+		GlStateManager.clearColor(fogColorRed, fogColorGreen, fogColorBlue, 0.0F);
 	}
 
 	/**
@@ -1954,12 +1941,12 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * 0 and goes to 80% of far plane distance and is used for sky rendering.
 	 */
 	private void setupFog(int startCoords, float partialTicks) {
-		final Entity entity = this.mc.getRenderViewEntity();
+		final Entity entity = mc.getRenderViewEntity();
 		this.setupFogColor(false);
 		GlStateManager.glNormal3f(0.0F, -1.0F, 0.0F);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		final IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(
-				this.mc.world, entity,
+				mc.world, entity,
 				partialTicks
 		);
 		final float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(
@@ -1974,7 +1961,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			final int i = ((EntityLivingBase) entity).getActivePotionEffect(MobEffects.BLINDNESS).getDuration();
 
 			if (i < 20) {
-				f1 = 5.0F + ((this.farPlaneDistance - 5.0F) * (1.0F - (i / 20.0F)));
+				f1 = 5.0F + ((farPlaneDistance - 5.0F) * (1.0F - (i / 20.0F)));
 			}
 
 			GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
@@ -1990,7 +1977,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			if (GLContext.getCapabilities().GL_NV_fog_distance) {
 				GlStateManager.glFogi(34138, 34139);
 			}
-		} else if (this.cloudFog) {
+		} else if (cloudFog) {
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(0.1F);
 		} else if (iblockstate.getMaterial() == Material.WATER) {
@@ -2011,7 +1998,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(2.0F);
 		} else {
-			final float f = this.farPlaneDistance;
+			final float f = farPlaneDistance;
 			GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
 
 			if (startCoords == -1) {
@@ -2026,8 +2013,8 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 				GlStateManager.glFogi(34138, 34139);
 			}
 
-			if (this.mc.world.provider.doesXZShowFog((int) entity.posX, (int) entity.posZ)
-					|| this.mc.ingameGUI.getBossOverlay().shouldCreateFog()) {
+			if (mc.world.provider.doesXZShowFog((int) entity.posX, (int) entity.posZ)
+					|| mc.ingameGUI.getBossOverlay().shouldCreateFog()) {
 				GlStateManager.setFogStart(f * 0.05F);
 				GlStateManager.setFogEnd(Math.min(f, 192.0F) * 0.5F);
 			}
@@ -2049,7 +2036,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		} else {
 			GlStateManager.glFog(
 					2918,
-					this.setFogColorBuffer(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 1.0F)
+					this.setFogColorBuffer(fogColorRed, fogColorGreen, fogColorBlue, 1.0F)
 			);
 		}
 	}
@@ -2058,21 +2045,21 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	 * Update and return fogColorBuffer with the RGBA values passed as arguments
 	 */
 	private FloatBuffer setFogColorBuffer(float red, float green, float blue, float alpha) {
-		this.fogColorBuffer.clear();
-		this.fogColorBuffer.put(red).put(green).put(blue).put(alpha);
-		this.fogColorBuffer.flip();
-		return this.fogColorBuffer;
+		fogColorBuffer.clear();
+		fogColorBuffer.put(red).put(green).put(blue).put(alpha);
+		fogColorBuffer.flip();
+		return fogColorBuffer;
 	}
 
 	@Override
 	public void resetData() {
-		this.itemActivationItem = null;
-		this.mapItemRenderer.clearLoadedMaps();
+		itemActivationItem = null;
+		mapItemRenderer.clearLoadedMaps();
 	}
 
 	@Override
 	public MapItemRenderer getMapItemRenderer() {
-		return this.mapItemRenderer;
+		return mapItemRenderer;
 	}
 
 	public static void drawNameplate(FontRenderer fontRendererIn, String str, float x, float y, float z,
@@ -2126,22 +2113,22 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 
 	@Override
 	public void displayItemActivation(ItemStack stack) {
-		this.itemActivationItem = stack;
-		this.itemActivationTicks = 40;
-		this.itemActivationOffX = (this.random.nextFloat() * 2.0F) - 1.0F;
-		this.itemActivationOffY = (this.random.nextFloat() * 2.0F) - 1.0F;
+		itemActivationItem = stack;
+		itemActivationTicks = 40;
+		itemActivationOffX = (random.nextFloat() * 2.0F) - 1.0F;
+		itemActivationOffY = (random.nextFloat() * 2.0F) - 1.0F;
 	}
 
 	private void renderItemActivation(int p_190563_1_, int p_190563_2_, float p_190563_3_) {
-		if ((this.itemActivationItem != null) && (this.itemActivationTicks > 0)) {
-			final int i = 40 - this.itemActivationTicks;
+		if ((itemActivationItem != null) && (itemActivationTicks > 0)) {
+			final int i = 40 - itemActivationTicks;
 			final float f = (i + p_190563_3_) / 40.0F;
 			final float f1 = f * f;
 			final float f2 = f * f1;
 			final float f3 = (10.25F * f2 * f1) + (-24.95F * f1 * f1) + (25.5F * f2) + (-13.8F * f1) + (4.0F * f);
 			final float f4 = f3 * (float) Math.PI;
-			final float f5 = this.itemActivationOffX * (p_190563_1_ / 4);
-			final float f6 = this.itemActivationOffY * (p_190563_2_ / 4);
+			final float f5 = itemActivationOffX * (p_190563_1_ / 4);
+			final float f6 = itemActivationOffY * (p_190563_2_ / 4);
 			GlStateManager.enableAlpha();
 			GlStateManager.pushMatrix();
 			GlStateManager.pushAttrib();
@@ -2157,7 +2144,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 			GlStateManager.rotate(900.0F * MathHelper.abs(MathHelper.sin(f4)), 0.0F, 1.0F, 0.0F);
 			GlStateManager.rotate(6.0F * MathHelper.cos(f * 8.0F), 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(6.0F * MathHelper.cos(f * 8.0F), 0.0F, 0.0F, 1.0F);
-			this.mc.getRenderItem().renderItem(this.itemActivationItem, ItemCameraTransforms.TransformType.FIXED);
+			mc.getRenderItem().renderItem(itemActivationItem, ItemCameraTransforms.TransformType.FIXED);
 			GlStateManager.popAttrib();
 			GlStateManager.popMatrix();
 			RenderHelper.disableStandardItemLighting();

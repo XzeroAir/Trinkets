@@ -23,7 +23,7 @@ compileJava {
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
 
-version = "${config.version}-${config.build_number}"
+version = "${config.version}.${config.build_number}"
 group = "xzeroair.xat" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
 
