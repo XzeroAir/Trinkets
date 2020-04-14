@@ -42,9 +42,9 @@ public class EnhancedVisualsRenderEvent {
 
 	//	@SubscribeEvent
 	//	public void onRenderTick(RenderTickEvent event) {
-	//		if ((this.mc.player != null) && (this.mc.player.world != null)) {
+	//		if ((mc.player != null) && (mc.player.world != null)) {
 	//			if (TrinketsConfig.compat.enhancedvisuals) {
-	//				if (TrinketHelper.AccessoryCheck(this.mc.player, ModItems.trinkets.TrinketDragonsEye)) {
+	//				if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketDragonsEye)) {
 	//					if (TrinketsConfig.compat.toughasnails && Loader.isModLoaded("toughasnails")) {
 	//						//						if((VisualManager.getPersitentVisual(ToughAsNailsAddon.heat) != null) && VisualManager.getPersitentVisual(ToughAsNailsAddon.heat).type.isEnabled()) {
 	//						//							final float intensity = VisualManager.getPersitentVisual(ToughAsNailsAddon.heat).getIntensity(event.renderTickTime);
@@ -62,7 +62,7 @@ public class EnhancedVisualsRenderEvent {
 	//							}
 	//						}
 	//					}
-	//					if (TrinketHelper.AccessoryCheck(this.mc.player, ModItems.trinkets.TrinketEnderTiara)) {
+	//					if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketEnderTiara)) {
 	//						if ((VisualManager.getPersitentVisual(VisualType.slender) != null) && VisualManager.getPersitentVisual(VisualType.slender).type.isEnabled()) {
 	//							final float intensity = VisualManager.getPersitentVisual(VisualType.slender).getIntensity(event.renderTickTime);
 	//							if ((intensity > 0f)) {
@@ -70,7 +70,7 @@ public class EnhancedVisualsRenderEvent {
 	//							}
 	//						}
 	//					}
-	//					if (TrinketHelper.AccessoryCheck(this.mc.player, ModItems.trinkets.TrinketSea) && this.mc.player.isInWater()) {
+	//					if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketSea) && mc.player.isInWater()) {
 	//						if ((VisualManager.getPersitentVisual(VisualType.blur) != null) && VisualManager.getPersitentVisual(VisualType.blur).type.isEnabled()) {
 	//							final float intensity = VisualManager.getPersitentVisual(VisualType.blur).getIntensity(event.renderTickTime);
 	//							if ((intensity > 0f) && (intensity < 20f)) {
@@ -78,7 +78,7 @@ public class EnhancedVisualsRenderEvent {
 	//							}
 	//						}
 	//					}
-	//					if (TrinketHelper.AccessoryCheck(this.mc.player, ModItems.trinkets.TrinketDamageShield)) {
+	//					if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketDamageShield)) {
 	//						if ((VisualManager.getPersitentVisual(VisualType.blur) != null) && VisualManager.getPersitentVisual(VisualType.blur).type.isEnabled()) {
 	//							final float intensity = VisualManager.getPersitentVisual(VisualType.blur).getIntensity(event.renderTickTime);
 	//							if ((intensity > 0f) && (intensity <= (100 * TrinketsConfig.SERVER.DAMAGE_SHIELD.explosion_amount))) {

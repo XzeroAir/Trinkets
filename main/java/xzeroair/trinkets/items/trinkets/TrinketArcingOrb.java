@@ -70,16 +70,16 @@ public class TrinketArcingOrb extends AccessoryBase {
 		if (iCap != null) {
 			if (client) {
 
-				if ((this.left > 0) || (this.right > 0) || (this.front > 0) || (this.back > 0)) {
-					this.clock++;
-					if (this.clock >= 10) {
-						this.left = 0;
-						this.right = 0;
-						this.front = 0;
-						this.back = 0;
-						this.clock = 0;
+				if ((left > 0) || (right > 0) || (front > 0) || (back > 0)) {
+					clock++;
+					if (clock >= 10) {
+						left = 0;
+						right = 0;
+						front = 0;
+						back = 0;
+						clock = 0;
 					}
-					System.out.println(this.clock);
+					System.out.println(clock);
 				}
 
 				final float yaw = player.rotationYaw;
@@ -89,28 +89,28 @@ public class TrinketArcingOrb extends AccessoryBase {
 				final boolean pressedBack = Minecraft.getMinecraft().gameSettings.keyBindBack.isPressed();
 				final boolean pressedForward = Minecraft.getMinecraft().gameSettings.keyBindForward.isPressed();
 				if (pressedLeft) {
-					this.left++;
-					this.right = 0;
-					this.front = 0;
-					this.back = 0;
+					left++;
+					right = 0;
+					front = 0;
+					back = 0;
 				}
 				if (pressedRight) {
-					this.left = 0;
-					this.right++;
-					this.front = 0;
-					this.back = 0;
+					left = 0;
+					right++;
+					front = 0;
+					back = 0;
 				}
 				if (pressedForward) {
-					this.left = 0;
-					this.right = 0;
-					this.front++;
-					this.back = 0;
+					left = 0;
+					right = 0;
+					front++;
+					back = 0;
 				}
 				if (pressedBack) {
-					this.left = 0;
-					this.right = 0;
-					this.front = 0;
-					this.back++;
+					left = 0;
+					right = 0;
+					front = 0;
+					back++;
 				}
 
 				final Vec3d look = player.getLookVec();
@@ -142,32 +142,32 @@ public class TrinketArcingOrb extends AccessoryBase {
 				final double spd = 1.25;
 				// Need a Timer to reset to 0 if no double tap after a few seconds
 				if (player.onGround) {
-					if (this.left > 1) {
+					if (left > 1) {
 						player.setVelocity(look.z * spd, 0.3, -look.x * spd);
 						System.out.println("Left Triggered");
-						this.left = 0;
+						left = 0;
 					}
-					if (this.right > 1) {
+					if (right > 1) {
 						player.setVelocity(-look.z * spd, 0.3, look.x * spd);
 						System.out.println("Right Triggered");
-						this.right = 0;
+						right = 0;
 					}
-					if (this.front > 1) {
+					if (front > 1) {
 						player.setVelocity(look.x * spd, 0.3, look.z * spd);
 						System.out.println("Front Triggered");
-						this.front = 0;
+						front = 0;
 					}
-					if (this.back > 1) {
+					if (back > 1) {
 						player.setVelocity(-look.x * 2, 0.5, -look.z * 2);
 						System.out.println("Back Triggered");
-						this.back = 0;
+						back = 0;
 					}
 				} else {
-					this.left = 0;
-					this.right = 0;
-					this.front = 0;
-					this.back = 0;
-					this.clock = 0;
+					left = 0;
+					right = 0;
+					front = 0;
+					back = 0;
+					clock = 0;
 				}
 			}
 		}
