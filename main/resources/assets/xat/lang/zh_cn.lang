@@ -257,10 +257,10 @@ xat.config.client.render.trinkets.all.tooltip=所有饰品的主要渲染控制
 xat.config.client.render.trinket=饰品渲染
 xat.config.client.render.trinket.tooltip=渲染饰品在玩家上的效果
 
-xat.config.client.render.entity.renderer.replace=Replace EntityRenderer
-xat.config.client.render.entity.renderer.replace.tooltip=When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?
-xat.config.client.render.entity.renderer.replace.fog=EntityRenderer Fog
-xat.config.client.render.entity.renderer.replace.fog.tooltip=When Trinket and Baubles Replaces the EntityRenderer is breaks some settings with Optifine, Specifically Fog, use this to turn Fog on or off
+xat.config.client.render.entity.renderer.replace=更换实体渲染器
+xat.config.client.render.entity.renderer.replace.tooltip=使用变形之戒时 Trinkets and Baubles 是否更换实体渲染器以解决某些视角问题？
+xat.config.client.render.entity.renderer.replace.fog=实体渲染器 雾
+xat.config.client.render.entity.renderer.replace.fog.tooltip=Trinket and Baubles Replaces 更换实体渲染器时会破坏某些 Optifine 的设置，尤其是雾，使用这个选项以打开或关闭雾。
 
 xat.config.food.registry.enabled=启用食物
 xat.config.food.registry.enabled.tooltip=这个 Trinkets and Baubles 的食物是否在加载时注册
