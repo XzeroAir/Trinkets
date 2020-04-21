@@ -4,43 +4,16 @@ import java.util.Collection;
 import java.util.UUID;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import xzeroair.trinkets.attributes.GenericAttribute;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
-import xzeroair.trinkets.attributes.armor.ArmorAttribute;
-import xzeroair.trinkets.attributes.attackdamage.DamageAttribute;
-import xzeroair.trinkets.attributes.attackspeed.AttackSpeedAttribute;
-import xzeroair.trinkets.attributes.health.HealthAttribute;
-import xzeroair.trinkets.attributes.knock.KnockResistAttribute;
-import xzeroair.trinkets.attributes.luck.LuckAttribute;
-import xzeroair.trinkets.attributes.reach.ReachAttribute;
-import xzeroair.trinkets.attributes.speed.SpeedAttribute;
-import xzeroair.trinkets.attributes.swim.SwimAttribute;
-import xzeroair.trinkets.attributes.toughness.ToughnessAttribute;
 import xzeroair.trinkets.util.interfaces.IAttributeConfigHelper;
 
 public class AttributeHelper {
-
-	// private static UUID uuid =
-	// UUID.fromString("d222c4fa-0e05-4b90-98c0-1f574d9d2558");
-	//
-	// TranslationHelper.addTooltips(this,
-	// TrinketsConfig.SERVER.TITAN_RING.Attributes, tooltip);
-	//
-	// AttributeHelper.handleAttributes(player,
-	// TrinketsConfig.SERVER.TITAN_RING.Attributes, uuid);
-	//
-	// final Collection<IAttributeInstance> attributes =
-	// player.getAttributeMap().getAllAttributes();
-	// for(final IAttributeInstance attribute : attributes) {
-	// for(final AttributeModifier modifier : attribute.getModifiers()) {
-	// if(modifier.getID().toString().contentEquals(uuid.toString())) {
-	// attribute.removeModifier(modifier);
-	// }
-	// }
-	// }
 
 	public static void removeRaceAttribute(EntityLivingBase player) {
 		AbstractAttributeMap attributes = player.getAttributeMap();
@@ -67,73 +40,73 @@ public class AttributeHelper {
 		if (AttributeConfig.ArmorAttributeEnabled()) {
 			final double amount = AttributeConfig.ArmorAttributeAmount();
 			final int op = AttributeConfig.ArmorAttributeOperation();
-			ArmorAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.ARMOR);
 		} else {
-			ArmorAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.ARMOR);
 		}
 		if (AttributeConfig.DamageAttributeEnabled()) {
 			final double amount = AttributeConfig.DamageAttributeAmount();
 			final int op = AttributeConfig.DamageAttributeOperation();
-			DamageAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.ATTACK_DAMAGE);
 		} else {
-			DamageAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.ATTACK_DAMAGE);
 		}
 		if (AttributeConfig.AttackSpeedAttributeEnabled()) {
 			final double amount = AttributeConfig.AttackSpeedAttributeAmount();
 			final int op = AttributeConfig.AttackSpeedAttributeOperation();
-			AttackSpeedAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.ATTACK_SPEED);
 		} else {
-			AttackSpeedAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.ATTACK_SPEED);
 		}
 		if (AttributeConfig.HealthAttributeEnabled()) {
 			final double amount = AttributeConfig.HealthAttributeAmount();
 			final int op = AttributeConfig.HealthAttributeOperation();
-			HealthAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.MAX_HEALTH);
 		} else {
-			HealthAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.MAX_HEALTH);
 		}
 		if (AttributeConfig.KnockbackAttributeEnabled()) {
 			final double amount = AttributeConfig.KnockbackAttributeAmount();
 			final int op = AttributeConfig.KnockbackAttributeOperation();
-			KnockResistAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
 		} else {
-			KnockResistAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
 		}
 		if (AttributeConfig.MovementSpeedAttributeEnabled()) {
 			final double amount = AttributeConfig.MovementSpeedAttributeAmount();
 			final int op = AttributeConfig.MovementSpeedAttributeOperation();
-			SpeedAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.MOVEMENT_SPEED);
 		} else {
-			SpeedAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.MOVEMENT_SPEED);
 		}
 		if (AttributeConfig.ArmorToughnessAttributeEnabled()) {
 			final double amount = AttributeConfig.ArmorToughnessAttributeAmount();
 			final int op = AttributeConfig.ArmorToughnessAttributeOperation();
-			ToughnessAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.ARMOR_TOUGHNESS);
 		} else {
-			ToughnessAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.ARMOR_TOUGHNESS);
 		}
 		if (AttributeConfig.SwimSpeedAttributeEnabled()) {
 			final double amount = AttributeConfig.SwimSpeedAttributeAmount();
 			final int op = AttributeConfig.SwimSpeedAttributeOperation();
-			SwimAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, EntityLivingBase.SWIM_SPEED);
 		} else {
-			SwimAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, EntityLivingBase.SWIM_SPEED);
 		}
 		if (AttributeConfig.LuckAttributeEnabled()) {
 			final double amount = AttributeConfig.LuckAttributeAmount();
 			final int op = AttributeConfig.LuckAttributeOperation();
-			LuckAttribute.addModifier(player, amount, uuid, op);
+			GenericAttribute.addModifier(player, amount, uuid, op, SharedMonsterAttributes.LUCK);
 		} else {
-			LuckAttribute.removeModifier(player, uuid);
+			GenericAttribute.removeModifier(player, uuid, SharedMonsterAttributes.LUCK);
 		}
 		if (player instanceof EntityPlayer) {
 			if (AttributeConfig.ReachAttributeEnabled()) {
 				final double amount = AttributeConfig.ReachAttributeAmount();
 				final int op = AttributeConfig.ReachAttributeOperation();
-				ReachAttribute.addModifier((EntityPlayer) player, amount, uuid, op);
+				GenericAttribute.addModifier(player, amount, uuid, op, EntityPlayer.REACH_DISTANCE);
 			} else {
-				ReachAttribute.removeModifier((EntityPlayer) player, uuid);
+				GenericAttribute.removeModifier(player, uuid, EntityPlayer.REACH_DISTANCE);
 			}
 		}
 	}

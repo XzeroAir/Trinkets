@@ -2,8 +2,6 @@ package xzeroair.trinkets.util;
 
 import java.util.Random;
 
-import net.minecraft.util.math.MathHelper;
-
 public class Reference {
 
 	public static final String MODID = "xat";
@@ -27,12 +25,4 @@ public class Reference {
 	private static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_OLD_AMOUNT = 1;
 	private static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_NEW_AMOUNT = 2;
 
-	public static int getOpModifier(int i) {
-		switch(i) {
-		case 0: return ATTRIBUTE_MODIFIER_OPERATION_ADD;
-		case 1: return ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_OLD_AMOUNT;
-		case 2: return ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_NEW_AMOUNT;
-		}
-		return MathHelper.clamp(i, 0, 2);
-	}
 }

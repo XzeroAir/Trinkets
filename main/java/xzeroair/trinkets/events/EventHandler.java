@@ -1,5 +1,6 @@
 package xzeroair.trinkets.events;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -33,7 +34,9 @@ import xzeroair.trinkets.items.foods.Titan_Spirit;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.toughasnails.TANCompat;
+import xzeroair.trinkets.util.handlers.SizeHandler;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.EntityRaceHelper;
 import xzeroair.trinkets.util.helpers.SizeHelper;
 
 public class EventHandler {
@@ -154,74 +157,78 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void EntityUpdate(LivingUpdateEvent event) {
-		//		final EntityLivingBase entity = event.getEntityLiving();
-		//		RaceProperties cap = Capabilities.getEntityRace(entity);
-		//
-		//		if ((cap != null) && !(entity instanceof EntityPlayer)) {
-		//			AbstractAttributeMap attributes = entity.getAttributeMap();
-		//			if (attributes.getAttributeInstance(RaceAttribute.ENTITY_RACE) != null) {
-		//				String fairy = "fairy_dew";
-		//				String dwarf = "dwarf_stout";
-		//				String titan = "titan_spirit";
-		//				if (EntityRaceHelper.getRace(entity).contentEquals(fairy)) {
-		//					if (!cap.getFood().contentEquals(fairy)) {
-		//						EffectsFairyRing.FairyEquip(null, entity);
-		//						cap.setFood(fairy);
-		//					}
-		//					if (cap.getFood().contentEquals(fairy)) {
-		//						EffectsFairyRing.FairyTicks(entity);
-		//					}
-		//				}
-		//				if (EntityRaceHelper.getRace(entity).contentEquals(dwarf)) {
-		//					if (!cap.getFood().contentEquals(dwarf)) {
-		//						EffectsDwarfRing.DwarfEquip(null, entity);
-		//						cap.setFood(dwarf);
-		//					}
-		//					if (cap.getFood().contentEquals(dwarf)) {
-		//						EffectsDwarfRing.DwarfTicks(entity);
-		//					}
-		//				}
-		//				if (EntityRaceHelper.getRace(entity).contentEquals(titan)) {
-		//					if (!cap.getFood().contentEquals(titan)) {
-		//						EffectsTitanRing.TitanEquip(null, entity);
-		//						cap.setFood(titan);
-		//					}
-		//					if (cap.getFood().contentEquals(titan)) {
-		//						EffectsTitanRing.TitansTicks(entity);
-		//					}
-		//				}
-		//			} else {
-		//				if (!cap.getFood().contentEquals("none")) {
-		//					cap.setFood("none");
-		//				}
-		//				if (cap.getTarget() != 100) {
-		//					cap.setTarget(100);
-		//				}
-		//			}
-		//			if (cap.getTarget() != 100) {
-		//				cap.setTrans(true);
-		//			}
-		//			if (cap.getTarget() == 100) {
-		//				if (cap.getTrans() == true) {
-		//					AttributeHelper.removeAttributes(entity, EffectsFairyRing.getUUID());
-		//					AttributeHelper.removeAttributes(entity, EffectsDwarfRing.getUUID());
-		//					AttributeHelper.removeAttributes(entity, EffectsTitanRing.getUUID());
-		//					entity.height = cap.getDefaultHeight();
-		//					entity.width = cap.getDefaultWidth();
-		//					cap.setTrans(false);
-		//				}
-		//			}
-		//			//			System.out.println(cap.getSize() + " " + cap.getTarget() + "  " + cap.getTrans());
-		//			if (cap.getSize() != cap.getTarget()) {
-		//				SizeHelper.sizeHandler(cap);
-		//				SizeHandler.setSize(entity, cap);
-		//			}
-		//		}
+		if (!TrinketsConfig.SERVER.Potion.players_only) {
+			final EntityLivingBase entity = event.getEntityLiving();
+			RaceProperties cap = Capabilities.getEntityRace(entity);
 
-	}
-
-	@SubscribeEvent
-	public void onItemUse(LivingEntityUseItemEvent event) {
+			if ((cap != null) && !(entity instanceof EntityPlayer)) {
+				AbstractAttributeMap attributes = entity.getAttributeMap();
+				if (attributes.getAttributeInstance(RaceAttribute.ENTITY_RACE) != null) {
+					String fairy = "fairy_dew";
+					String dwarf = "dwarf_stout";
+					String titan = "titan_spirit";
+					if (EntityRaceHelper.getRace(entity).contentEquals(fairy)) {
+						if (!cap.getFood().contentEquals(fairy)) {
+							EffectsFairyRing.FairyEquip(null, entity);
+							cap.setFood(fairy);
+						}
+						if (cap.getFood().contentEquals(fairy)) {
+							EffectsFairyRing.FairyTicks(entity);
+						}
+					}
+					if (EntityRaceHelper.getRace(entity).contentEquals(dwarf)) {
+						if (!cap.getFood().contentEquals(dwarf)) {
+							EffectsDwarfRing.DwarfEquip(null, entity);
+							cap.setFood(dwarf);
+						}
+						if (cap.getFood().contentEquals(dwarf)) {
+							EffectsDwarfRing.DwarfTicks(entity);
+						}
+					}
+					if (EntityRaceHelper.getRace(entity).contentEquals(titan)) {
+						if (!cap.getFood().contentEquals(titan)) {
+							EffectsTitanRing.TitanEquip(null, entity);
+							cap.setFood(titan);
+						}
+						if (cap.getFood().contentEquals(titan)) {
+							EffectsTitanRing.TitansTicks(entity);
+						}
+					}
+					if (EntityRaceHelper.getRace(entity).contentEquals("none")) {
+						if (!cap.getFood().contentEquals("none")) {
+							cap.setFood("none");
+						}
+						if (cap.getTarget() != 100) {
+							cap.setTarget(100);
+						}
+					}
+				} else {
+					if (!cap.getFood().contentEquals("none")) {
+						cap.setFood("none");
+					}
+					if (cap.getTarget() != 100) {
+						cap.setTarget(100);
+					}
+				}
+				if (cap.getTarget() != 100) {
+					cap.setTrans(true);
+				}
+				if (cap.getTarget() == 100) {
+					if (cap.getTrans() == true) {
+						AttributeHelper.removeAttributes(entity, EffectsFairyRing.getUUID());
+						AttributeHelper.removeAttributes(entity, EffectsDwarfRing.getUUID());
+						AttributeHelper.removeAttributes(entity, EffectsTitanRing.getUUID());
+						entity.height = cap.getDefaultHeight();
+						entity.width = cap.getDefaultWidth();
+						cap.setTrans(false);
+					}
+				}
+				if (cap.getSize() != cap.getTarget()) {
+					SizeHelper.sizeHandler(cap);
+					SizeHandler.setSize(entity, cap);
+				}
+			}
+		}
 	}
 
 	@SubscribeEvent
@@ -262,19 +269,13 @@ public class EventHandler {
 					}
 				}
 			}
-			//				if (stack.getItem().equals(Items.POTIONITEM)) {
-			//					final PotionType pot = PotionUtils.getPotionFromItem(stack);
-			//					if (pot.equals(ModPotionTypes.Enhanced)) {
-			//
-			//					}
-			//				}
 		}
 	}
 
 	@SubscribeEvent
 	public void onCollideWithBlock(PlayerSPPushOutOfBlocksEvent event) {
 		if (event.getEntityPlayer() != null) {
-			if (TrinketHelper.AccessoryCheck(event.getEntityPlayer(), ModItems.trinkets.TrinketFairyRing) || TrinketHelper.AccessoryCheck(event.getEntityPlayer(), ModItems.trinkets.TrinketDwarfRing)) {
+			if (TrinketHelper.AccessoryCheck(event.getEntityPlayer(), TrinketHelper.SizeTrinkets)) {
 				event.setCanceled(true);
 			}
 		}

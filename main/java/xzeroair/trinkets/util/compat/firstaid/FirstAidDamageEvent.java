@@ -34,8 +34,10 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getBro().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getBro().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty() && (list.size() >= 2)) {
-								string = list.get(1);
+							if ((list != null) && !list.isEmpty()) {
+								if (list.size() > 1) {
+									string = list.get(1);
+								}
 							}
 						}
 					} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
@@ -43,8 +45,10 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getPanda().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getPanda().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty() && (list.size() >= 2)) {
-								string = list.get(1);
+							if ((list != null) && !list.isEmpty()) {
+								if (list.size() > 1) {
+									string = list.get(1);
+								}
 							}
 						}
 					} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
@@ -52,8 +56,10 @@ public class FirstAidDamageEvent {
 						if (!VIPHandler.getVIP().isEmpty()) {
 							Map<String, List<String>> map = VIPHandler.getVIP().get(0);
 							List<String> list = map.get(player.getUniqueID().toString());
-							if (!list.isEmpty() && (list.size() >= 2)) {
-								string = list.get(1);
+							if ((list != null) && !list.isEmpty()) {
+								if (list.size() > 1) {
+									string = list.get(1);
+								}
 							}
 						}
 					}

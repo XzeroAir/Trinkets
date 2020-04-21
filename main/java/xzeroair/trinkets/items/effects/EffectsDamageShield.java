@@ -51,8 +51,10 @@ public class EffectsDamageShield {
 			if (!VIPHandler.getBro().isEmpty()) {
 				Map<String, List<String>> map = VIPHandler.getBro().get(0);
 				List<String> list = map.get(player.getUniqueID().toString());
-				if (!list.isEmpty()) {
-					string = list.get(0);
+				if ((list != null) && !list.isEmpty()) {
+					if (list.size() > 0) {
+						string = list.get(0);
+					}
 				}
 			}
 		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getPanda())) {
@@ -60,8 +62,10 @@ public class EffectsDamageShield {
 			if (!VIPHandler.getPanda().isEmpty()) {
 				Map<String, List<String>> map = VIPHandler.getPanda().get(0);
 				List<String> list = map.get(player.getUniqueID().toString());
-				if (!list.isEmpty()) {
-					string = list.get(0);
+				if ((list != null) && !list.isEmpty()) {
+					if (list.size() > 0) {
+						string = list.get(0);
+					}
 				}
 			}
 		} else if (VIPHandler.CheckPlayerVIPStatus(player.getUniqueID(), VIPHandler.getVIP())) {
@@ -69,8 +73,10 @@ public class EffectsDamageShield {
 			if (!VIPHandler.getVIP().isEmpty()) {
 				Map<String, List<String>> map = VIPHandler.getVIP().get(0);
 				List<String> list = map.get(player.getUniqueID().toString());
-				if (!list.isEmpty()) {
-					string = list.get(0);
+				if ((list != null) && !list.isEmpty()) {
+					if (list.size() > 0) {
+						string = list.get(0);
+					}
 				}
 			}
 		}

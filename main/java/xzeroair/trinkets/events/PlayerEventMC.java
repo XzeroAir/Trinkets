@@ -32,7 +32,7 @@ public class PlayerEventMC {
 			if ((event.getTarget() != null) && (event.getTarget() instanceof EntityLivingBase) && event.getTarget().hasCapability(Capabilities.ENTITY_RACE, null)) {
 				final EntityLivingBase entity = (EntityLivingBase) event.getTarget();
 				RaceProperties cap = Capabilities.getEntityRace(entity);
-				if (!client) {
+				if (!client && (cap != null)) {
 					NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(entity, cap), (EntityPlayerMP) player);
 					//					NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(player, cap), (EntityPlayerMP) entity);
 					//					NetworkHandler.sendPlayerDataTo(entity, cap, (EntityPlayerMP) player);

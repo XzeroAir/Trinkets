@@ -1,4 +1,4 @@
-package xzeroair.trinkets.network;
+package xzeroair.trinkets.network.trinketcontainer;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

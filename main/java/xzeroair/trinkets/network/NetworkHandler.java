@@ -7,7 +7,10 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
-import xzeroair.trinkets.capabilities.race.RaceProperties;
+import xzeroair.trinkets.network.configsync.BlocklistSyncPacket;
+import xzeroair.trinkets.network.configsync.PacketConfigSync;
+import xzeroair.trinkets.network.trinketcontainer.OpenDefaultInventory;
+import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.compat.firstaid.FirstAidSyncHPPacket;
 
@@ -47,8 +50,7 @@ public class NetworkHandler {
 		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(OpenDefaultInventory.class, OpenDefaultInventory.class, nextId(), Side.SERVER);
 
-		// INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class,
-		// nextId(), Side.SERVER);
+		INSTANCE.registerMessage(IncreasedAttackRangePacket.Handler.class, IncreasedAttackRangePacket.class, nextId(), Side.SERVER);
 
 	}
 
@@ -69,21 +71,21 @@ public class NetworkHandler {
 		NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(send, stack, capSend, isTrinket));
 	}
 
-	// Player Data
-	public static void sendPlayerDataTo(EntityLivingBase send, RaceProperties capSend, EntityPlayerMP recieve) {
-		NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(send, capSend), recieve);
-	}
-
-	public static void sendPlayerDataTracking(EntityLivingBase entity, RaceProperties cap) {
-		NetworkHandler.INSTANCE.sendToAllTracking(new SizeDataPacket(entity, cap), entity);
-	}
-
-	// If Entity Instanceof EntityPlayerMP
-	public static void sendPlayerDataAll(EntityLivingBase entity, RaceProperties cap) {
-		NetworkHandler.INSTANCE.sendToAll(new SizeDataPacket(entity, cap));
-	}
-
-	public static void sendPlayerDataServer(EntityLivingBase entity, RaceProperties cap) {
-		NetworkHandler.INSTANCE.sendToServer(new SizeDataPacket(entity, cap));
-	}
+	//	// Player Data
+	//	public static void sendPlayerDataTo(EntityLivingBase send, RaceProperties capSend, EntityPlayerMP recieve) {
+	//		NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(send, capSend), recieve);
+	//	}
+	//
+	//	public static void sendPlayerDataTracking(EntityLivingBase entity, RaceProperties cap) {
+	//		NetworkHandler.INSTANCE.sendToAllTracking(new SizeDataPacket(entity, cap), entity);
+	//	}
+	//
+	//	// If Entity Instanceof EntityPlayerMP
+	//	public static void sendPlayerDataAll(EntityLivingBase entity, RaceProperties cap) {
+	//		NetworkHandler.INSTANCE.sendToAll(new SizeDataPacket(entity, cap));
+	//	}
+	//
+	//	public static void sendPlayerDataServer(EntityLivingBase entity, RaceProperties cap) {
+	//		NetworkHandler.INSTANCE.sendToServer(new SizeDataPacket(entity, cap));
+	//	}
 }

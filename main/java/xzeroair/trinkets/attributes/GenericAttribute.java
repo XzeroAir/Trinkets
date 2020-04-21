@@ -3,10 +3,13 @@ package xzeroair.trinkets.attributes;
 import java.util.UUID;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidCompat;
 
 public class GenericAttribute {
 	private static final String id = Reference.MODID + ".";
@@ -59,6 +62,11 @@ public class GenericAttribute {
 			setUUID(uuid);
 			if (AttributeInstance.getModifier(uuid) == null) {
 				AttributeInstance.applyModifier(createModifier());
+				if (attribute == SharedMonsterAttributes.MAX_HEALTH) {
+					if (Loader.isModLoaded("firstaid")) {
+						FirstAidCompat.resetHP(entity);
+					}
+				}
 			}
 		}
 	}

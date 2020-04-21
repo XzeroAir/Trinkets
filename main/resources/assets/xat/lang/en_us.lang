@@ -178,6 +178,7 @@ xat.item.potion.enhanced.tooltip1=#gold:Heals 2.5 hearts
 xat.item.potion.enhanced.tooltip2=#green:Used to craft the Potion of Restoration
 xat.item.potion.enhanced.tooltip3=#green:Used to craft the Fairy Transformation Potion
 xat.item.potion.enhanced.tooltip4=#green:Used to craft the Dwarf Transformation Potion
+xat.item.potion.enhanced.tooltip5=#green:Used to craft the Titan Transformation Potion
 
 potion.effect.restorative=Potion of Restoration
 splash_potion.effect.restorative=Splash Potion of Restoration
@@ -290,6 +291,9 @@ xat.config.potion.titan.duration=Titan Effect Duration
 xat.config.potion.titan.duration.tooltip=How Long in Ticks the Tranformation Lasts
 xat.config.potion.catalyst.titan=Titan Potion Catalyst
 xat.config.potion.catalyst.titan.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
+
+xat.config.potion.playersonly=Potions work on Players only
+xat.config.potion.playersonly.tooltip=
 
 xat.config.glow_ring=Ring of Enchanted Eyes Settings
 xat.config.glow_ring.tooltip=

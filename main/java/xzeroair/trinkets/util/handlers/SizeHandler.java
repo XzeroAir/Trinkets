@@ -1,6 +1,7 @@
 package xzeroair.trinkets.util.handlers;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -62,5 +63,32 @@ public class SizeHandler {
 		final AxisAlignedBB bb = entity.getEntityBoundingBox();
 		//		entity.setEntityBoundingBox(new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.minX + width, bb.minY + (height), bb.minZ + width));
 		entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - d0, bb.minY, entity.posZ - d0, entity.posX + d0, bb.minY + (height), entity.posZ + d0));
+		if ((entity.width > width) && !entity.world.isRemote) {
+			entity.move(MoverType.SELF, entity.width - width, 0.0D, entity.width - width);
+		}
 	}
+	//   protected void setSize(float width, float height)
+	//   {
+	//       if (width != this.width || height != this.height)
+	//       {
+	//           float f = this.width;
+	//           this.width = width;
+	//           this.height = height;
+	//
+	//           if (this.width < f)
+	//           {
+	//               double d0 = (double)width / 2.0D;
+	//               this.setEntityBoundingBox(new AxisAlignedBB(this.posX - d0, this.posY, this.posZ - d0, this.posX + d0, this.posY + (double)this.height, this.posZ + d0));
+	//               return;
+	//           }
+	//
+	//           AxisAlignedBB axisalignedbb = this.getEntityBoundingBox();
+	//           this.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + (double)this.width, axisalignedbb.minY + (double)this.height, axisalignedbb.minZ + (double)this.width));
+	//
+	//           if (this.width > f && !this.firstUpdate && !this.world.isRemote)
+	//           {
+	//               this.move(MoverType.SELF, (double)(f - this.width), 0.0D, (double)(f - this.width));
+	//           }
+	//       }
+	//   }
 }

@@ -19,7 +19,7 @@ public class RaceProperties {
 	}
 
 	public boolean getTrans() {
-		return this.transformed;
+		return transformed;
 	}
 
 	public void setTrans(boolean transformed) {
@@ -29,7 +29,7 @@ public class RaceProperties {
 	}
 
 	public String getFood() {
-		return this.food;
+		return food;
 	}
 
 	public void setFood(String food) {
@@ -39,7 +39,7 @@ public class RaceProperties {
 	}
 
 	public int getSize() {
-		return this.size;
+		return size;
 	}
 
 	public void setSize(int size) {
@@ -50,7 +50,7 @@ public class RaceProperties {
 	}
 
 	public int getTarget() {
-		return this.target;
+		return target;
 	}
 
 	public void setTarget(int target) {
@@ -61,7 +61,7 @@ public class RaceProperties {
 	}
 
 	public float getWidth() {
-		return this.width;
+		return width;
 	}
 
 	public void setWidth(float width) {
@@ -72,7 +72,7 @@ public class RaceProperties {
 	}
 
 	public float getHeight() {
-		return this.height;
+		return height;
 	}
 
 	public void setHeight(float height) {
@@ -83,7 +83,7 @@ public class RaceProperties {
 	}
 
 	public float getDefaultWidth() {
-		return this.defaultWidth;
+		return defaultWidth;
 	}
 
 	public void setDefaultWidth(float defaultWidth) {
@@ -93,7 +93,7 @@ public class RaceProperties {
 	}
 
 	public float getDefaultHeight() {
-		return this.defaultHeight;
+		return defaultHeight;
 	}
 
 	public void setDefaultHeight(float defaultHeight) {
@@ -103,51 +103,51 @@ public class RaceProperties {
 	}
 
 	public void copyFrom(RaceProperties source) {
-		this.size = source.size;
-		this.transformed = source.transformed;
-		this.target = source.target;
-		this.food = source.food;
-		this.height = source.height;
-		this.width = source.width;
-		this.defaultHeight = source.defaultHeight;
-		this.defaultWidth = source.defaultWidth;
+		size = source.size;
+		transformed = source.transformed;
+		target = source.target;
+		food = source.food;
+		height = source.height;
+		width = source.width;
+		defaultHeight = source.defaultHeight;
+		defaultWidth = source.defaultWidth;
 	}
 
 	public void savedNBTData(NBTTagCompound compound) {
-		compound.setInteger("size", this.size);
-		compound.setBoolean("transformed", this.transformed);
-		compound.setInteger("target", this.target);
-		compound.setString("food", this.food);
-		compound.setFloat("height", this.height);
-		compound.setFloat("width", this.width);
-		compound.setFloat("default_height", this.defaultHeight);
-		compound.setFloat("default_width", this.defaultWidth);
+		compound.setInteger("size", size);
+		compound.setBoolean("transformed", transformed);
+		compound.setInteger("target", target);
+		compound.setString("food", food);
+		compound.setFloat("height", height);
+		compound.setFloat("width", width);
+		compound.setFloat("default_height", defaultHeight);
+		compound.setFloat("default_width", defaultWidth);
 	}
 
 	public void loadNBTData(NBTTagCompound compound) {
 		if (compound.hasKey("size")) {
-			this.size = compound.getInteger("size");
+			size = compound.getInteger("size");
 		}
 		if (compound.hasKey("transformed")) {
-			this.transformed = compound.getBoolean("transformed");
+			transformed = compound.getBoolean("transformed");
 		}
 		if (compound.hasKey("target")) {
-			this.target = compound.getInteger("target");
+			target = compound.getInteger("target");
 		}
 		if (compound.hasKey("food")) {
-			this.food = compound.getString("food");
+			food = compound.getString("food");
 		}
 		if (compound.hasKey("height")) {
-			this.height = compound.getFloat("height");
+			height = compound.getFloat("height");
 		}
 		if (compound.hasKey("width")) {
-			this.width = compound.getFloat("width");
+			width = compound.getFloat("width");
 		}
 		if (compound.hasKey("default_height")) {
-			this.defaultHeight = compound.getFloat("default_height");
+			defaultHeight = compound.getFloat("default_height");
 		}
 		if (compound.hasKey("default_width")) {
-			this.defaultWidth = compound.getFloat("default_width");
+			defaultWidth = compound.getFloat("default_width");
 		}
 	}
 

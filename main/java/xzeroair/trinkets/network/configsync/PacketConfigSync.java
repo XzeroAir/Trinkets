@@ -1,4 +1,4 @@
-package xzeroair.trinkets.network;
+package xzeroair.trinkets.network.configsync;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

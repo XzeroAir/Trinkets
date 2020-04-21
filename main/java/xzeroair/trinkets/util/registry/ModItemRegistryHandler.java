@@ -20,24 +20,22 @@ public class ModItemRegistryHandler {
 
 		event.getRegistry().registerAll(ModItems.crafting.ITEMS.toArray(new Item[0]));
 
-		if(TrinketsConfig.SERVER.Food.foods_enabled) {
+		if (TrinketsConfig.SERVER.Food.foods_enabled) {
 			event.getRegistry().registerAll(ModItems.foods.ITEMS.toArray(new Item[0]));
 		}
 
-		if(Loader.isModLoaded("baubles")) {
-			//			event.getRegistry().registerAll(ModItems.baubles.ITEMS.toArray(new Item[0]));
-			for(final Item item : ModItems.baubles.ITEMS) {
-				if(item instanceof IAccessoryInterface) {
-					if(((IAccessoryInterface)item).ItemEnabled()) {
+		if (Loader.isModLoaded("baubles")) {
+			for (final Item item : ModItems.baubles.ITEMS) {
+				if (item instanceof IAccessoryInterface) {
+					if (((IAccessoryInterface) item).ItemEnabled()) {
 						event.getRegistry().register(item);
 					}
 				}
 			}
 		} else {
-			//			event.getRegistry().registerAll(ModItems.trinkets.ITEMS.toArray(new Item[0]));
-			for(final Item item : ModItems.trinkets.ITEMS) {
-				if(item instanceof IAccessoryInterface) {
-					if(((IAccessoryInterface)item).ItemEnabled()) {
+			for (final Item item : ModItems.trinkets.ITEMS) {
+				if (item instanceof IAccessoryInterface) {
+					if (((IAccessoryInterface) item).ItemEnabled()) {
 						event.getRegistry().register(item);
 					}
 				}
@@ -47,37 +45,38 @@ public class ModItemRegistryHandler {
 
 	@SubscribeEvent
 	public static void onPotionRegister(RegistryEvent.Register<PotionType> event) {
-		if(TrinketsConfig.SERVER.Potion.potions_enabled) {
+		if (TrinketsConfig.SERVER.Potion.potions_enabled) {
 			ModPotionTypes.registerPotionTypes();
 		}
 	}
+
 	/**
 	 * @param event
 	 */
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		for(final Item item : ModItems.crafting.ITEMS) {
-			if(item instanceof IsModelLoaded) {
-				((IsModelLoaded)item).registerModels();
+		for (final Item item : ModItems.crafting.ITEMS) {
+			if (item instanceof IsModelLoaded) {
+				((IsModelLoaded) item).registerModels();
 			}
 		}
-		if(TrinketsConfig.SERVER.Food.foods_enabled) {
-			for(final Item item : ModItems.foods.ITEMS) {
-				if(item instanceof IsModelLoaded) {
-					((IsModelLoaded)item).registerModels();
+		if (TrinketsConfig.SERVER.Food.foods_enabled) {
+			for (final Item item : ModItems.foods.ITEMS) {
+				if (item instanceof IsModelLoaded) {
+					((IsModelLoaded) item).registerModels();
 				}
 			}
 		}
-		if(Loader.isModLoaded("baubles")) {
-			for(final Item item : ModItems.baubles.ITEMS) {
-				if(item instanceof IsModelLoaded) {
-					((IsModelLoaded)item).registerModels();
+		if (Loader.isModLoaded("baubles")) {
+			for (final Item item : ModItems.baubles.ITEMS) {
+				if (item instanceof IsModelLoaded) {
+					((IsModelLoaded) item).registerModels();
 				}
 			}
 		} else {
-			for(final Item item : ModItems.trinkets.ITEMS) {
-				if(item instanceof IsModelLoaded) {
-					((IsModelLoaded)item).registerModels();
+			for (final Item item : ModItems.trinkets.ITEMS) {
+				if (item instanceof IsModelLoaded) {
+					((IsModelLoaded) item).registerModels();
 				}
 			}
 		}

@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
-import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -88,7 +87,7 @@ public class TrinketDragonsEye extends AccessoryBase {
 
 	@Override
 	public boolean playerCanEquip(ItemStack stack, EntityLivingBase player) {
-		if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) || TrinketHelper.AccessoryCheck(player, stack.getItem())) {
+		if (TrinketHelper.AccessoryCheck(player, stack.getItem())) {
 			return false;
 		} else {
 			return super.playerCanEquip(stack, player);

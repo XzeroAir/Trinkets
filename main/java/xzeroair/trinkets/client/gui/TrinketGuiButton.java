@@ -15,8 +15,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.OpenDefaultInventory;
-import xzeroair.trinkets.network.OpenTrinketGui;
+import xzeroair.trinkets.network.trinketcontainer.OpenDefaultInventory;
+import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compatibility.BaublesHelperFunctions;
@@ -39,19 +39,19 @@ public class TrinketGuiButton extends GuiButton {
 	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		final boolean flag = mc.getMinecraft().player.getRecipeBook().isGuiOpen();
-		final boolean pressed = flag ? false : super.mousePressed(mc, mouseX - this.parentGui.getGuiLeft(), mouseY);
+		final boolean pressed = flag ? false : super.mousePressed(mc, mouseX - parentGui.getGuiLeft(), mouseY);
 		final boolean baublesLoaded = Loader.isModLoaded("baubles");
 		if (pressed) {
-			if (this.parentGui instanceof GuiInventory) {
+			if (parentGui instanceof GuiInventory) {
 				NetworkHandler.INSTANCE.sendToServer(new OpenTrinketGui());
 			} else {
 				if (baublesLoaded) {
-					BaublesHelperFunctions.mousePressedHelper(this.parentGui, this.id);
+					BaublesHelperFunctions.mousePressedHelper(parentGui, id);
 				} else {
-					if (this.id == 9999) {
+					if (id == 9999) {
 
 					} else {
-						((TrinketGui) this.parentGui).displayNormalInventory();
+						((TrinketGui) parentGui).displayNormalInventory();
 						NetworkHandler.INSTANCE.sendToServer(new OpenDefaultInventory());
 					}
 				}
@@ -63,20 +63,20 @@ public class TrinketGuiButton extends GuiButton {
 	@SuppressWarnings("static-access")
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-		if (this.visible && !mc.getMinecraft().player.getRecipeBook().isGuiOpen()) {
-			final int x = this.x + this.parentGui.getGuiLeft();
+		if (visible && !mc.getMinecraft().player.getRecipeBook().isGuiOpen()) {
+			final int x = this.x + parentGui.getGuiLeft();
 
-			if (this.id == 9999) {
+			if (id == 9999) {
 				mc.getTextureManager().bindTexture(new ResourceLocation("xat:textures/items/weightless_stone.png"));
-				this.TrinketDrawButton(x, this.y, 16, 16, 16, 16, 0.0625f, 1, 1, 1, 1);
+				this.TrinketDrawButton(x, y, 16, 16, 16, 16, 0.0625f, 1, 1, 1, 1);
 			}
 
 			final int ID = TrinketsConfig.CLIENT.GUI.button.ID;
-			if (this.id == ID) {
+			if (id == ID) {
 				final FontRenderer fontrenderer = mc.fontRenderer;
-				this.hovered = (mouseX >= x) && (mouseY >= this.y) && (mouseX < (x + this.width))
-						&& (mouseY < (this.y + this.height));
-				final int k = this.getHoverState(this.hovered);
+				hovered = (mouseX >= x) && (mouseY >= y) && (mouseX < (x + width))
+						&& (mouseY < (y + height));
+				final int k = this.getHoverState(hovered);
 				GlStateManager.enableBlend();
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -84,7 +84,7 @@ public class TrinketGuiButton extends GuiButton {
 				GlStateManager.pushMatrix();
 
 				final int tXpos = x;
-				final int tYpos = this.y;
+				final int tYpos = y;
 
 				final int X = TrinketsConfig.CLIENT.GUI.button.X;
 				final int Y = TrinketsConfig.CLIENT.GUI.button.Y;
@@ -125,7 +125,7 @@ public class TrinketGuiButton extends GuiButton {
 				final float ca = cbColor[3];
 
 				if (k == 1) {
-					if (this.parentGui instanceof TrinketGui) {
+					if (parentGui instanceof TrinketGui) {
 						mc.getTextureManager().bindTexture(closeButtonTex);
 						if (flag2) {
 							this.TrinketDrawButton(tXpos, tYpos, cbX, cbY, cbSize, cbSize, closeScale, cr, cg, cb, ca);
@@ -141,7 +141,7 @@ public class TrinketGuiButton extends GuiButton {
 						}
 					}
 				} else {
-					if (this.parentGui instanceof TrinketGui) {
+					if (parentGui instanceof TrinketGui) {
 						mc.getTextureManager().bindTexture(openButtonTex);
 						if (flag) {
 							this.TrinketDrawButton(tXpos, tYpos, obX, obY, obSize, obSize, openScale, or, og, ob, oa);
@@ -156,19 +156,21 @@ public class TrinketGuiButton extends GuiButton {
 							this.TrinketDrawButton(tXpos, tYpos, cbX, cbY, cbSize, cbSize, closeScale, cr, cg, cb, ca);
 						}
 					}
-					this.drawCenteredString(fontrenderer, I18n.format(this.displayString), x + 5, this.y + this.height,
-							0xffffff);
+					this.drawCenteredString(
+							fontrenderer, I18n.format(displayString), x + 5, y + height,
+							0xffffff
+					);
 				}
 				GlStateManager.popMatrix();
 			}
 			if ((Loader.isModLoaded("baubles"))) {
-				if (this.id == 55) {
+				if (id == 55) {
 					final FontRenderer fontrenderer = mc.fontRenderer;
 					mc.getTextureManager().bindTexture(BaublesHelperFunctions.getBaublesResourceLocation());
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-					this.hovered = (mouseX >= x) && (mouseY >= this.y) && (mouseX < (x + this.width))
-							&& (mouseY < (this.y + this.height));
-					final int k = this.getHoverState(this.hovered);
+					hovered = (mouseX >= x) && (mouseY >= y) && (mouseX < (x + width))
+							&& (mouseY < (y + height));
+					final int k = this.getHoverState(hovered);
 					GlStateManager.enableBlend();
 					GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 					GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -176,11 +178,13 @@ public class TrinketGuiButton extends GuiButton {
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(0, 0, 200);
 					if (k == 1) {
-						this.drawTexturedModalRect(x, this.y, 200, 48, 10, 10);
+						this.drawTexturedModalRect(x, y, 200, 48, 10, 10);
 					} else {
-						this.drawTexturedModalRect(x, this.y, 210, 48, 10, 10);
-						this.drawCenteredString(fontrenderer, I18n.format(this.displayString), x + 5,
-								this.y + this.height, 0xffffff);
+						this.drawTexturedModalRect(x, y, 210, 48, 10, 10);
+						this.drawCenteredString(
+								fontrenderer, I18n.format(displayString), x + 5,
+								y + height, 0xffffff
+						);
 					}
 					GlStateManager.popMatrix();
 				}
@@ -196,13 +200,13 @@ public class TrinketGuiButton extends GuiButton {
 		final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		// Bottom Left
-		buffer.pos(x + 0, y + height, this.zLevel).tex((texX + 0) * scale, (texY + height) * scale).endVertex();
+		buffer.pos(x + 0, y + height, zLevel).tex((texX + 0) * scale, (texY + height) * scale).endVertex();
 		// bottom right
-		buffer.pos(x + width, y + height, this.zLevel).tex((texX + width) * scale, (texY + height) * scale).endVertex();
+		buffer.pos(x + width, y + height, zLevel).tex((texX + width) * scale, (texY + height) * scale).endVertex();
 		// top right
-		buffer.pos(x + width, y + 0, this.zLevel).tex((texX + width) * scale, (texY + 0) * scale).endVertex();
+		buffer.pos(x + width, y + 0, zLevel).tex((texX + width) * scale, (texY + 0) * scale).endVertex();
 		// top left
-		buffer.pos(x + 0, y + 0, this.zLevel).tex((texX + 0) * scale, (texY + 0) * scale).endVertex();
+		buffer.pos(x + 0, y + 0, zLevel).tex((texX + 0) * scale, (texY + 0) * scale).endVertex();
 		Tessellator.getInstance().draw();
 		GlStateManager.popMatrix();
 	}

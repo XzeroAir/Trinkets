@@ -2,13 +2,19 @@ package xzeroair.trinkets.client.events;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -21,11 +27,14 @@ import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.items.effects.EffectsPolarizedStone;
+import xzeroair.trinkets.network.IncreasedAttackRangePacket;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.OpenTrinketGui;
 import xzeroair.trinkets.network.PolarizedStoneSyncPacket;
+import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.EntityRaceHelper;
 import xzeroair.trinkets.util.helpers.OreTrackingHelper;
+import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class EventHandlerClient {
@@ -36,6 +45,7 @@ public class EventHandlerClient {
 	int AUX = 0;
 
 	private boolean check, check2, check3 = false;
+	float cooldown = 0;
 
 	@SubscribeEvent
 	public void clientTickEvent(TickEvent.ClientTickEvent event) {
@@ -52,24 +62,24 @@ public class EventHandlerClient {
 			final EntityPlayerSP player = Minecraft.getMinecraft().player;
 			if ((player != null)) {
 				if (ModKeyBindings.POLARIZED_STONE_ABILITY.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-					this.Polarized_Ability = 1;
+					Polarized_Ability = 1;
 				} else {
-					this.Polarized_Ability = 0;
+					Polarized_Ability = 0;
 				}
 				if (ModKeyBindings.DRAGONS_EYE_ABILITY.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-					this.Dragon_Ability = 1;
+					Dragon_Ability = 1;
 				} else {
-					this.Dragon_Ability = 0;
+					Dragon_Ability = 0;
 				}
 				if (ModKeyBindings.DRAGONS_EYE_TARGET.isPressed() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-					this.TARGET = 1;
+					TARGET = 1;
 				} else {
-					this.TARGET = 0;
+					TARGET = 0;
 				}
 				if (ModKeyBindings.AUX_KEY.isKeyDown() && FMLClientHandler.instance().getClient().inGameHasFocus) {
-					this.AUX = 1;
+					AUX = 1;
 				} else {
-					this.AUX = 0;
+					AUX = 0;
 				}
 				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketPolarized)) {
 					final ItemStack stack = TrinketHelper.getAccessory(player, ModItems.trinkets.TrinketPolarized);
@@ -77,13 +87,13 @@ public class EventHandlerClient {
 					if (FMLClientHandler.instance().getClient().inGameHasFocus) {
 						TextComponentString magnet = new TextComponentString(TranslationHelper.formatLangKeys(stack, new TextComponentTranslation(stack.getTranslationKey() + ".magnetmode")));
 						TextComponentString repel = new TextComponentString(TranslationHelper.formatLangKeys(stack, new TextComponentTranslation(stack.getTranslationKey() + ".repelmode")));
-						if ((this.Polarized_Ability == 1) && (this.AUX == 0)) {
+						if ((Polarized_Ability == 1) && (AUX == 0)) {
 							iCap.toggleMainAbility(!iCap.mainAbility());
 							EffectsPolarizedStone.handleStatus(stack, iCap);
 							player.sendMessage(magnet);
 							NetworkHandler.INSTANCE.sendToServer(new PolarizedStoneSyncPacket(player, stack, iCap, true, stack.getItemDamage()));
 						}
-						if ((this.Polarized_Ability == 1) && (this.AUX == 1)) {
+						if ((Polarized_Ability == 1) && (AUX == 1)) {
 							iCap.toggleAltAbility(!iCap.altAbility());
 							EffectsPolarizedStone.handleStatus(stack, iCap);
 							player.sendMessage(repel);
@@ -97,11 +107,11 @@ public class EventHandlerClient {
 					if (iCap == null) {
 						return;
 					}
-					if ((this.Dragon_Ability == 1) && (this.AUX == 0)) {
+					if ((Dragon_Ability == 1) && (AUX == 0)) {
 						iCap.toggleMainAbility(!iCap.mainAbility());
 						NetworkHandler.sendItemDataServer(player, stack, iCap, true);
 					}
-					if ((this.Dragon_Ability == 1) && (this.AUX == 1)) {
+					if ((Dragon_Ability == 1) && (AUX == 1)) {
 						iCap.toggleAltAbility(!iCap.altAbility());
 					}
 					if (TrinketsConfig.SERVER.DRAGON_EYE.oreFinder != false) {
@@ -109,7 +119,7 @@ public class EventHandlerClient {
 						final int off = size - size - 1;
 						final int max = size - 1;
 
-						if ((this.TARGET == 1) && (this.AUX == 0)) {
+						if ((TARGET == 1) && (AUX == 0)) {
 							if (iCap.Target() < size) {
 								iCap.setTarget(iCap.Target() + 1);
 							}
@@ -117,7 +127,7 @@ public class EventHandlerClient {
 								iCap.setTarget(off);
 							}
 						}
-						if ((this.TARGET == 1) && (this.AUX == 1)) {
+						if ((TARGET == 1) && (AUX == 1)) {
 							if (iCap.Target() > (off - 1)) {
 								iCap.setTarget(iCap.Target() - 1);
 							}
@@ -128,7 +138,7 @@ public class EventHandlerClient {
 						if (iCap.Target() > size) {
 							iCap.setTarget(off);
 						}
-						if (this.TARGET == 1) {
+						if (TARGET == 1) {
 							TextComponentTranslation UnkownTarget = new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.notfound");
 							TextComponentTranslation FinderOn = new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.on");
 							TextComponentTranslation FinderOff = new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.off");
@@ -165,7 +175,38 @@ public class EventHandlerClient {
 					}
 				}
 			}
+			if (cooldown > 0) {
+				cooldown--;
+			} else {
+				cooldown = 0;
+			}
+		}
+		//
+	}
 
+	@SubscribeEvent
+	public void playerInteract(PlayerInteractEvent event) {
+		KeyBinding lClick = Minecraft.getMinecraft().gameSettings.keyBindAttack;
+		if (lClick.isKeyDown() && (cooldown == 0)) {
+			EntityPlayer player = event.getEntityPlayer();
+			IAttributeInstance reach = player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE);
+			if ((reach.getAttributeValue() > 5) && (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketTitanRing) || EntityRaceHelper.getRace(player).contentEquals("titan_spirit"))) {
+
+				RayTraceHelper.Beam beam = new RayTraceHelper.Beam(player.world, player, reach.getAttributeValue() * 0.8, 1D, true);
+
+				RayTraceHelper.rayTraceEntity(beam, target -> {
+					if (target instanceof EntityLivingBase) {
+						NetworkHandler.INSTANCE.sendToServer(new IncreasedAttackRangePacket(player, (EntityLivingBase) target, Capabilities.getEntityRace(player)));
+						if (cooldown == 0) {
+							cooldown = player.getCooldownPeriod();
+						}
+						RayTraceHelper.drawAttackSweep(player.world, beam.getEnd(), EnumParticleTypes.SWEEP_ATTACK);
+						return true;
+					} else {
+						return false;
+					}
+				});
+			}
 		}
 	}
 

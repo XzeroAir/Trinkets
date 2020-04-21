@@ -230,6 +230,11 @@ public class TrinketsConfig {
 			@Name("08. Titan Potion Effect Duration")
 			@LangKey(PREFIX + ".potion.titan.duration")
 			public int TitanDuration = 1200;
+
+			@Config.RequiresMcRestart
+			@Name("09. Work on players only")
+			@LangKey(PREFIX + "potion.playersonly")
+			public boolean players_only = true;
 		}
 
 		@Name("Fairy Ring Settings")

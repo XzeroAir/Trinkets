@@ -199,7 +199,7 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 	private float cameraDistance = 4F;
 	private final float offsetY = 1F; // just for testing, should be based on actual render size
 
-	public TrinketsViewRenderEntity(Minecraft mc, IResourceManager resourceManager, float cameraDistance) {
+	public TrinketsViewRenderEntity(Minecraft mc, IResourceManager resourceManager) {
 		super(mc, resourceManager);
 		this.mc = mc;
 		this.resourceManager = resourceManager;
@@ -210,7 +210,6 @@ public class TrinketsViewRenderEntity extends EntityRenderer {
 		locationLightMap = mc.getTextureManager().getDynamicTextureLocation("lightMap", lightmapTexture);
 		lightmapColors = lightmapTexture.getTextureData();
 		shaderGroup = null;
-		this.cameraDistance = cameraDistance;
 
 		for (int i = 0; i < 32; ++i) {
 			for (int j = 0; j < 32; ++j) {

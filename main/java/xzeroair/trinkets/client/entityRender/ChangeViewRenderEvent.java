@@ -21,7 +21,7 @@ public class ChangeViewRenderEvent {
 			if (player != null) {
 				if (TrinketHelper.AccessoryCheck(player, TrinketHelper.SizeTrinkets) || !EntityRaceHelper.getRace(player).contentEquals("none")) {
 					if (renderer == null) {
-						renderer = new TrinketsViewRenderEntity(mc, mc.getResourceManager(), 4F);
+						renderer = new TrinketsViewRenderEntity(mc, mc.getResourceManager());
 					}
 					if (mc.entityRenderer != renderer) {
 						// be sure to store the previous renderer

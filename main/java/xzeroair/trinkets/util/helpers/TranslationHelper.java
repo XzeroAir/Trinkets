@@ -74,7 +74,7 @@ public class TranslationHelper {
 			TextComponentTranslation info = new TextComponentTranslation(stack.getTranslationKey() + ".tooltip" + i);
 			if (!(info.getUnformattedComponentText().contentEquals(info.getKey()) || info.getUnformattedText().isEmpty())) {
 				String string = formatLangKeys(stack, info);
-				if (!(string.replace("§r", "").isEmpty())) {
+				if (!(string.replace("ï¿½r", "").isEmpty())) {
 					tooltip.add(
 							string
 					);
@@ -93,7 +93,7 @@ public class TranslationHelper {
 				TextComponentTranslation info = new TextComponentTranslation(Reference.MODID + "." + stack.getTranslationKey() + "." + pot.getRegistryName().getPath() + ".tooltip" + i);
 				if (!(info.getUnformattedComponentText().contentEquals(info.getKey()) || info.getUnformattedText().isEmpty())) {
 					String string = formatLangKeys(stack, info);
-					if (!(string.replace("§r", "").replace("§6", "").replace("§", "").isEmpty())) {
+					if (!(string.replace("ï¿½r", "").replace("ï¿½6", "").replace("ï¿½", "").isEmpty())) {
 						tooltip.add(
 								string
 						);
@@ -123,7 +123,7 @@ public class TranslationHelper {
 			if (Loader.isModLoaded("toughasnails") && TrinketsConfig.compat.toughasnails) {
 				if (!(CompatTan.getUnformattedComponentText().contentEquals(CompatTan.getKey()) || CompatTan.getUnformattedText().isEmpty())) {
 					String string = formatLangKeys(stack, CompatTan);
-					if (!(string.replace("§r", "").isEmpty())) {
+					if (!(string.replace("ï¿½r", "").isEmpty())) {
 						tooltip.add(
 								string + gold + " (Tough as Nails)"
 						);
@@ -133,7 +133,7 @@ public class TranslationHelper {
 			if (Loader.isModLoaded("firstaid")) {
 				if (!(CompatFA.getUnformattedComponentText().contentEquals(CompatFA.getKey()) || CompatFA.getUnformattedText().isEmpty())) {
 					String string = formatLangKeys(stack, CompatFA);
-					if (!(string.replace("§r", "").isEmpty())) {
+					if (!(string.replace("ï¿½r", "").isEmpty())) {
 						tooltip.add(
 								string + gold + " (First Aid)"
 						);
@@ -143,7 +143,7 @@ public class TranslationHelper {
 			if (Loader.isModLoaded("enhancedvisuals") && TrinketsConfig.compat.enhancedvisuals) {
 				if (!(CompatEV.getUnformattedComponentText().contentEquals(CompatEV.getKey()) || CompatEV.getUnformattedText().isEmpty())) {
 					String string = formatLangKeys(stack, CompatEV);
-					if (!(string.replace("§r", "").isEmpty())) {
+					if (!(string.replace("ï¿½r", "").isEmpty())) {
 						tooltip.add(
 								string + gold + " (Enhanced Visuals)"
 						);

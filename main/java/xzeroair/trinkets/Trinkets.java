@@ -74,19 +74,11 @@ public class Trinkets {
 		}
 
 		proxy.preInit(event);
-
-		//		if (config.hasChanged()) {
-		//			System.out.println("This Triggered in pre");
-		//			config.save();
-		//		}
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-		//		if(TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.generate) {
-		//			TrinketsConfig.saveBlockList();
-		//		}
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		proxy.init(event);
 	}

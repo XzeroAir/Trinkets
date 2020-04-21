@@ -27,60 +27,46 @@ public class SizeDataPacket implements IMessage {
 	public float eyeHeight = 1.62F;
 	public int entityID = 0;
 
-	public SizeDataPacket(EntityLivingBase entity, int size, boolean trans, int target, String food) {
-
-		this.entityID = entity.getEntityId();
-		this.size = size;
-		this.trans = trans;
-		this.target = target;
-		this.food = food;
-		this.width = entity.width;
-		this.height = entity.height;
-		this.defaultWidth = entity.width;
-		this.defaultHeight = entity.height;
-		this.eyeHeight = entity.getEyeHeight();
-	}
-
 	public SizeDataPacket(EntityLivingBase entity, RaceProperties cap) {
-		this.entityID = entity.getEntityId();
-		this.size = cap.getSize();
-		this.trans = cap.getTrans();
-		this.target = cap.getTarget();
-		this.food = cap.getFood();
-		this.width = entity.width;
-		this.height = entity.height;
-		this.defaultWidth = entity.width;
-		this.defaultHeight = entity.height;
-		this.eyeHeight = entity.getEyeHeight();
+		entityID = entity.getEntityId();
+		size = cap.getSize();
+		trans = cap.getTrans();
+		target = cap.getTarget();
+		food = cap.getFood();
+		width = entity.width;
+		height = entity.height;
+		defaultWidth = entity.width;
+		defaultHeight = entity.height;
+		eyeHeight = entity.getEyeHeight();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		// Writes the int into the buf
-		buf.writeInt(this.size);
-		buf.writeBoolean(this.trans);
-		buf.writeInt(this.target);
-		ByteBufUtils.writeUTF8String(buf, this.food);
-		buf.writeFloat(this.width);
-		buf.writeFloat(this.height);
-		buf.writeFloat(this.defaultWidth);
-		buf.writeFloat(this.defaultHeight);
-		buf.writeFloat(this.eyeHeight);
-		buf.writeInt(this.entityID);
+		buf.writeInt(size);
+		buf.writeBoolean(trans);
+		buf.writeInt(target);
+		ByteBufUtils.writeUTF8String(buf, food);
+		buf.writeFloat(width);
+		buf.writeFloat(height);
+		buf.writeFloat(defaultWidth);
+		buf.writeFloat(defaultHeight);
+		buf.writeFloat(eyeHeight);
+		buf.writeInt(entityID);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.size = buf.readInt();
-		this.trans = buf.readBoolean();
-		this.target = buf.readInt();
+		size = buf.readInt();
+		trans = buf.readBoolean();
+		target = buf.readInt();
 		ByteBufUtils.readUTF8String(buf);
-		this.width = buf.readFloat();
-		this.height = buf.readFloat();
-		this.defaultWidth = buf.readFloat();
-		this.defaultHeight = buf.readFloat();
-		this.eyeHeight = buf.readFloat();
-		this.entityID = buf.readInt();
+		width = buf.readFloat();
+		height = buf.readFloat();
+		defaultWidth = buf.readFloat();
+		defaultHeight = buf.readFloat();
+		eyeHeight = buf.readFloat();
+		entityID = buf.readInt();
 	}
 
 	public static class Handler implements IMessageHandler<SizeDataPacket, IMessage> {
@@ -90,7 +76,6 @@ public class SizeDataPacket implements IMessage {
 
 			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
 				if ((Trinkets.proxy.getPlayer(ctx) != null) && (Trinkets.proxy.getPlayer(ctx).getEntityWorld() != null)) {
-					// final EntityPlayer entity = Trinkets.proxy.getPlayer(ctx);
 					final Entity entity = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.entityID);
 					if (entity instanceof EntityLivingBase) {
 						if (entity.hasCapability(Capabilities.ENTITY_RACE, null)) {
@@ -106,13 +91,6 @@ public class SizeDataPacket implements IMessage {
 								cap.setDefaultHeight(message.defaultHeight);
 							}
 						}
-//						if (ctx.side == Side.CLIENT) {
-//							System.out.println("Packet Recieved");
-//							Trinkets.proxy.getPlayer(ctx).sendMessage(new TextComponentString("You Recieved A Packet!"));
-//						} else {
-//							System.out.println("Packet Sent");
-//							Trinkets.proxy.getPlayer(ctx).sendMessage(new TextComponentString("You Sent A Packet!"));
-//						}
 					}
 				}
 			});

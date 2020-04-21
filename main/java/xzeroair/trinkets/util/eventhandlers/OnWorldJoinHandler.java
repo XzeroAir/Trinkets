@@ -14,10 +14,10 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.RaceProperties;
-import xzeroair.trinkets.network.BlocklistSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.PacketConfigSync;
 import xzeroair.trinkets.network.SizeDataPacket;
+import xzeroair.trinkets.network.configsync.BlocklistSyncPacket;
+import xzeroair.trinkets.network.configsync.PacketConfigSync;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class OnWorldJoinHandler {

@@ -291,6 +291,9 @@ xat.config.potion.titan.duration.tooltip=变形持续多少 ticks
 xat.config.potion.catalyst.titan=泰坦药水触媒
 xat.config.potion.catalyst.titan.tooltip=这个物品用于酿造台中酿造药水
 
+xat.config.potion.playersonly=Potions work on Players only
+xat.config.potion.playersonly.tooltip=
+
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
 xat.config.glow_ring.blindness=免疫失明

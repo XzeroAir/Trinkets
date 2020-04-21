@@ -50,6 +50,7 @@ jar {
     exclude "**/*.psd"
     exclude "**/*.exe"
     exclude "**/unused"
+	exclude "**/gitignored"
 }
 
 dependencies {

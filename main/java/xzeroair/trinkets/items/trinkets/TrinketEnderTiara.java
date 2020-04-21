@@ -50,7 +50,11 @@ public class TrinketEnderTiara extends AccessoryBase {
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		if (TrinketsConfig.SERVER.ENDER_CROWN.water_hurts) {
 			if ((player.isInWater() || player.isWet())) {
-				player.attackEntityFrom(DamageSource.GENERIC, 2);
+				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye)) {
+					player.attackEntityFrom(DamageSource.WITHER, 4);
+				} else {
+					player.attackEntityFrom(DamageSource.WITHER, 2);
+				}
 			}
 		}
 
@@ -61,7 +65,7 @@ public class TrinketEnderTiara extends AccessoryBase {
 
 	@Override
 	public boolean playerCanEquip(ItemStack stack, EntityLivingBase player) {
-		if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye) || TrinketHelper.AccessoryCheck(player, stack.getItem())) {
+		if (TrinketHelper.AccessoryCheck(player, stack.getItem())) {
 			return false;
 		} else {
 			return super.playerCanEquip(stack, player);
