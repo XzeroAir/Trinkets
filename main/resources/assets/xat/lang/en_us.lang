@@ -231,22 +231,22 @@ item.fairy_dew.info=Gives a Permanent Fairy Effect, which can be removed with th
 item.dwarf_stout.info=Gives a Permanent Dwarf Effect, which can be removed with the Potion of Restoration. The splash and lingering variants will NOT work!
 
 xat.config.client.settings=Client Settings
-xat.config.client.settings.tooltip=
+xat.config.client.settings.tooltip=Settings with only visual effects.
 
 xat.config.client.gui.settings=Trinkets Gui
-xat.config.client.gui.settings.tooltip=
+xat.config.client.gui.settings.tooltip=Settings regarding the Trinkets Gui on the client.
 
 xat.config.server.food.settings=Magic Food Settings
-xat.config.server.food.settings.tooltip=
+xat.config.server.food.settings.tooltip=Settings regarding the transformation foods.
 
 xat.config.server.potion.settings=Potion Settings
-xat.config.server.potion.settings.tooltip=
+xat.config.server.potion.settings.tooltip=Settings regarding the potions.
 
 xat.config.server.settings=Server Settings
-xat.config.server.settings.tooltip=
+xat.config.server.settings.tooltip=Settings which change the gameplay.
 
 xat.config.server.gui.settings=Trinkets Gui
-xat.config.server.gui.settings.tooltip=
+xat.config.server.gui.settings.tooltip=Settings regarding the Trinkets Gui on the server.
 xat.config.server.gui.settings.enabled=Trinkets Gui Enabled
 xat.config.server.gui.settings.enabled.tooltip=Should Trinkets and Baubles Container be Enabled\nIf Disabled, please use "Baubles" by Azanor, Otherwise you wont be able to use this mod
 
@@ -293,7 +293,7 @@ xat.config.potion.catalyst.titan=Titan Potion Catalyst
 xat.config.potion.catalyst.titan.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
 
 xat.config.potion.playersonly=Potions work on Players only
-xat.config.potion.playersonly.tooltip=
+xat.config.potion.playersonly.tooltip=Whether the transformation potions should only work on players or if they should work on all mobs.
 
 xat.config.glow_ring=Ring of Enchanted Eyes Settings
 xat.config.glow_ring.tooltip=
@@ -433,9 +433,9 @@ xat.config.greater_inertia_stone.falldamage.tooltip=Should the Stone of Greater 
 xat.config.greater_inertia_stone.falldamage.amount=Modified Fall Damage Amount
 xat.config.greater_inertia_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
 xat.config.greater_inertia_stone.jumpheight=Modify Jump Height
-xat.config.greater_inertia_stone.jumpheight.tooltip=
+xat.config.greater_inertia_stone.jumpheight.tooltip=Should the Stone of Greater Inertia Modify Jump Height?
 xat.config.greater_inertia_stone.jumpheight.amount=Modified Jump Height Amount
-xat.config.greater_inertia_stone.jumpheight.amount.tooltip=
+xat.config.greater_inertia_stone.jumpheight.amount.tooltip=Multiply Jump Height by This Amount
 
 xat.config.poison_stone=Poison Stone Settings
 xat.config.poison_stone.tooltip=
@@ -494,7 +494,7 @@ xat.config.wither_ring.wither.chance=Wither Chance
 xat.config.wither_ring.wither.chance.tooltip=1 in X Chance to Wither an Enemy on Attack for 2 Seconds
 
 xat.config.compatability=Compatability Settings
-xat.config.compatability.tooltip=
+xat.config.compatability.tooltip=Settings which affect how this mod works with other mods.
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=If the Mod Tough as Nails is Installed
