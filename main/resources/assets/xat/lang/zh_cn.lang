@@ -230,19 +230,19 @@ item.fairy_dew.info=变身为仙女。
 item.dwarf_stout.info=变身为矮人。
 
 xat.config.client.settings=客户端设置
-xat.config.client.settings.tooltip=
+xat.config.client.settings.tooltip=仅对视觉效果进行设置。
 
 xat.config.client.gui.settings=饰品 Gui
-xat.config.client.gui.settings.tooltip=
+xat.config.client.gui.settings.tooltip=关于客户端上饰品 Gui 的设置
 
 xat.config.server.food.settings=魔法食物设置
-xat.config.server.food.settings.tooltip=
+xat.config.server.food.settings.tooltip=关于使玩家变形的食物的设置
 
 xat.config.server.potion.settings=药水设置
-xat.config.server.potion.settings.tooltip=
+xat.config.server.potion.settings.tooltip=关于药水的设置
 
 xat.config.server.settings=服务端设置
-xat.config.server.settings.tooltip=
+xat.config.server.settings.tooltip=改变游戏玩法的设置
 
 xat.config.server.gui.settings=饰品 Gui
 xat.config.server.gui.settings.tooltip=
@@ -292,7 +292,7 @@ xat.config.potion.catalyst.titan=泰坦药水触媒
 xat.config.potion.catalyst.titan.tooltip=这个物品用于酿造台中酿造药水
 
 xat.config.potion.playersonly=药水仅对玩家有效
-xat.config.potion.playersonly.tooltip=
+xat.config.potion.playersonly.tooltip=变形药水只对玩家有效或对所有生物有效
 
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
@@ -492,7 +492,7 @@ xat.config.wither_ring.wither.chance=凋零几率
 xat.config.wither_ring.wither.chance.tooltip=每次攻击有 x 分之一的几率使敌人凋零 2 秒
 
 xat.config.compatability=兼容设置
-xat.config.compatability.tooltip=
+xat.config.compatability.tooltip=影响此模组如何与其他模组共同生效的设置
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=如果已安装 Tough as Nails
