@@ -5,8 +5,8 @@
   	  "1.12-recommended": "0.17",
 	  "1.12.1-latest": "0.17",
   	  "1.12.1-recommended": "0.17",
-	  "1.12.2-latest": "0.29.2",
-  	  "1.12.2-recommended": "0.29.2"
+	  "1.12.2-latest": "0.30.1",
+  	  "1.12.2-recommended": "0.30.1"
 	},
 	"1.12.2": {
   		"0.17": "Added support for 1.12 and 1.12.1", 
@@ -18,6 +18,8 @@
 		"0.28.1": "Added Tons of Config options and added support for Enhanced Visuals"
 		"0.29.1": "Hotfix for a crash, more support for other mods and tons more configs"
 		"0.29.2": "More bug fixes and crash fixes"
+		"0.30": "Steadily Making Progress"
+		"0.30.1": "or Not, but Crashes and more Bugs Fixed"
 	},
 	"1.12.1": {
   		"0.17": "Added support for 1.12 and 1.12.1"
