@@ -175,11 +175,11 @@ lingering_potion.effect.enhanced=增强滞留型药水
 tipped_arrow.effect.enhanced=增强箭矢
 effect.enhanced=增强
 xat.item.potion.enhanced.tooltip1=#gold:治疗 2.5 心
-xat.item.potion.enhanced.tooltip2=#gold:Restores 50 mana
+xat.item.potion.enhanced.tooltip2=#gold:恢复 50 魔力
 xat.item.potion.enhanced.tooltip3=#green:用于制作恢复药水
 xat.item.potion.enhanced.tooltip4=#green:用于制作仙女变形药水
 xat.item.potion.enhanced.tooltip5=#green:用于制作矮人变形药水
-xat.item.potion.enhanced.tooltip6=#green:Used to craft the Titan Transformation Potion																					  
+xat.item.potion.enhanced.tooltip6=#green:用于制作泰坦变形药水
 
 potion.effect.restorative=恢复药水
 splash_potion.effect.restorative=恢复喷溅型药水
@@ -297,7 +297,7 @@ xat.config.potion.playersonly=药水仅对玩家有效
 xat.config.potion.playersonly.tooltip=变形药水只对玩家有效或对所有生物有效
 
 
-xat.config.items=Item Settings
+xat.config.items=物品设置
 
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
@@ -374,10 +374,10 @@ xat.config.damage_shield.explosion.resist=爆炸保护
 xat.config.damage_shield.explosion.resist.tooltip=降低爆炸伤害
 xat.config.damage_shield.explosion.resist.amount=降低爆炸伤害的量
 xat.config.damage_shield.explosion.resist.amount.tooltip=受到的爆炸伤害乘这个数字
-xat.config.damage_shield.resistance.level=Resistance Level
-xat.config.damage_shield.resistance.level.tooltip=Level of Resistance when worn. Default 0
-xat.config.damage_shield.resistance.stacks=Resistance Stacks
-xat.config.damage_shield.resistance.stacks.tooltip=If the Shield of Honors Resistance should Stack with Resistance from other sources
+xat.config.damage_shield.resistance.level=抗性提升等级
+xat.config.damage_shield.resistance.level.tooltip=装备时抗性提升的等级。默认 0
+xat.config.damage_shield.resistance.stacks=抗性提升叠加
+xat.config.damage_shield.resistance.stacks.tooltip=荣耀之盾是否能从其他来源叠加抗性提升
 xat.config.damage_shield.epic.gamer=Epic Pro Gamer
 xat.config.damage_shield.epic.gamer.tooltip=Only Disable this if you're 'The' Epic Pro Gamer (复活节彩蛋)
 xat.config.damage_shield.firstaid.ignore.headshots=免疫爆头
@@ -431,18 +431,18 @@ xat.config.polarized_stone.collection.speed.tooltip=如果即时拾取已关闭�
 xat.config.polarized_stone.repel=排斥弹射物
 xat.config.polarized_stone.repel.tooltip=磁石是否排斥弹射物
 xat.config.polarized_stone.repel.exhaust=排斥耗费饥饿值
-xat.config.polarized_stone.repel.exhaust.tooltip=推走弹射物是否消耗饥饿值
+xat.config.polarized_stone.repel.exhaust.tooltip=排斥弹射物是否消耗饥饿值
 xat.config.polarized_stone.repel.exhaust.amount=饥饿值消耗
 xat.config.polarized_stone.repel.exhaust.amount.tooltip=每 Tick 消耗多少饥饿值
 xat.config.polarized_stone.repel.exhaust.speed=每 Tick 消耗饥饿值速率
 xat.config.polarized_stone.repel.exhaust.speed.tooltip=斥力模式启动时每多少 Ticks 消耗一次饥饿值
-xat.config.polarized_stone.repel.entity.whitelist=Repelled Entities
-xat.config.polarized_stone.repel.entity.whitelist.tooltip=List of Entities the Polarized stone can repel
+xat.config.polarized_stone.repel.entity.whitelist=排斥实体
+xat.config.polarized_stone.repel.entity.whitelist.tooltip=磁石可以推开实体的列表
 
 xat.config.sea_stone=海洋之石设置
 xat.config.sea_stone.tooltip=
 xat.config.sea_stone.betterswimming=更好的游泳
-xat.config.sea_stone.betterswimming.tooltip=When Enabled applies tweaks to Water movement to make swimming easier
+xat.config.sea_stone.betterswimming.tooltip=启用时增强水下移动以使游泳更简单
 xat.config.sea_stone.waterbreathing=水下呼吸
 xat.config.sea_stone.waterbreathing.tooltip=装备时获得无限的氧气
 xat.config.sea_stone.waterbreathing.bubbles=全部气泡
@@ -461,18 +461,18 @@ xat.config.wither_ring.wither.tooltip=是否有几率使敌人凋零
 xat.config.wither_ring.wither.chance=凋零几率
 xat.config.wither_ring.wither.chance.tooltip=每次攻击有 x 分之一的几率使敌人凋零 2 秒
 
-xat.config.magic=Magic Settings
+xat.config.magic=魔法设置
 xat.config.magic.tooltip=
-xat.config.magic.mana.enabled=Mana Enabled
+xat.config.magic.mana.enabled=启用魔力
 xat.config.magic.mana.enabled.tooltip=
-xat.config.magic.mana.regen.ticks=Mana Regen Rate
-xat.config.magic.mana.regen.ticks.tooltip=How Often in Ticks Mana Regenerates
-xat.config.magic.mana.regen.timeout=Mana Regen Timeout
-xat.config.magic.mana.regen.timeout.tooltip=How long after spending mana before it begins to regenerate
+xat.config.magic.mana.regen.ticks=魔力恢复速率
+xat.config.magic.mana.regen.ticks.tooltip=每多少游戏刻恢复魔力
+xat.config.magic.mana.regen.timeout=魔力恢复冷却
+xat.config.magic.mana.regen.timeout.tooltip=使用魔力多长时间后开始恢复
 
-xat.config.races=Race Settings
+xat.config.races=种族设置
 
-xat.config.races.fairy=Fairy Race Settings
+xat.config.races.fairy=精灵设置
 xat.config.races.fairy.flight=创造模式飞行
 xat.config.races.fairy.flight.tooltip=如果启用允许玩家进行创造模式飞行
 xat.config.races.fairy.flight.speed=创造模式飞行速度
@@ -486,7 +486,7 @@ xat.config.races.fairy.climbing.blocks.list.tooltip=玩家装备仙女之戒时�
 xat.config.races.fairy.jumpheight=修改跳跃高度
 xat.config.races.fairy.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 
-xat.config.races.dwarf=Dwarf Race Settings
+xat.config.races.dwarf=矮人设置
 xat.config.races.dwarf.blocks=方块设置
 xat.config.races.dwarf.blocks.tooltip=
 xat.config.races.dwarf.blocks.xp=破坏方块给予经验
@@ -512,7 +512,7 @@ xat.config.races.dwarf.skilledminer.tooltip=矮人之戒是否能降低镐的采
 xat.config.races.dwarf.static_mining=平等挖掘
 xat.config.races.dwarf.static_mining.tooltip=固定以4倍方块硬度速度进行采集，不兼容其他模组。
 
-xat.config.races.titan=Titan Race Settings
+xat.config.races.titan=泰坦设置
 xat.config.races.titan.jumpheight=修改跳跃高度
 xat.config.races.titan.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 xat.config.races.titan.heavy=沉重的玩家
