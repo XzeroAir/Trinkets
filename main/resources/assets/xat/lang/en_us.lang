@@ -4,7 +4,7 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= These are informational example text, they do not show up in game.
 xat.exampletext.1= Tooltips for Items go up to 10
 xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 Compatability Texts per Item, examples are
+xat.exampletext.3= There are 3 Compatibility Texts per Item, examples are
 xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
 xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
 xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
@@ -519,7 +519,7 @@ xat.config.races.titan.heavy.tooltip=If Enabled the player will sink faster in w
 xat.config.races.titan.trample=Trample Farmland
 xat.config.races.titan.trample.tooltip=If Enabled the player will trample farmland in a 3x3 under the player
 
-xat.config.compatability=Compatability Settings
+xat.config.compatability=Compatibility Settings
 xat.config.compatability.tooltip=Settings which affect how this mod works with other mods.
 
 xat.config.toughasnails=Tough as Nails
