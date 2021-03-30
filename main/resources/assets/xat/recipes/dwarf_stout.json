@@ -10,7 +10,7 @@
             "item": "xat:glowing_ingot"
         },
         "@": {
-            "item": "xat:dwarf_ring"
+            "item": "xat:mana_crystal"
         }, 
         "*": {
             "item": "minecraft:dragon_breath"

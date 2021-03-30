@@ -9,18 +9,24 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
 import xzeroair.trinkets.util.handlers.ItemEffectHandler;
 
 public class EffectsPolarizedStone {
+
+	private static final ConfigPolarizedStone serverConfig = TrinketsConfig.SERVER.Items.POLARIZED_STONE;
 
 	private final float playerDistance = 0;
 	private static float otherDistance = 0;
@@ -50,7 +56,7 @@ public class EffectsPolarizedStone {
 		if ((entity instanceof EntityPlayer)) {
 			EntityPlayer player = (EntityPlayer) entity;
 			AxisAlignedBB bBox = entity.getEntityBoundingBox();
-			List<Entity> List = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(TrinketsConfig.SERVER.POLARIZED_STONE.PR.HD, TrinketsConfig.SERVER.POLARIZED_STONE.PR.VD, TrinketsConfig.SERVER.POLARIZED_STONE.PR.HD));
+			List<Entity> List = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(serverConfig.PR.HD, serverConfig.PR.VD, serverConfig.PR.HD));
 			TrinketProperties cap = Capabilities.getTrinketProperties(stack);
 
 			if ((cap != null)) {// && !(player.inventory.getFirstEmptyStack() < 0)) {
@@ -61,7 +67,7 @@ public class EffectsPolarizedStone {
 								getDrops().add(String.valueOf(targets.getEntityId()));
 							}
 						}
-						if (TrinketsConfig.SERVER.POLARIZED_STONE.collectXP && (targets instanceof EntityXPOrb)) {
+						if (serverConfig.collectXP && (targets instanceof EntityXPOrb)) {
 							if (!getDrops().contains(String.valueOf(targets.getEntityId()))) {
 								getDrops().add(String.valueOf(targets.getEntityId()));
 							}
@@ -85,8 +91,8 @@ public class EffectsPolarizedStone {
 											}
 										}
 										if ((player.getDistance(drop) < getOtherDistance()) || (getOtherDistance() == 0)) {
-											if (!TrinketsConfig.SERVER.POLARIZED_STONE.instant_pickup) {
-												if ((drop instanceof EntityItem) || (TrinketsConfig.SERVER.POLARIZED_STONE.collectXP && (drop instanceof EntityXPOrb))) {
+											if (!serverConfig.instant_pickup) {
+												if ((drop instanceof EntityItem) || (serverConfig.collectXP && (drop instanceof EntityXPOrb))) {
 													ItemEffectHandler.pull(drop, player.posX, player.posY, player.posZ);
 												}
 											} else {
@@ -114,7 +120,7 @@ public class EffectsPolarizedStone {
 															}
 														}
 													} else {
-														if (TrinketsConfig.SERVER.POLARIZED_STONE.collectXP && (drop instanceof EntityXPOrb)) {
+														if (serverConfig.collectXP && (drop instanceof EntityXPOrb)) {
 															final EntityXPOrb xp = (EntityXPOrb) drop;
 															player.addExperience(xp.xpValue);
 															if (!xp.isDead) {
@@ -143,20 +149,41 @@ public class EffectsPolarizedStone {
 		if ((entity instanceof EntityPlayer)) {
 			final TrinketProperties cap = Capabilities.getTrinketProperties(stack);
 			if ((cap != null) && cap.altAbility()) {
-				if (TrinketsConfig.SERVER.POLARIZED_STONE.exhaustion) {
+				if (serverConfig.exhaustion) {
 					if (!((EntityPlayer) entity).isCreative()) {
-						if ((entity.ticksExisted % TrinketsConfig.SERVER.POLARIZED_STONE.exhaust_ticks) == 0) {
-							((EntityPlayer) entity).getFoodStats().addExhaustion(TrinketsConfig.SERVER.POLARIZED_STONE.exhaust_rate);
+						EntityProperties prop = Capabilities.getEntityRace(entity);
+						if (prop != null) {
+							float exhaustRate = serverConfig.exhaust_rate;
+							if (exhaustRate <= prop.getMagic().getMana()) {
+								if ((entity.ticksExisted % serverConfig.exhaust_ticks) == 0) {
+									prop.getMagic().spendMana(exhaustRate);
+									//									((EntityPlayer) entity).getFoodStats().addExhaustion(serverConfig.exhaust_rate);
+								}
+							} else {
+								if (entity instanceof EntityPlayer) {
+									if ((entity.ticksExisted % 60) == 0) {
+										String Message = "No MP";
+										((EntityPlayer) entity).sendStatusMessage(new TextComponentString(Message), true);
+									}
+								}
+								return;
+							}
 						}
 					}
 				}
 				final AxisAlignedBB bBox = entity.getEntityBoundingBox();
-				final List<Entity> entityList = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(2));
-				for (final Entity arrow : entityList) {
-					if (arrow instanceof EntityArrow) {
-						arrow.motionX = 0;
-						arrow.motionZ = 0;
-						arrow.motionY *= 1;
+				final List<Entity> entityList = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(1.1));
+				for (final Entity repelledEntity : entityList) {
+					if ((repelledEntity != null) && !(repelledEntity instanceof EntityPlayer)) {
+						String e = EntityRegistry.getEntry(repelledEntity.getClass()).getRegistryName().toString();
+						for (String s : serverConfig.repelledEntities) {
+							if (e.equalsIgnoreCase(s)) {
+								Vec3d playerVec3 = entity.getLookVec();
+								repelledEntity.motionX = (playerVec3.x * 0.3D);
+								repelledEntity.motionY = (playerVec3.y * 0.3D);
+								repelledEntity.motionZ = (playerVec3.z * 0.3D);
+							}
+						}
 					}
 				}
 			}
@@ -177,7 +204,7 @@ public class EffectsPolarizedStone {
 						if (ICap.mainAbility()) {
 							EffectsPolarizedStone.collectDrops(Magnet, player);
 						}
-						if (TrinketsConfig.SERVER.POLARIZED_STONE.repell) {
+						if (serverConfig.repell) {
 							if (ICap.altAbility()) {
 								EffectsPolarizedStone.blockArrows(Magnet, player);
 							}
@@ -199,7 +226,7 @@ public class EffectsPolarizedStone {
 				if (ICap.mainAbility()) {
 					EffectsPolarizedStone.collectDrops(Magnet, player);
 				}
-				if (TrinketsConfig.SERVER.POLARIZED_STONE.repell) {
+				if (serverConfig.repell) {
 					if (ICap.altAbility()) {
 						EffectsPolarizedStone.blockArrows(Magnet, player);
 					}
@@ -214,7 +241,7 @@ public class EffectsPolarizedStone {
 					if (ICap.mainAbility()) {
 						EffectsPolarizedStone.collectDrops(Magnet, player);
 					}
-					if (TrinketsConfig.SERVER.POLARIZED_STONE.repell) {
+					if (serverConfig.repell) {
 						if (ICap.altAbility()) {
 							EffectsPolarizedStone.blockArrows(Magnet, player);
 						}

@@ -45,6 +45,17 @@ minecraft {
     makeObfSourceJar = false
 }
 
+sourceSets {
+        main {
+            java {
+                srcDir 'main/java'
+            }
+            resources {
+                srcDir 'main/resources'
+            }
+        }
+}
+
 jar {
     exclude "**/*.bat"
     exclude "**/*.psd"

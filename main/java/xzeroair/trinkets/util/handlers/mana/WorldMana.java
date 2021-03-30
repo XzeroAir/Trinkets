@@ -12,8 +12,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.manaCap.ManaStats;
 
 public class WorldMana extends WorldSavedData {
 
@@ -31,7 +29,7 @@ public class WorldMana extends WorldSavedData {
 		//		world.getMapStorage(); All worlds
 		WorldMana instance = (WorldMana) storage.getOrLoadData(WorldMana.class, NAME);
 
-		if(instance == null) {
+		if (instance == null) {
 			instance = new WorldMana();
 			storage.setData(NAME, instance);
 		}
@@ -41,13 +39,13 @@ public class WorldMana extends WorldSavedData {
 	public float getManaInfluence(World world, BlockPos pos) {
 		final ChunkPos chunkPos = new ChunkPos(pos);
 		float mana = 0.0f;
-		for(int dx = -4;dx<=4;dx++) {
-			for(int dz = -4;dz<=4;dz++) {
+		for (int dx = -4; dx <= 4; dx++) {
+			for (int dz = -4; dz <= 4; dz++) {
 				final ChunkPos cp = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-				final ManaSphere sphere = getOrCreateSphereAt(world, cp);
-				if(sphere.getRadius() > 0) {
+				final ManaSphere sphere = this.getOrCreateSphereAt(world, cp);
+				if (sphere.getRadius() > 0) {
 					final double distanceSq = pos.distanceSq(sphere.getCenter());
-					if(distanceSq < (sphere.getRadius() * sphere.getRadius())) {
+					if (distanceSq < (sphere.getRadius() * sphere.getRadius())) {
 						final double distance = Math.sqrt(distanceSq);
 						mana += (sphere.getRadius() - distance) / sphere.getRadius();
 
@@ -61,13 +59,13 @@ public class WorldMana extends WorldSavedData {
 	public float getManaStrength(World world, BlockPos pos) {
 		final ChunkPos chunkPos = new ChunkPos(pos);
 		float mana = 0.0f;
-		for(int dx = -4;dx<=4;dx++) {
-			for(int dz = -4;dz<=4;dz++) {
+		for (int dx = -4; dx <= 4; dx++) {
+			for (int dz = -4; dz <= 4; dz++) {
 				final ChunkPos cp = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-				final ManaSphere sphere = getOrCreateSphereAt(world, cp);
-				if(sphere.getRadius() > 0) {
+				final ManaSphere sphere = this.getOrCreateSphereAt(world, cp);
+				if (sphere.getRadius() > 0) {
 					final double distanceSq = pos.distanceSq(sphere.getCenter());
-					if(distanceSq < (sphere.getRadius() * sphere.getRadius())) {
+					if (distanceSq < (sphere.getRadius() * sphere.getRadius())) {
 						final double distance = Math.sqrt(distanceSq);
 						final double influence = (sphere.getRadius() - distance) / sphere.getRadius();
 						mana += influence * sphere.getCurrentMana();
@@ -79,29 +77,29 @@ public class WorldMana extends WorldSavedData {
 	}
 
 	public float extractMana(World world, BlockPos pos) {
-		final float manaInfluence = getManaInfluence(world, pos);
-		if(manaInfluence <= 0) {
+		final float manaInfluence = this.getManaInfluence(world, pos);
+		if (manaInfluence <= 0) {
 			return 0;
 		}
 		final ChunkPos chunkPos = new ChunkPos(pos);
 		float extracted = 0.0f;
-		for(int dx = -4;dx<=4;dx++) {
-			for(int dz = -4;dz<=4;dz++) {
+		for (int dx = -4; dx <= 4; dx++) {
+			for (int dz = -4; dz <= 4; dz++) {
 				final ChunkPos cp = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-				final ManaSphere sphere = getOrCreateSphereAt(world, cp);
-				if(sphere.getRadius() > 0) {
+				final ManaSphere sphere = this.getOrCreateSphereAt(world, cp);
+				if (sphere.getRadius() > 0) {
 					final double distanceSq = pos.distanceSq(sphere.getCenter());
-					if(distanceSq < (sphere.getRadius() * sphere.getRadius())) {
+					if (distanceSq < (sphere.getRadius() * sphere.getRadius())) {
 						final double distance = Math.sqrt(distanceSq);
 						double influence = (sphere.getRadius() - distance) / sphere.getRadius();
 						float currentMana = sphere.getCurrentMana();
-						if(influence > currentMana) {
+						if (influence > currentMana) {
 							influence = currentMana;
 						}
 						currentMana -= influence;
 						extracted += influence;
 						sphere.setCurrentMana(currentMana);
-						markDirty();
+						this.markDirty();
 					}
 				}
 			}
@@ -111,52 +109,53 @@ public class WorldMana extends WorldSavedData {
 
 	public void tick(World world) {
 		ticker--;
-		if(ticker > 0) {
+		if (ticker > 0) {
 			return;
 		}
 		ticker = 10;
-		growMana(world);
-		sendMana(world);
+		this.growMana(world);
+		this.sendMana(world);
 	}
 
 	private void growMana(World world) {
-		for(final Map.Entry<ChunkPos, ManaSphere> entry : spheres.entrySet()) {
+		for (final Map.Entry<ChunkPos, ManaSphere> entry : spheres.entrySet()) {
 			final ManaSphere sphere = entry.getValue();
-			if(sphere.getRadius() > 0) {
-				if(world.isBlockLoaded(sphere.getCenter())) {
+			if (sphere.getRadius() > 0) {
+				if (world.isBlockLoaded(sphere.getCenter())) {
 					float currentMana = sphere.getCurrentMana();
 					currentMana += 0.01f;
-					if(currentMana >= 5) {
+					if (currentMana >= 5) {
 						currentMana = 5;
 					}
 					sphere.setCurrentMana(currentMana);
-					markDirty();
+					this.markDirty();
 				}
 			}
 		}
 	}
+
 	private void sendMana(World world) {
-		for(final EntityPlayer player : world.playerEntities) {
-			final float manaStrength = getManaStrength(world, player.getPosition());
-			final float maxInfluence = getManaInfluence(world, player.getPosition());
+		for (final EntityPlayer player : world.playerEntities) {
+			final float manaStrength = this.getManaStrength(world, player.getPosition());
+			final float maxInfluence = this.getManaInfluence(world, player.getPosition());
 			//			System.out.println(manaStrength);
-			final ManaStats playerMana = Capabilities.getPlayerMana(player);
+			//			final ManaStats playerMana = Capabilities.getEntityMana(player);
 			//			NetworkHandler.INSTANCE.sendTo(new PacketSendMana(manaStrength,  maxInfluence, playerMana.getMana()), (EntityPlayerMP) player);
 		}
 	}
 
 	private ManaSphere getOrCreateSphereAt(World world, ChunkPos cp) {
 		ManaSphere sphere = spheres.get(cp);
-		if(sphere == null) {
+		if (sphere == null) {
 			final BlockPos center = cp.getBlock(8, ManaSphere.getRandomYOffset(world.getSeed(), cp.x, cp.z), 8);
 			float radius = 0;
-			if(ManaSphere.isCenterChunk(world.getSeed(), cp.x, cp.z)) {
+			if (ManaSphere.isCenterChunk(world.getSeed(), cp.x, cp.z)) {
 				radius = ManaSphere.getRadius(world.getSeed(), cp.x, cp.z);
 			}
 			sphere = new ManaSphere(center, radius);
 			spheres.put(cp, sphere);
 			//			System.out.println(center);
-			markDirty();
+			this.markDirty();
 		}
 		return sphere;
 	}
@@ -164,10 +163,10 @@ public class WorldMana extends WorldSavedData {
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		final NBTTagList list = nbt.getTagList("spheres", Constants.NBT.TAG_COMPOUND);
-		for(int i = 0; i < list.tagCount();i++) {
+		for (int i = 0; i < list.tagCount(); i++) {
 			final NBTTagCompound sphereNBT = list.getCompoundTagAt(i);
 			final ChunkPos pos = new ChunkPos(sphereNBT.getInteger("cx"), sphereNBT.getInteger("cz"));
-			final ManaSphere sphere = new ManaSphere(new BlockPos(sphereNBT.getInteger("posx"), sphereNBT.getInteger("posy"),sphereNBT.getInteger("posz")), sphereNBT.getFloat("radius"));
+			final ManaSphere sphere = new ManaSphere(new BlockPos(sphereNBT.getInteger("posx"), sphereNBT.getInteger("posy"), sphereNBT.getInteger("posz")), sphereNBT.getFloat("radius"));
 			sphere.setCurrentMana(sphereNBT.getFloat("mana"));
 			spheres.put(pos, sphere);
 		}
@@ -176,7 +175,7 @@ public class WorldMana extends WorldSavedData {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		final NBTTagList list = new NBTTagList();
-		for(final Map.Entry<ChunkPos, ManaSphere> entry : spheres.entrySet()) {
+		for (final Map.Entry<ChunkPos, ManaSphere> entry : spheres.entrySet()) {
 			final NBTTagCompound sphereNBT = new NBTTagCompound();
 			final ChunkPos pos = entry.getKey();
 			final ManaSphere sphere = entry.getValue();

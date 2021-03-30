@@ -2,6 +2,8 @@ package xzeroair.trinkets.util.helpers;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
@@ -15,15 +17,21 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
+import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.attributes.AttributeConfigWrapper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.init.ModPotionTypes;
+import xzeroair.trinkets.items.base.TrinketRaceBase;
+import xzeroair.trinkets.items.foods.Mana_Candy;
+import xzeroair.trinkets.items.foods.Mana_Crystal;
+import xzeroair.trinkets.items.trinkets.TrinketArcingOrb;
 import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
-import xzeroair.trinkets.items.trinkets.TrinketDwarfRing;
 import xzeroair.trinkets.items.trinkets.TrinketEnderTiara;
-import xzeroair.trinkets.items.trinkets.TrinketFairyRing;
+import xzeroair.trinkets.items.trinkets.TrinketFaelisClaws;
 import xzeroair.trinkets.items.trinkets.TrinketGlowRing;
 import xzeroair.trinkets.items.trinkets.TrinketGreaterInertia;
 import xzeroair.trinkets.items.trinkets.TrinketInertiaNull;
@@ -31,19 +39,21 @@ import xzeroair.trinkets.items.trinkets.TrinketPoison;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.items.trinkets.TrinketSea;
 import xzeroair.trinkets.items.trinkets.TrinketWitherRing;
+import xzeroair.trinkets.races.dwarf.config.DwarfConfig;
+import xzeroair.trinkets.races.elf.config.ElfConfig;
+import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.trinkets.DamageShield;
-import xzeroair.trinkets.util.config.trinkets.DragonsEye;
-import xzeroair.trinkets.util.config.trinkets.DwarfRing;
-import xzeroair.trinkets.util.config.trinkets.EnderCrown;
-import xzeroair.trinkets.util.config.trinkets.FairyRing;
-import xzeroair.trinkets.util.config.trinkets.GlowRing;
-import xzeroair.trinkets.util.config.trinkets.PoisonStone;
-import xzeroair.trinkets.util.config.trinkets.PolarizedStone;
-import xzeroair.trinkets.util.config.trinkets.SeaStone;
-import xzeroair.trinkets.util.config.trinkets.WitherRing;
-import xzeroair.trinkets.util.interfaces.IAttributeConfigHelper;
+import xzeroair.trinkets.util.config.trinkets.ConfigArcingOrb;
+import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
+import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
+import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
+import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
+import xzeroair.trinkets.util.config.trinkets.ConfigGlowRing;
+import xzeroair.trinkets.util.config.trinkets.ConfigPoisonStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigSeaStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigWitherRing;
 
 public class TranslationHelper {
 
@@ -69,21 +79,32 @@ public class TranslationHelper {
 	private static TextFormatting bold = TextFormatting.BOLD;
 	private static TextFormatting reset = TextFormatting.RESET;
 
-	public static void addTooltips(ItemStack stack, List<String> tooltip) {
+	private static boolean isStringEmpty(String string) {
+		return string
+				.replace("�r", "")
+				.replace("�6", "")
+				.replace("�", "")
+				.replace("§r", "")
+				.replaceAll(" ", "")
+				.isEmpty();
+	}
+
+	public static void addTooltips(ItemStack stack, @Nullable World world, List<String> tooltip) {
 		for (int i = 1; i < 10; i++) {
 			TextComponentTranslation info = new TextComponentTranslation(stack.getTranslationKey() + ".tooltip" + i);
 			if (!(info.getUnformattedComponentText().contentEquals(info.getKey()) || info.getUnformattedText().isEmpty())) {
 				String string = formatLangKeys(stack, info);
-				if (!(string.replace("�r", "").isEmpty())) {
+				if ((string != null) && !isStringEmpty(string)) {
 					tooltip.add(
 							string
 					);
 				}
 			}
 		}
+		addModCompatTooltips(stack, world, tooltip);
 	}
 
-	public static void addPotionTooltips(ItemStack stack, World world, List<String> tooltip) {
+	public static void addPotionTooltips(ItemStack stack, @Nullable World world, List<String> tooltip) {
 		if (world == null) {
 			return;
 		}
@@ -93,7 +114,7 @@ public class TranslationHelper {
 				TextComponentTranslation info = new TextComponentTranslation(Reference.MODID + "." + stack.getTranslationKey() + "." + pot.getRegistryName().getPath() + ".tooltip" + i);
 				if (!(info.getUnformattedComponentText().contentEquals(info.getKey()) || info.getUnformattedText().isEmpty())) {
 					String string = formatLangKeys(stack, info);
-					if (!(string.replace("�r", "").replace("�6", "").replace("�", "").isEmpty())) {
+					if ((string != null) && !isStringEmpty(string)) {
 						tooltip.add(
 								string
 						);
@@ -103,27 +124,23 @@ public class TranslationHelper {
 		}
 	}
 
-	public static void addOtherTooltips(ItemStack stack, World world, IAttributeConfigHelper attributes, List<String> tooltip) {
-		if (world == null) {
-			return;
-		}
+	public static void addModCompatTooltips(ItemStack stack, @Nullable World world, List<String> tooltip) {
 		TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
-		TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
-		TextComponentTranslation whenworn = new TextComponentTranslation(Reference.MODID + ".onequip");
-		TextComponentTranslation noAttributes = new TextComponentTranslation(Reference.MODID + ".noattributes");
-
 		TextComponentTranslation CompatTan = new TextComponentTranslation(stack.getTranslationKey() + ".compat.tan");
 		TextComponentTranslation CompatFA = new TextComponentTranslation(stack.getTranslationKey() + ".compat.firstaid");
 		TextComponentTranslation CompatEV = new TextComponentTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals");
 
-		addTooltips(stack, tooltip);
-		// §r
-
+		boolean tanEmpty = (CompatTan.getUnformattedComponentText().contentEquals(CompatTan.getKey()) || CompatTan.getUnformattedText().isEmpty());
+		boolean evEmpty = (CompatEV.getUnformattedComponentText().contentEquals(CompatEV.getKey()) || CompatEV.getUnformattedText().isEmpty());
+		boolean faEmpty = (CompatFA.getUnformattedComponentText().contentEquals(CompatFA.getKey()) || CompatFA.getUnformattedText().isEmpty());
+		String TAN = formatLangKeys(stack, CompatTan);
+		String EV = formatLangKeys(stack, CompatEV);
+		String FA = formatLangKeys(stack, CompatFA);
 		if (GuiScreen.isCtrlKeyDown()) {
 			if (Loader.isModLoaded("toughasnails") && TrinketsConfig.compat.toughasnails) {
-				if (!(CompatTan.getUnformattedComponentText().contentEquals(CompatTan.getKey()) || CompatTan.getUnformattedText().isEmpty())) {
+				if (!tanEmpty) {
 					String string = formatLangKeys(stack, CompatTan);
-					if (!(string.replace("�r", "").isEmpty())) {
+					if (!isStringEmpty(string)) {
 						tooltip.add(
 								string + gold + " (Tough as Nails)"
 						);
@@ -131,9 +148,9 @@ public class TranslationHelper {
 				}
 			}
 			if (Loader.isModLoaded("firstaid")) {
-				if (!(CompatFA.getUnformattedComponentText().contentEquals(CompatFA.getKey()) || CompatFA.getUnformattedText().isEmpty())) {
+				if (!faEmpty) {
 					String string = formatLangKeys(stack, CompatFA);
-					if (!(string.replace("�r", "").isEmpty())) {
+					if (!isStringEmpty(string)) {
 						tooltip.add(
 								string + gold + " (First Aid)"
 						);
@@ -141,9 +158,9 @@ public class TranslationHelper {
 				}
 			}
 			if (Loader.isModLoaded("enhancedvisuals") && TrinketsConfig.compat.enhancedvisuals) {
-				if (!(CompatEV.getUnformattedComponentText().contentEquals(CompatEV.getKey()) || CompatEV.getUnformattedText().isEmpty())) {
+				if (!evEmpty) {
 					String string = formatLangKeys(stack, CompatEV);
-					if (!(string.replace("�r", "").isEmpty())) {
+					if (!isStringEmpty(string)) {
 						tooltip.add(
 								string + gold + " (Enhanced Visuals)"
 						);
@@ -151,26 +168,54 @@ public class TranslationHelper {
 				}
 			}
 		} else {
-			tooltip.add(TextFormatting.RESET + "" + dGray + addTextColorFromLangKey(ctrl.getFormattedText()));
+			if ((!tanEmpty && !isStringEmpty(TAN)) ||
+					(!evEmpty && !isStringEmpty(EV)) ||
+					(!faEmpty && !isStringEmpty(FA))
+
+			) {
+				tooltip.add(TextFormatting.RESET + "" + dGray + addTextColorFromLangKey(ctrl.getFormattedText()));
+			}
 		}
+	}
+
+	public static void addOtherTooltips(ItemStack stack, @Nullable World world, AttributeConfigWrapper attributes, List<String> tooltip) {
+		if (world == null) {
+			return;
+		}
+		TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
+		TextComponentTranslation whenworn = new TextComponentTranslation(Reference.MODID + ".onequip");
+
 		if (GuiScreen.isShiftKeyDown()) {
-			if (attributes.ArmorAttributeEnabled() ||
-					attributes.ArmorToughnessAttributeEnabled() ||
-					attributes.AttackSpeedAttributeEnabled() ||
-					attributes.DamageAttributeEnabled() ||
-					attributes.HealthAttributeEnabled() ||
-					attributes.KnockbackAttributeEnabled() ||
-					attributes.LuckAttributeEnabled() ||
-					attributes.MovementSpeedAttributeEnabled() ||
-					attributes.ReachAttributeEnabled() ||
-					attributes.SwimSpeedAttributeEnabled()) {
+			if (attributes.armorEnabled() ||
+					attributes.armorToughnessEnabled() ||
+					attributes.attackSpeedEnabled() ||
+					attributes.attackDamageEnabled() ||
+					attributes.healthEnabled() ||
+					attributes.knockbackEnabled() ||
+					attributes.luckEnabled() ||
+					attributes.movementSpeedEnabled() ||
+					attributes.reachEnabled() ||
+					attributes.swimSpeedEnabled() ||
+					attributes.jumpEnabled() ||
+					attributes.stepHeightEnabled()) {
 				tooltip.add(TextFormatting.RESET + addTextColorFromLangKey(whenworn.getFormattedText()));
 				addAttributeTooltips(attributes, tooltip);
-			} else {
-				tooltip.add(TextFormatting.RESET + addTextColorFromLangKey(noAttributes.getFormattedText()));
 			}
 		} else {
-			tooltip.add(TextFormatting.RESET + "" + dGray + addTextColorFromLangKey(shift.getFormattedText()));
+			if (attributes.armorEnabled() ||
+					attributes.armorToughnessEnabled() ||
+					attributes.attackSpeedEnabled() ||
+					attributes.attackDamageEnabled() ||
+					attributes.healthEnabled() ||
+					attributes.knockbackEnabled() ||
+					attributes.luckEnabled() ||
+					attributes.movementSpeedEnabled() ||
+					attributes.reachEnabled() ||
+					attributes.swimSpeedEnabled() ||
+					attributes.jumpEnabled() ||
+					attributes.stepHeightEnabled()) {
+				tooltip.add(TextFormatting.RESET + "" + dGray + addTextColorFromLangKey(shift.getFormattedText()));
+			}
 		}
 	}
 
@@ -178,13 +223,13 @@ public class TranslationHelper {
 		TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 		boolean isCapNull = iCap == null;
 		if (stack.getItem() instanceof TrinketGlowRing) {
-			GlowRing config = TrinketsConfig.SERVER.GLOW_RING;
+			ConfigGlowRing config = TrinketsConfig.SERVER.Items.GLOW_RING;
 			String Key = "blindness";
 			string = TranslationKeyReplace(stack, config.prevent_blindness, Key, string);
 			string = VariableReplace(config.enabled, Key, booleanCheckTranslation(config.prevent_blindness), string);
 		}
 		if (stack.getItem() instanceof TrinketWitherRing) {
-			WitherRing config = TrinketsConfig.SERVER.WITHER_RING;
+			ConfigWitherRing config = TrinketsConfig.SERVER.Items.WITHER_RING;
 			String Key = "wither";
 			String Key2 = "leech";
 			string = TranslationKeyReplace(stack, config.wither, Key, string);
@@ -196,7 +241,7 @@ public class TranslationHelper {
 			string = VariableReplace(config.enabled, Key2, booleanCheckTranslation(config.leech), string);
 		}
 		if (stack.getItem() instanceof TrinketDamageShield) {
-			DamageShield config = TrinketsConfig.SERVER.DAMAGE_SHIELD;
+			ConfigDamageShield config = TrinketsConfig.SERVER.Items.DAMAGE_SHIELD;
 			String Key = "explosionresist";
 			String Key2 = "damageignored";
 			String Key3 = "headshots";
@@ -207,34 +252,51 @@ public class TranslationHelper {
 
 			string = TranslationKeyReplace(stack, config.damage_ignore, Key2, string);
 			string = VariableReplace(config.enabled, Key2, booleanCheckTranslation(config.damage_ignore), string);
-			string = VariableReplace(config.damage_ignore, "damageignoredhitcount", CapabilityProperties.getDamageShield_HitCount() + "/" + config.hits, string);
+			int hitcount = 0;
+			if (TrinketHelper.getTagCompoundSafe(stack).hasKey("count")) {
+				hitcount = TrinketHelper.getTagCompoundSafe(stack).getInteger("count");
+			}
+			string = VariableReplace(config.damage_ignore, "damageignoredhitcount", hitcount + "/" + config.hits, string);
 
 			string = TranslationKeyReplace(stack, config.compat.firstaid.chance_ignore, Key3, string);
 			string = VariableReplace(config.enabled, Key3, booleanCheckTranslation(config.compat.firstaid.chance_ignore), string);
 			string = VariableReplace(config.compat.firstaid.chance_ignore, "headshotchance", MathHelper.clamp((1F / config.compat.firstaid.chance_headshots) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%", string);
 
 		}
-		if (stack.getItem() instanceof TrinketFairyRing) {
-			FairyRing config = TrinketsConfig.SERVER.FAIRY_RING;
-			String Key = "creativeflight";
-			string = TranslationKeyReplace(stack, config.creative_flight, Key, string);
-			string = VariableReplace(config.enabled, Key, booleanCheckTranslation(config.creative_flight), string);
-		}
-		if (stack.getItem() instanceof TrinketDwarfRing) {
-			DwarfRing config = TrinketsConfig.SERVER.DWARF_RING;
-			String Key = "fortune";
-			String Key2 = "skilledminer";
-			String Key3 = "staticminer";
-			string = TranslationKeyReplace(stack, config.fortune, Key, string);
-			string = VariableReplace(config.enabled, Key, booleanCheckTranslation(config.fortune), string);
-			string = TranslationKeyReplace(stack, config.skilled_miner, Key2, string);
-			string = VariableReplace(config.enabled, Key2, booleanCheckTranslation(config.skilled_miner), string);
-			string = TranslationKeyReplace(stack, config.static_mining, Key3, string);
-			string = VariableReplace(config.enabled, Key3, booleanCheckTranslation(config.static_mining), string);
-
+		if (stack.getItem() instanceof TrinketRaceBase) {
+			TrinketRaceBase rr = (TrinketRaceBase) stack.getItem();
+			string = VariableReplace(rr.ItemEnabled(), "rsize", rr.getRacialTraits().getRaceSize() + "%", string);
+			if (rr.getRacialTraits().equals(EntityRaces.fairy)) {
+				FairyConfig config = TrinketsConfig.SERVER.races.fairy;
+				String Key = "creativeflight";
+				string = TranslationKeyReplace(stack, config.creative_flight, Key, string);
+				string = VariableReplace(true, Key, booleanCheckTranslation(config.creative_flight), string);
+			}
+			if (rr.getRacialTraits().equals(EntityRaces.dwarf)) {
+				DwarfConfig config = TrinketsConfig.SERVER.races.dwarf;
+				String Key = "fortune";
+				String Key2 = "skilledminer";
+				String Key3 = "staticminer";
+				string = TranslationKeyReplace(stack, config.fortune, Key, string);
+				string = VariableReplace(true, Key, booleanCheckTranslation(config.fortune), string);
+				string = TranslationKeyReplace(stack, config.skilled_miner, Key2, string);
+				string = VariableReplace(true, Key2, booleanCheckTranslation(config.skilled_miner), string);
+				string = TranslationKeyReplace(stack, config.static_mining, Key3, string);
+				string = VariableReplace(true, Key3, booleanCheckTranslation(config.static_mining), string);
+			}
+			if (rr.getRacialTraits().equals(EntityRaces.elf)) {
+				ElfConfig config = TrinketsConfig.SERVER.races.elf;
+				String Key = "chargeshot";
+				string = TranslationKeyReplace(stack, config.charge_shot, Key, string);
+			}
+			if (rr.getRacialTraits().equals(EntityRaces.dragon)) {
+				String breathKey = ModKeyBindings.RACE_ABILITY.getDisplayName();
+				string = string
+						.replace("*breathkb:", breathKey + "");
+			}
 		}
 		if (stack.getItem() instanceof TrinketDragonsEye) {
-			DragonsEye config = TrinketsConfig.SERVER.DRAGON_EYE;
+			ConfigDragonsEye config = TrinketsConfig.SERVER.Items.DRAGON_EYE;
 
 			String Key = "treasurefinder";
 			String Key1 = "$target:";
@@ -246,7 +308,7 @@ public class TranslationHelper {
 			string = VariableReplace(config.enabled, Key, booleanCheckTranslation(config.oreFinder), string);
 			boolean looking = !isCapNull && (iCap.Target() >= 0);
 			if (config.oreFinder) {
-				String Type = !looking ? "None" : TrinketsConfig.SERVER.DRAGON_EYE.BLOCKS.Blocks[iCap.Target()];
+				String Type = !looking ? "None" : TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.Blocks[iCap.Target()];
 				String translatedTarget = OreTrackingHelper.translateOreName(Type);
 				NonNullList<ItemStack> target = OreDictionary.getOres(Type, false);
 				if (!target.isEmpty()) {
@@ -276,22 +338,22 @@ public class TranslationHelper {
 					.replace("*deofkb:", DragonsEyeKeybindOF + "");
 		}
 		if (stack.getItem() instanceof TrinketInertiaNull) {
-			String inertiaNullFD = "" + ((100F - (TrinketsConfig.SERVER.INERTIA_NULL.falldamage_amount * 100F)) + "%");
+			String inertiaNullFD = "" + ((100F - (TrinketsConfig.SERVER.Items.INERTIA_NULL.falldamage_amount * 100F)) + "%");
 			string = string
 					.replace("$inertianullfd:", inertiaNullFD + "");
 		}
 		if (stack.getItem() instanceof TrinketGreaterInertia) {
-			String greaterInertiaFD = "" + ((100F - (TrinketsConfig.SERVER.GREATER_INERTIA.falldamage_amount * 100F)) + "%");
+			String greaterInertiaFD = "" + ((100F - (TrinketsConfig.SERVER.Items.GREATER_INERTIA.falldamage_amount * 100F)) + "%");
 			string = string
 					.replace("$greaterinertiafd:", greaterInertiaFD + "");
 		}
 		if (stack.getItem() instanceof TrinketSea) {
-			SeaStone config = TrinketsConfig.SERVER.SEA_STONE;
+			ConfigSeaStone config = TrinketsConfig.SERVER.Items.SEA_STONE;
 			String key = "bubbles";
 			String key2 = "betterswimming";
 			String key3 = "tanthirst";
 			string = TranslationKeyReplace(stack, config.underwater_breathing, key, string);
-			string = VariableReplace(config.underwater_breathing, key, TrinketsConfig.SERVER.SEA_STONE.always_full ? 10 + "" : 1 + "", string);
+			string = VariableReplace(config.underwater_breathing, key, TrinketsConfig.SERVER.Items.SEA_STONE.always_full ? 10 + "" : 1 + "", string);
 			string = TranslationKeyReplace(stack, config.Swim_Tweaks, key2, string);
 			string = VariableReplace(config.Swim_Tweaks, key2, booleanCheckTranslation(config.Swim_Tweaks), string);
 			string = TranslationKeyReplace(stack, config.compat.tan.prevent_thirst, key3, string);
@@ -299,7 +361,7 @@ public class TranslationHelper {
 
 		}
 		if (stack.getItem() instanceof TrinketPolarized) {
-			PolarizedStone config = TrinketsConfig.SERVER.POLARIZED_STONE;
+			ConfigPolarizedStone config = TrinketsConfig.SERVER.Items.POLARIZED_STONE;
 			String key = "collect";
 			String key2 = "collectxp";
 			String key3 = "repel";
@@ -320,7 +382,7 @@ public class TranslationHelper {
 					.replace("*magnetkb:", PolarizedStoneKeybind + "");
 		}
 		if (stack.getItem() instanceof TrinketPoison) {
-			PoisonStone config = TrinketsConfig.SERVER.POISON_STONE;
+			ConfigPoisonStone config = TrinketsConfig.SERVER.Items.POISON_STONE;
 			boolean PoisonChance = config.poison;
 			String key = "poison";
 			string = TranslationKeyReplace(stack, PoisonChance, key, string);
@@ -331,10 +393,11 @@ public class TranslationHelper {
 			String key2 = "bonusdamage";
 			string = TranslationKeyReplace(stack, bonusDamage, key2, string);
 			string = VariableReplace(config.enabled, key2, toggleCheckTranslation(bonusDamage), string);
-			string = VariableReplace(PoisonChance, "damagemultiplier", translateAttributeValue(1, config.bonus_damage_amount), string);
+			float pa = config.bonus_damage_amount <= 0 ? config.bonus_damage_amount : config.bonus_damage_amount - 1;
+			string = VariableReplace(PoisonChance, "damagemultiplier", translateAttributeValue(1, pa), string);
 		}
 		if (stack.getItem() instanceof TrinketEnderTiara) {
-			EnderCrown config = TrinketsConfig.SERVER.ENDER_CROWN;
+			ConfigEnderCrown config = TrinketsConfig.SERVER.Items.ENDER_CROWN;
 			String key = "damageignored";
 			String key1 = "endermenchance";
 			String key2 = "endermenfollow";
@@ -355,18 +418,56 @@ public class TranslationHelper {
 			string = VariableReplace(config.enabled, key3, booleanCheckTranslation(config.water_hurts), string);
 
 		}
+		if (stack.getItem() instanceof TrinketArcingOrb) {
+			ConfigArcingOrb config = TrinketsConfig.SERVER.Items.ARCING_ORB;
+
+			String key = "dodge";
+			String key1 = "dodgecost";
+			String key2 = "dodgestun";
+			String key3 = "boltattack";
+			String key4 = "boltcost";
+			String key5 = "boltdamage";
+
+			string = TranslationKeyReplace(stack, config.dodgeAbility, key, string);
+			string = VariableReplace(config.enabled, key, toggleCheckTranslation(config.dodgeAbility), string);
+
+			string = VariableReplace(config.enabled, key1, config.dodgeCost + "", string);
+
+			string = TranslationKeyReplace(stack, config.dodgeStuns, key2, string);
+			string = VariableReplace(config.enabled, key2, booleanCheckTranslation(config.dodgeStuns), string);
+
+			string = TranslationKeyReplace(stack, config.attackAbility, key3, string);
+			string = VariableReplace(config.enabled, key3, toggleCheckTranslation(config.attackAbility), string);
+
+			string = VariableReplace(config.enabled, key4, config.attackCost + "", string);
+
+			string = VariableReplace(config.enabled, key5, config.attackDmg + "", string);
+
+			String ArcingOrbKeybindBoltAttack = ModKeyBindings.ARCING_ORB_ABILITY.getDisplayName();
+			string = string
+					.replace("*arckb:", ArcingOrbKeybindBoltAttack + "");
+		}
+		if (stack.getItem() instanceof TrinketFaelisClaws) {
+			ConfigFaelisClaw config = TrinketsConfig.SERVER.Items.FAELIS_CLAW;
+			string = VariableReplace(true, "clawbleed", config.duration + "", string);
+		}
+		if (stack.getItem() instanceof Mana_Candy) {
+			string = VariableReplace(true, "MPRestore", "25-50" + "", string);
+		}
+		if (stack.getItem() instanceof Mana_Crystal) {
+			string = VariableReplace(true, "MPMax", "10" + "", string);
+		}
 		if (stack.getItem().equals(Items.POTIONITEM)) {
 			final PotionType pot = PotionUtils.getPotionFromItem(stack);
-			if (pot.equals(ModPotionTypes.Enhanced) ||
-					pot.equals(ModPotionTypes.Restorative) ||
-					pot.equals(ModPotionTypes.DwarfType) ||
-					pot.equals(ModPotionTypes.FairyType) ||
-					pot.equals(ModPotionTypes.TitanType)) {
+			if (ModPotionTypes.TrinketPotionTypes.containsValue(pot)) {
 				string = string
-						.replace("$unused:", "")
-						.replace("$fairyticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.FairyDuration), 0, Integer.MAX_VALUE) / 20F) + "")
-						.replace("$dwarfticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.DwarfDuration), 0, Integer.MAX_VALUE) / 20F) + "")
-						.replace("$titanticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.TitanDuration), 0, Integer.MAX_VALUE) / 20F) + "");
+						.replace("$humanticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.human.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$fairyticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.fairy.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$dwarfticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.dwarf.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$titanticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.titan.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$goblinticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.goblin.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$elfticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.elf.Duration), 0, Integer.MAX_VALUE) / 20F) + "")
+						.replace("$faelisticks:", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.faelis.Duration), 0, Integer.MAX_VALUE) / 20F) + "");
 			}
 		}
 		String AuxKeybind = ModKeyBindings.AUX_KEY.getDisplayName();
@@ -379,21 +480,19 @@ public class TranslationHelper {
 	private static String TranslationKeyReplace(ItemStack stack, boolean enabled, String key, String translation) {
 		if (enabled) {
 			String translatedKey = new TextComponentTranslation(stack.getTranslationKey() + "." + key).getFormattedText();
-			translation = translation.replace("@" + key + ":", translatedKey);
+			return translation.replace("@" + key.toLowerCase() + ":", translatedKey);
 		} else {
-			translation = translation.replace("@" + key + ":", "");
+			return translation.replace("@" + key.toLowerCase() + ":", "");
 		}
-		return translation;
 	}
 
 	private static String VariableReplace(boolean enabled, String key, String Variable, String translation) {
+		//TODO the .replace("§r", "") is added somewhere in this
 		if (enabled) {
-			translation = translation.replace("$" + key + ":", Variable);
-			return translation;
+			return translation.replace("$" + key.toLowerCase() + ":", Variable);
 		} else {
-			translation = translation.replace("$" + key + ":", "");
+			return translation.replace("$" + key.toLowerCase() + ":", "");
 		}
-		return translation;
 	}
 
 	public static String booleanCheckTranslation(boolean bool) {
@@ -444,7 +543,7 @@ public class TranslationHelper {
 	public static String formatLangKeys(ItemStack stack, TextComponentTranslation string) {
 		final String addOptions = TrinketOptionsKeyTranslate(stack, string.getFormattedText());
 		final String addColor = addTextColorFromLangKey(addOptions);
-		return reset + addColor;
+		return addColor;
 	}
 
 	// tooltip.add("#black: " + TextFormatting.BLACK + "Color");
@@ -477,14 +576,17 @@ public class TranslationHelper {
 		double TranslatedAmount = Amount;
 		String string = "";
 		if (OP > 0) {
-			TranslatedAmount = Amount * (100);
+			TranslatedAmount = Math.round(Amount * (100));
 			if (TranslatedAmount > 0) {
 				string = "+" + TranslatedAmount + "%";
+				//				if (OP == 1) {
+				//					string = "+" + string;
+				//				}
 			} else {
 				string = "" + TranslatedAmount + "%";
 			}
 		} else {
-			TranslatedAmount = Amount * (100);
+			//			TranslatedAmount = Math.round(Amount * (100));
 			if (TranslatedAmount > 0) {
 				string = "+" + TranslatedAmount;
 			} else {
@@ -494,78 +596,97 @@ public class TranslationHelper {
 		return string;
 	}
 
-	public static void addAttributeTooltips(IAttributeConfigHelper attributes, List<String> tooltip) {
-		if (attributes.AttackSpeedAttributeEnabled()) {
-			final int OP = attributes.AttackSpeedAttributeOperation();
-			final double Amount = attributes.AttackSpeedAttributeAmount();
+	public static void addAttributeTooltips(AttributeConfigWrapper attributes, List<String> tooltip) {
+		if (attributes.attackSpeedEnabled()) {
+			//Base Value = 4.0
+			final int OP = attributes.getAttackSpeedOperation();
+			final double Amount = attributes.getAttackSpeed();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String attackspeed = I18n.format(Reference.MODID + ".tooltip.attackspeed");
-			tooltip.add(color + string + "  " + blue + attackspeed);
+			tooltip.add(color + string + " " + blue + attackspeed);
 		}
-		if (attributes.DamageAttributeEnabled()) {
-			final int OP = attributes.DamageAttributeOperation();
-			final double Amount = attributes.DamageAttributeAmount();
+		if (attributes.attackDamageEnabled()) {
+			//Base value = 1.0
+			final int OP = attributes.getAttackDamageOperation();
+			final double Amount = attributes.getAttackDamage();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String attackdamage = I18n.format(Reference.MODID + ".tooltip.attackdamage");
-			tooltip.add(color + string + "  " + blue + attackdamage);
+			tooltip.add(color + string + " " + blue + attackdamage);
 		}
-		if (attributes.HealthAttributeEnabled()) {
-			final int OP = attributes.HealthAttributeOperation();
-			final double Amount = attributes.HealthAttributeAmount();
+		if (attributes.healthEnabled()) {
+			//Base Value = 20
+			final int OP = attributes.getHealthOperation();
+			final double Amount = attributes.getHealth();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String health = I18n.format(Reference.MODID + ".tooltip.health");
-			tooltip.add(color + string + "  " + blue + health);
+			tooltip.add(color + string + " " + blue + health);
 		}
-		if (attributes.ArmorAttributeEnabled()) {
-			final int OP = attributes.ArmorAttributeOperation();
-			final double Amount = attributes.ArmorAttributeAmount();
+		if (attributes.armorEnabled()) {
+			//Base value = 0
+			final int OP = attributes.getArmorOperation();
+			final double Amount = attributes.getArmor();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String armor = I18n.format(Reference.MODID + ".tooltip.armor");
-			tooltip.add(color + string + "  " + blue + armor);
+			tooltip.add(color + string + " " + blue + armor);
 		}
-		if (attributes.ArmorToughnessAttributeEnabled()) {
-			final int OP = attributes.ArmorToughnessAttributeOperation();
-			final double Amount = attributes.ArmorToughnessAttributeAmount();
+		if (attributes.armorToughnessEnabled()) {
+			//Base value = 0
+			final int OP = attributes.getArmorToughnessOperation();
+			final double Amount = attributes.getArmorToughness();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String toughness = I18n.format(Reference.MODID + ".tooltip.toughness");
-			tooltip.add(color + string + "  " + blue + toughness);
+			tooltip.add(color + string + " " + blue + toughness);
 		}
-		if (attributes.KnockbackAttributeEnabled()) {
-			final int OP = attributes.KnockbackAttributeOperation();
-			final double Amount = attributes.KnockbackAttributeAmount();
+		if (attributes.knockbackEnabled()) {
+			//Base value = 0
+			final int OP = attributes.getKnockbackOperation();
+			final double Amount = attributes.getKnockback();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String knockbackresist = I18n.format(Reference.MODID + ".tooltip.knockbackresist");
-			tooltip.add(color + string + "  " + blue + knockbackresist);
+			tooltip.add(color + string + " " + blue + knockbackresist);
 		}
-		if (attributes.MovementSpeedAttributeEnabled()) {
-			final int OP = attributes.MovementSpeedAttributeOperation();
-			final double Amount = attributes.MovementSpeedAttributeAmount();
+		if (attributes.movementSpeedEnabled()) {
+			//Base value = 0.10000000149011612
+			final int OP = attributes.getMovementSpeedOperation();
+			final double Amount = attributes.getMovementSpeed();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String movementspeed = I18n.format(Reference.MODID + ".tooltip.movementspeed");
-			tooltip.add(color + string + "  " + blue + movementspeed);
+			tooltip.add(color + string + " " + blue + movementspeed);
 		}
-		if (attributes.SwimSpeedAttributeEnabled()) {
-			final int OP = attributes.SwimSpeedAttributeOperation();
-			final double Amount = attributes.SwimSpeedAttributeAmount();
+		if (attributes.swimSpeedEnabled()) {
+			//Base value = 1.0
+			final int OP = attributes.getSwimSpeedOperation();
+			final double Amount = attributes.getSwimSpeed();
 			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
 			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
 			final String swimspeed = I18n.format(Reference.MODID + ".tooltip.swimspeed");
-			tooltip.add(color + string + "  " + blue + swimspeed);
+			tooltip.add(color + string + " " + blue + swimspeed);
 		}
-
-		// final String stepheight = TextFormatting.BLUE + I18n.format(Reference.MODID +
-		// ".tooltip.stepheight");
-		// final String jumpheight = TextFormatting.BLUE + I18n.format(Reference.MODID +
-		// ".tooltip.jumpheight");
-		// tooltip.add(jumpheight);
-		// tooltip.add(stepheight);
+		if (attributes.jumpEnabled()) {
+			//Base value = 0.42
+			final int OP = attributes.getJumpOperation();
+			final double Amount = attributes.getJump();
+			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
+			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
+			final String jumpheight = I18n.format(Reference.MODID + ".tooltip.jumpheight");
+			tooltip.add(color + string + " " + blue + jumpheight);
+		}
+		if (attributes.stepHeightEnabled()) {
+			//Base value = 0.6
+			final int OP = attributes.getStepHeightOperation();
+			final double Amount = attributes.getStepHeight();
+			final String string = TranslationHelper.translateAttributeValue(OP, Amount);
+			final String color = Double.parseDouble(string.replace("+", "").replace("%", "")) > 0 ? "" + green : "" + red;
+			final String stepheight = I18n.format(Reference.MODID + ".tooltip.stepheight");
+			tooltip.add(color + string + " " + blue + stepheight);
+		}
 	}
 
 }

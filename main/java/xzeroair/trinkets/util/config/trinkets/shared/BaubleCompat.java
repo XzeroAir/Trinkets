@@ -14,18 +14,21 @@ public class BaubleCompat {
 	}
 
 	@Config.Comment({
-		"If the mod Baubles is installed what bauble slot should it use",
-		"Available Types:",
-		"Trinket, Any, All",
-		"Amulet, Necklace, Pendant",
-		"Ring, Rings",
-		"Belt",
-		"Head, Hat",
-		"Body, Chest",
-		"Charm"
+			"If the mod Baubles is installed what bauble slot should it use",
+			"Available Types:",
+			"Trinket, Any, All",
+			"Amulet, Necklace, Pendant",
+			"Ring, Rings",
+			"Belt",
+			"Head, Hat",
+			"Body, Chest",
+			"Charm"
 	})
 	@Name("Bauble Type")
 	@Config.RequiresWorldRestart
 	@LangKey(PREFIX + ".type")
 	public String bauble_type = "trinket";
+
+	@Name("Equip Multiple")
+	public boolean equip_multiple = false;
 }

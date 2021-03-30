@@ -3,18 +3,26 @@ package xzeroair.trinkets.util.helpers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
+import xzeroair.trinkets.enums.TargetOreType;
 
 public class OreTrackingHelper {
 
+	private String block;
+
+	public OreTrackingHelper(String block) {
+		this.block = block;
+	}
+
 	public static String translateOreName(String name) {
-		name = name.toLowerCase();
-		String target = name.toLowerCase();
+		String target = name;
 		String meta = "";
 		if (name.contains("[")) {
 			final int metaStart = name.indexOf("[");
@@ -22,45 +30,35 @@ public class OreTrackingHelper {
 			target = name.substring(0, metaStart);
 			meta = name.substring(metaStart + 1, metaEnd);
 		}
-		final Item itemTarget = Item.getByNameOrId(target);
-		ItemStack parseName = new ItemStack(itemTarget, 1);
-		if (itemTarget == null) {
-			if (Block.getBlockFromName(target) != null) {
-				target = Block.getBlockFromName(target).getRegistryName().toString();
+		if (name.contains(":")) {
+			final Item itemTarget = Item.getByNameOrId(target);
+			ItemStack parseName = new ItemStack(itemTarget, 1);
+			if (itemTarget == null) {
+				if (Block.getBlockFromName(target) != null) {
+					target = Block.getBlockFromName(target).getRegistryName().toString();
+				}
 			}
-		}
-		target = parseName.getTextComponent().getUnformattedText();
-		if (meta.isEmpty()) {
-			target = target
-					.replace(" Ore", "")
-					.replace("ore", "")
-					.replace(" ore", "")
-					.replace("_", " ")
-					.replace("tile.", "")
-					.replace("Chest", "Treasure Chests")
-					.replace("[", "")
-					.replace("]", "");
-		}
-		if (!meta.isEmpty() && (itemTarget != null) && itemTarget.getHasSubtypes()) {
-			final NonNullList<ItemStack> parseMeta = NonNullList.create();
-			itemTarget.getSubItems(CreativeTabs.SEARCH, parseMeta);
-			for (final ItemStack t : parseMeta) {
-				if (t.getMetadata() == Integer.parseInt(meta)) {
-					parseName = new ItemStack(itemTarget, 1, Integer.parseInt(meta));
-					target = parseName.getTextComponent().getUnformattedText();
-					target = target
-							.replace(" Ore", "")
-							.replace("ore", "")
-							.replace(" ore", "")
-							.replace("_", " ")
-							.replace("tile.", "")
-							.replace("Chest", "Treasure Chests")
-							.replace("[", "")
-							.replace("]", "");
+			target = parseName.getTextComponent().getUnformattedText();
+
+			if (!meta.isEmpty() && (itemTarget != null) && itemTarget.getHasSubtypes()) {
+				final NonNullList<ItemStack> parseMeta = NonNullList.create();
+				itemTarget.getSubItems(CreativeTabs.SEARCH, parseMeta);
+				for (final ItemStack t : parseMeta) {
+					if (t.getMetadata() == Integer.parseInt(meta)) {
+						parseName = new ItemStack(itemTarget, 1, Integer.parseInt(meta));
+						target = parseName.getTextComponent().getUnformattedText();
+					}
 				}
 			}
 		}
-		return target;
+		return target
+				.replace(" Ore", "")
+				.replace("ore", "")
+				.replace(" ore", "")
+				.replace("_", " ")
+				.replace("tile.", "")
+				.replace("[", "")
+				.replace("]", "");
 	}
 
 	private static List OresLoaded = new ArrayList<>();
@@ -136,7 +134,7 @@ public class OreTrackingHelper {
 		return OresLoaded;
 	}
 
-	public static String[] getOreNames(ItemStack stack) {
+	public static String[] getOreNames(@Nonnull ItemStack stack) {
 		final int[] ids = OreDictionary.getOreIDs(stack);
 		final String[] list = new String[ids.length];
 		for (int i = 0; i < ids.length; i++) {
@@ -214,5 +212,13 @@ public class OreTrackingHelper {
 			finished = true;
 		}
 		return totalOresLoaded;
+	}
+
+	public static float getColor(String name, int index) {
+		return TargetOreType.Color(name, index);
+	}
+
+	public static int getColor(String name) {
+		return TargetOreType.Color(name);
 	}
 }

@@ -18,33 +18,33 @@ public class TrinketInventoryEffectRenderer extends TrinketGuiContainer {
 	public TrinketInventoryEffectRenderer(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 	}
+
 	/** True if there is some potion effect to display */
 
 	/**
-	 * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-	 * window resizes, the buttonList is cleared beforehand.
+	 * Adds the buttons (and other controls) to the screen in question. Called when
+	 * the GUI is displayed and when the window resizes, the buttonList is cleared
+	 * beforehand.
 	 */
 	@Override
-	public void initGui()
-	{
+	public void initGui() {
 		super.initGui();
-		updateActivePotionEffects();
+		this.updateActivePotionEffects();
 	}
 
-	protected void updateActivePotionEffects()
-	{
+	protected void updateActivePotionEffects() {
 		boolean hasVisibleEffect = false;
-		for(final PotionEffect potioneffect : mc.player.getActivePotionEffects()) {
+		for (final PotionEffect potioneffect : mc.player.getActivePotionEffects()) {
 			final Potion potion = potioneffect.getPotion();
-			if(potion.shouldRender(potioneffect)) { hasVisibleEffect = true; break; }
+			if (potion.shouldRender(potioneffect)) {
+				hasVisibleEffect = true;
+				break;
+			}
 		}
-		if (mc.player.getActivePotionEffects().isEmpty() || !hasVisibleEffect)
-		{
+		if (mc.player.getActivePotionEffects().isEmpty() || !hasVisibleEffect) {
 			guiLeft = (width - xSize) / 2;
 			hasActivePotionEffects = false;
-		}
-		else
-		{
+		} else {
 			if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent(this))) {
 				guiLeft = (width - xSize) / 2;
 			} else {
@@ -58,21 +58,18 @@ public class TrinketInventoryEffectRenderer extends TrinketGuiContainer {
 	 * Draws the screen and all the components in it.
 	 */
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks)
-	{
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 
-		if (hasActivePotionEffects)
-		{
-			drawActivePotionEffects();
+		if (hasActivePotionEffects) {
+			this.drawActivePotionEffects();
 		}
 	}
 
 	/**
 	 * Display the potion effects list
 	 */
-	private void drawActivePotionEffects()
-	{
+	private void drawActivePotionEffects() {
 		final int xPos = TrinketsConfig.CLIENT.GUI.X;//MathHelper.clamp(38, 38, 39);
 		final int yPos = TrinketsConfig.CLIENT.GUI.Y;//MathHelper.clamp(3, 3, 61);
 
@@ -81,47 +78,41 @@ public class TrinketInventoryEffectRenderer extends TrinketGuiContainer {
 		final int k = 166;
 		final Collection<PotionEffect> collection = mc.player.getActivePotionEffects();
 
-		if (!collection.isEmpty())
-		{
+		if (!collection.isEmpty()) {
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			GlStateManager.disableLighting();
 			int l = 33;
 
-			if (collection.size() > 5)
-			{
+			if (collection.size() > 5) {
 				l = 132 / (collection.size() - 1);
 			}
 
-			for (final PotionEffect potioneffect : Ordering.natural().sortedCopy(collection))
-			{
+			for (final PotionEffect potioneffect : Ordering.natural().sortedCopy(collection)) {
 				final Potion potion = potioneffect.getPotion();
-				if(!potion.shouldRender(potioneffect)) {
+				if (!potion.shouldRender(potioneffect)) {
 					continue;
 				}
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				mc.getTextureManager().bindTexture(INVENTORY_BACKGROUND);
 				this.drawTexturedModalRect(i, j, 0, 166, 140, 32);
 
-				if (potion.hasStatusIcon())
-				{
+				if (potion.hasStatusIcon()) {
 					final int i1 = potion.getStatusIconIndex();
 					this.drawTexturedModalRect(i + 6, j + 7, 0 + ((i1 % 8) * 18), 198 + ((i1 / 8) * 18), 18, 18);
 				}
 
 				potion.renderInventoryEffect(potioneffect, this, i, j, zLevel);
-				if (!potion.shouldRenderInvText(potioneffect)) { j += l; continue; }
+				if (!potion.shouldRenderInvText(potioneffect)) {
+					j += l;
+					continue;
+				}
 				String s1 = I18n.format(potion.getName());
 
-				if (potioneffect.getAmplifier() == 1)
-				{
+				if (potioneffect.getAmplifier() == 1) {
 					s1 = s1 + " " + I18n.format("enchantment.level.2");
-				}
-				else if (potioneffect.getAmplifier() == 2)
-				{
+				} else if (potioneffect.getAmplifier() == 2) {
 					s1 = s1 + " " + I18n.format("enchantment.level.3");
-				}
-				else if (potioneffect.getAmplifier() == 3)
-				{
+				} else if (potioneffect.getAmplifier() == 3) {
 					s1 = s1 + " " + I18n.format("enchantment.level.4");
 				}
 

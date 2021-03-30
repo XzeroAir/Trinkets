@@ -1,0 +1,30 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CFC",
+        "DGD",
+        "C#C"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:fish",
+            "data": 32767
+        },
+        "F": {
+            "item": "minecraft:red_flower",
+            "data": 3
+        },
+        "D": {
+            "item": "minecraft:dragon_breath"
+        },
+        "C": {
+            "item": "xat:mana_candy"
+        },
+        "G": {
+            "item": "xat:mana_crystal"
+        }
+    },
+    "result": {
+        "item": "xat:faelis_food"
+    }
+}

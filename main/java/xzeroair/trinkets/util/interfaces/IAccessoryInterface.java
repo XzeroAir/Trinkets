@@ -1,15 +1,16 @@
 package xzeroair.trinkets.util.interfaces;
 
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
@@ -20,6 +21,9 @@ public interface IAccessoryInterface {
 	 * @param itemstack
 	 * @param player
 	 */
+
+	default void eventClientTick(ItemStack stack, EntityLivingBase entity) {
+	}
 
 	/**
 	 * This Triggers at the End of every Player Tick
@@ -34,9 +38,9 @@ public interface IAccessoryInterface {
 	}
 
 	/**
-	 * This Triggers when the Player enters the world
+	 * This Triggers when the entity enters the world
 	 */
-	default void eventEntityJoinWorld(ItemStack stack, EntityLivingBase player) {
+	default void eventEntityJoinWorld(ItemStack stack, EntityLivingBase entity) {
 	}
 
 	/**
@@ -46,15 +50,15 @@ public interface IAccessoryInterface {
 	}
 
 	/**
-	 * This Triggers when the Player jumps
+	 * This Triggers when the Entity jumps
 	 */
-	default void eventLivingJump(ItemStack stack, EntityLivingBase player) {
+	default void eventLivingJump(ItemStack stack, EntityLivingBase entity) {
 	}
 
 	/**
-	 * This Triggers when the Player is About to hit the ground
+	 * This Triggers when the Entity is About to hit the ground
 	 */
-	default void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase player) {
+	default void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase entity) {
 	}
 
 	/**
@@ -117,15 +121,10 @@ public interface IAccessoryInterface {
 	default void eventLivingDamageAttacker(LivingDamageEvent event, ItemStack stack, EntityLivingBase player) {
 	}
 
-	default String getIsTrinketOrBauble(ItemStack stack, EntityLivingBase player) {
-		return "Else";
-	}
-
 	/**
-	 * This Returns the Current Slot ID of the ItemStack
+	 * This Triggers when a potion effect is about to be applied to a player
 	 */
-	default int getEquippedSlot(ItemStack stack, EntityLivingBase player) {
-		return -1;
+	default void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
 	}
 
 	/**
@@ -156,8 +155,10 @@ public interface IAccessoryInterface {
 
 	/**
 	 * This Renders things on the Trinkets Render Layer
+	 *
+	 * @param scale
 	 */
-	default void playerRender(ItemStack stack, EntityLivingBase player, float partialTicks, boolean isBauble) {
+	default void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isTrinket) {
 	}
 
 	/**
@@ -165,13 +166,6 @@ public interface IAccessoryInterface {
 	 */
 	default boolean ItemEnabled() {
 		return true;
-	}
-
-	default NBTTagCompound saveNBT() {
-		return null;
-	}
-
-	default void loadNBT(NBTTagCompound compound) {
 	}
 
 }

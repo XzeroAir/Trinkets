@@ -1,8 +1,5 @@
 package xzeroair.trinkets.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
@@ -10,38 +7,92 @@ import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.races.dragon.config.DragonConfig;
+import xzeroair.trinkets.races.dwarf.config.DwarfConfig;
+import xzeroair.trinkets.races.elf.config.ElfConfig;
+import xzeroair.trinkets.races.faelis.config.FaelisConfig;
+import xzeroair.trinkets.races.fairy.config.FairyConfig;
+import xzeroair.trinkets.races.goblin.config.GoblinConfig;
+import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.util.config.compat.CompatabilityConfigs;
-import xzeroair.trinkets.util.config.gui.TrinketsGui;
-import xzeroair.trinkets.util.config.trinkets.DamageShield;
-import xzeroair.trinkets.util.config.trinkets.DragonsEye;
-import xzeroair.trinkets.util.config.trinkets.DwarfRing;
-import xzeroair.trinkets.util.config.trinkets.EnderCrown;
-import xzeroair.trinkets.util.config.trinkets.FairyRing;
-import xzeroair.trinkets.util.config.trinkets.GlowRing;
-import xzeroair.trinkets.util.config.trinkets.GreaterInertia;
-import xzeroair.trinkets.util.config.trinkets.InertiaNull;
-import xzeroair.trinkets.util.config.trinkets.PoisonStone;
-import xzeroair.trinkets.util.config.trinkets.PolarizedStone;
-import xzeroair.trinkets.util.config.trinkets.SeaStone;
-import xzeroair.trinkets.util.config.trinkets.TitanRing;
-import xzeroair.trinkets.util.config.trinkets.WeightlessStone;
-import xzeroair.trinkets.util.config.trinkets.WitherRing;
+import xzeroair.trinkets.util.config.gui.TrinketsContainerConfig;
+import xzeroair.trinkets.util.config.gui.TrinketsPropertiesConfig;
+import xzeroair.trinkets.util.config.mana.EntityManaConfig;
+import xzeroair.trinkets.util.config.potions.PotionConfig;
+import xzeroair.trinkets.util.config.trinkets.ConfigArcingOrb;
+import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
+import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
+import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
+import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
+import xzeroair.trinkets.util.config.trinkets.ConfigGlowRing;
+import xzeroair.trinkets.util.config.trinkets.ConfigGreaterInertia;
+import xzeroair.trinkets.util.config.trinkets.ConfigInertiaNull;
+import xzeroair.trinkets.util.config.trinkets.ConfigPoisonStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigSeaStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigTeddyBear;
+import xzeroair.trinkets.util.config.trinkets.ConfigWeightlessStone;
+import xzeroair.trinkets.util.config.trinkets.ConfigWitherRing;
+import xzeroair.trinkets.util.config.trinkets.shared.TransformationRingConfig;
 
 @Config(name = Reference.configPath, modid = Reference.MODID)
 @Config.LangKey("xat.config.title")
 public class TrinketsConfig {
 
-	private final static String PREFIX = Reference.MODID + ".config";
+	private final static String cfgPrefix = Reference.MODID + ".config";
 
 	@Name("Client Settings")
-	@LangKey(PREFIX + ".client.settings")
+	@LangKey(cfgPrefix + ".client.settings")
 	public static xClient CLIENT = new xClient();
 
 	public static class xClient {
 
 		@Name("Gui Settings")
-		@LangKey(PREFIX + ".client.gui.settings")
-		public TrinketsGui GUI = new TrinketsGui();
+		@LangKey(cfgPrefix + ".client.gui.settings")
+		public TrinketsContainerConfig GUI = new TrinketsContainerConfig();
+
+		@Name("Mana Bar Settings")
+		@LangKey(cfgPrefix + ".magic.mana.hud.settings")
+		public ManaBar MPBar = new ManaBar();
+
+		public class ManaBar {
+
+			private final String name = "hud";
+			private final String PREFIX = Reference.MODID + ".config.magic.mana" + name;
+
+			@Config.Comment("Mana Bar shown")
+			@Name("01. Show Mana")
+			@LangKey(PREFIX + ".shown")
+			public boolean shown = true;
+
+			@Config.Comment("Should the Mana Bar show even when full")
+			@Name("02. Show when Full")
+			@LangKey(PREFIX + ".shown.always")
+			public boolean always_shown = false;
+
+			@Config.Comment("Should the Mana Bar display horizontal or vertical?")
+			@Name("03. Mana Bar Horizontal")
+			@LangKey(PREFIX + ".horizontal")
+			public boolean mana_horizontal = false;
+
+			@Config.Comment("Show next to Mana Bar Text?")
+			@Name("04. Hide Text")
+			@LangKey(PREFIX + ".text.shown")
+			public boolean hide_text = false;
+
+			@Name("05. Location X")
+			@LangKey(PREFIX + ".location.x")
+			public double X = 0;
+			@Name("06. Location Y")
+			@LangKey(PREFIX + ".location.y")
+			public double Y = 0;
+
+		}
+
+		@Name("Race Properties Gui")
+		@LangKey(cfgPrefix + ".race.properties.gui.settings")
+		public TrinketsPropertiesConfig raceProperties = new TrinketsPropertiesConfig();
 
 		@Config.Comment("POV Height adjustments when wearing Race Rings. Set to False to Disable. Default True")
 		@Name("POV Height Adjustments")
@@ -49,103 +100,108 @@ public class TrinketsConfig {
 
 		@Config.Comment("Rendering of Trinkets. Set to False to Disable. Default True")
 		@Name("Render Trinkets")
-		@LangKey(PREFIX + ".client.render.trinkets.all")
+		@LangKey(cfgPrefix + ".client.render.trinkets.all")
 		public boolean rendering = true;
 
 		@Config.Comment("When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?")
 		@Name("Replace EntityRenderer")
-		@LangKey(PREFIX + ".client.entity.renderer.replace")
+		@LangKey(cfgPrefix + ".client.entity.renderer.replace")
 		public boolean entityRenderer = true;
 
 		@Config.Comment("When Trinket and Baubles Replaces the EntityRenderer is breaks some settings with Optifine, Specifically Fog, use this to turn Fog on or off")
 		@Name("EntityRenderer Fog")
-		@LangKey(PREFIX + ".client.entity.renderer.replace.fog")
+		@LangKey(cfgPrefix + ".client.entity.renderer.replace.fog")
 		public boolean RendererFog = true;
 
-		@Name("Dragon's Eye Settings")
-		@LangKey(PREFIX + ".dragons_eye")
-		public Dragon DRAGON_EYE = new Dragon();
+		@Name("Items")
+		public TrinketItems items = new TrinketItems();
 
-		public class Dragon {
-			@Config.Comment("How Often the Dragon's Eye effect triggers in Ticks. try to avoid lower values. Default 79, 20 MIN, 360 MAX")
-			@Name("Refresh Rate")
-			@RangeInt(min = 20, max = 360)
-			@LangKey(PREFIX + ".dragons_eye.client.orefinder.refresh.rate")
-			public int C00_RR = 79;
+		public class TrinketItems {
+			@Name("Dragon's Eye Settings")
+			@LangKey(cfgPrefix + ".dragons_eye")
+			public Dragon DRAGON_EYE = new Dragon();
 
-			@Config.Comment("Should the Dragon's Eye play a Sound when Ore is Nearby? Set to False to Disable. Default True")
-			@Name("Dragon's growl")
-			@LangKey(PREFIX + ".dragons_eye.client.growl.enabled")
-			public boolean Dragon_Growl = true;
+			public class Dragon {
+				@Config.Comment("How Often the Dragon's Eye effect triggers in Ticks. try to avoid lower values. Default 79, 20 MIN, 360 MAX")
+				@Name("Refresh Rate")
+				@RangeInt(min = 20, max = 360)
+				@LangKey(cfgPrefix + ".dragons_eye.client.orefinder.refresh.rate")
+				public int C00_RR = 79;
 
-			@Config.Comment("Should the Dragon's Eye a Sound when Sneaking. Options 'SNEAK', 'STAND', 'BOTH'  Default SNEAK")
-			@Name("Dragon's growl Sneak")
-			@LangKey(PREFIX + ".dragons_eye.client.growl.activation")
-			public String Dragon_Growl_Sneak = "SNEAK";
+				@Config.Comment("Should the Dragon's Eye play a Sound when Ore is Nearby? Set to False to Disable. Default True")
+				@Name("Dragon's growl")
+				@LangKey(cfgPrefix + ".dragons_eye.client.growl.enabled")
+				public boolean Dragon_Growl = true;
 
-			@Config.Comment("The Volume of the Dragon's growl when detecting nearby Treasure. Default 100, 0 MIN, 300 MAX")
-			@Name("Dragon's growl Volume")
-			@RangeInt(min = 0, max = 300)
-			@LangKey(PREFIX + ".dragons_eye.client.growl.volume")
-			public int Dragon_Growl_Volume = 100;
-		}
+				@Config.Comment("Should the Dragon's Eye a Sound when Sneaking. Options 'SNEAK', 'STAND', 'BOTH'  Default SNEAK")
+				@Name("Dragon's growl Sneak")
+				@LangKey(cfgPrefix + ".dragons_eye.client.growl.activation")
+				public String Dragon_Growl_Sneak = "SNEAK";
 
-		@Name("Fairy Ring Settings")
-		@LangKey(PREFIX + ".fairy_ring")
-		public Fairy FAIRY_RING = new Fairy();
+				@Config.Comment("The Volume of the Dragon's growl when detecting nearby Treasure. Default 100, 0 MIN, 300 MAX")
+				@Name("Dragon's growl Volume")
+				@RangeInt(min = 0, max = 300)
+				@LangKey(cfgPrefix + ".dragons_eye.client.growl.volume")
+				public int Dragon_Growl_Volume = 100;
+			}
 
-		public class Fairy {
-			@Name("Render Trinket on Player")
-			@LangKey(PREFIX + ".client.render.trinket")
-			public boolean doRender = true;
-		}
+			@Name("Fairy Ring Settings")
+			@LangKey(cfgPrefix + ".fairy_ring")
+			public Fairy FAIRY_RING = new Fairy();
 
-		@Name("Shield of Honor Settings")
-		@LangKey(PREFIX + ".damage_shield")
-		public Shield DAMAGE_SHIELD = new Shield();
+			public class Fairy {
+				@Name("Render Trinket on Player")
+				@LangKey(cfgPrefix + ".client.render.trinket")
+				public boolean doRender = true;
+			}
 
-		public class Shield {
-			@Name("Render Trinket on Player")
-			@LangKey(PREFIX + ".client.render.trinket")
-			public boolean doRender = true;
-		}
+			@Name("Shield of Honor Settings")
+			@LangKey(cfgPrefix + ".damage_shield")
+			public Shield DAMAGE_SHIELD = new Shield();
 
-		@Name("Ender Queen's Crown Settings")
-		@LangKey(PREFIX + ".ender_tiara")
-		public Crown ENDER_CROWN = new Crown();
+			public class Shield {
+				@Name("Render Trinket on Player")
+				@LangKey(cfgPrefix + ".client.render.trinket")
+				public boolean doRender = true;
+			}
 
-		public class Crown {
-			@Name("Render Trinket on Player")
-			@LangKey(PREFIX + ".client.render.trinket")
-			public boolean doRender = true;
-		}
+			@Name("Ender Queen's Crown Settings")
+			@LangKey(cfgPrefix + ".ender_tiara")
+			public Crown ENDER_CROWN = new Crown();
 
-		@Name("Stone of the Sea Settings")
-		@LangKey(PREFIX + ".sea_stone")
-		public Sea SEA_STONE = new Sea();
+			public class Crown {
+				@Name("Render Trinket on Player")
+				@LangKey(cfgPrefix + ".client.render.trinket")
+				public boolean doRender = true;
+			}
 
-		public class Sea {
-			@Name("Render Trinket on Player")
-			@LangKey(PREFIX + ".client.render.trinket")
-			public boolean doRender = true;
+			@Name("Stone of the Sea Settings")
+			@LangKey(cfgPrefix + ".sea_stone")
+			public Sea SEA_STONE = new Sea();
+
+			public class Sea {
+				@Name("Render Trinket on Player")
+				@LangKey(cfgPrefix + ".client.render.trinket")
+				public boolean doRender = true;
+			}
 		}
 	}
 
 	@Name("Server Settings")
-	@LangKey(PREFIX + ".server.settings")
+	@LangKey(cfgPrefix + ".server.settings")
 	public static xServer SERVER = new xServer();
 
 	public static class xServer {
 
 		@Config.Comment("Should Trinkets and Baubles use it's own Built-in Container")
 		@Name("Gui Settings")
-		@LangKey(PREFIX + ".server.gui.settings")
+		@LangKey(cfgPrefix + ".server.gui.settings")
 		public GuiSettings GUI = new GuiSettings();
 
 		public class GuiSettings {
 			@Config.RequiresMcRestart
 			@Name("01. Trinkets Gui Enabled")
-			@LangKey(PREFIX + ".server.gui.settings.enabled")
+			@LangKey(cfgPrefix + ".server.gui.settings.enabled")
 			public boolean guiEnabled = true;
 
 			@Config.RequiresMcRestart
@@ -160,207 +216,256 @@ public class TrinketsConfig {
 		}
 
 		@Name("Magical Foods Settings")
-		@LangKey(PREFIX + ".server.food.settings")
+		@LangKey(cfgPrefix + ".server.food.settings")
 		public Foods Food = new Foods();
 
 		public class Foods {
 			@Config.RequiresMcRestart
 			@Config.Comment("Should this mod add Magical Foods?. Set to False to Disable. Default True")
 			@Name("01. Foods Enabled")
-			@LangKey(PREFIX + ".food.registry.enabled")
+			@LangKey(cfgPrefix + ".food.registry.enabled")
 			public boolean foods_enabled = true;
 
 			@Config.Comment("Set to False to Disable. Default True")
 			@Name("02. Foods Effects")
-			@LangKey(PREFIX + ".food.transformation.effect")
+			@LangKey(cfgPrefix + ".food.transformation.effect")
 			public boolean food_effects = true;
 
 			@Config.Comment("Should the player keep the Food Effects on Death. Set to False to Disable. Default True")
 			@Name("03. Keep Effects")
-			@LangKey(PREFIX + ".food.transformation.effect.keep")
+			@LangKey(cfgPrefix + ".food.transformation.effect.keep")
 			public boolean keep_effects = true;
 		}
 
 		@Name("Potion Settings")
-		@LangKey(PREFIX + ".server.potion.settings")
+		@LangKey(cfgPrefix + ".server.potion.settings")
 		public Potions Potion = new Potions();
 
 		public class Potions {
+			private final String potion = cfgPrefix + ".potion";
 			@Config.RequiresMcRestart
 			@Name("00. Potions Enabled")
-			@LangKey(PREFIX + ".potion.registry.enabled")
+			@LangKey(potion + ".registry.enabled")
 			public boolean potions_enabled = true;
 
 			@Config.Comment("If Tough as Nails is Installed, Should the Potions Give water?")
 			@Name("01. Potion Give Water")
-			@LangKey(PREFIX + ".potion.toughasnails.water")
+			@LangKey(potion + ".toughasnails.water")
 			public boolean potion_thirst = true;
 
 			@Config.RequiresMcRestart
 			@Name("02. Restorative Potion Catalyst Item")
-			@LangKey(PREFIX + ".potion.catalyst.restorative")
-			public String catalyst = "minecraft:nether_star";
+			@LangKey(potion + ".restore.catalyst")
+			public String restoreCatalyst = "minecraft:nether_star";
 
-			@Config.RequiresMcRestart
-			@Name("03. Fairy Potion Catalyst Item")
-			@LangKey(PREFIX + ".potion.catalyst.fairy")
-			public String fairy_catalyst = "minecraft:ghast_tear";
-
-			@Config.RequiresMcRestart
-			@Name("04. Fairy Potion Effect Duration")
-			@LangKey(PREFIX + ".potion.fairy.duration")
-			public int FairyDuration = 1200;
-
-			@Config.RequiresMcRestart
-			@Name("05. Dwarf Potion Catalyst Item")
-			@LangKey(PREFIX + ".potion.catalyst.dwarf")
-			public String dwarf_catalyst = "minecraft:iron_block";
-
-			@Config.RequiresMcRestart
-			@Name("06. Dwarf Potion Effect Duration")
-			@LangKey(PREFIX + ".potion.dwarf.duration")
-			public int DwarfDuration = 1200;
-
-			@Config.RequiresMcRestart
-			@Name("07. Titan Potion Catalyst Item")
-			@LangKey(PREFIX + ".potion.catalyst.titan")
-			public String titan_catalyst = "minecraft:bone_block";
-
-			@Config.RequiresMcRestart
-			@Name("08. Titan Potion Effect Duration")
-			@LangKey(PREFIX + ".potion.titan.duration")
-			public int TitanDuration = 1200;
+			@Name("Normie Potion")
+			@LangKey(potion + ".human")
+			public PotionConfig human = new PotionConfig("minecraft:apple", 3600);
+			@Name("Dwarf Potion")
+			@LangKey(potion + ".dwarf")
+			public PotionConfig dwarf = new PotionConfig("minecraft:iron_block", 1200);
+			@Name("Elf Potion")
+			@LangKey(potion + ".elf")
+			public PotionConfig elf = new PotionConfig("minecraft:leaves", 1200);
+			@Name("Fairy Potion")
+			@LangKey(potion + ".fairy")
+			public PotionConfig fairy = new PotionConfig("minecraft:ghast_tear", 1200);
+			@Name("Goblin Potion")
+			@LangKey(potion + ".goblin")
+			public PotionConfig goblin = new PotionConfig("minecraft:leather", 1200);
+			@Name("Titan Potion")
+			@LangKey(potion + ".titan")
+			public PotionConfig titan = new PotionConfig("minecraft:golden_apple", 1200);
+			@Name("Faelis Potion")
+			@LangKey(potion + ".faelis")
+			public PotionConfig faelis = new PotionConfig("xat:faelis_claw", 1200);
+			//TODO Dragon
+			@Name("Dragon Potion")
+			@LangKey(potion + ".dragon")
+			public PotionConfig dragon = new PotionConfig("minecraft:dragon_breath", 1200);
 
 			@Config.RequiresMcRestart
 			@Name("09. Work on players only")
-			@LangKey(PREFIX + "potion.playersonly")
+			@LangKey(potion + ".playersonly")
 			public boolean players_only = true;
 		}
 
-		@Name("Fairy Ring Settings")
-		@LangKey(PREFIX + ".fairy_ring")
-		public FairyRing FAIRY_RING = new FairyRing();
+		@Name("Item Settings")
+		@LangKey(cfgPrefix + "." + "items")
+		public TrinketItems Items = new TrinketItems();
 
-		@Name("Dwarf Ring Settings")
-		@LangKey(PREFIX + ".dwarf_ring")
-		public DwarfRing DWARF_RING = new DwarfRing();
+		public class TrinketItems {
 
-		@Name("Titan Ring Settings")
-		@LangKey(PREFIX + ".titan_ring")
-		public TitanRing TITAN_RING = new TitanRing();
+			@Name("Transformation Items")
+			@LangKey(cfgPrefix + "." + "items.transformation")
+			public RaceRings raceRings = new RaceRings();
 
-		@Name("Dragon's Eye Settings")
-		@LangKey(PREFIX + ".dragons_eye")
-		public DragonsEye DRAGON_EYE = new DragonsEye();
+			public class RaceRings {
+				@Name("Dwarf Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.DwarfRing)
+				public TransformationRingConfig DWARF_RING = new TransformationRingConfig();//new DwarfRing();
 
-		@Name("Ender Queen's Crown Settings")
-		@LangKey(PREFIX + ".ender_tiara")
-		public EnderCrown ENDER_CROWN = new EnderCrown();
+				@Name("Elf Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.ElfRing)
+				public TransformationRingConfig ELF_RING = new TransformationRingConfig();// new DwarfRing(); /// Here
 
-		@Name("Damage Shield Settings")
-		@LangKey(PREFIX + ".damage_shield")
-		public DamageShield DAMAGE_SHIELD = new DamageShield();
+				@Name("Fairy Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.FairyRing)
+				public TransformationRingConfig FAIRY_RING = new TransformationRingConfig();// new FairyRing();
 
-		@Name("Ring of Enchanted Eyes Settings")
-		@LangKey(PREFIX + ".glow_ring")
-		public GlowRing GLOW_RING = new GlowRing();
+				@Name("Goblin Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.GoblinRing)
+				public TransformationRingConfig GOBLIN_RING = new TransformationRingConfig();// new DwarfRing(); /// Here
 
-		@Name("Poison Stone Settings")
-		@LangKey(PREFIX + ".poison_stone")
-		public PoisonStone POISON_STONE = new PoisonStone();
+				@Name("Titan Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.TitanRing)
+				public TransformationRingConfig TITAN_RING = new TransformationRingConfig();// new TitanRing();
 
-		@Name("Wither Ring Settings")
-		@LangKey(PREFIX + ".wither_ring")
-		public WitherRing WITHER_RING = new WitherRing();
+				@Name("Faelis Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.FaelisRing)
+				public TransformationRingConfig FAELIS_RING = new TransformationRingConfig();// new FaelisRing();
+				//TODO Dragon
+				@Name("Dragon Ring Settings")
+				@LangKey(cfgPrefix + "." + ModItems.DragonRing)
+				public TransformationRingConfig DRAGON_RING = new TransformationRingConfig();// new FaelisRing();
+			}
 
-		@Name("Polarized Stone Settings")
-		@LangKey(PREFIX + ".polarized_stone")
-		public PolarizedStone POLARIZED_STONE = new PolarizedStone();
+			@Name("Dragon's Eye Settings")
+			@LangKey(cfgPrefix + "." + ModItems.DragonsEye)
+			public ConfigDragonsEye DRAGON_EYE = new ConfigDragonsEye();
 
-		@Name("Stone of the Sea Settings")
-		@LangKey(PREFIX + ".sea_stone")
-		public SeaStone SEA_STONE = new SeaStone();
+			@Name("Ender Queen's Crown Settings")
+			@LangKey(cfgPrefix + "." + ModItems.EnderTiara)
+			public ConfigEnderCrown ENDER_CROWN = new ConfigEnderCrown();
 
-		@Name("Stone of Inertia Null Settings")
-		@LangKey(PREFIX + ".inertia_null_stone")
-		public InertiaNull INERTIA_NULL = new InertiaNull();
+			@Name("Damage Shield Settings")
+			@LangKey(cfgPrefix + "." + ModItems.DamageShield)
+			public ConfigDamageShield DAMAGE_SHIELD = new ConfigDamageShield();
 
-		@Name("Stone of Greater Inertia Settings")
-		@LangKey(PREFIX + ".greater_inertia_stone")
-		public GreaterInertia GREATER_INERTIA = new GreaterInertia();
+			@Name("Ring of Enchanted Eyes Settings")
+			@LangKey(cfgPrefix + "." + ModItems.GlowRing)
+			public ConfigGlowRing GLOW_RING = new ConfigGlowRing();
 
-		@Name("Weightless Stone Settings")
-		@LangKey(PREFIX + ".weightless_stone")
-		public WeightlessStone WEIGHTLESS_STONE = new WeightlessStone();
+			@Name("Poison Stone Settings")
+			@LangKey(cfgPrefix + "." + ModItems.Poison)
+			public ConfigPoisonStone POISON_STONE = new ConfigPoisonStone();
+
+			@Name("Wither Ring Settings")
+			@LangKey(cfgPrefix + "." + ModItems.WitherRing)
+			public ConfigWitherRing WITHER_RING = new ConfigWitherRing();
+
+			@Name("Polarized Stone Settings")
+			@LangKey(cfgPrefix + "." + ModItems.Polarized)
+			public ConfigPolarizedStone POLARIZED_STONE = new ConfigPolarizedStone();
+
+			@Name("Stone of the Sea Settings")
+			@LangKey(cfgPrefix + "." + ModItems.Sea)
+			public ConfigSeaStone SEA_STONE = new ConfigSeaStone();
+
+			@Name("Stone of Inertia Null Settings")
+			@LangKey(cfgPrefix + "." + ModItems.InertiaNull)
+			public ConfigInertiaNull INERTIA_NULL = new ConfigInertiaNull();
+
+			@Name("Stone of Greater Inertia Settings")
+			@LangKey(cfgPrefix + "." + ModItems.GreaterInertia)
+			public ConfigGreaterInertia GREATER_INERTIA = new ConfigGreaterInertia();
+
+			@Name("Weightless Stone Settings")
+			@LangKey(cfgPrefix + "." + ModItems.Weightless)
+			public ConfigWeightlessStone WEIGHTLESS_STONE = new ConfigWeightlessStone();
+
+			@Name("Arcing Orb Settings")
+			@LangKey(cfgPrefix + "." + ModItems.ArcingOrb)
+			public ConfigArcingOrb ARCING_ORB = new ConfigArcingOrb();
+
+			@Name("Teddy Bear Settings")
+			@LangKey(cfgPrefix + "." + ModItems.TeddyBear)
+			public ConfigTeddyBear TEDDY_BEAR = new ConfigTeddyBear();
+
+			@Name("Faelis Claw Settings")
+			@LangKey(cfgPrefix + "." + ModItems.FaelisClaws)
+			public ConfigFaelisClaw FAELIS_CLAW = new ConfigFaelisClaw();
+
+		}
+
+		@Name("Magic Settings")
+		@LangKey(cfgPrefix + "." + "magic")
+		public EntityManaConfig mana = new EntityManaConfig();
+
+		@Name("Race Settings")
+		@LangKey(cfgPrefix + ".races")
+		public RaceConfigs races = new RaceConfigs();
+
+		public class RaceConfigs {
+
+			@Name("Fairy Settings")
+			@LangKey(cfgPrefix + "." + "races." + "fairy")
+			public FairyConfig fairy = new FairyConfig();
+
+			@Name("Dwarf Settings")
+			@LangKey(cfgPrefix + "." + "races." + "dwarf")
+			public DwarfConfig dwarf = new DwarfConfig();
+
+			@Name("Titan Settings")
+			@LangKey(cfgPrefix + "." + "races." + "titan")
+			public TitanConfig titan = new TitanConfig();
+
+			@Name("Goblin Settings")
+			@LangKey(cfgPrefix + "." + "races." + "goblin")
+			public GoblinConfig goblin = new GoblinConfig();
+
+			@Name("Elf Settings")
+			@LangKey(cfgPrefix + "." + "races." + "elf")
+			public ElfConfig elf = new ElfConfig();
+
+			@Name("Faelis Config")
+			@LangKey(cfgPrefix + "." + "races." + "faelis")
+			public FaelisConfig faelis = new FaelisConfig();
+
+			//TODO Dragon
+			@Name("Dragon Config")
+			@LangKey(cfgPrefix + "." + "races." + "dragon")
+			public DragonConfig dragon = new DragonConfig();
+
+			//			@Name("Human Settings")
+			//			@LangKey(PREFIX + "." + "races." + "human")
+			//			public HumanConfig human = new HumanConfig();
+
+		}
+
+		@Name("Misc Settings")
+		@LangKey(cfgPrefix + ".misc")
+		public MiscConfigs misc = new MiscConfigs();
+
+		public class MiscConfigs {
+			@Config.Comment("Does Depth Strider Stack with Swim Speed Attributes?")
+			@Name("Depth Strider Stacks")
+			@LangKey(cfgPrefix + "." + "misc." + "depth")
+			public boolean depthStacks = false;
+
+			@Config.Comment("If enabled, the player will be unable to move when transforming from one race to another")
+			@Name("Movement while transforming")
+			@LangKey(cfgPrefix + "." + "misc." + "movement")
+			public boolean movement = false;
+
+		}
 
 	}
 
 	@Name("Compatability Settings")
-	@LangKey(PREFIX + ".compatability")
+	@LangKey(cfgPrefix + ".compatability")
 	public static CompatabilityConfigs compat = new CompatabilityConfigs();
 
 	public static void setBlocklist(String[] string, boolean whitelist) {
 		if ((string != null)) {
-			if (SERVER.DRAGON_EYE.BLOCKS.Blocks != string.clone()) {
-				SERVER.DRAGON_EYE.BLOCKS.Blocks = string;
+			if (SERVER.Items.DRAGON_EYE.BLOCKS.Blocks != string.clone()) {
+				SERVER.Items.DRAGON_EYE.BLOCKS.Blocks = string;
 			}
 		}
 	}
 
 	public static String[] getBlockListArray(boolean whitelist) {
-		return SERVER.DRAGON_EYE.BLOCKS.Blocks;
-	}
-
-	public static void saveBlockList() {
-		final Configuration cfg = Trinkets.config;
-		final List<String> fillList = new ArrayList<>();
-		// try {
-		// fillList.add("minecraft:coal_ore");
-		// fillList.add("minecraft:iron_ore");
-		// fillList.add("minecraft:gold_ore");
-		// fillList.add("minecraft:lapis_ore");
-		// fillList.add("minecraft:redstone_ore");
-		// fillList.add("minecraft:diamond_ore");
-		// fillList.add("minecraft:emerald_ore");
-		// fillList.add("minecraft:quartz_ore");
-		// fillList.add("minecraft:chest");
-		//
-		// for(final Object block : OreDictionary.getOreNames()){
-		// if(block.toString().contains("ore")) {
-		// for(final ItemStack blocks:OreDictionary.getOres(block.toString())) {//;
-		// final ResourceLocation blockRL = blocks.getItem().getRegistryName();
-		// final String blockModID = blockRL.getNamespace();
-		// final String blockName = blockRL.toString();
-		// if(!(blockModID.contains("minecraft") || blockModID.contains("armor") ||
-		// blockModID.contains("levelup2"))) {
-		// final String name =
-		// blocks.getItem().getRegistryName().toString();//block.toString();
-		// if(!blocks.getHasSubtypes()) {
-		// if(true) {;
-		// fillList.add(name);
-		// }
-		// } else {
-		// final int Meta = blocks.getMetadata();//block.toString();
-		// if(true && (Meta < 32767)) {;
-		// fillList.add(name + "[" + Meta + "]");
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// if((!fillList.isEmpty())) {
-		// final String[] s = new String[fillList.size()];
-		// for(int i = 0;i<fillList.size();i++) {
-		// s[i] = fillList.get(i);
-		// }
-		// SERVER.DRAGON_EYE.BLOCKS.Blocks = s;
-		// Save();
-		// }
-		// } catch (final Exception e1) {
-		// Trinkets.log.error("Xat had a problem loading it's configuration");
-		// } finally {
-		// }
+		return SERVER.Items.DRAGON_EYE.BLOCKS.Blocks;
 	}
 
 	public static void Save() {

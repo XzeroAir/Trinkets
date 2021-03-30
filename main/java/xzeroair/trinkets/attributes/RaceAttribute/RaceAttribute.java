@@ -7,6 +7,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.util.Reference;
 
 public class RaceAttribute {
@@ -17,7 +19,8 @@ public class RaceAttribute {
 	).setDescription("Entity Race").setShouldWatch(true);
 
 	private static final String id = Reference.MODID + ".";
-	private static String name = "Race";
+	private static String race = "";
+	private static String name = "race";
 	protected static UUID uuid = UUID.fromString("f7fa2c13-6794-49df-b7bc-9451154dc3ec");
 	private static double amount;
 	private static int operation;
@@ -31,7 +34,7 @@ public class RaceAttribute {
 	}
 
 	protected static AttributeModifier createModifier() {
-		return new AttributeModifier(getUUID(), id + name, getAmount(), getOperation());
+		return new AttributeModifier(getUUID(), id + name + race, getAmount(), getOperation());
 	}
 
 	private static void setUUID(UUID uuid) {
@@ -50,7 +53,11 @@ public class RaceAttribute {
 		RaceAttribute.operation = operation;
 	}
 
-	public static void addModifier(EntityLivingBase entity, double amount, UUID uuid, int operation) {
+	private static void setRace(String race) {
+		RaceAttribute.race = race;
+	}
+
+	public static void addModifier(EntityLivingBase entity, String name, double amount, UUID uuid, int operation) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
 		if (AttributeInstance == null) {
 			return;
@@ -61,6 +68,7 @@ public class RaceAttribute {
 			}
 		}
 		if (amount != 0) {
+			setRace(name);
 			setOperation(operation);
 			setAmount(amount);
 			setUUID(uuid);
@@ -68,6 +76,13 @@ public class RaceAttribute {
 				AttributeInstance.applyModifier(createModifier());
 			}
 		}
+	}
+
+	public static void addModifier(EntityLivingBase entity, double amount, EntityRace race, int operation) {
+		if ((race == null) || race.equals(EntityRaces.human)) {
+			return;
+		}
+		addModifier(entity, race.getName(), amount, race.getUUID(), operation);
 	}
 
 	public static void removeModifier(EntityLivingBase entity, UUID uuid) {
@@ -78,6 +93,36 @@ public class RaceAttribute {
 		if (AttributeInstance.getModifier(uuid) != null) {
 			AttributeInstance.removeModifier(uuid);
 		}
+	}
+
+	public static void removeModifier(EntityLivingBase entity, EntityRace race) {
+		removeModifier(entity, race.getUUID());
+	}
+
+	public static void removeAllModifiersExcluding(EntityLivingBase entity, UUID uuid) {
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
+		if (AttributeInstance == null) {
+			return;
+		}
+		if (!AttributeInstance.getModifiers().isEmpty()) {
+			for (AttributeModifier modifier : AttributeInstance.getModifiers()) {
+				if (modifier.getID().compareTo(uuid) != 0) {
+					AttributeInstance.removeModifier(modifier);
+				}
+			}
+		}
+	}
+
+	public static void removeAllModifiersExcluding(EntityLivingBase entity, EntityRace race) {
+		removeAllModifiersExcluding(entity, race.getUUID());
+	}
+
+	public static void removeAllModifiers(EntityLivingBase entity) {
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
+		if (AttributeInstance == null) {
+			return;
+		}
+		AttributeInstance.removeAllModifiers();
 	}
 
 }

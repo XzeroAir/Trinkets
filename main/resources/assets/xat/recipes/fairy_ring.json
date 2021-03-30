@@ -1,19 +1,19 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "#I#",
+        "#I ",
         "ICI",
-        "#I#"
+        " I "
     ],
     "key": {
         "#": {
-            "item": "xat:glowing_gem"
+            "item": "xat:mana_crystal"
         },
         "I": {
             "item": "xat:glowing_ingot"
         },
         "C": {
-            "item": "minecraft:ghast_tear"
+            "item": "xat:fairy_dew"
         }
     },
     "result": {

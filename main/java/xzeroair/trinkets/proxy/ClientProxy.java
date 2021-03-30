@@ -6,34 +6,32 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.client.gui.TrinketGui;
+import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiEntityProperties;
+import xzeroair.trinkets.client.gui.hud.mana.ManaHud;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.client.particles.ParticleGreed;
+import xzeroair.trinkets.client.particles.ParticleFireBreath;
+import xzeroair.trinkets.client.particles.ParticleLightning;
+import xzeroair.trinkets.client.particles.ParticleLightningOrb;
 import xzeroair.trinkets.client.renderLayers.TrinketsRenderLayer;
 import xzeroair.trinkets.util.registry.EventRegistry;
 
 public class ClientProxy extends CommonProxy {
-
-	private static Minecraft mc = Minecraft.getMinecraft();
 
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
@@ -47,10 +45,10 @@ public class ClientProxy extends CommonProxy {
 		final Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 		RenderPlayer render;
 		render = skinMap.get("default");
-		render.addLayer(new TrinketsRenderLayer());
+		render.addLayer(new TrinketsRenderLayer(false, render));
 
 		render = skinMap.get("slim");
-		render.addLayer(new TrinketsRenderLayer());
+		render.addLayer(new TrinketsRenderLayer(true, render));
 		super.init(e);
 		EventRegistry.clientInit();
 	}
@@ -62,45 +60,38 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void spawnParticle(EnumParticleTypes Particle, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int i, float r, float g, float b) {
+	public void spawnParticle(int effectID, World world, double x, double y, double z, double motX, double motY, double motZ, int color, float alpha) {
+		Particle effect = null;
+		if (effectID == 3) {
+			effect = new ParticleFireBreath(world, x, y, z, motX, motY, motZ, color, 0.25F);//, color, alpha);
+		} else {
 
-		Minecraft.getMinecraft().effectRenderer
-		.addEffect(new ParticleGreed(mc.world, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, r, g, b));
+		}
+		if (effect != null) {
+			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+		}
+	}
+
+	@Override
+	public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
+		Particle effect = null;
+		if (effectID == 1) {
+			effect = new ParticleLightning(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
+		} else if (effectID == 2) {
+			effect = new ParticleLightningOrb(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
+		} else if (effectID == 3) {
+			//			effect = new ParticleFireBreath(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
+		} else {
+
+		}
+		if (effect != null) {
+			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+		}
 	}
 
 	@Override
 	public void registerItemRenderer(Item item, int meta, String id) {
-		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName().toString(), "inventory"));
-	}
-
-	@Override
-	public void registerEntityRenderers() {
-		//		registerEntityRenderer(EntityCamera.class, RenderCamera.class);
-	}
-
-	private static <E extends Entity> void registerEntityRenderer(Class<E> entityClass, Class<? extends Render<E>> renderClass) {
-		RenderingRegistry.registerEntityRenderingHandler(entityClass, new EntityRenderFactory<>(renderClass));
-	}
-
-	private static class EntityRenderFactory<E extends Entity> implements IRenderFactory<E> {
-		private final Class<? extends Render<E>> renderClass;
-
-		private EntityRenderFactory(Class<? extends Render<E>> renderClass) {
-			this.renderClass = renderClass;
-		}
-
-		@Override
-		public Render<E> createRenderFor(RenderManager manager) {
-			Render<E> renderer = null;
-
-			try {
-				renderer = this.renderClass.getConstructor(RenderManager.class).newInstance(manager);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-
-			return renderer;
-		}
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName().toString(), id));
 	}
 
 	@Override
@@ -123,8 +114,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	@Nullable
-	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID)
-	{
+	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID) {
 		final EntityPlayer player = context.side.isClient() ? Minecraft.getMinecraft().player : context.getServerHandler().player;
 		final Entity entity = player.world.getEntityByID(entityID);
 		return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
@@ -134,7 +124,12 @@ public class ClientProxy extends CommonProxy {
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (world instanceof WorldClient) {
 			switch (ID) {
-			case Trinkets.GUI: return new TrinketGui(player);
+			case Trinkets.GUI:
+				return new TrinketGui(player);
+			case 1:
+				return new ManaHud();
+			case 2:
+				return new GuiEntityProperties(player);
 			}
 		}
 		return null;

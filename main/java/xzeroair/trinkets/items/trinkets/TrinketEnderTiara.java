@@ -1,149 +1,129 @@
 package xzeroair.trinkets.items.trinkets;
 
 import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.client.model.Tiara;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.compat.toughasnails.TANCompat;
-import xzeroair.trinkets.util.helpers.AttributeHelper;
-import xzeroair.trinkets.util.helpers.CallHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Crown;
+import xzeroair.trinkets.util.compat.SurvivalCompat;
+import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
+import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
 
 public class TrinketEnderTiara extends AccessoryBase {
 
+	public static final ConfigEnderCrown serverConfig = TrinketsConfig.SERVER.Items.ENDER_CROWN;
+	public static final Crown clientConfig = TrinketsConfig.CLIENT.items.ENDER_CROWN;
+
 	public TrinketEnderTiara(String name) {
 		super(name);
-	}
-
-	private static UUID uuid = UUID.fromString("a45dbc1c-17e9-40b4-b6a3-09dea74355b7");
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		super.addInformation(stack, worldIn, tooltip, flagIn);
-		TranslationHelper.addOtherTooltips(stack, worldIn, TrinketsConfig.SERVER.ENDER_CROWN.Attributes, tooltip);
+		this.setUUID("a45dbc1c-17e9-40b4-b6a3-09dea74355b7");
+		this.setItemAttributes(serverConfig.Attributes);
+		ModItems.trinkets.ITEMS.add(this);
 	}
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		if (TrinketsConfig.SERVER.ENDER_CROWN.water_hurts) {
+		super.eventPlayerTick(stack, player);
+		LycanitesCompat.removeInstability(player);
+		EntityProperties prop = Capabilities.getEntityRace(player);
+		if (serverConfig.water_hurts) {
 			if ((player.isInWater() || player.isWet())) {
-				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye)) {
-					player.attackEntityFrom(DamageSource.WITHER, 4);
-				} else {
-					player.attackEntityFrom(DamageSource.WITHER, 2);
+				if ((player.ticksExisted % 20) == 0) {
+					if ((prop != null) && (prop.getMagic().spendMana(5F))) {
+
+					} else {
+						if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye)) {
+							player.attackEntityFrom(DamageSource.WITHER, 4);
+						} else {
+							player.attackEntityFrom(DamageSource.WITHER, 2);
+						}
+					}
 				}
 			}
 		}
 
-		if (TrinketsConfig.SERVER.ENDER_CROWN.compat.tan.immuneToCold) {
-			TANCompat.immuneToCold(player);
+		if (serverConfig.compat.tan.immuneToCold) {
+			SurvivalCompat.immuneToCold(player);
 		}
 	}
 
 	@Override
-	public boolean playerCanEquip(ItemStack stack, EntityLivingBase player) {
-		if (TrinketHelper.AccessoryCheck(player, stack.getItem())) {
-			return false;
-		} else {
-			return super.playerCanEquip(stack, player);
-		}
+	public void eventPlayerHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
+		//		if (event.getSource().getDamageType().equalsIgnoreCase("dragon_ice")) {
+		//			event.setCanceled(true);
+		//		}
 	}
 
 	@Override
-	public void eventPlayerLogout(ItemStack stack, EntityLivingBase player) {
-		AttributeHelper.removeAttributes(player, uuid);
-	}
-
-	@Override
-	public void playerEquipped(ItemStack stack, EntityLivingBase player) {
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
-		if ((cap != null)) {
-			if (!(cap.Slot() == -1)) {
-				super.playerEquipped(stack, player);
-			} else {
-				player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-				AttributeHelper.handleAttributes(player, TrinketsConfig.SERVER.ENDER_CROWN.Attributes, uuid);
+	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
+		List<Potion> hypothermia = SurvivalCompat.getHypothermiaEffects();
+		if (!hypothermia.isEmpty()) {
+			for (Potion hypo : hypothermia) {
+				if ((hypo != null) && event.getPotionEffect().getPotion().equals(hypo)) {
+					event.setResult(Result.DENY);
+				}
 			}
 		}
 	}
 
 	@Override
-	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
-		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
-		AttributeHelper.removeAttributes(player, uuid);
-		super.playerUnequipped(stack, player);
+	public void playerEquipped(ItemStack stack, EntityLivingBase player) {
+		super.playerEquipped(stack, player);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void playerRender(ItemStack stack, EntityLivingBase player, float partialTicks, boolean isBauble) {
+	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
+		super.playerUnequipped(stack, player);
+	}
 
-		if (!TrinketsConfig.CLIENT.ENDER_CROWN.doRender) {
+	ModelBase tiara = new Tiara();
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isBauble) {
+		if (!clientConfig.doRender) {
 			return;
 		}
-		final ModelBase tiara = CallHelper.getModel("tiara");
-		final float scale = 0.07f;
-
-		final float yaw = player.prevRotationYawHead + ((player.rotationYawHead - player.prevRotationYawHead) * partialTicks);
-		final float yawOffset = player.prevRenderYawOffset + ((player.renderYawOffset - player.prevRenderYawOffset) * partialTicks);
-		final float pitch = player.prevRotationPitch + ((player.rotationPitch - player.prevRotationPitch) * partialTicks);
-
-		GlStateManager.rotate(yawOffset, 0, -1, 0);
-		GlStateManager.rotate(yaw - 270, 0, 1, 0);
-		GlStateManager.rotate(pitch, 0, 0, 1);
-
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(-0.05, -0.63, 0);
 		if (player.isSneaking()) {
-			GlStateManager.translate(0.25F * MathHelper.sin((player.rotationPitch * (float) Math.PI) / 180), 0.25F * MathHelper.cos((player.rotationPitch * (float) Math.PI) / 180), 0F);
+			GlStateManager.translate(0, 0.2, 0);
 		}
+		renderer.getMainModel().bipedHead.postRender(scale);
 		if (player.hasItemInSlot(EntityEquipmentSlot.HEAD)) {
-			GlStateManager.translate(0.04F, -0.08F, 0F);
+			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.scale(scale, scale, scale);
 		tiara.render(player, player.limbSwing, player.limbSwingAmount, player.ticksExisted, player.rotationYaw, player.rotationPitch, 1F);
 		GlStateManager.popMatrix();
 	}
 
 	@Override
-	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-		if ((EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.BINDING_CURSE))) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public boolean ItemEnabled() {
-		return TrinketsConfig.SERVER.ENDER_CROWN.enabled;
+		return serverConfig.enabled;
 	}
 
 	@Override
-	public boolean hasDiscription(ItemStack stack) {
-		return false;
+	public void registerModels() {
+		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 }

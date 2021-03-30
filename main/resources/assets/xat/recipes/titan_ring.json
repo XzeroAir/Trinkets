@@ -1,20 +1,19 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "#I#",
+        "#I ",
         "ICI",
-        "#I#"
+        " I "
     ],
     "key": {
         "#": {
-            "item": "xat:glowing_gem"
+            "item": "xat:mana_crystal"
         },
         "I": {
             "item": "xat:glowing_ingot"
         },
         "C": {
-            "item": "minecraft:golden_apple",
-            "data": 1
+            "item": "xat:titan_spirit"
         }
     },
     "result": {

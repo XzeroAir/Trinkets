@@ -1,18 +1,24 @@
 package xzeroair.trinkets.network;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.network.arcingorb.ArcingOrbAttackPacket;
+import xzeroair.trinkets.network.arcingorb.ArcingOrbDodgePacket;
 import xzeroair.trinkets.network.configsync.BlocklistSyncPacket;
 import xzeroair.trinkets.network.configsync.PacketConfigSync;
+import xzeroair.trinkets.network.keybinds.KeyPressPacket;
+import xzeroair.trinkets.network.mana.SyncManaCostToHudPacket;
+import xzeroair.trinkets.network.mana.SyncManaHudPacket;
+import xzeroair.trinkets.network.mana.SyncManaStatsPacket;
+import xzeroair.trinkets.network.particles.LightningBoltPacket;
+import xzeroair.trinkets.network.particles.LightningOrbPacket;
+import xzeroair.trinkets.network.status.CombineStatusEffectPacket;
+import xzeroair.trinkets.network.status.StatusEffectPacket;
 import xzeroair.trinkets.network.trinketcontainer.OpenDefaultInventory;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
+import xzeroair.trinkets.network.vip.VipStatusPacket;
 import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.compat.firstaid.FirstAidSyncHPPacket;
 
 public class NetworkHandler {
 
@@ -24,6 +30,10 @@ public class NetworkHandler {
 		return ID++;
 	}
 
+	/**
+	 * Side.Client means sending to the Client Side.Server means sending to the
+	 * Server
+	 */
 	public static void init() {
 
 		INSTANCE.registerMessage(SizeDataPacket.Handler.class, SizeDataPacket.class, nextId(), Side.SERVER);
@@ -41,51 +51,53 @@ public class NetworkHandler {
 		INSTANCE.registerMessage(BlocklistSyncPacket.Handler.class, BlocklistSyncPacket.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(BlocklistSyncPacket.Handler.class, BlocklistSyncPacket.class, nextId(), Side.CLIENT);
 
-		INSTANCE.registerMessage(FirstAidSyncHPPacket.Handler.class, FirstAidSyncHPPacket.class, nextId(), Side.SERVER);
-		INSTANCE.registerMessage(FirstAidSyncHPPacket.Handler.class, FirstAidSyncHPPacket.class, nextId(), Side.CLIENT);
-
 		INSTANCE.registerMessage(PolarizedStoneSyncPacket.Handler.class, PolarizedStoneSyncPacket.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(PolarizedStoneSyncPacket.Handler.class, PolarizedStoneSyncPacket.class, nextId(), Side.CLIENT);
 
+		//Handle VIP
+		INSTANCE.registerMessage(VipStatusPacket.Handler.class, VipStatusPacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(VipStatusPacket.Handler.class, VipStatusPacket.class, nextId(), Side.CLIENT);
+
+		//Handle Health
+		INSTANCE.registerMessage(HealthUpdatePacket.Handler.class, HealthUpdatePacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(HealthUpdatePacket.Handler.class, HealthUpdatePacket.class, nextId(), Side.CLIENT);
+
+		//Handle Mana
+		INSTANCE.registerMessage(SyncManaHudPacket.Handler.class, SyncManaHudPacket.class, nextId(), Side.CLIENT);
+		INSTANCE.registerMessage(SyncManaCostToHudPacket.Handler.class, SyncManaCostToHudPacket.class, nextId(), Side.CLIENT);
+
+		INSTANCE.registerMessage(SyncManaStatsPacket.Handler.class, SyncManaStatsPacket.class, nextId(), Side.CLIENT);
+		INSTANCE.registerMessage(SyncManaStatsPacket.Handler.class, SyncManaStatsPacket.class, nextId(), Side.SERVER);
+
+		//Handle Trinkets Container
 		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(MoveHudMessage.class, MoveHudMessage.class, nextId(), Side.SERVER);
 		INSTANCE.registerMessage(OpenDefaultInventory.class, OpenDefaultInventory.class, nextId(), Side.SERVER);
 
+		//RACES
+		INSTANCE.registerMessage(KeyPressPacket.class, KeyPressPacket.class, nextId(), Side.SERVER);
+
+		//Handle Titan Reach
 		INSTANCE.registerMessage(IncreasedAttackRangePacket.Handler.class, IncreasedAttackRangePacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(IncreasedReachPacket.Handler.class, IncreasedReachPacket.class, nextId(), Side.SERVER);
+
+		INSTANCE.registerMessage(AlphaWolfPacket.Handler.class, AlphaWolfPacket.class, nextId(), Side.SERVER);
+
+		INSTANCE.registerMessage(StatusEffectPacket.Handler.class, StatusEffectPacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(CombineStatusEffectPacket.Handler.class, CombineStatusEffectPacket.class, nextId(), Side.SERVER);
+
+		INSTANCE.registerMessage(ArcingOrbAttackPacket.Handler.class, ArcingOrbAttackPacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(ArcingOrbAttackPacket.Handler.class, ArcingOrbAttackPacket.class, nextId(), Side.CLIENT);
+
+		INSTANCE.registerMessage(ArcingOrbDodgePacket.Handler.class, ArcingOrbDodgePacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(ArcingOrbDodgePacket.Handler.class, ArcingOrbDodgePacket.class, nextId(), Side.CLIENT);
+
+		INSTANCE.registerMessage(LightningBoltPacket.Handler.class, LightningBoltPacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(LightningBoltPacket.Handler.class, LightningBoltPacket.class, nextId(), Side.CLIENT);
+		INSTANCE.registerMessage(LightningOrbPacket.Handler.class, LightningOrbPacket.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(LightningOrbPacket.Handler.class, LightningOrbPacket.class, nextId(), Side.CLIENT);
+
+		INSTANCE.registerMessage(AlphaWolfAttackPacket.Handler.class, AlphaWolfAttackPacket.class, nextId(), Side.SERVER);
 
 	}
-
-	// Item Data
-	public static void sendItemDataTo(EntityLivingBase send, ItemStack stack, TrinketProperties capSend, boolean isTrinket, EntityPlayerMP recieve) {
-		NetworkHandler.INSTANCE.sendTo(new ItemCapDataMessage(send, stack, capSend, isTrinket), recieve);
-	}
-
-	public static void sendItemDataTracking(EntityLivingBase entity, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
-		NetworkHandler.INSTANCE.sendToAllTracking(new ItemCapDataMessage(entity, stack, capSend, isTrinket), entity);
-	}
-
-	public static void sendItemDataAll(EntityLivingBase entity, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
-		NetworkHandler.INSTANCE.sendToAll(new ItemCapDataMessage(entity, stack, capSend, isTrinket));
-	}
-
-	public static void sendItemDataServer(EntityLivingBase send, ItemStack stack, TrinketProperties capSend, boolean isTrinket) {
-		NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(send, stack, capSend, isTrinket));
-	}
-
-	//	// Player Data
-	//	public static void sendPlayerDataTo(EntityLivingBase send, RaceProperties capSend, EntityPlayerMP recieve) {
-	//		NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(send, capSend), recieve);
-	//	}
-	//
-	//	public static void sendPlayerDataTracking(EntityLivingBase entity, RaceProperties cap) {
-	//		NetworkHandler.INSTANCE.sendToAllTracking(new SizeDataPacket(entity, cap), entity);
-	//	}
-	//
-	//	// If Entity Instanceof EntityPlayerMP
-	//	public static void sendPlayerDataAll(EntityLivingBase entity, RaceProperties cap) {
-	//		NetworkHandler.INSTANCE.sendToAll(new SizeDataPacket(entity, cap));
-	//	}
-	//
-	//	public static void sendPlayerDataServer(EntityLivingBase entity, RaceProperties cap) {
-	//		NetworkHandler.INSTANCE.sendToServer(new SizeDataPacket(entity, cap));
-	//	}
 }

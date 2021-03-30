@@ -6,14 +6,14 @@ public class CompatabilityConfigs {
 
 	@Config.RequiresMcRestart
 	@Config.Comment({
-		"Should Items that implement IBauble be allowed in the Trinkets Gui",
-		"WARNING.",
-		"This is Very Experimental, Baubles equipped might only partially work, not at all, or Potentially cause a crash."
+			"Should Items that implement IBauble be allowed in the Trinkets Gui",
+			"WARNING.",
+			"This is Very Experimental, Baubles equipped might only partially work, not at all, or Potentially cause a crash."
 	})
 	@Config.Name("Baubles")
 	public boolean baubles = false;
 
-	@Config.RequiresMcRestart
+	//	@Config.RequiresMcRestart
 	@Config.Comment("Should Trinkets and Baubles use ArtemisLib to handle Height Adjustments to the player")
 	@Config.Name("ArtemisLib")
 	public boolean artemislib = true;
@@ -29,6 +29,11 @@ public class CompatabilityConfigs {
 	public boolean toughasnails = true;
 
 	@Config.RequiresMcRestart
+	@Config.Comment("Should Trinkets and Baubles Interact with Simple Difficulty")
+	@Config.Name("Simple Difficulty")
+	public boolean simpledifficulty = true;
+
+	@Config.RequiresMcRestart
 	@Config.Comment("Should Trinkets and Baubles prevent morphing while transformed")
 	@Config.Name("Morph")
 	public boolean morph = true;
@@ -37,6 +42,10 @@ public class CompatabilityConfigs {
 	//	@Config.Comment("Should Trinkets and Baubles not have an emc value")
 	//	@Config.Name("ProjectE")
 	//	public boolean projecte = true;
+
+	@Config.Comment("Should Trinkets and Baubles Interact with Lycanites Mobs")
+	@Config.Name("Lycanites Mobs")
+	public boolean lycanites = true;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should Trinkets and Baubles prevent some of the Visuals in Enhanced Visuals")

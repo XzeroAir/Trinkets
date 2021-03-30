@@ -28,7 +28,8 @@ public class PacketConfigSync implements IMessage {
 	int length;
 	double value;
 
-	public PacketConfigSync() {}
+	public PacketConfigSync() {
+	}
 
 	public PacketConfigSync(EntityPlayer p,
 			boolean setting,
@@ -46,17 +47,17 @@ public class PacketConfigSync implements IMessage {
 			boolean setting10,
 			boolean setting11,
 			boolean setting12
-			//			boolean setting13,
-			) {
+	//			boolean setting13,
+	) {
 		this.setting = setting;
-		this.setting2  = setting2;
-		this.setting3  = setting3;
-		this.setting4  = setting4;
-		this.setting5  = setting5;
-		this.setting6  = setting6;
-		this.setting7  = setting7;
-		this.setting8  = setting8;
-		this.setting9  = setting9;
+		this.setting2 = setting2;
+		this.setting3 = setting3;
+		this.setting4 = setting4;
+		this.setting5 = setting5;
+		this.setting6 = setting6;
+		this.setting7 = setting7;
+		this.setting8 = setting8;
+		this.setting9 = setting9;
 		this.setting10 = setting10;
 		this.setting11 = setting11;
 		this.setting12 = setting12;
@@ -109,19 +110,18 @@ public class PacketConfigSync implements IMessage {
 		//		setting13 = buffer.readBoolean();
 	}
 
-	public static class Handler implements IMessageHandler<PacketConfigSync, IMessage>
-	{
+	public static class Handler implements IMessageHandler<PacketConfigSync, IMessage> {
 		@Override
 		public IMessage onMessage(PacketConfigSync message, MessageContext ctx) {
 
 			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if(Trinkets.proxy.getPlayer(ctx) != null) {
-
-					TrinketsConfig.SERVER.FAIRY_RING.creative_flight = message.setting2;
-					TrinketsConfig.SERVER.DRAGON_EYE.oreFinder = message.setting3;
+				if (Trinkets.proxy.getPlayer(ctx) != null) {
+					TrinketsConfig.SERVER.races.dragon.creative_flight = message.setting;
+					TrinketsConfig.SERVER.races.fairy.creative_flight = message.setting2;
+					TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder = message.setting3;
 					TrinketsConfig.SERVER.GUI.guiEnabled = message.setting4;
-					TrinketsConfig.SERVER.FAIRY_RING.creative_flight_speed = message.setting5;
-					TrinketsConfig.SERVER.FAIRY_RING.flight_speed = message.value;
+					TrinketsConfig.SERVER.races.fairy.creative_flight_speed = message.setting5;
+					TrinketsConfig.SERVER.races.fairy.flight_speed = message.value;
 					TrinketsConfig.SERVER.GUI.guiEnabled = message.setting6;
 					TrinketsConfig.SERVER.GUI.guiSlotsRows = message.rows;
 					TrinketsConfig.SERVER.GUI.guiSlotsRowLength = message.length;

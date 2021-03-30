@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "S#S",
+        "DGD",
+        "SBS"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:sapling",
+            "data": 5
+        },
+        "D": {
+            "item": "minecraft:dragon_breath"
+        },
+        "B": {
+            "item": "minecraft:bow"
+        },
+        "G": {
+            "item": "xat:mana_crystal"
+        },
+        "S": {
+            "item": "xat:mana_candy"
+        }
+    },
+    "result": {
+        "item": "xat:elf_sap"
+    }
+}

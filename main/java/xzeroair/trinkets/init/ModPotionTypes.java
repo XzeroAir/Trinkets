@@ -1,94 +1,116 @@
 package xzeroair.trinkets.init;
 
-import net.minecraft.init.Items;
-import net.minecraft.init.PotionTypes;
+import java.util.HashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionHelper;
 import net.minecraft.potion.PotionType;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.items.base.BasePotion;
-import xzeroair.trinkets.items.potions.PotionDwarf;
-import xzeroair.trinkets.items.potions.PotionFairy;
-import xzeroair.trinkets.items.potions.PotionRestorative;
-import xzeroair.trinkets.items.potions.PotionTitan;
+import xzeroair.trinkets.items.potions.PotionObject;
+import xzeroair.trinkets.items.potions.TransformationPotion;
+import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class ModPotionTypes {
 
-	public static final Potion Base = new BasePotion("enhanced", 16777137);
-	public static final Potion RESTORING = new PotionRestorative("restorative");
-	public static final Potion Fairy = new PotionFairy("fairy");
-	public static final Potion Dwarf = new PotionDwarf("dwarf");
-	public static final Potion Titan = new PotionTitan("titan");
+	public static final String baseSparkling = "sparkling";
+	public static final String enhancedGlittering = "glittering";
+	public static final String advancedGlowing = "glowing";
+	public static final String restore = "restorative";
 
-	public static final PotionType Enhanced = new PotionType(
-			"enhanced", new PotionEffect[] {
-					new PotionEffect(Base, 1)
-			}
-	).setRegistryName("enhanced");
+	public static HashMap<String, Potion> TrinketPotions = new HashMap();//new ArrayList<>();
+	public static HashMap<String, PotionType> TrinketPotionTypes = new HashMap();//new ArrayList<>();
+	public static HashMap<String, PotionObject> TrinketPotionObjects = new HashMap();//new ArrayList<>();
 
-	public static final PotionType Restorative = new PotionType(
-			"restorative", new PotionEffect[] {
-					new PotionEffect(RESTORING, 1)
-			}
-	).setRegistryName("restorative");
+	public static PotionObject createBasePotion(String name, int color, int X, int Y, int duration, Item ingredient) {
+		Potion potion = new BasePotion(name, duration, color, X, Y);
+		PotionObject potObj = new PotionObject(potion, name, color, duration, ingredient);
+		TrinketPotionObjects.put(potObj.getName(), potObj);
+		return potObj;
+	}
 
-	public static final PotionType FairyType = new PotionType(
-			"fairy", new PotionEffect[] {
-					new PotionEffect(Fairy, TrinketsConfig.SERVER.Potion.FairyDuration)
-			}
-	).setRegistryName("fairy");
+	public static PotionObject createPotion(String name, int color, int X, int Y, int duration, PotionType base, Item ingredient) {
+		Potion potion = new BasePotion(name, duration, color, X, Y);
+		PotionObject potObj = new PotionObject(potion, base, name, color, duration, ingredient);
+		TrinketPotionObjects.put(potObj.getName(), potObj);
+		return potObj;
+	}
 
-	public static final PotionType ExtendedFairyType = new PotionType(
-			"fairy", new PotionEffect[] {
-					new PotionEffect(Fairy, TrinketsConfig.SERVER.Potion.FairyDuration * 3)
-			}
-	).setRegistryName("extended_fairy");
-
-	public static final PotionType DwarfType = new PotionType(
-			"dwarf", new PotionEffect[] {
-					new PotionEffect(Dwarf, TrinketsConfig.SERVER.Potion.FairyDuration)
-			}
-	).setRegistryName("dwarf");
-
-	public static final PotionType ExtendedDwarfType = new PotionType(
-			"dwarf", new PotionEffect[] {
-					new PotionEffect(Dwarf, TrinketsConfig.SERVER.Potion.FairyDuration * 3)
-			}
-	).setRegistryName("extended_dwarf");
-
-	public static final PotionType TitanType = new PotionType(
-			"titan", new PotionEffect[] {
-					new PotionEffect(Titan, TrinketsConfig.SERVER.Potion.TitanDuration)
-			}
-	).setRegistryName("titan");
-
-	public static final PotionType ExtendedTitanType = new PotionType(
-			"titan", new PotionEffect[] {
-					new PotionEffect(Titan, TrinketsConfig.SERVER.Potion.TitanDuration * 3)
-			}
-	).setRegistryName("extended_titan");
+	public static PotionObject createRacePotion(EntityRace race, int X, int Y, int duration, PotionType base, Item ingredient) {
+		Potion potion = new TransformationPotion(race.getName().toLowerCase(), race.getPrimaryColor(), race.getUUID().toString(), X, Y);
+		PotionObject potObj = new PotionObject(potion, base, race.getName().toLowerCase(), race.getPrimaryColor(), duration, ingredient);
+		TrinketPotionObjects.put(potObj.getName(), potObj);
+		return potObj;
+	}
 
 	public static void registerPotionTypes() {
 
-		final Item Catalyst = Item.getByNameOrId(TrinketsConfig.SERVER.Potion.catalyst);
-		final Item fairyCatalyst = Item.getByNameOrId(TrinketsConfig.SERVER.Potion.fairy_catalyst);
-		final Item dwarfCatalyst = Item.getByNameOrId(TrinketsConfig.SERVER.Potion.dwarf_catalyst);
-		final Item titanCatalyst = Item.getByNameOrId(TrinketsConfig.SERVER.Potion.titan_catalyst);
+		Trinkets.log.info("Generating Potions");
+		PotionObject pot = createBasePotion(baseSparkling, 16777160, 0, 0, 0, ModItems.crafting.glowing_powder).registerPotion();
+		pot = createPotion(enhancedGlittering, 16777120, 0, 0, 0, TrinketPotionObjects.get(baseSparkling).getPotionType(), ModItems.crafting.glowing_ingot).registerPotion();
+		pot = createPotion(advancedGlowing, 16777080, 0, 0, 0, TrinketPotionObjects.get(enhancedGlittering).getPotionType(), ModItems.crafting.glowing_gem).registerPotion();
+		pot = createPotion(restore, 16777215, 0, 0, 0, TrinketPotionObjects.get(baseSparkling).getPotionType(), Item.getByNameOrId(TrinketsConfig.SERVER.Potion.restoreCatalyst)).registerPotion();
 
-		ForgeRegistries.POTIONS.registerAll(Base, RESTORING, Fairy, Dwarf, Titan);
-		ForgeRegistries.POTION_TYPES.registerAll(Enhanced, Restorative, FairyType, DwarfType, TitanType, ExtendedFairyType, ExtendedDwarfType, ExtendedTitanType);
-		PotionHelper.addMix(PotionTypes.MUNDANE, ModItems.crafting.glowing_powder, Enhanced);
-		PotionHelper.addMix(PotionTypes.AWKWARD, ModItems.crafting.glowing_powder, Enhanced);
-		PotionHelper.addMix(PotionTypes.THICK, ModItems.crafting.glowing_powder, Enhanced);
-		PotionHelper.addMix(Enhanced, Catalyst, Restorative);
-		PotionHelper.addMix(Enhanced, fairyCatalyst, FairyType);
-		PotionHelper.addMix(Enhanced, dwarfCatalyst, DwarfType);
-		PotionHelper.addMix(Enhanced, titanCatalyst, TitanType);
-		PotionHelper.addMix(FairyType, Items.REDSTONE, ExtendedFairyType);
-		PotionHelper.addMix(DwarfType, Items.REDSTONE, ExtendedDwarfType);
-		PotionHelper.addMix(TitanType, Items.REDSTONE, ExtendedTitanType);
+		pot = createRacePotion(
+				EntityRaces.human, 0, 0,
+				TrinketsConfig.SERVER.Potion.human.Duration,
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.human.catalyst)
+		)
+				.registerPotion();
+
+		pot = createRacePotion(
+				EntityRaces.fairy, 1, 0,
+				TrinketsConfig.SERVER.Potion.fairy.Duration,
+				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.fairy.catalyst)
+		)
+				.registerPotion();
+		pot = createRacePotion(
+				EntityRaces.dwarf, 2, 0,
+				TrinketsConfig.SERVER.Potion.dwarf.Duration,
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.dwarf.catalyst)
+		)
+				.registerPotion();
+		pot = createRacePotion(
+				EntityRaces.titan, 3, 0,
+				TrinketsConfig.SERVER.Potion.titan.Duration,
+				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.titan.catalyst)
+		)
+				.registerPotion();
+		pot = createRacePotion(
+				EntityRaces.goblin, 4, 0,
+				TrinketsConfig.SERVER.Potion.goblin.Duration,
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.goblin.catalyst)
+		)
+				.registerPotion();
+		pot = createRacePotion(
+				EntityRaces.elf, 5, 0,
+				TrinketsConfig.SERVER.Potion.elf.Duration,
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.elf.catalyst)
+		)
+				.registerPotion();
+		pot = createRacePotion(
+				EntityRaces.faelis, 6, 0,
+				TrinketsConfig.SERVER.Potion.faelis.Duration,
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.faelis.catalyst)
+		)
+				.registerPotion();
+		//TODO Dragon
+		pot = createRacePotion(
+				EntityRaces.dragon, 7, 0,
+				TrinketsConfig.SERVER.Potion.dragon.Duration,
+				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
+				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.dragon.catalyst)
+		)
+				.registerPotion();
+
+		Trinkets.log.info("Finished Generating Potions");
 	}
 }

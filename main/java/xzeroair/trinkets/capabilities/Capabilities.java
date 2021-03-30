@@ -3,18 +3,19 @@ package xzeroair.trinkets.capabilities;
 import java.util.concurrent.Callable;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerStorage;
+import xzeroair.trinkets.capabilities.TileEntityCap.ManaEssenceProperties;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
-import xzeroair.trinkets.capabilities.manaCap.ManaStats;
-import xzeroair.trinkets.capabilities.race.RaceProperties;
+import xzeroair.trinkets.capabilities.Vip.VipStatus;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.container.TrinketContainerHandler;
 
 public class Capabilities {
@@ -22,26 +23,14 @@ public class Capabilities {
 	public static void init() {
 		CapabilityManager.INSTANCE.register(ITrinketContainerHandler.class, TrinketContainerStorage.storage, new TrinketContainerFactory());
 
-		CapabilityManager.INSTANCE.register(ManaStats.class, new Capability.IStorage<ManaStats>() {
+		CapabilityManager.INSTANCE.register(EntityProperties.class, new Capability.IStorage<EntityProperties>() {
 			@Override
-			public NBTBase writeNBT(Capability<ManaStats> capability, ManaStats instance, EnumFacing side) {
+			public NBTBase writeNBT(Capability<EntityProperties> capability, EntityProperties instance, EnumFacing side) {
 				throw new UnsupportedOperationException();
 			}
 
 			@Override
-			public void readNBT(Capability<ManaStats> capability, ManaStats instance, EnumFacing side, NBTBase nbt) {
-				throw new UnsupportedOperationException();
-			}
-		}, () -> null);
-
-		CapabilityManager.INSTANCE.register(RaceProperties.class, new Capability.IStorage<RaceProperties>() {
-			@Override
-			public NBTBase writeNBT(Capability<RaceProperties> capability, RaceProperties instance, EnumFacing side) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void readNBT(Capability<RaceProperties> capability, RaceProperties instance, EnumFacing side, NBTBase nbt) {
+			public void readNBT(Capability<EntityProperties> capability, EntityProperties instance, EnumFacing side, NBTBase nbt) {
 				throw new UnsupportedOperationException();
 			}
 		}, () -> null);
@@ -57,27 +46,58 @@ public class Capabilities {
 				throw new UnsupportedOperationException();
 			}
 		}, () -> null);
+
+		CapabilityManager.INSTANCE.register(VipStatus.class, new Capability.IStorage<VipStatus>() {
+			@Override
+			public NBTBase writeNBT(Capability<VipStatus> capability, VipStatus instance, EnumFacing side) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void readNBT(Capability<VipStatus> capability, VipStatus instance, EnumFacing side, NBTBase nbt) {
+				throw new UnsupportedOperationException();
+			}
+		}, () -> null);
+
+		CapabilityManager.INSTANCE.register(ManaEssenceProperties.class, new Capability.IStorage<ManaEssenceProperties>() {
+			@Override
+			public NBTBase writeNBT(Capability<ManaEssenceProperties> capability, ManaEssenceProperties instance, EnumFacing side) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void readNBT(Capability<ManaEssenceProperties> capability, ManaEssenceProperties instance, EnumFacing side, NBTBase nbt) {
+				throw new UnsupportedOperationException();
+			}
+		}, () -> null);
 	}
 
-	@CapabilityInject(ManaStats.class)
-	public static Capability<ManaStats> PLAYER_MANA;
-
-	@CapabilityInject(RaceProperties.class)
-	public static Capability<RaceProperties> ENTITY_RACE;
+	@CapabilityInject(EntityProperties.class)
+	public static Capability<EntityProperties> ENTITY_RACE;
 
 	@CapabilityInject(TrinketProperties.class)
 	public static Capability<TrinketProperties> ITEM_TRINKET;
 
-	public static RaceProperties getEntityRace(EntityLivingBase entity) {
-		return entity.getCapability(ENTITY_RACE, null);
+	@CapabilityInject(VipStatus.class)
+	public static Capability<VipStatus> VIP_STATUS;
+
+	@CapabilityInject(ManaEssenceProperties.class)
+	public static Capability<ManaEssenceProperties> TILE_ENTITY_MANA_ESSENCE;
+
+	public static ManaEssenceProperties getTileEntityManaProperties(TileEntity te) {
+		return te.getCapability(TILE_ENTITY_MANA_ESSENCE, null);
 	}
 
-	public static ManaStats getPlayerMana(EntityPlayer player) {
-		return player.getCapability(PLAYER_MANA, null);
+	public static EntityProperties getEntityRace(EntityLivingBase entity) {
+		return entity.getCapability(ENTITY_RACE, null);
 	}
 
 	public static TrinketProperties getTrinketProperties(ItemStack stack) {
 		return stack.getCapability(ITEM_TRINKET, null);
+	}
+
+	public static VipStatus getVipStatus(EntityLivingBase player) {
+		return player.getCapability(VIP_STATUS, null);
 	}
 
 	private static class TrinketContainerFactory implements Callable<ITrinketContainerHandler> {

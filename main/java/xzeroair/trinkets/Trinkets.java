@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -20,8 +21,12 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilitiesHandler;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.proxy.CommonProxy;
+import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.races.util.RaceRegistry;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.TrinketsConfigEvent;
+import xzeroair.trinkets.vip.VIPHandler;
 
 // @formatter:off
 @Mod(
@@ -47,12 +52,15 @@ public class Trinkets {
 	public static File directory;
 
 	public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
+
 	public static final int GUI = 0;
 
 	private static boolean gotVIPs = false;
 
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
+
+	public static final RaceRegistry<ResourceLocation, EntityRace> RaceRegistry = new RaceRegistry<>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -61,17 +69,27 @@ public class Trinkets {
 		config = new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg"));
 		TrinketsConfig.readConfig();
 
+		if (gotVIPs != true) {
+			log.info("Trinkets and Baubles: Generating VIP List");
+			//Needs to be on Client only
+			//			if (Minecraft.getMinecraft().getSession() != null) {
+			//				Session session = Minecraft.getMinecraft().getSession();
+			//				if (session.getProfile() != null) {
+			//					GameProfile profile = session.getProfile();
+			VIPHandler.popVIPList();
+			//					System.out.println(session.getUsername() + " with ID:" + session.getPlayerID());
+			//					System.out.println(profile.getName() + " with ID:" + profile.getId());
+			//				}
+			//			}
+			gotVIPs = true;
+		}
+
+		EntityRace.registerRaces();
 		//Capabilities
 		Capabilities.init();
 
 		//Network
 		NetworkHandler.init();
-
-		if (gotVIPs != true) {
-			System.out.println("Trinkets and Baubles: Generating VIP List");
-			VIPHandler.popVIPList();
-			gotVIPs = true;
-		}
 
 		proxy.preInit(event);
 	}
@@ -87,6 +105,8 @@ public class Trinkets {
 	public void postInit(FMLPostInitializationEvent event) {
 
 		proxy.postInit(event);
+
+		MinecraftForge.EVENT_BUS.register(TrinketsConfigEvent.instance);
 
 		if (config.hasChanged()) {
 			config.save();

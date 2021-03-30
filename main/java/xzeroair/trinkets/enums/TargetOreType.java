@@ -7,7 +7,7 @@ public enum TargetOreType {
 	gold(2, "Gold", 16766720),
 	diamond(3, "Diamond", 59135),
 	emerald(4, "Emerald", 65357),
-	lapis(5, "Lapis", 2515356),
+	lapis(5, "Lapis Lazuli", 2515356),
 	redstone(6, "Redstone", 11546150),
 	quarts(7, "Quartz", 15461355),
 	chest(8, "Chest", 16766720),
@@ -26,41 +26,55 @@ public enum TargetOreType {
 
 	private int type;
 	private String name;
+	private int colorValue;
 	private final float[] oreColor;
 
 	private TargetOreType(int type, String name, int colorValueIn) {
 		this.type = type;
 		this.name = name;
+		colorValue = colorValueIn;
 		final int i = (colorValueIn & 16711680) >> 16;
 		final int j = (colorValueIn & 65280) >> 8;
 		final int k = (colorValueIn & 255) >> 0;
-		this.oreColor = new float[] {i / 255.0F, j / 255.0F, k / 255.0F};
+		oreColor = new float[] { i / 255.0F, j / 255.0F, k / 255.0F };
 	}
 
 	public float getOreColor(int index) {
-		return this.oreColor[index];
+		return oreColor[index];
 	}
 
 	public int getType() {
-		return this.type;
-	}
-	public String getName() {
-		return this.name;
+		return type;
 	}
 
-	public static TargetOreType Type(int value)
-	{
-		if ((value < 0) || (value >= ID.length))
-		{
+	public String getName() {
+		return name;
+	}
+
+	public int getColor() {
+		return colorValue;
+	}
+
+	public static TargetOreType Type(int value) {
+		if ((value < 0) || (value >= ID.length)) {
 			value = 0;
 		}
 
 		return ID[value];
 	}
 
+	public static int Color(String name) {
+		for (final TargetOreType ore : TargetOreType.values()) {
+			if (ore.getName().contentEquals(name)) {
+				return ore.getColor();
+			}
+		}
+		return 16777215;
+	}
+
 	public static float Color(String name, int index) {
-		for(final TargetOreType ore : TargetOreType.values()) {
-			if(ore.getName() == name) {
+		for (final TargetOreType ore : TargetOreType.values()) {
+			if (ore.getName().contentEquals(name)) {
 				return ore.getOreColor(index);
 			}
 		}

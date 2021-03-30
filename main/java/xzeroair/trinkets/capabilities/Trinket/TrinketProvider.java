@@ -1,5 +1,6 @@
 package xzeroair.trinkets.capabilities.Trinket;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -8,7 +9,11 @@ import xzeroair.trinkets.capabilities.Capabilities;
 
 public class TrinketProvider implements ICapabilitySerializable<NBTTagCompound> {
 
-	private TrinketProperties trinket = new TrinketProperties();
+	private TrinketProperties trinket;
+
+	public TrinketProvider(ItemStack stack) {
+		trinket = new TrinketProperties(stack);
+	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -18,7 +23,7 @@ public class TrinketProvider implements ICapabilitySerializable<NBTTagCompound> 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (capability == Capabilities.ITEM_TRINKET) {
-			return (T) this.trinket;
+			return (T) trinket;
 		}
 		return null;
 	}
@@ -26,12 +31,12 @@ public class TrinketProvider implements ICapabilitySerializable<NBTTagCompound> 
 	@Override
 	public NBTTagCompound serializeNBT() {
 		final NBTTagCompound nbt = new NBTTagCompound();
-		this.trinket.savedNBTData(nbt);
+		trinket.savedNBTData(nbt);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		this.trinket.loadNBTData(nbt);
+		trinket.loadNBTData(nbt);
 	}
 }

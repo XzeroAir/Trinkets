@@ -1,0 +1,40 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"XS#",
+		"SDS",
+		"#S#"
+	],
+	"key": {
+		"D": [
+			{
+				"item": "minecraft:skull",
+				"data": 5
+			},
+			{
+				"type": "xat:conditional",
+				"conditions": [
+					{
+						"type": "forge:mod_loaded",
+						"modid": "iceandfire"
+					}
+				],
+				"ingredient": {
+					"type": "xat:skull_stage"
+				}
+			}
+		],
+		"S": {
+			"item": "minecraft:diamond_sword"
+		},
+		"#": {
+			"item": "xat:glowing_gem"
+		},
+		"X": {
+			"item": "xat:glow_ring"
+		}
+	},
+	"result": {
+		"item": "xat:dragons_eye"
+	}
+}

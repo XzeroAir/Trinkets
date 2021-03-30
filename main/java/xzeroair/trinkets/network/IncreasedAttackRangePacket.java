@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.RaceProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
 
 public class IncreasedAttackRangePacket implements IMessage {
 
@@ -22,7 +22,7 @@ public class IncreasedAttackRangePacket implements IMessage {
 	public int attackerEntityID = 0;
 	public int targetEntityID = 0;
 
-	public IncreasedAttackRangePacket(EntityLivingBase entity, EntityLivingBase targetEntity, RaceProperties cap) {
+	public IncreasedAttackRangePacket(EntityLivingBase entity, Entity targetEntity, EntityProperties cap) {
 		attackerEntityID = entity.getEntityId();
 		targetEntityID = targetEntity.getEntityId();
 	}
@@ -50,7 +50,7 @@ public class IncreasedAttackRangePacket implements IMessage {
 					final Entity player = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.attackerEntityID);
 					if (player instanceof EntityPlayer) {
 						if (player.hasCapability(Capabilities.ENTITY_RACE, null)) {
-							RaceProperties cap = Capabilities.getEntityRace((EntityLivingBase) player);
+							EntityProperties cap = Capabilities.getEntityRace((EntityLivingBase) player);
 							if (cap != null) {
 								final Entity targetEntity = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.targetEntityID);
 								AxisAlignedBB bb = targetEntity.getEntityBoundingBox().grow(1);

@@ -1,0 +1,82 @@
+{
+    "parent": "block/block",
+    "textures": {
+        "MoonRoseModel": "xat:blocks/moon_rose",
+		"particle": "xat:blocks/moon_rose"
+    },
+    "display": {
+        "gui": {
+            "rotation": [ 19, 26, 0 ],
+            "translation": [ 0, 3, 0 ],
+            "scale": [ 1, 1.2, 1 ]
+        },
+        "ground": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 3, 0 ],
+            "scale": [ 0.25, 0.25, 0.25 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "head": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 7, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, 315, 0 ],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [ 0.4, 0.4, 0.4 ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 2.5, 1 ],
+            "scale": [ 0.375, 0.375, 0.375 ]
+        }
+    },
+    "elements": [
+        {
+            "name": "Stem",
+            "from": [ 7, 0, 7 ], 
+            "to": [ 9, 7, 9 ], 
+            "faces": {
+                "north": { "texture": "#MoonRoseModel", "uv": [ 5.1, 2.3, 6.7, 6.2 ] },
+                "east": { "texture": "#MoonRoseModel", "uv": [ 5.1, 2.3, 6.7, 6.2 ] },
+                "south": { "texture": "#MoonRoseModel", "uv": [ 5.1, 2.3, 6.7, 6.2 ] },
+                "west": { "texture": "#MoonRoseModel", "uv": [ 5.1, 2.3, 6.7, 6.2 ] }
+            }
+        },
+        {
+            "name": "Leaf1",
+            "from": [ 2.5, 4, 8 ], 
+            "to": [ 7, 5.8, 8 ], 
+            "faces": {
+                "north": { "texture": "#MoonRoseModel", "uv": [ 0, 0, 4.5, 1.7 ] },
+                "south": { "texture": "#MoonRoseModel", "uv": [ 0, 1.7, 4.5, 0 ], "rotation": 180 }
+            }
+        },
+        {
+            "name": "Cube",
+            "from": [ 6, 7, 6 ], 
+            "to": [ 10, 10, 10 ], 
+            "faces": {
+                "north": { "texture": "#MoonRoseModel", "uv": [ 0, 2.3, 4.5, 4.5 ] },
+                "east": { "texture": "#MoonRoseModel", "uv": [ 0, 2.3, 4.5, 4.5 ] },
+                "south": { "texture": "#MoonRoseModel", "uv": [ 0, 2.3, 4.5, 4.5 ] },
+                "west": { "texture": "#MoonRoseModel", "uv": [ 0, 2.3, 4.5, 4.5 ] },
+                "up": { "texture": "#MoonRoseModel", "uv": [ 0, 2.3, 4.5, 4.5 ] }
+            }
+        },
+        {
+            "name": "Leaf2",
+            "from": [ 9, 4, 8 ], 
+            "to": [ 13.5, 5.8, 8 ], 
+            "faces": {
+                "north": { "texture": "#MoonRoseModel", "uv": [ 0, 1.7, 4.5, 0 ], "rotation": 180 },
+                "south": { "texture": "#MoonRoseModel", "uv": [ 0, 0, 4.5, 1.7 ] }
+            }
+        }
+    ]
+}

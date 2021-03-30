@@ -1,0 +1,6 @@
+{
+    "parent" : "item/bow", 
+    "textures" : {
+        "layer0" : "xat:items/ribbon_bow_1"
+    }
+}

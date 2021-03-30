@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -48,13 +47,7 @@ public class CommonProxy implements IGuiHandler {
 		EventRegistry.postInit();
 	}
 
-	public void spawnParticle(EnumParticleTypes Particle, double xCoord, double yCoord, double zCoord, double xSpeed,
-			double ySpeed, double zSpeed, int i, float r, float g, float b) {
-
-	}
-
-	public void registerEntityRenderers() {
-
+	public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
 	}
 
 	public void registerItemRenderer(Item item, int meta, String id) {
@@ -106,8 +99,16 @@ public class CommonProxy implements IGuiHandler {
 			switch (ID) {
 			case Trinkets.GUI:
 				return new TrinketInventoryContainer(player.inventory, !world.isRemote, player);
+			case 1:
+				return null;//Mana Hud
+			case 2:
+				return null;// Properties
 			}
 		}
 		return null;
+	}
+
+	public void spawnParticle(int effectID, World world, double x, double y, double z, double motX, double motY, double motZ, int color, float alpha) {
+
 	}
 }
