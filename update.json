@@ -5,7 +5,7 @@
   	  "1.12-recommended": "0.17",
 	  "1.12.1-latest": "0.17",
   	  "1.12.1-recommended": "0.17",
-	  "1.12.2-latest": "0.30.1",
+	  "1.12.2-latest": "0.31b",
   	  "1.12.2-recommended": "0.30.1"
 	},
 	"1.12.2": {
@@ -20,6 +20,7 @@
 		"0.29.2": "More bug fixes and crash fixes"
 		"0.30": "Steadily Making Progress"
 		"0.30.1": "or Not, but Crashes and more Bugs Fixed"
+		"0.31b": "Basically completely rewrote the Internals"
 	},
 	"1.12.1": {
   		"0.17": "Added support for 1.12 and 1.12.1"
