@@ -6,6 +6,8 @@ import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
+// owo uwu
+
 public class FaelisConfig {
 	private final String name = "faelis";
 	private final String PREFIX = Reference.MODID + ".config.races." + name;
@@ -76,7 +78,7 @@ public class FaelisConfig {
 	private final double	jumpAmount = 0.6;
 	private final int		jumpOperation = 2;
 	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
+	private final double	stepHeightAmount = 1;
 	private final int		stepHeightOperation = 2;
 
 
