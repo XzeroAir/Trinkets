@@ -28,7 +28,7 @@ public class DragonConfig {
 	@Name("04. Creative Flight Speed")
 	@Config.RangeDouble(min = 0.01, max = 1)
 	@LangKey(PREFIX + ".flight.speed.amount")
-	public double flight_speed = 0.02;
+	public double flight_speed = 0.015;
 
 	@Config.Comment("How much damage per tick the dragon breath does")
 	@Name("01. Dragon Breath Damage")
@@ -63,20 +63,20 @@ public class DragonConfig {
 	private final boolean 	armor = false;
 	private final double 	armorAmount = 0;
 	private final int		armorOperation = 2;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
+	private final boolean 	attackSpeed = true;
+	private final double 	attackSpeedAmount = -0.5;
 	private final int		attackSpeedOperation = 2;
 	private final boolean 	damage = true;
 	private final double 	damageAmount = 0.5;
 	private final int		damageOperation = 2;
 	private final boolean 	health = true;
 	private final double 	healthAmount = 1;
-	private final int		healthOperation = 2;
+	private final int		healthOperation = 1;
 	private final boolean 	knockback = false;
 	private final double 	knockbackAmount = 0;
 	private final int		knockbackOperation = 2;
-	private final boolean 	speed = false;
-	private final double 	speedAmount = 0;
+	private final boolean 	speed = true;
+	private final double 	speedAmount = -0.25;
 	private final int		speedOperation = 2;
 	private final boolean 	swimSpeed = false;
 	private final double 	swimSpeedAmount = 0;
