@@ -3,7 +3,6 @@ package xzeroair.trinkets.util.helpers;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
@@ -25,8 +24,8 @@ import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.items.base.TrinketRaceBase;
-import xzeroair.trinkets.items.foods.Mana_Candy;
 import xzeroair.trinkets.items.foods.Mana_Crystal;
+import xzeroair.trinkets.items.foods.Mana_Reagent;
 import xzeroair.trinkets.items.trinkets.TrinketArcingOrb;
 import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
@@ -451,10 +450,13 @@ public class TranslationHelper {
 			ConfigFaelisClaw config = TrinketsConfig.SERVER.Items.FAELIS_CLAW;
 			string = VariableReplace(true, "clawbleed", config.duration + "", string);
 		}
-		if (stack.getItem() instanceof Mana_Candy) {
-			string = VariableReplace(true, "MPRestore", "25-50" + "", string);
-		}
+		//		if (stack.getItem() instanceof Mana_Candy) {
+		//			string = VariableReplace(true, "MPRestore", "25-50" + "", string);
+		//		}
 		if (stack.getItem() instanceof Mana_Crystal) {
+			string = VariableReplace(true, "MPMax", "10" + "", string);
+		}
+		if (stack.getItem() instanceof Mana_Reagent) {
 			string = VariableReplace(true, "MPMax", "10" + "", string);
 		}
 		if (stack.getItem().equals(Items.POTIONITEM)) {

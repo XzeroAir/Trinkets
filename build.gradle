@@ -3,7 +3,8 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            //url = "http://files.minecraftforge.net/maven"
+			url = 'https://maven.minecraftforge.net'
         }
     }
     dependencies {
@@ -108,7 +109,8 @@ processResources {
 repositories {
 	maven { //MinecraftForge
 		name "MinecraftForge Maven"
-		url "http://files.minecraftforge.net/maven/"
+		url = 'https://maven.minecraftforge.net'
+		//url "http://files.minecraftforge.net/maven/"
 	}
     maven {
         name 'Chisel'

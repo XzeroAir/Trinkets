@@ -32,10 +32,7 @@ public class Mana_Crystal extends FoodBase {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityProperties prop = Capabilities.getEntityRace(entityLiving);
 			if (prop != null) {
-				//TODO Fix this
 				prop.getMagic().setBonusMana(prop.getMagic().getBonusMana() + 1);
-				prop.getMagic().sendManaToPlayer(entityLiving);
-				prop.getMagic().syncToManaHud();
 			}
 		}
 		this.setCooldown(20);

@@ -97,6 +97,12 @@ public class Trinkets {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
+
+		//TODO Add Reskillable Support?
+		//		if (Loader.isModLoaded("reskillable")) {
+		//			codersafterdark.reskillable.api.ReskillableRegistries.UNLOCKABLES.register(
+		//                new ReskillableTrait();
+		//        )
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		proxy.init(event);
 	}

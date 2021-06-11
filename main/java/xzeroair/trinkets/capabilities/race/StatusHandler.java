@@ -3,14 +3,18 @@ package xzeroair.trinkets.capabilities.race;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketStatusEffect;
+import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class StatusHandler {
 
@@ -56,6 +60,29 @@ public class StatusHandler {
 			} else {
 				this.remove(StatusEffectsEnum.bleed.getIndex());
 			}
+		}
+		if (effects.containsKey(StatusEffectsEnum.Invigorated.getName())) {
+			TrinketStatusEffect effect = effects.get(StatusEffectsEnum.Invigorated.getName());
+			UUID uuid = UUID.fromString("02eaa030-91c2-425e-8b3a-9de6aae4df35");
+			if (entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR).getModifier(uuid) == null) {
+				UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ARMOR);
+				armor.addModifier(entity, 4, 0);
+			}
+			if (entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(uuid) == null) {
+				UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.MOVEMENT_SPEED);
+				armor.addModifier(entity, 0.25, 1);
+			}
+			if (entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).getModifier(uuid) == null) {
+				UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ATTACK_DAMAGE);
+				armor.addModifier(entity, 0.5, 1);
+			}
+			if (effect.getDuration() <= 1) {
+				AttributeHelper.removeAttributesByUUID(entity, uuid);
+			}
+			// +10 Armor, Op 0
+			// +25% movement speed
+			// +50% attack dmg
+			// 20 seconds Duration
 		}
 	}
 

@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
@@ -13,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -24,7 +23,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.client.particles.ParticleFireBreath;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.UpdateThrowable;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class MovingThrownProjectile extends EntityFireball implements IProjectile {
@@ -49,54 +50,18 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 
 	private boolean ignoreBlocks = false;
 
-	//	public MovingThrownProjectile(World worldIn) {
-	//		super(worldIn);
-	//		color = 12582912;
-	//		xTile = -1;
-	//		yTile = -1;
-	//		zTile = -1;
-	//		damage = TrinketsConfig.SERVER.races.dragon.breath_damage;
-	//		hitResult = new HitResult.EmptyResult();
-	//		this.setSize(0.5F, 0.5F);
-	//	}
-
-	//	public MovingThrownProjectile(World worldIn, double x, double y, double z) {
-	//		this(worldIn);
-	//		damage = TrinketsConfig.SERVER.races.dragon.breath_damage;
-	//		hitResult = new HitResult.EmptyResult();
-	//		this.setPosition(x, y, z);
-	//	}
-
-	//	public MovingThrownProjectile(World worldIn, EntityLivingBase throwerIn) {
-	//		this(worldIn, throwerIn.posX, (throwerIn.posY + throwerIn.getEyeHeight()) - 0.10000000149011612D, throwerIn.posZ);
-	//		damage = TrinketsConfig.SERVER.races.dragon.breath_damage;
-	//		hitResult = new HitResult.EmptyResult();
-	//		//				super(worldIn, shooter, accelX, accelY, accelZ);
-	//		//				this.setSize(0.5F, 0.5F);
-	//		//				double d0 = (double) MathHelper.sqrt(accelX * accelX + accelY * accelY + accelZ * accelZ);
-	//		//				this.accelerationX = accelX / d0 * (0.1D * (shooter.isFlying() ? 4 * shooter.getDragonStage() : 1));
-	//		//				this.accelerationY = accelY / d0 * (0.1D * (shooter.isFlying() ? 4 * shooter.getDragonStage() : 1));
-	//		//				this.accelerationZ = accelZ / d0 * (0.1D * (shooter.isFlying() ? 4 * shooter.getDragonStage() : 1));
-	//		//				thrower = throwerIn;
-	//	}
-
 	public MovingThrownProjectile(World worldIn) {
 		super(worldIn);
 		color = 12582912;
 	}
 
-	public MovingThrownProjectile(World worldIn, double posX, double posY, double posZ, double accelX, double accelY, double accelZ, int color) {
-		super(worldIn, posX, posY, posZ, accelX, accelY, accelZ);
-		this.color = color;
-	}
-
 	public MovingThrownProjectile(World worldIn, EntityLivingBase shooter, double accelX, double accelY, double accelZ, int color) {
 		//		this(worldIn, shooter.posX, (shooter.posY + shooter.getEyeHeight()) - 0.10000000149011612D, shooter.posZ);
 		super(worldIn, shooter, accelX, accelY, accelZ);
+		this.color = color;
 		float f = -MathHelper.sin(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
 		float f1 = -MathHelper.sin((shooter.rotationPitch + 0) * 0.017453292F);
 		float f2 = MathHelper.cos(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
-		this.color = color;
 		damage = TrinketsConfig.SERVER.races.dragon.breath_damage;
 		this.setSize(0.5F, 0.5F);
 		//		float f = MathHelper.sqrt(x * x + y * y + z * z);
@@ -105,7 +70,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		accelerationX = (accelX / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
 		accelerationY = (accelY / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
 		accelerationZ = (accelZ / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
-		shootingEntity = shooter;
+		//		shootingEntity = shooter;
 	}
 
 	private boolean isFlying(EntityLivingBase entity) {
@@ -178,44 +143,6 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		}
 	}
 
-	//	@Override
-	//	protected void onImpact(RayTraceResult result) {
-	//		if ((result != null)) {
-	//			hitResult.onHit(this, result, !world.isRemote);
-	//			if (world.isRemote) {
-	//				return;
-	//			}
-	//			//					if (!ignoreBlocks) {
-	//			//						this.setDead();
-	//			//					}
-	//			AxisAlignedBB bb1 = this.getEntityBoundingBox().grow(1);
-	//			List<Entity> splash = world.getEntitiesWithinAABB(Entity.class, bb1);
-	//			for (Entity e : splash) {
-	//				if ((e instanceof EntityLivingBase) && (e != this.getThrower())) {
-	//					if ((e instanceof EntityPlayer) && !world.getMinecraftServer().isPVPEnabled()) {
-	//						continue;
-	//					}
-	//					e.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) damage);
-	//					e.setFire(4);
-	//				}
-	//			}
-	//			if ((result.typeOfHit == Type.BLOCK)) {
-	//				BlockPos blockpos = result.getBlockPos().offset(result.sideHit);
-	//				if (world.isAirBlock(blockpos)) {
-	//					world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
-	//				}
-	//				if (ticksExisted > 10) {
-	//					this.setDead();
-	//				}
-	//			}
-	//		}
-	//	}
-
-	//	@Override
-	//	protected float getGravityVelocity() {
-	//		return 0.01F;
-	//	}
-
 	public MovingThrownProjectile setIgnoreBlocks(boolean ignoreBlocks) {
 		this.ignoreBlocks = ignoreBlocks;
 		return this;
@@ -225,41 +152,6 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		this.color = color;
 		return this;
 	}
-
-	public boolean isIgnoreBlocks() {
-		return ignoreBlocks;
-	}
-
-	@Override
-	public void setDead() {
-		//		System.out.println("oh I died");
-		super.setDead();
-	}
-
-	//	@Override
-	//	public void onUpdate() {
-	//		System.out.println("I'm Alive!");
-	//		//		noClip = ignoreBlocks;
-	//		noClip = false;
-	//		super.onUpdate();
-	//		double distance = 1F;
-	//		if (this.getThrower() != null) {
-	//			distance = this.getThrower().getPosition().getDistance(this.getPosition().getX(), this.getPosition().getY(), this.getPosition().getZ());
-	//		}
-	//		float scale = (float) MathHelper.clamp((0.25F + (0.05F * distance)), 0, 1F);
-	//		if (!world.isRemote) {
-	//			Trinkets.proxy.renderEffect(3, world, posX, posY, posZ, posX, posY, posZ, color, 1F, scale);
-	//		}
-	//		EntityLivingBase entitylivingbase = this.getThrower();
-	//		if ((entitylivingbase != null) && (entitylivingbase instanceof EntityPlayer) && !entitylivingbase.isEntityAlive()) {
-	//			this.setDead();
-	//		} else {
-	//			//			super.onUpdate();
-	//		}
-	//		if (this.isInWater() || (ticksExisted > 20)) {
-	//			this.setDead();
-	//		}
-	//	}
 
 	public void setSizes(float width, float height) {
 		this.setSize(width, height);
@@ -417,18 +309,8 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		int life = 30;
 		this.setPosition(posX, posY, posZ);
 		//		for (int i = 0; i < 6; ++i) {
-		if (!world.isRemote) {
-			int frame2 = (ticksExisted % life);
-			if (frame2 > 0) {
-				Particle effect = new ParticleFireBreath(world, posX, posY, posZ, 0.0D, 0.0D, 0.0D, color, frame2);//, color, alpha);
-				if (frame2 < (life / 2)) {
-					effect.setParticleTextureIndex(frame2);
-				} else {
-					effect.setParticleTextureIndex((frame2 - life));
-				}
-				Minecraft.getMinecraft().effectRenderer.addEffect(effect);
-			}
-		}
+		//			Trinkets.proxy.spawnParticle(3, world, posX, posY, posZ, 0, 0, 0, color, 1F);
+		this.spawnParticle();
 		//		}
 		if (!world.isRemote) {
 			AxisAlignedBB bb1 = this.getEntityBoundingBox().grow(1);
@@ -450,6 +332,32 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 			this.setDead();
 		}
 		if (onGround) {
+		}
+	}
+
+	int frame = 0;
+
+	public void spawnParticle() {
+		int life = 30;
+		int frame2 = (ticksExisted % life);
+		if (frame2 > 0) {
+			int frame = frame2;
+			if (frame2 < (life / 2)) {
+			} else {
+				frame = frame2 - life;
+			}
+			if (!world.isRemote) {
+				NBTTagCompound tag = new NBTTagCompound();
+				tag.setInteger("BreathColor", color);
+				tag.setInteger("frame", frame);
+				tag.setDouble("x", posX);
+				tag.setDouble("y", posY);
+				tag.setDouble("z", posZ);
+				NetworkHandler.INSTANCE.sendToAllTracking(new UpdateThrowable(this, tag), this);
+			}
+			if (world.isRemote) {
+				Trinkets.proxy.spawnParticle(3, world, posX, posY, posZ, 0, 0, 0, color, this.frame);
+			}
 		}
 	}
 
@@ -555,4 +463,21 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		return true;
 	}
 
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		if (compound.hasKey("BreathColor")) {
+			color = compound.getInteger("BreathColor");
+		}
+		if (compound.hasKey("frame")) {
+			frame = compound.getInteger("frame");
+		}
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger("BreathColor", color);
+		compound.setInteger("frame", frame);
+		return super.writeToNBT(compound);
+	}
 }

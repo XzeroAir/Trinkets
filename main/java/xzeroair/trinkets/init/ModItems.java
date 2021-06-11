@@ -155,7 +155,7 @@ public class ModItems {
 		public static final Item BaubleElfRing			= new BaubleRaceBase(ElfRing, EntityRaces.elf, TrinketsConfig.SERVER.Items.raceRings.ELF_RING, TrinketsConfig.SERVER.races.elf.Attributes);//new TrinketElfRing(ElfRing);
 
 		public static final Item BaubleFaelisRing		= new BaubleRaceBase(FaelisRing, EntityRaces.faelis, TrinketsConfig.SERVER.Items.raceRings.FAELIS_RING, TrinketsConfig.SERVER.races.faelis.Attributes);//new TrinketElfRing(ElfRing);
-		//TODO Dragon
+
 		public static final Item BaubleDragonRing		= new BaubleRaceBase(DragonRing, EntityRaces.dragon, TrinketsConfig.SERVER.Items.raceRings.DRAGON_RING, TrinketsConfig.SERVER.races.dragon.Attributes);//new TrinketElfRing(ElfRing);
 
 	}

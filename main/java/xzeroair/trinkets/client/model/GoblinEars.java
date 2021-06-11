@@ -40,7 +40,7 @@ public class GoblinEars extends ModelBase {
 		float tileHeight = 32;
 		//		GlStateManager.rotate(-10, 1, 0, 0);
 		//		GlStateManager.rotate(25, 0, 0, 1);
-		double xR = 0.7;
+		double xR = 0.66;
 		double xL = -xR;
 		this.DrawRightEar(x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
 		this.DrawRightEar(x + xR, y, z + 0.0001, u, v + 16, uWidth, vHeight, width, height, tileWidth, tileHeight);

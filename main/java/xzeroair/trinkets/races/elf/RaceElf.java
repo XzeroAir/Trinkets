@@ -1,27 +1,32 @@
 package xzeroair.trinkets.races.elf;
 
-import javax.annotation.Nonnull;
+import java.util.Set;
+import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.model.ElfEars;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public class RaceElf extends EntityRacePropertiesHandler {
 
@@ -29,20 +34,30 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
 	protected boolean critReady = false;
 	protected float chargeMultiplier = 0;
+	protected UpdatingAttribute bonusSpeed, bonusAtkSpeed;
 
 	public RaceElf(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.elf);
-		color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
+		bonusSpeed = new UpdatingAttribute(e, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.MOVEMENT_SPEED);
+		bonusAtkSpeed = new UpdatingAttribute(e, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.ATTACK_SPEED);
 	}
 
 	@Override
 	public void whileTransformed() {
-
+		//		System.out.println(entity.world.getBiome(entity.getPosition()).);
+		if (entity.world.getBiome(entity.getPosition()) != null) {
+			Set<Type> biomeType = BiomeDictionary.getTypes(entity.world.getBiome(entity.getPosition()));
+			if (biomeType.contains(Type.FOREST)) {
+				bonusSpeed.addModifier(0.5, 2);
+				bonusAtkSpeed.addModifier(0.5, 2);
+			}
+		}
 	}
 
 	@Override
-	public float isHurt(DamageSource source, float dmg) {
-		return dmg;
+	public void endTransformation() {
+		bonusSpeed.removeModifier();
+		bonusAtkSpeed.removeModifier();
 	}
 
 	@Override
@@ -67,6 +82,7 @@ public class RaceElf extends EntityRacePropertiesHandler {
 				chargeMultiplier = clamp;
 				magic.syncToManaCostToHud(clamp * ManaCost);
 			} else {
+				magic.syncToManaCostToHud(0);
 				chargeMultiplier = 0;
 			}
 		}
@@ -86,7 +102,7 @@ public class RaceElf extends EntityRacePropertiesHandler {
 			if ((cost > 0) && (magic.getMana() >= cost)) {
 				magic.spendMana(cost);
 			}
-			//			magic.syncToManaCostToHud(0);
+			magic.syncToManaCostToHud(0);
 		}
 	}
 
@@ -116,15 +132,8 @@ public class RaceElf extends EntityRacePropertiesHandler {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || (!properties.isFake() && !properties.showTraits())) {
+		if (!TrinketsConfig.CLIENT.rendering || !properties.showTraits()) {
 			return;
-		}
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
 		}
 		ears = new ElfEars();
 		GlStateManager.pushMatrix();
@@ -139,7 +148,7 @@ public class RaceElf extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), properties.getTraitOpacity());
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

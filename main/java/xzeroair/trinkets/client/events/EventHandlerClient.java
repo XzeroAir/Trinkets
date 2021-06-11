@@ -3,7 +3,6 @@ package xzeroair.trinkets.client.events;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -13,6 +12,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -134,19 +134,19 @@ public class EventHandlerClient {
 					}
 					cap.getRaceProperties().onClientTick();
 					if (TrinketsConfig.SERVER.misc.movement && cap.isTransforming()) {
-						player.setVelocity(0, 0, 0);
-						if ((player.posX != player.prevPosX) || (player.posY != player.prevPosY) || (player.posZ != player.prevPosZ)) {
-							player.setPositionAndUpdate(player.prevPosX, player.prevPosY, player.prevPosZ);
+						//						player.setVelocity(0, player.motionY, 0);
+						if ((player.posX != player.prevPosX) || (player.posZ != player.prevPosZ)) {
+							player.setPositionAndUpdate(player.prevPosX, player.posY, player.prevPosZ);
 						}
 						if (player == Minecraft.getMinecraft().player) {
 							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode(), false);
 							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode(), false);
 							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode(), false);
 							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode(), false);
-							if (((EntityPlayer) player).capabilities.isFlying) {
-								KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), false);
-								KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode(), false);
-							}
+							//							if (((EntityPlayer) player).capabilities.isFlying) {
+							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), false);
+							KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode(), false);
+							//							}
 						}
 					}
 				}
@@ -161,6 +161,28 @@ public class EventHandlerClient {
 			//			for (int or : OreDictionary.getOreIDs(stack)) {
 			//				event.getToolTip().add(OreDictionary.getOreName(or));
 			//			}
+			String[] recoveryItems = TrinketsConfig.SERVER.mana.recovery;
+			for (String item : recoveryItems) {
+				String[] itemConfig = item.split(":");
+				if (itemConfig.length > 0) {
+					if (stack.getItem().getRegistryName().toString().equalsIgnoreCase(itemConfig[0] + ":" + itemConfig[1])) {
+						if (itemConfig.length > 1) {
+							if (stack.getItemDamage() == Integer.parseInt(itemConfig[2])) {
+								if (itemConfig.length > 2) {
+									String recoveryAmount = itemConfig[3];
+									if (recoveryAmount.endsWith("%")) {
+										float amount = MathHelper.clamp(Float.parseFloat(recoveryAmount.replace("%", "")), 0, 100);
+										event.getToolTip().add(TextFormatting.DARK_AQUA + "+" + amount + "% MP");
+									} else {
+										float amount = Float.parseFloat(recoveryAmount);
+										event.getToolTip().add(TextFormatting.DARK_AQUA + "+" + amount + " MP");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			if (stack.getItem().equals(Items.POTIONITEM)) {
 				final PotionType pot = PotionUtils.getPotionFromItem(stack);
 				if (ModPotionTypes.TrinketPotionTypes.containsValue(pot)) {

@@ -85,11 +85,11 @@ public class GuiEntityProperties extends GuiScreen {
 		bY += 20;
 		b = new GuiPropertiesSlider(this, blueSlider, bX, bY, 100, 20, "Blue", color.getBlue(), 1F, 0F);
 		bY += 20;
-		a = new GuiPropertiesSlider(this, alphaSlider, bX, bY, 100, 20, "Opacity", properties.getTraitOpacity(), 1F, 0F);
+		//		a = new GuiPropertiesSlider(this, alphaSlider, bX, bY, 100, 20, "Opacity", properties.getTraitOpacity(), 1F, 0F);
 		this.addButton(r);
 		this.addButton(g);
 		this.addButton(b);
-		this.addButton(a);
+		//		this.addButton(a);
 	}
 
 	@Override

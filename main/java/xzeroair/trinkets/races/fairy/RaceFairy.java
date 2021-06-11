@@ -1,7 +1,6 @@
 package xzeroair.trinkets.races.fairy;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,7 +26,6 @@ import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Fairy;
 import xzeroair.trinkets.util.handlers.ClimbHandler;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
 
 public class RaceFairy extends EntityRacePropertiesHandler {
@@ -136,13 +134,6 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 		if (!TrinketsConfig.CLIENT.rendering) {
 			return;
 		}
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
-		}
 		GlStateManager.pushMatrix();
 		if (isFake) {
 			GlStateManager.pushMatrix();
@@ -188,7 +179,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 
 				double x = 18;
 				double y = 0;
-				double z = 0;
+				double z = -1;
 
 				int barWidth = 16;
 				int barHeight = 16;
@@ -203,7 +194,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 				GlStateManager.enableBlend();
 				GlStateManager.rotate(angle - tick, 0, 1, 0);
 				GlStateManager.translate(-1, 0, 0);
-				GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), properties.getTraitOpacity());
+				GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
 				DrawingHelper.Draw(-x, y, z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
 				GlStateManager.popMatrix();
 

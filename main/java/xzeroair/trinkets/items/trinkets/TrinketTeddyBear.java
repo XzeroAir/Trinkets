@@ -1,9 +1,12 @@
 package xzeroair.trinkets.items.trinkets;
 
+import java.util.UUID;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.ModItems;
@@ -24,37 +27,41 @@ public class TrinketTeddyBear extends AccessoryBase {
 	}
 
 	@Override
+	public String getItemStackDisplayName(ItemStack stack) {
+		String crafter = "";
+		if (!this.getTagCompoundSafe(stack).getString("crafter.name").isEmpty()) {
+			crafter = this.getTagCompoundSafe(stack).getString("crafter.name") + "'s ";
+		}
+		return crafter + super.getItemStackDisplayName(stack);
+	}
+
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+		super.onUpdate(stack, world, entity, itemSlot, isSelected);
+		if (this.getTagCompoundSafe(stack).getString("crafter.id").isEmpty()) {
+			if (entity instanceof EntityPlayer) {
+				if (((EntityPlayer) entity).getUniqueID() != null) {
+					this.getTagCompoundSafe(stack).setString("crafter.id", ((EntityPlayer) entity).getUniqueID().toString());
+				}
+			}
+		} else {
+			EntityPlayer player = entity.world.getPlayerEntityByUUID(UUID.fromString(this.getTagCompoundSafe(stack).getString("crafter.id")));
+			if ((player != null) && this.getTagCompoundSafe(stack).getString("crafter.name").isEmpty()) {
+				this.getTagCompoundSafe(stack).setString("crafter.name", player.getDisplayNameString());
+			}
+		}
+	}
+
+	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
 		LycanitesCompat.removeFear(player);
 		LycanitesCompat.removeInsomnia(player);
-		//		if (player.isSneaking()) {
-		//			player.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 20, 0, false, false));
-		//		}
 	}
 
 	@Override
 	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
 
-	}
-
-	@Override
-	public void eventLivingHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-		//		if (serverConfig.bonus_damage) {
-		//			if (!event.getEntityLiving().isDead) {
-		//				if (event.getSource().getTrueSource() == player) {
-		//					if (serverConfig.poison && !event.getEntityLiving().isPotionActive(MobEffects.POISON)) {
-		//						final Random rand = new Random();
-		//						if (rand.nextInt(serverConfig.poison_chance) == 0) {
-		//							event.getEntityLiving().addPotionEffect(new PotionEffect(MobEffects.POISON, 40, 0, false, true));
-		//						}
-		//					}
-		//					if (event.getEntityLiving().isPotionActive(MobEffects.POISON)) {
-		//						event.setAmount(event.getAmount() * serverConfig.bonus_damage_amount);
-		//					}
-		//				}
-		//			}
-		//		}
 	}
 
 	@Override

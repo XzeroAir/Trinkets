@@ -1,16 +1,22 @@
 package xzeroair.trinkets.capabilities.Trinket;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.network.ItemCapDataMessage;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.PacketAccessorySync;
+import xzeroair.trinkets.util.handlers.DodgeHandler;
+import xzeroair.trinkets.util.handlers.TickHandler;
 
 public class TrinketProperties {
 
@@ -25,9 +31,12 @@ public class TrinketProperties {
 	boolean altAbility = false;
 	int playerStatus = -1;
 	int handler = 0;
+	Map<String, TickHandler> Counters;
+	private DodgeHandler dodge;
 
 	public TrinketProperties(ItemStack stack) {
 		this.stack = stack;
+		Counters = new HashMap<>();
 	}
 
 	public void itemRightClicked() {
@@ -42,6 +51,60 @@ public class TrinketProperties {
 
 	}
 
+	public void onUpdate() {
+		//		if(!Counters.isEmpty()) {
+		//			for(Entry<String, TickHandler> counter:Counters.entrySet()) {
+		//				counter.getValue().Tick();
+		//			}
+		//		}
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~Keybind handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public DodgeHandler DodgeHandler(World world) {
+		if ((dodge == null) && world.isRemote) {
+			dodge = new DodgeHandler();
+		}
+		return dodge;
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Counters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public void addCounter(String key, int length) {
+		if (!Counters.isEmpty() && !Counters.containsKey(key)) {
+			Counters.put(key, new TickHandler(key, length));
+		}
+	}
+
+	public void removeCounter(String key) {
+		if (!Counters.isEmpty() && Counters.containsKey(key)) {
+			Counters.remove(key);
+		}
+	}
+
+	public void clearCounters() {
+		if (!Counters.isEmpty()) {
+			Counters.clear();
+		}
+	}
+
+	public TickHandler getCounter(String key, int length, boolean isCountdown) {
+		TickHandler value;
+		if (!Counters.isEmpty() && Counters.containsKey(key)) {
+			value = Counters.get(key);//.setLength(length).setCountdown(isCountdown);
+		} else {
+			value = new TickHandler(key, length, isCountdown);
+			Counters.put(key, value);
+		}
+		return value;
+	}
+
+	public TickHandler getCounter(String key) {
+		return this.getCounter(key, 20, false);
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Counters End~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	public void itemEquipped(EntityLivingBase entity, int slot, int handler) {
 		this.handler = handler;
 		this.slot = slot;
@@ -55,11 +118,15 @@ public class TrinketProperties {
 	}
 
 	public void itemUnequipped() {
+		if (!this.getStackFromSlot(slot, handler).isEmpty() && this.getStackFromSlot(slot, handler).isItemEqual(stack)) {
+			return;
+		}
 		slot = -1;
 		entity = null;
 		playerStatus = -1;
 		handler = 0;
 		this.saveNBT();
+		this.clearCounters();
 	}
 
 	public void turnOff() {
@@ -69,7 +136,11 @@ public class TrinketProperties {
 	}
 
 	public boolean isEquipped(EntityLivingBase entity) {
-		return TrinketHelper.AccessoryCheck(entity, stack.getItem());
+		return ItemStack.areItemsEqual(stack, this.getStackFromSlot(slot, handler));//TrinketHelper.AccessoryCheck(entity, stack.getItem());
+	}
+
+	public ItemStack getStackFromSlot(int slot, int handler) {
+		return TrinketHelper.getItemStackFromSlot(entity, slot, handler);
 	}
 
 	private void saveNBT() {

@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -18,10 +19,15 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.items.effects.EffectsPolarizedStone;
 import xzeroair.trinkets.items.trinkets.TrinketTeddyBear;
+import xzeroair.trinkets.races.faelis.config.FaelisConfig;
+import xzeroair.trinkets.util.TrinketStatusEffect;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class EventHandler {
 
@@ -59,6 +65,12 @@ public class EventHandler {
 		if ((player != null) && !(player.isDead)) {
 			EffectsPolarizedStone.processBauble(player);
 		}
+		//		if (player.isPotionActive(MobEffects.RESISTANCE)) {
+		//			PotionEffect effect = player.getActivePotionEffect(MobEffects.RESISTANCE);
+		//			if (effect.getAmplifier() < 2) {
+		//			System.out.println(effect.getDuration() + " Duration, Amplifier " + effect.getAmplifier());
+		//			}
+		//		}
 	}
 
 	@SubscribeEvent
@@ -132,11 +144,36 @@ public class EventHandler {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
 			EntityProperties prop = Capabilities.getEntityRace(event.getEntityLiving());
 			if (prop != null) {
-				if (event.getItem().getItem().getRegistryName().toString().contentEquals("minecraft:golden_apple")) {
-					if (event.getItem().getItemDamage() < 1) {
-						prop.getMagic().addMana(prop.getMagic().getMaxMana() * 0.5F);
-					} else {
-						prop.getMagic().addMana(prop.getMagic().getMaxMana());
+				String[] recoveryItems = TrinketsConfig.SERVER.mana.recovery;
+				for (String item : recoveryItems) {
+					String[] itemConfig = item.split(":");
+					if (itemConfig.length > 0) {
+						if (event.getItem().getItem().getRegistryName().toString().equalsIgnoreCase(itemConfig[0] + ":" + itemConfig[1])) {
+							if (itemConfig.length > 1) {
+								if (event.getItem().getItemDamage() == Integer.parseInt(itemConfig[2])) {
+									if (itemConfig.length > 2) {
+										String recoveryAmount = itemConfig[3];
+										if (recoveryAmount.endsWith("%")) {
+											float amount = MathHelper.clamp(Float.parseFloat(recoveryAmount.replace("%", "")), 0, 100);
+											prop.getMagic().addMana(prop.getMagic().getMaxMana() * (amount * 0.01F));
+										} else {
+											float amount = Float.parseFloat(recoveryAmount);
+											prop.getMagic().addMana(amount);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				FaelisConfig faelisConfig = TrinketsConfig.SERVER.races.faelis;
+				if (prop.getCurrentRace().equals(EntityRaces.faelis) && faelisConfig.Invigorated) {
+					String[] Milk = faelisConfig.milk;
+					for (String s : Milk) {
+						if (event.getItem().getItem().getRegistryName().toString().contentEquals(s)) {
+							prop.getStatusHandler().apply(new TrinketStatusEffect("Invigorated", faelisConfig.Invigorated_Duration, 0, null));
+							break;
+						}
 					}
 				}
 			}
@@ -145,13 +182,25 @@ public class EventHandler {
 
 	@SubscribeEvent // Server only?
 	public void ItemPickupEvent(ItemPickupEvent event) {
+		//		ItemStack stack = event.getStack();
+		//		if (stack.getItem() instanceof TrinketTeddyBear) {
+		//			System.out.println("Picked Up Bear");
+		//		}
 	}
 
 	@SubscribeEvent // Both
 	public void craftedSomething(ItemCraftedEvent event) {
 		ItemStack stack = event.crafting;
 		if (stack.getItem() instanceof TrinketTeddyBear) {
-			stack.setStackDisplayName(event.player.getName() + "'s " + stack.getDisplayName());
+			TrinketProperties prop = Capabilities.getTrinketProperties(stack);
+			if (event.player != null) {
+				if (event.player.getUniqueID() != null) {
+					prop.getTagCompoundSafe(stack).setString("crafter.id", event.player.getUniqueID().toString());
+				} else {
+					prop.getTagCompoundSafe(stack).setString("crafter.name", event.player.getDisplayNameString());
+				}
+			}
+			//			stack.setStackDisplayName(event.player.getName() + "'s " + stack.getDisplayName());
 		}
 	}
 

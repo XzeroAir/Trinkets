@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
@@ -31,7 +30,7 @@ import xzeroair.trinkets.tileentities.TileEntityMoonRose;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
-public class Moon_Rose extends BlockBush implements IPlantable, IsModelLoaded {
+public class Moon_Rose extends BlockBush implements IsModelLoaded {
 
 	public Moon_Rose(String name) {
 		this.setTranslationKey(name);

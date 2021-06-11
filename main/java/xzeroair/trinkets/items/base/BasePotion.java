@@ -85,8 +85,8 @@ public class BasePotion extends Potion {
 		}
 		if (TrinketsConfig.SERVER.Potion.potion_thirst) {
 			if (entity instanceof EntityPlayer) {
-				SurvivalCompat.addThirst((EntityPlayer) entity, thirst, saturation);
-				SurvivalCompat.clearThirst((EntityPlayer) entity);
+				SurvivalCompat.addThirst(entity, thirst, saturation);
+				SurvivalCompat.clearThirst(entity);
 			}
 		}
 	}

@@ -99,5 +99,8 @@ public class NetworkHandler {
 
 		INSTANCE.registerMessage(AlphaWolfAttackPacket.Handler.class, AlphaWolfAttackPacket.class, nextId(), Side.SERVER);
 
+		INSTANCE.registerMessage(UpdateThrowable.Handler.class, UpdateThrowable.class, nextId(), Side.SERVER);
+		INSTANCE.registerMessage(UpdateThrowable.Handler.class, UpdateThrowable.class, nextId(), Side.CLIENT);
+
 	}
 }

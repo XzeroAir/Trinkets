@@ -74,32 +74,11 @@ public class ScreenOverlayEvents {
 		final int l = (event.getResolution().getScaledWidth() / 2) - 91;
 		final int i1 = (event.getResolution().getScaledWidth() / 2);
 		final int j1 = event.getResolution().getScaledHeight() / 2;
-		if (this.getCost() > 0) {
-			++costResetCounter;
-			if (costResetCounter >= 60) {
-				this.setCost(0);
-				costResetCounter = 0;
-			}
-		}
-		// Y = a(1 - r)x
 		double x = (TrinketsConfig.CLIENT.MPBar.X);
 		double y = (TrinketsConfig.CLIENT.MPBar.Y);
 		int scaleF = event.getResolution().getScaleFactor();
 		int xPos = (int) (w * x);
-		//		System.out.println(h * scaleF);
-		//		int nH = (h * scaleF);
-		//		double HeightPer = (nH * 100) / nH;
-		//		System.out.println(HeightPer);
-		//		float perY = ((y * 100) / nH) * 0.01F;
-		//		float perY2 = nH * (perY * 0.01F);
-		//		(this.getDefaultHeight() * (this.getSize() * 0.01F));
-		//		 ((y * 100) / (h * scaleF))
-		//		System.out.println(((yPtest * 100) / yPtest));
-		//		System.out.println(nH * perY);
-		int yPos = (int) (h * y);//(int) (h * perY);
-		//		System.out.println(((y * 100) / yPtest));
-		//		int m = (int) (((int) (mana * barWidth) / maxMana) * 1);
-		//		System.out.println(yPos + " " + nH + " " + perY);
+		int yPos = (int) (h * y);
 		GlStateManager.pushMatrix();
 		manaGui.renderManaGui(MathHelper.clamp(xPos, 0, w), MathHelper.clamp(yPos, 0, h), updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
 		GlStateManager.popMatrix();

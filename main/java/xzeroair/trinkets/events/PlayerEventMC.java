@@ -2,9 +2,7 @@ package xzeroair.trinkets.events;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -16,7 +14,10 @@ import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.trinkets.TrinketTeddyBear;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.PotionHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper.PotionHolder;
 
 public class PlayerEventMC {
 
@@ -84,9 +85,37 @@ public class PlayerEventMC {
 			if (((player.getHeldItemMainhand().getItem() instanceof TrinketTeddyBear) && player.getHeldItemOffhand().isEmpty()) ||
 					((player.getHeldItemOffhand().getItem() instanceof TrinketTeddyBear) && player.getHeldItemMainhand().isEmpty()) ||
 					(player.getHeldItemMainhand().isEmpty() && player.getHeldItemOffhand().isEmpty() && TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketTeddyBear))) {
-				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 300, 0, false, false));
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 3600, 2, false, false));
-				player.addPotionEffect(new PotionEffect(MobEffects.LUCK, 600, 0, false, false));
+				String[] config = TrinketsConfig.SERVER.Items.TEDDY_BEAR.buffs;
+				int amount = TrinketsConfig.SERVER.Items.TEDDY_BEAR.randomBuff;
+				if (amount > 0) {
+					String potID = "";
+					for (int i = 0; i < amount; i++) {
+						int potRand = Reference.random.nextInt(config.length);
+						potID += config[potRand] + ",";
+					}
+					if (!potID.isEmpty()) {
+						String[] pots = potID.split(",");
+						for (String p : pots) {
+							if (!p.isEmpty()) {
+								PotionHolder potion = PotionHelper.getPotionHolder(p);
+								if (!player.world.isRemote) {
+									if (!player.isPotionActive(potion.getPotion())) {
+										player.addPotionEffect(potion.getPotionEffect());
+									} else {
+										player.getActivePotionEffect(potion.getPotion()).combine(potion.getPotionEffect());
+									}
+								}
+							}
+						}
+					}
+				} else {
+					for (String potID : config) {
+						PotionHolder potion = PotionHelper.getPotionHolder(potID);
+						if (potion.getPotion() != null) {
+							player.addPotionEffect(potion.getPotionEffect());
+						}
+					}
+				}
 			}
 		}
 	}

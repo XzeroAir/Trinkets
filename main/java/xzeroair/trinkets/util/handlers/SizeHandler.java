@@ -37,7 +37,7 @@ public class SizeHandler {
 		float Wclamp = 0.252F;
 		float Hclamp = 0.45F;
 		if (entity instanceof EntityPlayer) {
-			Wclamp = 0.252f;
+			Wclamp = 0.3f;
 			Hclamp = 0.45f;
 		} else {
 			Wclamp = 0.3f;

@@ -80,30 +80,37 @@ public class LycanitesCompat {
 	}
 
 	public static void removeLeech(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, leech);
 	}
 
 	public static void removeSwiftSwimming(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, swiftswimming);
 	}
 
 	public static void removeFallResist(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, fallresist);
 	}
 
 	public static void removeRejuvenation(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, rejuvenation);
 	}
 
 	public static void removeImmunization(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, immunization);
 	}
 
 	public static void removeCleansed(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, cleansed);
 	}
 
 	public static void removeRepulsion(EntityLivingBase entity) {
+		// Good Effect
 		removeEffect(entity, repulsion);
 	}
 
@@ -139,7 +146,21 @@ public class LycanitesCompat {
 		//				return;
 		//			}
 		//			try {
+		//				ExtendedPlayer cap = ExtendedPlayer.getForPlayer((EntityPlayer) entity);
 		//				int spirit = ExtendedPlayer.getForPlayer((EntityPlayer) entity).summonFocus;
+		//				if (spirit < cap.summonFocusMax) {
+		//					System.out.println(spirit);
+		//					EntityProperties prop = Capabilities.getEntityRace(entity);
+		//					if (prop.getMagic().spendMana(1f)) {
+		//						if ((cap.summonFocus + 25) < cap.summonFocusMax) {
+		//							cap.summonFocus = cap.summonFocus + 25;
+		//						} else {
+		//							cap.summonFocus = cap.summonFocusMax;
+		//						}
+		//					}
+		//				}
+		//				//TODO Lycanite Thing Shiv Requested
+		//
 		//			} catch (Exception e) {
 		//				e.printStackTrace();
 		//			}

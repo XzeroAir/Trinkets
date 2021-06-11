@@ -32,7 +32,11 @@ public class VipStatus {
 	public void onUpdate() {
 		if ((checkStatus != true)) {
 			if (user == null) {
-				user = VIPHandler.Vips.get(player.getUniqueID().toString().replaceAll("-", ""));
+				if ((VIPHandler.Vips != null) && !VIPHandler.Vips.isEmpty()) {
+					if ((player != null) && (player.getUniqueID() != null)) {
+						user = VIPHandler.Vips.get(player.getUniqueID().toString().replaceAll("-", ""));
+					}
+				}
 			}
 			if (user != null) {
 				if (!user.getGroups().isEmpty()) {

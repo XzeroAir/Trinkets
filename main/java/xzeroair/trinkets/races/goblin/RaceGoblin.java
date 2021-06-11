@@ -35,7 +35,6 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.goblin.config.GoblinConfig;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.handlers.ClimbHandler;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public class RaceGoblin extends EntityRacePropertiesHandler {
 
@@ -45,7 +44,6 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 
 	public RaceGoblin(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.goblin);
-		color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
 		climbing = new ClimbHandler(e, e.world);
 	}
 
@@ -59,7 +57,7 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	@Override
 	public void whileTransformed() {
 		if (entity instanceof EntityPlayer) { // Start Player Effects
-			EntityPlayer player = (EntityPlayer) entity;
+			//			EntityPlayer player = (EntityPlayer) entity;
 
 		} else { // End player effects
 
@@ -109,7 +107,6 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	}
 
 	public void MountWolf(EntityWolf wolf) {
-		//TODO FIx this, It's taking MP when Wolf is untamed because of how I have the spend mana set up
 		if (!wolf.isTamed() || entity.isSneaking() || (magic.spendMana(magic.getMaxMana() * 0.6F) == false)) {
 			return;
 		}
@@ -164,15 +161,8 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || (!properties.showTraits())) {
+		if (!TrinketsConfig.CLIENT.rendering || !properties.showTraits()) {
 			return;
-		}
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
 		}
 		GlStateManager.pushMatrix();
 		if (entity.isSneaking()) {
@@ -186,7 +176,7 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), properties.getTraitOpacity());
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

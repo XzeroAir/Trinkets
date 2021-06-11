@@ -1,5 +1,9 @@
 package xzeroair.trinkets.items.trinkets;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,13 +18,13 @@ import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketStatusEffect;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Claw;
 import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
-import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
-import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
-public class TrinketFaelisClaws extends AccessoryBase implements IsModelLoaded, IAccessoryInterface {
+public class TrinketFaelisClaws extends AccessoryBase {
 
+	public static final Claw clientConfig = TrinketsConfig.CLIENT.items.FAELIS_CLAW;
 	public static final ConfigFaelisClaw serverConfig = TrinketsConfig.SERVER.Items.FAELIS_CLAW;
 
 	public TrinketFaelisClaws(String name) {
@@ -74,6 +78,43 @@ public class TrinketFaelisClaws extends AccessoryBase implements IsModelLoaded, 
 	@Override
 	public void registerModels() {
 		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+	}
+
+	@Override
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isTrinket) {
+		if (!clientConfig.doRender) {
+			return;
+		}
+		float offsetX = -0.66F;
+		float offsetY = -0.031F;
+		float offsetZ = 0.11F;
+		float bS = 4f;
+		GlStateManager.pushMatrix();
+		if (player.isSneaking()) {
+			GlStateManager.translate(0F, 0.2F, 0F);
+		}
+		renderer.getMainModel().bipedLeftArm.postRender(scale);
+		GlStateManager.rotate(90F, 1F, 0F, 0F);
+		GlStateManager.rotate(90F, 0F, 1F, 0F);
+		GlStateManager.rotate(180F, 0F, 0F, 1F);
+		GlStateManager.translate(offsetX, -offsetY, offsetZ);
+		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
+		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
+		GlStateManager.popMatrix();
+
+		GlStateManager.pushMatrix();
+		if (player.isSneaking()) {
+			GlStateManager.translate(0F, 0.2F, 0F);
+		}
+		renderer.getMainModel().bipedRightArm.postRender(scale);
+		GlStateManager.rotate(90F, 1F, 0F, 0F);
+		GlStateManager.rotate(90F, 0F, 1F, 0F);
+		GlStateManager.rotate(180F, 0F, 0F, 1F);
+		GlStateManager.translate(offsetX, -offsetY, offsetZ);
+		GlStateManager.translate(0, 0, -0.22F);
+		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
+		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
+		GlStateManager.popMatrix();
 	}
 
 }

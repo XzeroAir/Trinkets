@@ -12,7 +12,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -23,6 +22,7 @@ import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
 import xzeroair.trinkets.util.handlers.ItemEffectHandler;
+import xzeroair.trinkets.util.handlers.TickHandler;
 
 public class EffectsPolarizedStone {
 
@@ -154,18 +154,12 @@ public class EffectsPolarizedStone {
 						EntityProperties prop = Capabilities.getEntityRace(entity);
 						if (prop != null) {
 							float exhaustRate = serverConfig.exhaust_rate;
+							TickHandler counter = cap.getCounter("repel.ticks", serverConfig.exhaust_ticks, false);
 							if (exhaustRate <= prop.getMagic().getMana()) {
-								if ((entity.ticksExisted % serverConfig.exhaust_ticks) == 0) {
+								if (counter.Tick()) {
 									prop.getMagic().spendMana(exhaustRate);
-									//									((EntityPlayer) entity).getFoodStats().addExhaustion(serverConfig.exhaust_rate);
 								}
 							} else {
-								if (entity instanceof EntityPlayer) {
-									if ((entity.ticksExisted % 60) == 0) {
-										String Message = "No MP";
-										((EntityPlayer) entity).sendStatusMessage(new TextComponentString(Message), true);
-									}
-								}
 								return;
 							}
 						}

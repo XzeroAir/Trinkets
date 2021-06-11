@@ -1,7 +1,6 @@
 package xzeroair.trinkets.races.dragon;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -40,8 +39,6 @@ import xzeroair.trinkets.races.dragon.config.DragonConfig;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
-import xzeroair.trinkets.util.handlers.ClimbHandler;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
 import xzeroair.trinkets.util.helpers.OreTrackingHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
@@ -49,7 +46,6 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 public class RaceDragon extends EntityRacePropertiesHandler {
 
 	public static final DragonConfig serverConfig = TrinketsConfig.SERVER.races.dragon;
-	private ClimbHandler climbing;
 
 	public RaceDragon(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.dragon);
@@ -70,6 +66,9 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			if (!player.isCreative() && (serverConfig.creative_flight == true)) {
 				if ((player.capabilities.allowFlying != true)) {
 					player.capabilities.allowFlying = true;
+					if (serverConfig.creative_flight_speed && player.world.isRemote) {
+						player.capabilities.setFlySpeed((float) serverConfig.flight_speed);
+					}
 				}
 			}
 		}
@@ -82,6 +81,11 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 				if ((player.capabilities.allowFlying == true)) {
 					player.capabilities.isFlying = false;
 					player.capabilities.allowFlying = false;
+					if (serverConfig.creative_flight_speed && player.world.isRemote) {
+						if (player.capabilities.getFlySpeed() != 0.05F) {
+							player.capabilities.setFlySpeed(0.05f);
+						}
+					}
 				}
 			}
 		}
@@ -111,20 +115,21 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			if (NightVision) {
 				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 210, 0, false, false));
 				if (player.isPotionActive(MobEffects.NIGHT_VISION)) {
-					player.getActivePotionEffect(MobEffects.NIGHT_VISION).setPotionDurationMax(true);
+					if (entity.world.isRemote) {
+						player.getActivePotionEffect(MobEffects.NIGHT_VISION).setPotionDurationMax(true);
+					}
 				}
 			} else {
 				if (player.isPotionActive(MobEffects.NIGHT_VISION)) {
-					final PotionEffect potion = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-					if ((potion.getDuration() > 0) && (potion.getDuration() < 220)) {
-						player.removePotionEffect(MobEffects.NIGHT_VISION);
-					}
+					player.removePotionEffect(MobEffects.NIGHT_VISION);
 				}
 			}
 			PotionEffect fireResist = new PotionEffect(MobEffects.FIRE_RESISTANCE, 150, 0, false, false);
 			player.addPotionEffect(fireResist);
 			if (player.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
-				player.getActivePotionEffect(MobEffects.FIRE_RESISTANCE).setPotionDurationMax(true);
+				if (entity.world.isRemote) {
+					player.getActivePotionEffect(MobEffects.FIRE_RESISTANCE).setPotionDurationMax(true);
+				}
 			}
 			if (player.isBurning()) {
 				player.extinguish();
@@ -150,7 +155,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			if (!properties.getMagic().spendMana(serverConfig.breath_cost)) {
 				return;
 			}
-			int bcolor = color == null ? 12582912 : color.getDecimal();
+			int bcolor = properties.getTraitColorHandler().getDecimal();
 			EntityLivingBase entity = this.entity;
 			World world = entity.world;
 			float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
@@ -163,10 +168,10 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			//			d2 = d2 + (Reference.random.nextGaussian() * 0.007499999832361937D * inaccuracy);
 			//			d3 = d3 + (Reference.random.nextGaussian() * 0.007499999832361937D * inaccuracy);
 			//			d4 = d4 + (Reference.random.nextGaussian() * 0.007499999832361937D * inaccuracy);
-			MovingThrownProjectile breath = new MovingThrownProjectile(world, entity, d2, d3, d4, bcolor);
-			breath.setPosition(headPosX, headPosY, headPosZ);
 			world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
 			if (!world.isRemote) {
+				MovingThrownProjectile breath = new MovingThrownProjectile(world, entity, d2, d3, d4, bcolor);
+				breath.setPosition(headPosX, headPosY, headPosZ);
 				breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 1.0F);
 				world.spawnEntity(breath.setColor(bcolor));
 			}
@@ -305,26 +310,17 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings.png");
 	int tick = 0;
 	float armSwing = 0;
+	int wingFrames = 0;
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		if (!TrinketsConfig.CLIENT.rendering || (!properties.showTraits())) {
-			//		if (true) {
 			return;
 		}
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
-		}
 		GlStateManager.pushMatrix();
-		//		if (isFake) {
-		//		} else {
 		if (properties.showTraits()) {
-			final float flap = MathHelper.cos((limbSwing * 0.6662F) + (float) Math.PI);
+			float flap = MathHelper.cos((limbSwing * 0.6662F) + (float) Math.PI);
 			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 			if (entity.isSneaking()) {
 				GlStateManager.translate(0F, 0.2F, 0F);
@@ -340,33 +336,30 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 				GlStateManager.translate(-0.4F, -1F, 0F);
 			}
 
-			final double[][] frames = new double[][] {
-					{ 40, 30, -14.65, -5 },
-					//					{ 40, 30, -14.65, -5 },
-					{ 30, 30, -14.65, -5 },
-					{ 30, 30, -14.65, -5 },
-					{ 40, 30, -14.65, -5 },
-					{ 40, 30, -14.65, -5 },
-					{ 60, 30, -14.65, -5 },
-					{ 60, 30, -14.65, -5 },
-					//					{ 60, -20, -15.3, 3.4 },
-					{ 60, -20, -15.3, 3.4 },
-					//					{ 40, -20, -15.3, 3.4 },
-					{ 40, -20, -15.3, 3.4 },
-					//					{ 40, -40, -13.6, -6.4 },
-					{ 40, -40, -13.6, -6.4 }
-			};
-			int v1 = frames.length - 1;
+			int base = entity.onGround ? 40 : 50;
+			int wing = 20;
+			int tip = -20;
+			int rotX = 0;
+			//			int rotY = 0;
+			int rotZ = -10;
+
+			double[][] frames = new double[111][10];
+
+			wingFrames = frames.length;
+
+			int v1 = frames.length;
 			int v2 = v1 * 10;
 
 			int angleTick = (tick * v1) / v2;
-			//			angleTick = 3;
+			this.getWingFrames(angleTick, base, wing, tip, rotX, rotZ, frames);
+			//			angleTick = 0;//v1 - 0;
+			//			angleTick = v1 - 0;
 			if (angleTick >= (frames.length)) {
 				angleTick = frames.length - 1;
 			}
 
-			double x = 10;
-			double y = -16;
+			double x = -12;
+			double y = -20;
 			double z = 0;
 			int width = 8;
 			int height = 32;
@@ -375,41 +368,57 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			int texWidth = 64;
 			int texHeight = 64;
 
-			int outerwidth = 32;
-			int outerheight = 32;
-			int outeruWidth = 48;
-			int outervHeight = 64;
-			int outertexWidth = 64;
-			int outertexHeight = 64;
-			GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), properties.getTraitOpacity());
+			int innerWidth = 16;
+			int innerHeight = 32;
+			int innerUWidth = 32;
+			int innerVHeight = 64;
+			int innerTexWidth = 64;
+			int innerTexHeight = 64;
+
+			int outerwidth = 8;
+			int outHeight = 32;
+			int outerUWidth = 16;
+			int outerVHeight = 64;
+			int outerTexWidth = 64;
+			int outerTexHeight = 64;
+			GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
 			GlStateManager.pushMatrix();
 			GlStateManager.disableLighting();
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-			//			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-			//			GlStateManager.disableCull();
-			//			GlStateManager.enableAlpha();
 
 			GlStateManager.scale(0.8, 0.8, 0.8);
+
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate((float) frames[angleTick][0], 0, 1, 0);
-			DrawingHelper.Draw(-x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
+			//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
+			//			GlStateManager.rotate((float) -frames[angleTick][3], 1, 0, 0);
+			DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
+			GlStateManager.translate(x, y, z);
 			GlStateManager.rotate((float) frames[angleTick][1], 0, 1, 0);
-			GlStateManager.translate(frames[angleTick][2], 0, frames[angleTick][3]);
-			DrawingHelper.Draw(-(x + uWidth), y, z, 0, 0, outeruWidth, outervHeight, outerwidth, outerheight, outertexWidth, outertexHeight);
-			GlStateManager.rotate((float) -(frames[angleTick][0] + frames[angleTick][1]), 0, 1, 0);
-			GlStateManager.translate(-frames[angleTick][2], 0, -frames[angleTick][3]);
+			GlStateManager.translate(-x, -y, -z);
+			DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight);
+			GlStateManager.translate(x - innerWidth, y, z);
+			GlStateManager.rotate((float) (frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
+			GlStateManager.translate(-(x - innerWidth), -y, -z);
+			DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight);
 			GlStateManager.popMatrix();
 
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate((float) -frames[angleTick][0], 0, 1, 0);
-			DrawingHelper.Draw(-x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
+			//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
+			//			GlStateManager.rotate((float) frames[angleTick][3], 1, 0, 0);
+			DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
+			GlStateManager.translate(x, y, z);
 			GlStateManager.rotate((float) -frames[angleTick][1], 0, 1, 0);
-			GlStateManager.translate(frames[angleTick][2], 0, -frames[angleTick][3]);
-			DrawingHelper.Draw(-(x + uWidth), y, z, 0, 0, outeruWidth, outervHeight, outerwidth, outerheight, outertexWidth, outertexHeight);
+			GlStateManager.translate(-x, -y, -z);
+			DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight);
+			GlStateManager.translate(x - innerWidth, y, z);
+			GlStateManager.rotate((float) -(frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
+			GlStateManager.translate(-(x - innerWidth), -y, -z);
+			DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight);
 			GlStateManager.popMatrix();
-			//			GlStateManager.enableCull();
-			//			GlStateManager.disableAlpha();
+
 			GlStateManager.enableLighting();
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();
@@ -421,9 +430,159 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			}
 			armSwing = flap;
 		}
-		//		}
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.popMatrix();
+	}
+
+	private double[][] getWingFrames(int tickPos, double base, double wing, double tip, double rotX, double rotZ, double[][] frames) {
+		frames[0] = new double[] { base, wing, tip, rotX, rotZ };
+		int position = 1;
+		int s = this.frames(15);
+		for (int i1 = 0; i1 < s; i1++) {
+			frames[position][0] = base - i1;
+			frames[position][1] = wing - i1;
+			frames[position][2] = tip;
+			frames[position][3] = rotX;
+			frames[position][4] = rotZ;
+			position++;
+		}
+		int pos1 = position;
+		int s1 = this.frames(10);
+		for (int i1 = 0; i1 < s1; i1++) {
+			frames[position][0] = frames[pos1 - 1][0] - i1;
+			frames[position][1] = frames[pos1 - 1][1] - i1;
+			frames[position][2] = frames[pos1 - 1][2];
+			frames[position][3] = frames[pos1 - 1][3];
+			frames[position][4] = frames[pos1 - 1][4];
+			position++;
+		}
+		int pos2 = position;
+		int s2 = this.frames(10);
+		for (int i1 = 0; i1 < s2; i1++) {
+			frames[position][0] = frames[pos2 - 1][0];
+			frames[position][1] = frames[pos2 - 1][1] + i1;
+			frames[position][2] = frames[pos2 - 1][2];
+			frames[position][3] = frames[pos2 - 1][3] + (i1);
+			frames[position][4] = frames[pos2 - 1][4] - (i1);
+			position++;
+		}
+		int pos3 = position;
+		int s3 = this.frames(10);
+		for (int i1 = 0; i1 < s3; i1++) {
+			frames[position][0] = frames[pos3 - 1][0] + i1;
+			frames[position][1] = frames[pos3 - 1][1] + i1;
+			frames[position][2] = frames[pos3 - 1][2];
+			frames[position][3] = frames[pos3 - 1][3] + (i1);
+			frames[position][4] = frames[pos3 - 1][4];
+			position++;
+		}
+		int pos4 = position;
+		int s4 = this.frames(10);
+		for (int i1 = 0; i1 < s4; i1++) {
+			frames[position][0] = frames[pos4 - 1][0] + i1;
+			frames[position][1] = frames[pos4 - 1][1] + i1;
+			frames[position][2] = frames[pos4 - 1][2];
+			frames[position][3] = frames[pos4 - 1][3] + i1;
+			frames[position][4] = frames[pos4 - 1][4];
+			position++;
+		}
+		int pos5 = position;
+		int s5 = this.frames(10);
+		for (int i1 = 0; i1 < s5; i1++) {
+			frames[position][0] = frames[pos5 - 1][0] + i1;
+			frames[position][1] = frames[pos5 - 1][1] + i1;
+			frames[position][2] = frames[pos5 - 1][2];
+			frames[position][3] = frames[pos5 - 1][3];
+			frames[position][4] = frames[pos5 - 1][4];
+			position++;
+		}
+		int pos6 = position;
+		int s6 = this.frames(10);
+		for (int i1 = 0; i1 < s6; i1++) {
+			frames[position][0] = frames[pos6 - 1][0];
+			frames[position][1] = frames[pos6 - 1][1] + i1;
+			frames[position][2] = frames[pos6 - 1][2];
+			frames[position][3] = frames[pos6 - 1][3];
+			frames[position][4] = frames[pos6 - 1][4];
+			position++;
+		}
+		int pos7 = position;
+		int s7 = this.frames(10);
+		for (int i1 = 0; i1 < s7; i1++) {
+			frames[position][0] = frames[pos7 - 1][0];
+			frames[position][1] = frames[pos7 - 1][1] + i1;
+			frames[position][2] = frames[pos7 - 1][2] - i1;
+			frames[position][3] = frames[pos7 - 1][3];
+			frames[position][4] = frames[pos7 - 1][4];
+			position++;
+		}
+		int pos8 = position;
+		int s8 = this.frames(10);
+		for (int i1 = 0; i1 < s8; i1++) {
+			frames[position][0] = frames[pos8 - 1][0];
+			frames[position][1] = frames[pos8 - 1][1] - i1;
+			frames[position][2] = frames[pos8 - 1][2];
+			frames[position][3] = frames[pos8 - 1][3] - (i1);
+			frames[position][4] = frames[pos8 - 1][4] + (i1);
+			position++;
+		}
+		int pos9 = position;
+		int s9 = this.frames(15);
+		for (int i1 = 0; i1 < s9; i1++) {
+			frames[position][0] = frames[pos9 - 1][0];
+			frames[position][1] = frames[pos9 - 1][1] - i1;
+			frames[position][2] = frames[pos9 - 1][2] - i1;
+			frames[position][3] = frames[pos9 - 1][3] - (i1);
+			frames[position][4] = frames[pos9 - 1][4];
+			position++;
+		}
+		//		int pos10 = position;
+		//		int s10 = this.frames(10);
+		//		for (int i1 = 0; i1 < s10; i1++) {
+		//			frames[position][0] = frames[pos10 - 1][0] + (i1 / 2);
+		//			frames[position][1] = frames[pos10 - 1][1] + (i1 / 2);
+		//			frames[position][2] = frames[pos10 - 1][2] - i1;
+		//			frames[position][3] = frames[pos10 - 1][3];
+		//			frames[position][4] = frames[pos10 - 1][4];
+		//			position++;
+		//		}
+		//		System.out.println(wingFrames);
+		//		int posL = position;
+		//		int sL = this.frames(1000);
+		//		for (int i1 = 0; i1 < sL; i1++) {
+		//			frames[position][0] = frames[posL - 1][0];
+		//			frames[position][1] = frames[posL - 1][1];
+		//			frames[position][2] = frames[posL - 1][2];
+		//			frames[position][3] = frames[posL - 1][3];
+		//			frames[position][4] = frames[posL - 1][4];
+		//			position++;
+		//		}
+		return frames;
+	}
+
+	private double[][] section(int length, int position, int savedPos, int incBase, int incWing, int incTip, int incRotX, int incRotY, double[][] frames) {
+		int sL = this.frames(length);
+		for (int i1 = 0; i1 < sL; i1++) {
+			frames[position][0] = frames[savedPos - 1][0] + incBase;
+			frames[position][1] = frames[savedPos - 1][1] + incWing;
+			frames[position][2] = frames[savedPos - 1][2] + incTip;
+			frames[position][3] = frames[savedPos - 1][3] + incRotX;
+			frames[position][4] = frames[savedPos - 1][4] + incRotY;
+		}
+		return frames;
+	}
+
+	private int frames(int amount) {
+		if ((wingFrames - amount) >= 0) {
+			wingFrames -= amount;
+			return amount;
+		} else {
+			if (wingFrames > 0) {
+				return wingFrames;
+			} else {
+				return 0;
+			}
+		}
 	}
 
 	@Override

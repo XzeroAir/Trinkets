@@ -3,7 +3,6 @@ package xzeroair.trinkets.proxy;
 import java.util.Map;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.Particle;
@@ -63,7 +62,9 @@ public class ClientProxy extends CommonProxy {
 	public void spawnParticle(int effectID, World world, double x, double y, double z, double motX, double motY, double motZ, int color, float alpha) {
 		Particle effect = null;
 		if (effectID == 3) {
-			effect = new ParticleFireBreath(world, x, y, z, motX, motY, motZ, color, 0.25F);//, color, alpha);
+			effect = new ParticleFireBreath(world, x, y, z, 0.0D, 0.0D, 0.0D, color, alpha);//, color, alpha);
+			effect.setParticleTextureIndex((int) alpha);
+			//			effect = new ParticleFireBreath(world, x, y, z, motX, motY, motZ, color, 0.25F);//, color, alpha);
 		} else {
 
 		}

@@ -25,6 +25,28 @@ public class FaelisConfig {
 	@LangKey(PREFIX + ".armor.penalties.amount")
 	public double penalty_amount = 0.0250;
 
+	@Config.Comment("Should Faelis get a buff when drinking milk")
+	@Name("05. Milk Buff")
+	@LangKey(PREFIX + ".milk.buff")
+	public boolean Invigorated = true;
+
+	@Config.Comment("How long the buff should last")
+	@Name("06. Buff Duration")
+	@LangKey(PREFIX + ".milk.buff.duration")
+	public int Invigorated_Duration = 600;
+
+	@Config.Comment("Should the Faelis be Immune to the armor weight penalty while the Buff is Active")
+	@Name("07. Buff Immunity")
+	@LangKey(PREFIX + ".milk.buff.immunity")
+	public boolean InvigoratedPenalty = true;
+
+	@Config.Comment("List of Items that count as Milk")
+	@Name("08. Milk")
+	@LangKey(PREFIX + ".milk.list")
+	public String[] milk = new String[] {
+			"minecraft:milk_bucket"
+	};
+
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")
 	private Compatability compat = new Compatability();
@@ -75,9 +97,9 @@ public class FaelisConfig {
 	private final boolean	jump = true;
 	private final double	jumpAmount = 0.6;
 	private final int		jumpOperation = 2;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 2;
+	private final boolean	stepHeight = true;
+	private final double	stepHeightAmount = 0.6;
+	private final int		stepHeightOperation = 0;
 
 
 	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})

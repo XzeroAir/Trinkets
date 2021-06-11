@@ -34,6 +34,7 @@ public class RenderThrownProjectile extends Render<MovingThrownProjectile> {
 		EntityPlayer player = net.minecraft.client.Minecraft.getMinecraft().player;
 		for (Entity e : player.world.getLoadedEntityList()) {
 			if (e instanceof MovingThrownProjectile) {
+
 				Minecraft.getMinecraft().getRenderManager().renderEntityStatic(e, event.getPartialTicks(), false);
 			}
 		}

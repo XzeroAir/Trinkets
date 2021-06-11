@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.mana.SyncManaCostToHudPacket;
 import xzeroair.trinkets.network.mana.SyncManaHudPacket;
@@ -96,6 +97,10 @@ public class MagicStats {
 			spend = true;
 		} else {
 			spend = false;
+			if ((entity instanceof EntityPlayer) && entity.world.isRemote) {
+				String Message = "No MP";
+				((EntityPlayer) entity).sendStatusMessage(new TextComponentString(Message), true);
+			}
 		}
 
 		if (spend == true) {
@@ -130,6 +135,8 @@ public class MagicStats {
 
 	public void setBonusMana(int bonus) {
 		bonusMana = bonus;
+		this.sendManaToPlayer(entity);
+		this.syncToManaHud();
 	}
 
 	public void setManaRegenTimeout() {

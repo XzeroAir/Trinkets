@@ -1,7 +1,5 @@
 package xzeroair.trinkets.items.foods;
 
-import java.util.Random;
-
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -16,8 +14,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.items.base.FoodBase;
 
 public class Mana_Candy extends FoodBase {
@@ -35,18 +31,18 @@ public class Mana_Candy extends FoodBase {
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if (entityLiving instanceof EntityPlayer) {
-			EntityProperties prop = Capabilities.getEntityRace(entityLiving);
-			if (prop != null) {
-				Random rand = new Random();
-				int chance = rand.nextInt(10);
-				float manaAmount = 25f;
-				if (chance == 0) {
-					manaAmount = 50f;
-				}
-				prop.getMagic().addMana(manaAmount);
-			}
-		}
+		//		if (entityLiving instanceof EntityPlayer) {
+		//			EntityProperties prop = Capabilities.getEntityRace(entityLiving);
+		//			if (prop != null) {
+		//				Random rand = new Random();
+		//				int chance = rand.nextInt(10);
+		//				float manaAmount = 25f;
+		//				if (chance == 0) {
+		//					manaAmount = 50f;
+		//				}
+		//				prop.getMagic().addMana(manaAmount);
+		//			}
+		//		}
 		this.setCooldown(20);
 		super.onItemUseFinish(stack, worldIn, entityLiving);
 		return stack;

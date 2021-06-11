@@ -15,10 +15,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
@@ -26,6 +28,7 @@ import xzeroair.trinkets.items.effects.EffectsDamageShield;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Shield;
 import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
+import xzeroair.trinkets.util.handlers.TickHandler;
 
 public class TrinketDamageShield extends AccessoryBase {
 
@@ -39,29 +42,47 @@ public class TrinketDamageShield extends AccessoryBase {
 		ModItems.trinkets.ITEMS.add(this);
 	}
 
-	protected boolean hasResist = false;
-
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		if (!player.isPotionActive(MobEffects.RESISTANCE)) {
-			player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 30, serverConfig.resistance_level, false, false));
-			hasResist = false;
-		}
-		if (player.isPotionActive(MobEffects.RESISTANCE)) {
-			final int dur = player.getActivePotionEffect(MobEffects.RESISTANCE).getDuration();
-			final int amp = player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier();
-			if ((dur <= 30) && !(amp > serverConfig.resistance_level) && (hasResist == false)) {
-				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 30, serverConfig.resistance_level, false, false));
-				hasResist = false;
-			}
-			//TODO try and get this to stack properly
-			if (serverConfig.resistance_stacks) {
-				if (((dur > 30) && (amp < 3)) && (hasResist == false)) {
-					player.getActivePotionEffect(MobEffects.RESISTANCE).combine(new PotionEffect(MobEffects.RESISTANCE, dur + 1, amp + 1, false, false));
-					hasResist = true;
+		int duration = 30;
+		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+		if (cap != null) {
+			if (!player.isPotionActive(MobEffects.RESISTANCE)) {
+				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, serverConfig.resistance_level, false, false));
+				cap.removeCounter("CheckResist");
+			} else {
+				final int dur = player.getActivePotionEffect(MobEffects.RESISTANCE).getDuration();
+				final int amp = player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier();
+				TickHandler counter = cap.getCounter("CheckResist");
+				boolean trigger = counter.Tick();
+				if (trigger) {
+					cap.removeCounter("CheckResist");
+				}
+				if ((dur > duration) && serverConfig.resistance_stacks) {
+					//Assume it was given by something else
+					if ((amp <= serverConfig.resistance_level)) {
+						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, amp + 1, false, false));
+					} else {
+						if (trigger && ((amp + 1) < 3)) {
+							player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, dur, amp + 1, false, false));
+						}
+					}
+				} else {
+					if ((amp <= serverConfig.resistance_level)) {
+						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, serverConfig.resistance_level, false, false));
+					}
 				}
 			}
+		}
+	}
+
+	@Override
+	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
+		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+		if ((cap != null) && event.getPotionEffect().getPotion().equals(MobEffects.RESISTANCE)) {
+			TickHandler counter = cap.getCounter("CheckResist");
+			counter.setLength(event.getPotionEffect().getDuration() - 1).setCountdown(true);
 		}
 	}
 
@@ -84,7 +105,6 @@ public class TrinketDamageShield extends AccessoryBase {
 			if (player.isPotionActive(MobEffects.RESISTANCE)) {
 				player.removeActivePotionEffect(MobEffects.RESISTANCE);
 				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 10, serverConfig.resistance_level, false, false));
-				hasResist = false;
 			}
 		}
 	}

@@ -3,7 +3,6 @@ package xzeroair.trinkets.races.faelis;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -21,9 +20,9 @@ import xzeroair.trinkets.client.model.FaelisEars;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
+import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public class RaceFaelis extends EntityRacePropertiesHandler {
 
@@ -31,7 +30,6 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 
 	public RaceFaelis(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.faelis);
-		color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
 	}
 
 	@Override
@@ -61,9 +59,14 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 				amount -= weight;
 			}
 
-			if (amount > 0) {
+			if (amount != 0) {
 				GenericAttribute armor = new GenericAttribute(entity, amount, UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), 2, SharedMonsterAttributes.MOVEMENT_SPEED);
-				armor.addModifier();
+				if (properties.getStatusHandler().getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
+					amount = 0;
+					armor.removeModifier();
+				} else {
+					armor.addModifier();
+				}
 			}
 		}
 	}
@@ -90,15 +93,8 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || (!properties.isFake() && !properties.showTraits())) {
+		if (!TrinketsConfig.CLIENT.rendering || !properties.showTraits()) {
 			return;
-		}
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
 		}
 		GlStateManager.pushMatrix();
 		if (entity.isSneaking()) {
@@ -112,7 +108,7 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), properties.getTraitOpacity());
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

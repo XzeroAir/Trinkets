@@ -7,14 +7,15 @@ public enum StatusEffectsEnum {
 	stun		(		nextID(), "Stun"		, 100	),
 	paralysis	(		nextID(), "Paralysis"	, 100	),
 	bleed		(		nextID(), "Bleed"		, 100	),
+	Invigorated	(		nextID(), "Invigorated", 100	),
 	charm		(		nextID(), "Charm"		, 100	),
 	Rage		(		nextID(), "Rage"		, 100	),
-	Berserk		(		nextID(), "Berserk"		, 100	),
+	Berserk		(		nextID(), "Berserk"	, 100	),
 	Corrupted	(		nextID(), "Corrupted"	, 100	),
 	Infected	(		nextID(), "Infected"	, 100	),
-	Inspiration	(		nextID(), "Inspiration"	, 100	),
+	Inspiration	(		nextID(), "Inspiration", 100	),
 	Undead		(		nextID(), "Undead"		, 100	),
-	Incorporeal	(		nextID(), "Incorporeal"	, 100	)
+	Incorporeal	(		nextID(), "Incorporeal", 100	)
 	// Sun Blessed, Moon Walker, Lucky, Demonification, The Fallen
 	//TODO Don't do an Enum, Do something else
 	;

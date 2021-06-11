@@ -19,6 +19,20 @@ public class ConfigTeddyBear {
 	@LangKey(PREFIX + ".sleepbonus")
 	public boolean sleep_bonus = true;
 
+	@Config.Comment("Which Buffs to give")
+	@Name("02. Buffs")
+	@LangKey(PREFIX + ".sleepbonus.buff")
+	public String[] buffs = new String[] {
+			"minecraft:regeneration:300:0",
+			"minecraft:luck:600:0",
+			"minecraft:health_boost:3600:1"
+	};
+
+	@Config.Comment("If this value is greater then 0, instead of giving every buff in the list, it gives x random buffs")
+	@Name("03. Random Buffs")
+	@LangKey(PREFIX + ".sleepbonus.buff.random")
+	public int randomBuff = 0;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")

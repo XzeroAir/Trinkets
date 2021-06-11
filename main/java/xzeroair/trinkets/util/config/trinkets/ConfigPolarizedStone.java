@@ -47,7 +47,7 @@ public class ConfigPolarizedStone {
 	@Name("06. Mana Cost Rate")
 	@RangeInt(min = 0)
 	@LangKey(PREFIX + ".repel.exhaust.speed")
-	public float exhaust_ticks = 20;
+	public int exhaust_ticks = 20;
 
 	@Config.Comment("If Instant Pickup is Disabled, Polarized Stone's Push and pull speed. Default 0.1, 0.1 MIN, 1.0 MAX")
 	@Name("07. Polarized Stone Push and Pull Speed")

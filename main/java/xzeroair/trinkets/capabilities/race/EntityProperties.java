@@ -24,6 +24,7 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.human.RaceHuman;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
+import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.EyeHeightHandler;
 
 public class EntityProperties {
@@ -43,6 +44,7 @@ public class EntityProperties {
 	boolean traitShown = true;
 	String traitColor = "16777215";
 	float traitOpacity = 1F;
+	protected ColorHelper color;
 
 	boolean isFake = false;
 
@@ -61,6 +63,7 @@ public class EntityProperties {
 		magic = new MagicStats(e, this);
 		properties = new RaceHuman(e, this);
 		status = new StatusHandler(e, this);
+		color = new ColorHelper().setColor(this.getTraitColor()).setAlpha(this.getTraitOpacity());
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -71,6 +74,7 @@ public class EntityProperties {
 	private float stepHeightPrev = 0.6F;
 
 	public void onUpdate() {
+		color = color.setColor(this.getTraitColor()).setAlpha(this.getTraitOpacity());
 		if (!(entity instanceof EntityPlayer)) {
 			if (this.isLogin()) {
 				this.setDefaultHeight(entity.height);
@@ -113,7 +117,7 @@ public class EntityProperties {
 
 		EntityRace race = this.getEntityRace();
 		TransformationEvent.RaceChangedEvent rc = new RaceChangedEvent(entity, this, current, race);
-		if (!MinecraftForge.EVENT_BUS.post(rc) && rc.raceChanged()) {
+		if (!MinecraftForge.EVENT_BUS.post(rc) && !rc.raceChanged()) {
 			EntityRace newRace = rc.getNewRace();
 			if (!current.equals(newRace)) {
 				SizeAttribute artemisLib = new SizeAttribute(entity, 0, 0, 0);
@@ -147,8 +151,9 @@ public class EntityProperties {
 			this.sendInformationToAll();
 			sync = false;
 		}
+		//		magic.setMana(150);
 		//TODO Lycanite thing shivaxi requested
-		//LycanitesCompat.convertManaToSpirit(entity);
+		//		LycanitesCompat.convertManaToSpirit(entity);
 		keyPressed = -1;
 		auxPressed = -1;
 	}
@@ -289,6 +294,10 @@ public class EntityProperties {
 
 	public String getTraitColor() {
 		return traitColor;
+	}
+
+	public ColorHelper getTraitColorHandler() {
+		return color;
 	}
 
 	public void setTraitColor(String color) {

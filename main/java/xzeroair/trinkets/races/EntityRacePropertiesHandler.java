@@ -8,7 +8,6 @@ import xzeroair.trinkets.capabilities.race.MagicStats;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.handlers.RaceAttributeHandler;
 import xzeroair.trinkets.util.handlers.SizeHandler;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
@@ -27,8 +26,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	protected boolean MainAbility = false;
 	protected boolean SecondaryAbility = false;
 
-	protected ColorHelper color;
-
 	public EntityRacePropertiesHandler(@Nonnull EntityLivingBase e, EntityProperties properties, @Nonnull EntityRace race) {
 		entity = e;
 		this.race = race;
@@ -36,7 +33,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		magic = this.properties.getMagic();
 		attributes = new RaceAttributeHandler(e, race);
 		artemisSupport = this.getArtemisAttributeSize();
-		color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
 		firstUpdate = true;
 	}
 
@@ -57,13 +53,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	}
 
 	public void onTick() {
-		if (color == null) {
-			color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-		} else {
-			if (color.getDecimal() != color.setColor(properties.getTraitColor()).getDecimal()) {
-				color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
-			}
-		}
 		SizeHandler.setSize(entity, properties);
 		//		if (properties.isTransforming()) {
 		//			entity.moveForward = 0;

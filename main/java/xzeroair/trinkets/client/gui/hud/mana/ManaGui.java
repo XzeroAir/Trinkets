@@ -3,7 +3,6 @@ package xzeroair.trinkets.client.gui.hud.mana;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -18,12 +17,7 @@ import xzeroair.trinkets.util.TrinketsConfig;
 public class ManaGui extends Gui {
 
 	public static ResourceLocation background = null;
-
-	private static ResourceLocation manaH = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_horizontal.png");
-	private static ResourceLocation manaHAlt = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_horizontal_alt.png");
-	private static ResourceLocation manaHAlt2 = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_horizontal_alt2.png");
-	private static ResourceLocation manaV = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_vertical.png");
-	private static ResourceLocation manaVAlt = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_vertical_alt.png");
+	private static ResourceLocation manaBar = new ResourceLocation(Reference.RESOURCE_PREFIX + "textures/gui/mana_bar.png");
 
 	private final Minecraft mc;
 	private final Random rand = new Random();
@@ -34,85 +28,169 @@ public class ManaGui extends Gui {
 		this.mc = mc;
 	}
 
-	//hmmmm
 	public void renderManaGui(int x, int y, int tick, float mana, float maxMana, float cost) {
-		final EntityPlayerSP player = mc.player;
+		//		final EntityPlayerSP player = mc.player;
 		final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
 		if (TrinketsConfig.CLIENT.MPBar.mana_horizontal) {
-			int xOffset = 0;
-			int yOffset = 5;
-			int barWidth = 100;
-			int barHeight = 5;
-			int barCutoffWidth = 100;
-			int barCutoffHeight = 5;
-			int texWidth = 100;
-			int texHeight = 15;
-			this.drawImageHorizontal(x, y, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
-			int m = (int) (((int) (mana * barWidth) / maxMana) * 1);
-			int cutoff = barWidth - m;
-			this.drawImageHorizontal(x, y, 0, 5, m, barCutoffHeight, m, barHeight, texWidth, texHeight);
+			// Actual Size of the Bar
+			int barWidth = 104;
+			int barHeight = 14;
+
+			// Texture Section Size
+			int texWidth = 104;
+			int texHeight = 14;
+
+			// UV Wrapped Tex Size
+			int texUVWidth = 104;
+			int texUVHeight = 42;
+
+			int m = (int) ((mana * 100) / maxMana);//this.percentValue((mana / maxMana), 1F);
+			float percent = (m / (100 * 1F));
+			int barMana = this.percentValue(barWidth, percent);
+			int texMana = this.percentValue(texWidth, percent);
 
 			GlStateManager.pushMatrix();
-			int costM = (int) (((int) (cost * barWidth) / maxMana));
-			int clampedCost = MathHelper.clamp(costM, costM, m);
-			this.drawImage(x + (m), y, 0, 10, cutoff - barCutoffWidth, barCutoffHeight, clampedCost, 5, texWidth, texHeight);
-			GlStateManager.popMatrix();
+			mc.getTextureManager().bindTexture(manaBar);
+			// Bar Background
+			this.drawImage(
+					x, y,
+					barWidth, barHeight,
+					texUVWidth, texUVHeight,
+					0, 0,
+					texWidth, texHeight,
+					false, false, false, false
+			);
 
+			// Bar Foreground - Mana
+			this.drawImage(
+					x, y,
+					barMana, barHeight,
+					texUVWidth, texUVHeight,
+					0, texHeight,
+					texMana, texHeight,
+					false, false, false, false
+			);
+
+			int costM = (int) ((cost * 100) / maxMana);
+			float percentCost = costM / (100 * 1F);
+
+			int barCost = MathHelper.clamp(this.percentValue(barMana, percentCost), 0, barMana);
+			int texCost = MathHelper.clamp(this.percentValue(texMana, percentCost), 0, texMana);
+			int d = (barMana <= (barWidth - 2) ? +2 : 0);
+			int xPos = (x + d) + barMana;
+
+			// Bar Foreground - Cost
+			this.drawImage(
+					xPos, y,
+					barCost, barHeight,
+					texUVWidth, texUVHeight,
+					0, texHeight * 2,
+					texCost, texHeight,
+					true, false, true, false
+			);
+			GlStateManager.popMatrix();
 			if (!TrinketsConfig.CLIENT.MPBar.hide_text) {
 				GlStateManager.pushMatrix();
-				y -= 12;
-				x = fontRenderer.drawStringWithShadow("Mana: ", x, y, 0xffffffff);
+				y -= 11;
+				x += 30;
 				mana = Math.round(mana * 100) / 100;
 				maxMana = Math.round(MathHelper.clamp(maxMana, 0, maxMana) * 100) / 100;
 				x = fontRenderer.drawStringWithShadow((int) mana + "/" + (int) maxMana, x, y, 0xffffffff);
-				y += 22;
-				x -= 50;
-				int percentage = Math.round(((mana * 100) / maxMana) * 100) / 100;
-				x = fontRenderer.drawStringWithShadow(percentage + "%", x, (y), 0xffffffff);
+				//				x = fontRenderer.drawStringWithShadow(percentage + "%", x, (y), 0xffffffff);
 				GlStateManager.popMatrix();
 			}
 		} else {
-			int xOffset = 5;
-			int yOffset = 0;
-			int barWidth = 5;
-			int barHeight = 100;
-			int barCutoffWidth = 5;
-			int barCutoffHeight = 100;
-			int texWidth = 15;
-			int texHeight = 100;
-			this.drawImageVertical(x, y, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
-			int m = (int) (((int) (mana * barHeight) / maxMana) * 1);
-			int cutoff = barHeight - m;
-			this.drawImageVertical(x, y, 5, cutoff, barCutoffWidth, m, barWidth, m, texWidth, texHeight);
+			int barWidth = 104;
+			int barHeight = 14;
+
+			// Texture Section Size
+			int texWidth = 104;
+			int texHeight = 14;
+
+			// UV Wrapped Tex Size
+			int texUVWidth = 104;
+			int texUVHeight = 42;
+
+			int m = (int) ((mana * 100) / maxMana);//this.percentValue((mana / maxMana), 1F);
+			float percent = (m / (100 * 1F));
+			int barMana = this.percentValue(barWidth, percent);
+			int texMana = this.percentValue(texWidth, percent);
 
 			GlStateManager.pushMatrix();
-			int costM = (int) (((int) (cost * barHeight) / maxMana));
-			int clampedCost = MathHelper.clamp(costM, costM, m);
-			int costOffset = barHeight - m;
-			this.drawImage(x + 5, y - m, 10, barHeight + costOffset, 5, clampedCost, barWidth, clampedCost, texWidth, texHeight);
-			GlStateManager.popMatrix();
+			GlStateManager.translate(x, y, 0);
+			GlStateManager.rotate(-90, 0, 0, 1);
+			GlStateManager.translate(-x, -y, 0);
+			mc.getTextureManager().bindTexture(manaBar);
+			int xPos = x;
+			int yPos = y + (barHeight / 2);
+			// Bar Background
+			this.drawImage(
+					xPos, yPos,
+					barWidth, barHeight,
+					texUVWidth, texUVHeight,
+					0, 0,
+					texWidth, texHeight,
+					false, false, false, false
+			);
 
+			// Bar Foreground - Mana
+			this.drawImage(
+					xPos, yPos,
+					barMana, barHeight,
+					texUVWidth, texUVHeight,
+					0, texHeight,
+					texMana, texHeight,
+					false, false, false, false
+			);
+
+			int costM = (int) ((cost * 100) / maxMana);
+			float percentCost = costM / (100 * 1F);
+
+			int barCost = MathHelper.clamp(this.percentValue(barMana, percentCost), 0, barMana);
+			int texCost = MathHelper.clamp(this.percentValue(texMana, percentCost), 0, texMana);
+			int d = (barMana <= (barWidth - 2) ? +2 : 0);
+			xPos = (xPos + d) + barMana;
+
+			// Bar Foreground - Cost
+			this.drawImage(
+					xPos, yPos,
+					barCost, barHeight,
+					texUVWidth, texUVHeight,
+					0, texHeight * 2,
+					texCost, texHeight,
+					true, false, true, false
+			);
+			GlStateManager.popMatrix();
 			if (!TrinketsConfig.CLIENT.MPBar.hide_text) {
 				GlStateManager.pushMatrix();
-				y += 4;
-				x -= 18;
+				x -= 22;
+				y += 2;
 				mana = Math.round(mana * 100) / 100;
 				maxMana = Math.round(MathHelper.clamp(maxMana, 0, maxMana) * 100) / 100;
-				x = fontRenderer.drawStringWithShadow((int) mana + "/" + (int) maxMana, x, y, 0xffffffff);
+				x = fontRenderer.drawStringWithShadow((int) mana + "", x, y, 0xffffffff);
+				x = fontRenderer.drawStringWithShadow("/", x, y, 0xffffffff);
+				x = fontRenderer.drawStringWithShadow((int) maxMana + "", x, y, 0xffffffff);
 				y += 10;
 				x -= 33;
 				String percentage = (Math.round(((mana * 100) / maxMana) * 100) / 100) + "";
-				//				x -= 6;
 				x = fontRenderer.drawStringWithShadow(percentage + "%", x, (y), 0xffffffff);
 				GlStateManager.popMatrix();
 			}
 		}
 	}
 
+	private int percentValue(int value, float percent) {
+		return (int) (value * percent);
+	}
+
 	/**
 	 * Draws a scaled, textured, tiled modal rect at z = 0. This method isn't used
 	 * anywhere in vanilla code.
 	 *
+	 * @param x          Location X
+	 * @param y          Location Y
+	 * @param width      Rendered Image Width
+	 * @param height     Rendered Image Height
 	 * @param u          Texture U (or x) coordinate, in pixels
 	 * @param v          Texture V (or y) coordinate, in pixels
 	 * @param uWidth     Width of the rendered part of the texture, in pixels. Parts
@@ -122,15 +200,11 @@ public class ManaGui extends Gui {
 	 * @param tileWidth  total width of the texture
 	 * @param tileHeight total height of the texture
 	 */
-	private void drawImage(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
-		boolean flipH = true; // Needs flipped for Horizontal
-		boolean flipV = true;
-		boolean flipU = false;
-		boolean flipUV = false;
-		GlStateManager.color(1f, 1F, 1F, 1f);
-		//		GlStateManager.color(1f, 0f, 0f, 1F);
-		//		GlStateManager.enableAlpha();
-		//		GlStateManager.disableTexture2D();
+	private void drawImage(int x, int y, int width, int height, float tileWidth, float tileHeight, float u, float v, int uWidth, int vHeight) {
+		this.drawImage(x, y, width, height, tileWidth, tileHeight, u, v, uWidth, vHeight, true, true, false, false);
+	}
+
+	private void drawImage(int x, int y, int width, int height, float tileWidth, float tileHeight, float u, float v, int uWidth, int vHeight, boolean flipH, boolean flipV, boolean flipU, boolean flipUV) {
 		float f = 1.0F / tileWidth;
 		float f1 = 1.0F / tileHeight;
 		Tessellator tessellator = Tessellator.getInstance();
@@ -149,61 +223,6 @@ public class ManaGui extends Gui {
 		bufferbuilder.pos(xF2, yF2, 0.0D).tex((uF2) * f, (vF2) * f1).endVertex();
 		bufferbuilder.pos(xF2, yF, 0.0D).tex((uF2) * f, vF * f1).endVertex();
 		bufferbuilder.pos(xF, yF, 0.0D).tex(uF * f, vF * f1).endVertex();
-		//		bufferbuilder.pos(x, y, 0.0D).tex(u * f, (v + vHeight) * f1).endVertex();
-		//		bufferbuilder.pos(x + width, y, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
-		//		bufferbuilder.pos(x + width, y - height, 0.0D).tex((u + uWidth) * f, v * f1).endVertex();
-		//		bufferbuilder.pos(x, y - height, 0.0D).tex(u * f, v * f1).endVertex();
 		tessellator.draw();
-		//		GlStateManager.disableBlend();
-		//		GlStateManager.disableAlpha();
-		//		GlStateManager.enableTexture2D();
-	}
-
-	private void drawImageReversed(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
-		GlStateManager.pushMatrix();
-		float f = 1.0F / tileWidth;
-		float f1 = 1.0F / tileHeight;
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos(x - width, y + height, 0.0D).tex(u * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x, y + height, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x, y, 0.0D).tex((u + uWidth) * f, v * f1).endVertex();
-		bufferbuilder.pos(x - width, y, 0.0D).tex(u * f, v * f1).endVertex();
-		tessellator.draw();
-		GlStateManager.popMatrix();
-	}
-
-	private void drawImageHorizontal(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
-		mc.getTextureManager().bindTexture(manaH);
-		//		mc.getTextureManager().bindTexture(manaHAlt);
-		GlStateManager.pushMatrix();
-		float f = 1.0F / tileWidth;
-		float f1 = 1.0F / tileHeight;
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos(x, y + height, 0.0D).tex(u * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x + width, y + height, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x + width, y, 0.0D).tex((u + uWidth) * f, v * f1).endVertex();
-		bufferbuilder.pos(x, y, 0.0D).tex(u * f, v * f1).endVertex();
-		tessellator.draw();
-		GlStateManager.popMatrix();
-	}
-
-	private void drawImageVertical(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
-		mc.getTextureManager().bindTexture(manaV);
-		GlStateManager.pushMatrix();
-		float f = 1.0F / tileWidth;
-		float f1 = 1.0F / tileHeight;
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos(x, y, 0.0D).tex(u * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x + width, y, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x + width, y - height, 0.0D).tex((u + uWidth) * f, v * f1).endVertex();
-		bufferbuilder.pos(x, y - height, 0.0D).tex(u * f, v * f1).endVertex();
-		tessellator.draw();
-		GlStateManager.popMatrix();
 	}
 }

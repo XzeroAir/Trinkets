@@ -116,6 +116,23 @@ public class TrinketHelper {
 		return ItemStack.EMPTY;
 	}
 
+	public static ItemStack getItemStackFromSlot(EntityLivingBase player, int slot, int handler) {
+		if (player instanceof EntityPlayer) {
+			if (handler == 1) {
+				final ITrinketContainerHandler Trinket = getTrinketHandler((EntityPlayer) player);
+				if (!Trinket.getStackInSlot(slot).isEmpty()) {
+					return Trinket.getStackInSlot(slot);
+				}
+			} else if (Loader.isModLoaded("baubles") && (handler == 2)) {
+				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
+				if (!baubles.getStackInSlot(slot).isEmpty()) {
+					return baubles.getStackInSlot(slot);
+				}
+			}
+		}
+		return ItemStack.EMPTY;
+	}
+
 	public static NBTTagCompound getTagCompoundSafe(ItemStack stack) {
 		NBTTagCompound tagCompound = stack.getTagCompound();
 		if (tagCompound == null) {

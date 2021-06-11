@@ -33,8 +33,6 @@ public class Mana_Reagent extends FoodBase {
 			EntityProperties prop = Capabilities.getEntityRace(entityLiving);
 			if (prop != null) {
 				prop.getMagic().setBonusMana(prop.getMagic().getBonusMana() - 1);
-				prop.getMagic().sendManaToPlayer(entityLiving);
-				prop.getMagic().syncToManaHud();
 			}
 		}
 		this.setCooldown(20);

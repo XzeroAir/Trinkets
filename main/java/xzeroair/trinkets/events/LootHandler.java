@@ -43,28 +43,32 @@ public class LootHandler {
 
 	@SubscribeEvent
 	public void BreakSpeed(BreakSpeed event) {
-		EntityProperties prop = Capabilities.getEntityRace(event.getEntityLiving());
-		if (prop != null) {
-			prop.getRaceProperties().breakingBlock(event);
-		}
-		if (TrinketsConfig.SERVER.Items.SEA_STONE.Swim_Tweaks && TrinketHelper.AccessoryCheck(event.getEntityLiving(), ModItems.trinkets.TrinketSea)) {
-			final float o = event.getOriginalSpeed();
-			float ns = o;
-			if (event.getEntityLiving().isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(event.getEntityLiving())) {
-				ns *= 5f;
-				if (!event.getEntityLiving().onGround) {
-					ns *= 5.0f;
+		if (event.getEntityLiving() != null) {
+			EntityProperties prop = Capabilities.getEntityRace(event.getEntityLiving());
+			if (prop != null) {
+				prop.getRaceProperties().breakingBlock(event);
+			}
+			if (TrinketsConfig.SERVER.Items.SEA_STONE.Swim_Tweaks && TrinketHelper.AccessoryCheck(event.getEntityLiving(), ModItems.trinkets.TrinketSea)) {
+				final float o = event.getOriginalSpeed();
+				float ns = o;
+				if (event.getEntityLiving().isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(event.getEntityLiving())) {
+					ns *= 5f;
+					if (!event.getEntityLiving().onGround) {
+						ns *= 5.0f;
+					}
+					event.setNewSpeed(ns);
 				}
-				event.setNewSpeed(ns);
 			}
 		}
 	}
 
 	@SubscribeEvent
 	public void breakEvent(BreakEvent event) {
-		EntityProperties prop = Capabilities.getEntityRace(event.getPlayer());
-		if (prop != null) {
-			prop.getRaceProperties().blockBroken(event);
+		if (event.getPlayer() != null) {
+			EntityProperties prop = Capabilities.getEntityRace(event.getPlayer());
+			if (prop != null) {
+				prop.getRaceProperties().blockBroken(event);
+			}
 		}
 	}
 

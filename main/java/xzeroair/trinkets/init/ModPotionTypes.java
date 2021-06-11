@@ -102,7 +102,6 @@ public class ModPotionTypes {
 				Item.getByNameOrId(TrinketsConfig.SERVER.Potion.faelis.catalyst)
 		)
 				.registerPotion();
-		//TODO Dragon
 		pot = createRacePotion(
 				EntityRaces.dragon, 7, 0,
 				TrinketsConfig.SERVER.Potion.dragon.Duration,

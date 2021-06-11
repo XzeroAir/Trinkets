@@ -3,7 +3,6 @@ package xzeroair.trinkets.races.dwarf;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockQuartz;
@@ -49,19 +48,15 @@ public class RaceDwarf extends EntityRacePropertiesHandler {
 	@Override
 	public void breakingBlock(BreakSpeed event) {
 		if (serverConfig.static_mining) {
-			if (entity instanceof EntityPlayer) {
-				final ItemStack heldItemStack = entity.getActiveItemStack();
+			if ((entity instanceof EntityPlayer) && (event.getEntityPlayer() == entity)) {
+				final ItemStack heldItemStack = event.getEntityPlayer().inventory.getCurrentItem();
 				final Item heldItem = heldItemStack.getItem();
 				final IBlockState state = event.getState();
 				final int toolLevel = heldItem.getHarvestLevel(heldItemStack, "pickaxe", (EntityPlayer) entity, state);
 				final int level = state.getBlock().getHarvestLevel(state);
 				final float hardness = state.getBlockHardness(event.getEntityPlayer().world, event.getPos());
-
 				if (!heldItem.getToolClasses(heldItemStack).isEmpty() && heldItem.getToolClasses(heldItemStack).contains("pickaxe")) {
-					if ((toolLevel >= (level))) {
-						event.setNewSpeed(hardness * 4F);
-					}
-					if ((toolLevel == (level - 1))) {
+					if ((toolLevel >= (level)) || (toolLevel == (level - 1))) {
 						event.setNewSpeed(hardness * 4F);
 					}
 				}
@@ -78,17 +73,15 @@ public class RaceDwarf extends EntityRacePropertiesHandler {
 		EntityProperties cap = Capabilities.getEntityRace(player);
 		if ((cap != null)) {
 			final IBlockState state = event.getState();
-			final Item heldItem = player.inventory.getCurrentItem().getItem();
 			final ItemStack heldItemStack = player.inventory.getCurrentItem();
+			final Item heldItem = heldItemStack.getItem();
 			final int blockLevel = state.getBlock().getHarvestLevel(state);
 			final int toolLevel = heldItem.getHarvestLevel(heldItemStack, "pickaxe", player, state);
-
 			if (!heldItem.getToolClasses(heldItemStack).isEmpty() && heldItem.getToolClasses(heldItemStack).contains("pickaxe")) {
 				if ((toolLevel == (blockLevel - 1)) && serverConfig.skilled_miner) {
 					final TileEntity tile = event.getWorld().getTileEntity(event.getPos());
-					final ItemStack stack = new ItemStack(state.getBlock(), 1);
-					if ((stack != null) && ((state.getBlock() instanceof BlockOre) || (state.getBlock() instanceof BlockRedstoneOre) || (state.getBlock() instanceof BlockQuartz) || (state.getBlock() instanceof BlockObsidian))) {
-						event.getState().getBlock().harvestBlock(event.getWorld(), player, event.getPos(), state, tile, stack);
+					if (((state.getBlock() instanceof BlockOre) || (state.getBlock() instanceof BlockRedstoneOre) || (state.getBlock() instanceof BlockQuartz) || (state.getBlock() instanceof BlockObsidian))) {
+						event.getState().getBlock().harvestBlock(event.getWorld(), player, event.getPos(), state, tile, heldItemStack);
 						event.getWorld().destroyBlock(event.getPos(), false);
 					}
 				}
@@ -139,8 +132,8 @@ public class RaceDwarf extends EntityRacePropertiesHandler {
 				} else {
 					bonus = 0;
 				}
-				final Item heldItem = player.inventory.getCurrentItem().getItem();
 				final ItemStack heldItemStack = player.inventory.getCurrentItem();
+				final Item heldItem = heldItemStack.getItem();
 				final int fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.getEnchantmentByID(35), heldItemStack);
 				final boolean flag = serverConfig.fortune_mix ? true : fortuneLevel > 0 ? false : true;
 				if (!heldItem.getToolClasses(heldItemStack).isEmpty() && heldItem.getToolClasses(heldItemStack).contains("pickaxe") && (flag == true)) {

@@ -18,8 +18,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.keybinds.KeyHandler;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.items.effects.EffectsDragonsEye;
@@ -44,6 +46,10 @@ public class TrinketDragonsEye extends AccessoryBase {
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
+		EntityProperties prop = Capabilities.getEntityRace(player);
+		if ((prop != null) && prop.getCurrentRace().equals(EntityRaces.dragon)) {
+			return;
+		}
 		super.eventPlayerTick(stack, player);
 		TrinketProperties itemNBT = Capabilities.getTrinketProperties(stack);
 		if (itemNBT != null) {
@@ -56,10 +62,7 @@ public class TrinketDragonsEye extends AccessoryBase {
 				}
 			} else {
 				if (player.isPotionActive(MobEffects.NIGHT_VISION)) {
-					final PotionEffect potion = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-					if ((potion.getDuration() > 0) && (potion.getDuration() < 220)) {
-						player.removePotionEffect(MobEffects.NIGHT_VISION);
-					}
+					player.removePotionEffect(MobEffects.NIGHT_VISION);
 				}
 			}
 		}
@@ -94,6 +97,10 @@ public class TrinketDragonsEye extends AccessoryBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void eventClientTick(ItemStack stack, EntityLivingBase entity) {
+		EntityProperties prop = Capabilities.getEntityRace(entity);
+		if ((prop != null) && prop.getCurrentRace().equals(EntityRaces.dragon)) {
+			return;
+		}
 		TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 		if ((iCap == null) || !(entity instanceof EntityPlayer) || !FMLClientHandler.instance().getClient().inGameHasFocus) {
 			return;

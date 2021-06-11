@@ -5,8 +5,6 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
@@ -18,6 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -442,6 +441,7 @@ public class PlayerRaceCameraRenderer extends EntityRenderer {
 				mc.profiler.endSection();
 			}
 		}
+		super.getMouseOver(partialTicks);
 	}
 
 	/**
@@ -802,6 +802,7 @@ public class PlayerRaceCameraRenderer extends EntityRenderer {
 		}
 	}
 
+	// Can't Disable Lightmaps
 	@Override
 	public void disableLightmap() {
 		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -976,6 +977,7 @@ public class PlayerRaceCameraRenderer extends EntityRenderer {
 		return i > 200 ? 1.0F : 0.7F + (MathHelper.sin((i - partialTicks) * (float) Math.PI * 0.2F) * 0.3F);
 	}
 
+	//Requires Restart to change
 	@Override
 	public void updateCameraAndRender(float partialTicks, long nanoTime) {
 		boolean flag = Display.isActive();
@@ -1121,7 +1123,8 @@ public class PlayerRaceCameraRenderer extends EntityRenderer {
 
 	@Override
 	public void renderStreamIndicator(float partialTicks) {
-		this.setupOverlayRendering();
+		//		this.setupOverlayRendering();
+		super.renderStreamIndicator(partialTicks);
 	}
 
 	private boolean isDrawBlockOutline() {
@@ -1150,6 +1153,7 @@ public class PlayerRaceCameraRenderer extends EntityRenderer {
 		}
 	}
 
+	// Super Important for Rendering
 	@Override
 	public void renderWorld(float partialTicks, long finishTimeNano) {
 		this.updateLightmap(partialTicks);

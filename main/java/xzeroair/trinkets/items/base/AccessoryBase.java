@@ -3,10 +3,9 @@ package xzeroair.trinkets.items.base;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -94,6 +93,10 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		attributes.addAttributes(player);
+		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+		if ((cap != null)) {
+			cap.onUpdate();
+		}
 	}
 
 	@Override

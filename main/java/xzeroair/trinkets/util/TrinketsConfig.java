@@ -74,7 +74,7 @@ public class TrinketsConfig {
 			@Config.Comment("Should the Mana Bar display horizontal or vertical?")
 			@Name("03. Mana Bar Horizontal")
 			@LangKey(PREFIX + ".horizontal")
-			public boolean mana_horizontal = false;
+			public boolean mana_horizontal = true;
 
 			@Config.Comment("Show next to Mana Bar Text?")
 			@Name("04. Hide Text")
@@ -184,6 +184,16 @@ public class TrinketsConfig {
 				@LangKey(cfgPrefix + ".client.render.trinket")
 				public boolean doRender = true;
 			}
+
+			@Name("Faelis Claw Settings")
+			@LangKey(cfgPrefix + ".faelis_claw")
+			public Claw FAELIS_CLAW = new Claw();
+
+			public class Claw {
+				@Name("Render Trinket on Player")
+				@LangKey(cfgPrefix + ".client.render.trinket")
+				public boolean doRender = true;
+			}
 		}
 	}
 
@@ -279,7 +289,6 @@ public class TrinketsConfig {
 			@Name("Faelis Potion")
 			@LangKey(potion + ".faelis")
 			public PotionConfig faelis = new PotionConfig("xat:faelis_claw", 1200);
-			//TODO Dragon
 			@Name("Dragon Potion")
 			@LangKey(potion + ".dragon")
 			public PotionConfig dragon = new PotionConfig("minecraft:dragon_breath", 1200);
@@ -324,7 +333,7 @@ public class TrinketsConfig {
 				@Name("Faelis Ring Settings")
 				@LangKey(cfgPrefix + "." + ModItems.FaelisRing)
 				public TransformationRingConfig FAELIS_RING = new TransformationRingConfig();// new FaelisRing();
-				//TODO Dragon
+
 				@Name("Dragon Ring Settings")
 				@LangKey(cfgPrefix + "." + ModItems.DragonRing)
 				public TransformationRingConfig DRAGON_RING = new TransformationRingConfig();// new FaelisRing();
@@ -422,7 +431,6 @@ public class TrinketsConfig {
 			@LangKey(cfgPrefix + "." + "races." + "faelis")
 			public FaelisConfig faelis = new FaelisConfig();
 
-			//TODO Dragon
 			@Name("Dragon Config")
 			@LangKey(cfgPrefix + "." + "races." + "dragon")
 			public DragonConfig dragon = new DragonConfig();
