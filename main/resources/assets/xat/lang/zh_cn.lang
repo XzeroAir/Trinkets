@@ -34,39 +34,39 @@ xat.tooltip.enabled=#reset:[#green:启用#reset:]
 xat.tooltip.disabled=#reset:[#red:禁用#reset:]
 
 key.xat.category=饰品和装饰物
-key.xat.trinket_target.desc=Dragons Eye: Cycle
+key.xat.trinket_target.desc=末影龙之眼：轮换
 key.xat.trinket_toggle_effect.desc=切换夜视
 key.xat.magnet_toggle_effect.desc=切换磁性
 key.xat.aux_key.desc=辅助键
 key.xat.trinket_gui.desc=饰品 Gui
 
-key.xat.trinket_arcing_attack.desc=Arcing Orb: Attack
-key.xat.race_ability.desc=Race Ability
+key.xat.trinket_arcing_attack.desc=
+key.xat.race_ability.desc=种族能力
 
 gui.xat.button.open=打开
 gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
 
-####################################Materials####################################
+####################################材料####################################
 
 item.glowing_powder.name=闪耀粉
-item.glowing_powder.tooltip1=Tier 1 Crafting Material
+item.glowing_powder.tooltip1=1级制造材料
 
 item.glowing_ingot.name=#yellow:闪耀锭
-item.glowing_ingot.tooltip1=#yellow:Tier 2 Crafting Material
+item.glowing_ingot.tooltip1=#yellow:2级制造材料
 
 item.glowing_gem.name=#gold:闪耀宝石
-item.glowing_gem.tooltip1=#gold:Tier 3 Crafting Material
+item.glowing_gem.tooltip1=#gold:2级制造材料
 
-item.mana_candy.name=#aqua:Mana Candy
+item.mana_candy.name=#aqua:魔法糖果
 //item.mana_candy.tooltip1=#green:Restores #aqua:$mprestore:#green: Mana
 
-item.mana_crystal.name=#gold:Mana Crystal
-item.mana_crystal.tooltip1=#gold:+#aqua:$mpmax:#gold: Max Mana
+item.mana_crystal.name=#gold:魔法水晶
+item.mana_crystal.tooltip1=#gold:+#aqua:$mpmax:#gold:魔力值上限
 
 item.mana_reagent.name=#gold:Mana Reagent
-item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red: Max Mana
+item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red:魔力值上限
 
 ####################################Materials End####################################
 
@@ -86,39 +86,39 @@ item.dwarf_ring.0.fortune=#gold:伪运 $fortune:
 item.dwarf_ring.0.skilledminer=#darkgreen:熟练矿工 $skilledminer:
 item.dwarf_ring.0.staticminer=#darkgreen:平等挖掘 $staticminer:
 
-item.elf_ring.0.name=#gold:Ring of the Elves
-item.elf_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
+item.elf_ring.0.name=#gold:精灵之戒
+item.elf_ring.0.tooltip1=#gold:$rsize:标准体型
 item.elf_ring.0.tooltip2=@chargeshot:
 item.elf_ring.0.tooltip3=
-item.elf_ring.0.chargeshot=#gold:Sneaking while using a Bow activates a Power Shot
+item.elf_ring.0.chargeshot=#gold:潜行时增强弓箭伤害
 
 item.fairy_ring.0.name=仙女之戒
 item.fairy_ring.0.tooltip1=#gold:体型减小为正常的1/4
 item.fairy_ring.0.tooltip2=@creativeflight:
 item.fairy_ring.0.creativeflight=#gold:创造模式飞行 $creativeflight:
 
-item.faelis_ring.0.name=#gold:Ring of the Faelis
-item.faelis_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
-item.faelis_ring.0.tooltip2=#green:Increased bare handed damage
-item.faelis_ring.0.tooltip3=#red:Movement penalty when wearing heavy armor
+item.faelis_ring.0.name=#gold:猫之戒
+item.faelis_ring.0.tooltip1=#gold:$rsize:标准体型
+item.faelis_ring.0.tooltip2=#green:增加空手伤害
+item.faelis_ring.0.tooltip3=#red:装备重甲时降低移动速度
 
-item.goblin_ring.0.name=#gold:Ring of the Goblins
-item.goblin_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
-item.goblin_ring.0.tooltip2=#gold:Can mount tamed wolves
-item.goblin_ring.0.tooltip3=#gold:Gains Increased Strength and Regeneration while Mounted
+item.goblin_ring.0.name=#gold:哥布林之戒
+item.goblin_ring.0.tooltip1=#gold:$rsize:标准体型
+item.goblin_ring.0.tooltip2=#gold:可以骑乘被驯服的狼
+item.goblin_ring.0.tooltip3=#gold:骑乘时获得力量和生命恢复
 
 item.titan_ring.0.name=泰坦之戒
 item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
-item.titan_ring.0.tooltip2=#gold:Grants 3x3x3 Mining Range
-item.titan_ring.0.tooltip3=#red:Sinks in water
+item.titan_ring.0.tooltip2=#gold:3x3x3挖掘范围
+item.titan_ring.0.tooltip3=#red:在水中下沉
 
-item.dragon_ring.0.name=#gold:Ring of the Dragons
-item.dragon_ring.0.tooltip1=#gold:Entity size $rsize: of normal
-item.dragon_ring.0.tooltip1=#gold:Press #reset:<#yellow:*breathkb:#reset:>#gold: to Breath Fire
+item.dragon_ring.0.name=#gold:末影龙之戒
+item.dragon_ring.0.tooltip1=#gold:$rsize:标准体型
+item.dragon_ring.0.tooltip1=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
 
-item.teddy_bear.0.name=Teddy Bear
-item.teddy_bear.0.tooltip1=#gold:If held when sleeping, provides a buff
-item.teddy_bear.0.tooltip2=#gold:Removes Fear and Insomnia if Lycanites is installed
+item.teddy_bear.0.name=泰迪熊
+item.teddy_bear.0.tooltip1=#gold:如果在装备时睡眠，提供增益效果
+item.teddy_bear.0.tooltip2=#gold:如果安装恐怖生物，移除失眠和恐惧
 
 item.weightless_stone.0.name=反重力之石
 item.weightless_stone.0.tooltip1=#darkgreen:装备时忽略重力
@@ -135,7 +135,7 @@ item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold:�
 item.sea_stone.0.name=海洋之石
 item.sea_stone.0.tooltip1=@bubbles:
 item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=[#darkaqua:$bubbles:#reset:]#gold: 个气泡的无限氧气
+item.sea_stone.0.bubbles=[#darkaqua:$bubbles:#reset:]#gold:个气泡的无限氧气
 item.sea_stone.0.betterswimming=#darkgreen:增强游泳
 item.sea_stone.0.compat.tan=@tanthirst:
 item.sea_stone.0.tanthirst=#gold:免疫脱水
@@ -143,7 +143,7 @@ item.sea_stone.0.compat.enhancedvisuals=禁用水下模糊
 
 item.polarized_stone.0.name=磁石
 item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset: 或#yellow:右键#reset:>
+item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset:或#yellow:右键#reset:>
 item.polarized_stone.0.tooltip3=@repel:
 item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#reset: 或#yellow:潜行#reset:+#yellow:右键#reset:>
 item.polarized_stone.0.collect=#gold:吸引附近的物品@collectxp:
@@ -187,8 +187,8 @@ item.ender_tiara.0.tooltip2=#darkgreen:末影人为你作战@endermenfollow:
 item.ender_tiara.0.tooltip3=@damageignored:
 item.ender_tiara.0.tooltip4=@endermenchance:
 item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold: 几率免疫伤害
-item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold: 几率刷新一个末影人
+item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:几率免疫伤害
+item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:几率刷新一个末影人
 item.ender_tiara.0.endermenfollow=且跟随你
 item.ender_tiara.0.waterhurts=#red:弱水
 item.ender_tiara.0.compat.tan=#gold:免疫寒冷
@@ -203,17 +203,17 @@ item.damage_shield.0.compat.firstaid=@headshots:
 item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率无视爆头
 item.damage_shield.0.compat.enhancedvisuals=禁用爆炸模糊
 
-item.arcing_orb.0.name=Arcing Orb
+item.arcing_orb.0.name=电弧球
 item.arcing_orb.0.tooltip1=#darkgreen:Grants double tap dodge ability #darkaqua:$dodgecost:MP
 item.arcing_orb.0.tooltip2=@dodgestun:
-item.arcing_orb.0.tooltip3=#gold:Hold #reset:<#yellow:*arckb:#reset:>#gold: to cast a bolt attack #darkaqua:$boltcost:MP
+item.arcing_orb.0.tooltip3=#gold:按住#reset:<#yellow:*arckb:#reset:>#gold: to cast a bolt attack #darkaqua:$boltcost:MP
 item.arcing_orb.0.tooltip4=#darkaqua:$boltdamage:#gold: damage based on MP spent
 item.arcing_orb.0.dodgestun=#gold:Stun nearby enemies on dodge
 
-item.faelis_claw.0.name=Faelis Claw
-item.faelis_claw.0.tooltip1=#gold:Attacking enemies causes them to bleed
-item.faelis_claw.0.tooltip2=#green:Bleeding causes 1 damage every 20 ticks for $clawbleed: ticks
-item.faelis_claw.0.tooltip3=#red:Duration reduced to 1/3 when used by Non-Faelis
+item.faelis_claw.0.name=猫爪
+item.faelis_claw.0.tooltip1=#gold:攻击敌人使其流血
+item.faelis_claw.0.tooltip2=#green:流血在300 ticks 内每20 ticks 造成1点伤害
+item.faelis_claw.0.tooltip3=#red:当由非猫科动物使用时持续时间减少到1/3
 
 ####################################Trinkets End####################################
 
@@ -234,25 +234,25 @@ item.titan_spirit.tooltip1=#aqua:我也许能通过饮用某种药水
 item.titan_spirit.tooltip2=#aqua:来移除这种效果
 item.titan_spirit.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.elf_sap.name=Elf Sap
-item.elf_sap.tooltip1=#aqua:I might be able to remove the effects
-item.elf_sap.tooltip2=#aqua:by drinking some sort of potion
-item.elf_sap.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.elf_sap.name=精灵之息
+item.elf_sap.tooltip1=#aqua:我也许能通过饮用某种药水
+item.elf_sap.tooltip2=#aqua:来移除这种效果
+item.elf_sap.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.goblin_soup.name=Goblin Soup
-item.goblin_soup.tooltip1=#aqua:I might be able to remove the effects
-item.goblin_soup.tooltip2=#aqua:by drinking some sort of potion
-item.goblin_soup.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.goblin_soup.name=哥布林之汤
+item.goblin_soup.tooltip1=#aqua:我也许能通过饮用某种药水
+item.goblin_soup.tooltip2=#aqua:来移除这种效果
+item.goblin_soup.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.faelis_food.name=Faelis Nip
-item.faelis_food.tooltip1=#aqua:I might be able to remove the effects
-item.faelis_food.tooltip2=#aqua:by drinking some sort of potion
-item.faelis_food.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.faelis_food.name=猫薄荷
+item.faelis_food.tooltip1=#aqua:我也许能通过饮用某种药水
+item.faelis_food.tooltip2=#aqua:来移除这种效果
+item.faelis_food.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.dragon_gem.name=Dragon Gem
-item.dragon_gem.tooltip1=#aqua:I might be able to remove the effects
-item.dragon_gem.tooltip2=#aqua:by drinking some sort of potion
-item.dragon_gem.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.dragon_gem.name=末影龙宝石
+item.dragon_gem.tooltip1=#aqua:我也许能通过饮用某种药水
+item.dragon_gem.tooltip2=#aqua:来移除这种效果
+item.dragon_gem.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
 ####################################Food End####################################
 
