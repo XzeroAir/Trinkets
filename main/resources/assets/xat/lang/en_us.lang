@@ -48,6 +48,8 @@ gui.xat.button.close=Close
 
 attribute.name.xat.entityRace=Enchanted Race
 
+entity.AlphaWolf.name=Alpha Wolf
+
 ####################################Materials####################################
 
 item.glowing_powder.name=Glowing Powder
@@ -436,8 +438,6 @@ xat.config.items.transformation=Transformation Items
 
 xat.config.glow_ring=Ring of Enchanted Eyes Settings
 xat.config.glow_ring.tooltip=
-xat.config.glow_ring.blindness=Prevent Blindness
-xat.config.glow_ring.blindness.tooltip=Should the Ring of Enchanted Eyes Prevent Blindness?
 
 xat.config.weightless_stone=Stone of Negative Gravity Settings
 xat.config.weightless_stone.tooltip=
@@ -456,8 +456,6 @@ xat.config.dragons_eye.orefinder.blocks=Block Settings
 xat.config.dragons_eye.orefinder.blocks.tooltip=
 xat.config.dragons_eye.orefinder.blocks.list=Treasure Finder Block list
 xat.config.dragons_eye.orefinder.blocks.list.tooltip=What the Treasure Finding Feature of the Dragon's Eye can Detect
-xat.config.dragons_eye.blindness=Prevent Blindness
-xat.config.dragons_eye.blindness.tooltip=Should the Dragon's Eye Prevent Blindness?
 xat.config.dragons_eye.toughasnails.immunity.heat=Immune to Heat
 xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails is Installed Should the player be Immune to Heat
 xat.config.dragons_eye.client.growl.enabled=Dragon's Growl

@@ -40,13 +40,15 @@ key.xat.magnet_toggle_effect.desc=切换磁性
 key.xat.aux_key.desc=辅助键
 key.xat.trinket_gui.desc=饰品 Gui
 
-key.xat.trinket_arcing_attack.desc=
+key.xat.trinket_arcing_attack.desc=Arcing Orb: Attack 闪电天球 电弧天球 弧形天体
 key.xat.race_ability.desc=种族能力
 
 gui.xat.button.open=打开
 gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
+
+entity.AlphaWolf.name=Alpha Wolf
 
 ####################################材料####################################
 
@@ -436,8 +438,6 @@ xat.config.items.transformation=Transformation Items
 
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
-xat.config.glow_ring.blindness=免疫失明
-xat.config.glow_ring.blindness.tooltip=魔眼之戒是否免疫失明
 
 xat.config.weightless_stone=反重力之石
 xat.config.weightless_stone.tooltip=
@@ -456,8 +456,6 @@ xat.config.dragons_eye.orefinder.blocks=方块设置
 xat.config.dragons_eye.orefinder.blocks.tooltip=
 xat.config.dragons_eye.orefinder.blocks.list=寻宝列表
 xat.config.dragons_eye.orefinder.blocks.list.tooltip=末影龙之眼的寻宝功能可以探测什么
-xat.config.dragons_eye.blindness=免疫失明
-xat.config.dragons_eye.blindness.tooltip=末影龙之眼是否免疫失明？
 xat.config.dragons_eye.toughasnails.immunity.heat=免疫炽热
 xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=如果已安装 Tough as Nails，玩家是否免疫炽热
 xat.config.dragons_eye.client.growl.enabled=巨龙咆哮
@@ -826,14 +824,14 @@ xat.config.attributes.swimspeed.amount=Swim Speed Amount
 xat.config.attributes.swimspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.swimspeed.operation=游泳速度设置
 
-xat.config.attributes.jump.tooltip=Enable Attribute Modifier
+xat.config.attributes.jump.tooltip=启用属性修改
 xat.config.attributes.jump=Jump Force
 xat.config.attributes.jump.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.jump.amount=Jump Force Amount
 xat.config.attributes.jump.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.jump.operation=Jump Force Operation
 
-xat.config.attributes.stepheight.tooltip=Enable Attribute Modifier
+xat.config.attributes.stepheight.tooltip=启用属性修改
 xat.config.attributes.stepheight=Step Height
 xat.config.attributes.stepheight.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.stepheight.amount=Step Height Amount
