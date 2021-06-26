@@ -48,7 +48,7 @@ gui.xat.button.close=Close
 
 attribute.name.xat.entityRace=Enchanted Race
 
-entity.AlphaWolf.name=Alpha Wolf
+entity.AlphaWolf.name=Wolf King
 
 ####################################Materials####################################
 
@@ -76,8 +76,8 @@ item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red: Max Mana
 
 item.glow_ring.0.name=#gold:Ring of Enchanted Eyes
 item.glow_ring.0.tooltip1=#darkgreen:Grants Night Vision
-item.glow_ring.0.tooltip2=%blindness:
-item.glow_ring.0.blindness=#gold:Immunity to Blindness
+//item.glow_ring.0.tooltip2=%blindness:
+//item.glow_ring.0.blindness=#gold:Immunity to Blindness
 
 item.dwarf_ring.0.name=#gold:Ring of the Dwarves
 item.dwarf_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
@@ -116,7 +116,7 @@ item.titan_ring.0.tooltip3=#red:Sinks in water
 
 item.dragon_ring.0.name=#gold:Ring of the Dragons
 item.dragon_ring.0.tooltip1=#gold:Entity size $rsize: of normal
-item.dragon_ring.0.tooltip1=#gold:Press #reset:<#yellow:*breathkb:#reset:>#gold: to Breath Fire
+item.dragon_ring.0.tooltip2=#gold:Press #reset:<#yellow:*breathkb:#reset:>#gold: to Breath Fire
 
 item.teddy_bear.0.name=Teddy Bear
 item.teddy_bear.0.tooltip1=#gold:If held when sleeping, provides a buff
@@ -159,8 +159,8 @@ item.dragons_eye.0.tooltip1=#gold:Grants Fire Resistance
 item.dragons_eye.0.tooltip2=#darkgreen:Grants Night Vision $nightvision: #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:Grants Night Vision $nightvision:
-item.dragons_eye.0.treasurefinder=#gold:Current Target: #darkaqua:#underline:$target: #reset:<#yellow:*deofkb:#reset:>
-item.dragons_eye.0.blindness=#gold:Immunity to Blindness $blindness:
+item.dragons_eye.0.treasurefinder=#gold:Current Target: #darkaqua:#underline:$target:#reset: <#yellow:*deofkb:#reset:>
+//item.dragons_eye.0.blindness=#gold:Immunity to Blindness $blindness:
 item.dragons_eye.0.treasurefinder.on=#gold:I need more#white: $target:#gold: for my Treasury $looking:
 item.dragons_eye.0.treasurefinder.notfound=#gold:I'm unsure what my treasury currently needs. #red:(Item not found, returned as $target:)
 item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:

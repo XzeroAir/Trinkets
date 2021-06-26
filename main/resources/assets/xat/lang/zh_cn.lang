@@ -48,7 +48,7 @@ gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
 
-entity.AlphaWolf.name=Alpha Wolf
+entity.AlphaWolf.name=Wolf King
 
 ####################################材料####################################
 
@@ -76,8 +76,8 @@ item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red:魔力值上限
 
 item.glow_ring.0.name=魔眼之戒
 item.glow_ring.0.tooltip1=#darkgreen:获得夜视
-item.glow_ring.0.tooltip2=%blindness:
-item.glow_ring.0.blindness=#gold:免疫失明
+//item.glow_ring.0.tooltip2=%blindness:
+//item.glow_ring.0.blindness=#gold:免疫失明
 
 item.dwarf_ring.0.name=矮人之戒
 item.dwarf_ring.0.tooltip1=#gold:体型减小为正常的3/4
@@ -159,8 +159,8 @@ item.dragons_eye.0.tooltip1=#gold:获得防火
 item.dragons_eye.0.tooltip2=#darkgreen:获得夜视$nightvision: #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:获得夜视$nightvision:
-item.dragons_eye.0.treasurefinder=#gold:当前目标：#darkaqua:#underline:$target: #reset:<#yellow:*deofkb:#reset:>
-item.dragons_eye.0.blindness=#gold:免疫失明$blindness:
+item.dragons_eye.0.treasurefinder=#gold:当前目标：#darkaqua:#underline:$target:#reset: <#yellow:*deofkb:#reset:>
+//item.dragons_eye.0.blindness=#gold:免疫失明$blindness:
 item.dragons_eye.0.treasurefinder.on=#gold:我需要更多的#white: $target:#gold: for my Treasury $looking:
 item.dragons_eye.0.treasurefinder.notfound=#gold:我需要更多的#red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
