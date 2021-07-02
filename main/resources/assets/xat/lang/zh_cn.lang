@@ -33,14 +33,14 @@ xat.tooltip.off=#reset:(#red:关闭#reset:)
 xat.tooltip.enabled=#reset:[#green:启用#reset:]
 xat.tooltip.disabled=#reset:[#red:禁用#reset:]
 
-key.xat.category=饰品和装饰物
-key.xat.trinket_target.desc=末影龙之眼：轮换
+key.xat.category=Trinkets and Baubles
+key.xat.trinket_target.desc=巨龙之眼：轮换
 key.xat.trinket_toggle_effect.desc=切换夜视
 key.xat.magnet_toggle_effect.desc=切换磁性
 key.xat.aux_key.desc=辅助键
 key.xat.trinket_gui.desc=饰品 Gui
 
-key.xat.trinket_arcing_attack.desc=Arcing Orb: Attack 闪电天球 电弧天球 弧形天体
+key.xat.trinket_arcing_attack.desc=电弧球：攻击
 key.xat.race_ability.desc=种族能力
 
 gui.xat.button.open=打开
@@ -48,11 +48,6 @@ gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
 
-entity.AlphaWolf.name=Wolf King
-
-####################################材料####################################
-
-item.glowing_powder.name=闪耀粉
 item.glowing_powder.tooltip1=1级制造材料
 
 item.glowing_ingot.name=#yellow:闪耀锭
@@ -114,7 +109,7 @@ item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
 item.titan_ring.0.tooltip2=#gold:3x3x3挖掘范围
 item.titan_ring.0.tooltip3=#red:在水中下沉
 
-item.dragon_ring.0.name=#gold:末影龙之戒
+item.dragon_ring.0.name=#gold:巨龙之戒
 item.dragon_ring.0.tooltip1=#gold:$rsize:标准体型
 item.dragon_ring.0.tooltip1=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
 
@@ -154,7 +149,7 @@ item.polarized_stone.0.repel=#gold:排斥箭矢 $repeltoggle:
 item.polarized_stone.0.magnetmode=收集模式 $collecttoggle:
 item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
-item.dragons_eye.0.name=末影龙之眼
+item.dragons_eye.0.name=巨龙之眼
 item.dragons_eye.0.tooltip1=#gold:获得防火
 item.dragons_eye.0.tooltip2=#darkgreen:获得夜视$nightvision: #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
@@ -209,7 +204,7 @@ item.arcing_orb.0.name=电弧球
 item.arcing_orb.0.tooltip1=#darkgreen:Grants double tap dodge ability #darkaqua:$dodgecost:MP
 item.arcing_orb.0.tooltip2=@dodgestun:
 item.arcing_orb.0.tooltip3=#gold:按住#reset:<#yellow:*arckb:#reset:>#gold: to cast a bolt attack #darkaqua:$boltcost:MP
-item.arcing_orb.0.tooltip4=#darkaqua:$boltdamage:#gold: damage based on MP spent
+item.arcing_orb.0.tooltip4=#darkaqua:$boltdamage:#gold:伤害基于消耗的 MP
 item.arcing_orb.0.dodgestun=#gold:Stun nearby enemies on dodge
 
 item.faelis_claw.0.name=猫爪
@@ -251,7 +246,7 @@ item.faelis_food.tooltip1=#aqua:我也许能通过饮用某种药水
 item.faelis_food.tooltip2=#aqua:来移除这种效果
 item.faelis_food.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
-item.dragon_gem.name=末影龙宝石
+item.dragon_gem.name=巨龙宝石
 item.dragon_gem.tooltip1=#aqua:我也许能通过饮用某种药水
 item.dragon_gem.tooltip2=#aqua:来移除这种效果
 item.dragon_gem.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
@@ -288,7 +283,7 @@ xat.item.potion.glowing.tooltip2=#gold:Restores 100% Mana
 potion.effect.xat.restorative=恢复药水
 splash_potion.effect.xat.restorative=恢复喷溅型药水
 lingering_potion.effect.xat.restorative=恢复滞留型药水
-tipped_arrow.effect.xat.restorative=恢复箭矢
+tipped_arrow.effect.xat.restorative=恢复之箭
 xat.effect.restorative=恢复
 xat.item.potion.restorative.tooltip1=#gold:治疗 10 心
 xat.item.potion.restorative.tooltip2=#gold:移除药水效果
@@ -306,35 +301,35 @@ splash_potion.effect.xat.fairy=喷溅型仙女变形药水
 lingering_potion.effect.xat.fairy=滞留型仙女变形药水
 tipped_arrow.effect.xat.fairy=仙女变形之箭
 xat.effect.fairy=仙女
-xat.item.potion.fairy.tooltip1=变形为仙女 $fairyticks: 秒
+xat.item.potion.fairy.tooltip1=变形为仙女$fairyticks:秒
 
 potion.effect.xat.dwarf=矮人变形药水
 splash_potion.effect.xat.dwarf=喷溅型矮人变形药水
 lingering_potion.effect.xat.dwarf=滞留型矮人变形药水
 tipped_arrow.effect.xat.dwarf=矮人变形之箭
 xat.effect.dwarf=矮人
-xat.item.potion.dwarf.tooltip1=变形为矮人 $dwarfticks: 秒
+xat.item.potion.dwarf.tooltip1=变形为矮人$dwarfticks:秒
 
 potion.effect.xat.titan=泰坦变形药水
 splash_potion.effect.xat.titan=喷溅型泰坦变形药水
 lingering_potion.effect.xat.titan=滞留型泰坦变形药水
 tipped_arrow.effect.xat.titan=泰坦变形之箭
 xat.effect.titan=泰坦
-xat.item.potion.titan.tooltip1=变形为泰坦 $titanticks: 秒
+xat.item.potion.titan.tooltip1=变形为泰坦$titanticks:秒
 
-potion.effect.xat.goblin=Potion of Goblin Transformation
-splash_potion.effect.xat.goblin=Splash Potion of Goblin Transformation
-lingering_potion.effect.xat.goblin=Lingering Potion of Goblin Transformation
-tipped_arrow.effect.xat.goblin=Tipped Arrow of Goblin Transformation
-xat.effect.goblin=Goblin Transformation
-xat.item.potion.goblin.tooltip1=Become a Goblin for $goblinticks: seconds
+potion.effect.xat.goblin=哥布林变形药水
+splash_potion.effect.xat.goblin=喷溅型哥布林变形药水
+lingering_potion.effect.xat.goblin=滞留型哥布林变形药水
+tipped_arrow.effect.xat.goblin=哥布林变形之箭
+xat.effect.goblin=哥布林
+xat.item.potion.goblin.tooltip1=变形为哥布林$goblinticks:秒
 
-potion.effect.xat.elf=Potion of Elf Transformation
-splash_potion.effect.xat.elf=Splash Potion of Elf Transformation
-lingering_potion.effect.xat.elf=Lingering Potion of Elf Transformation
-tipped_arrow.effect.xat.elf=Tipped Arrow of Elf Transformation
-xat.effect.elf=Elf Transformation
-xat.item.potion.elf.tooltip1=Become a Elf for $elfticks: seconds
+potion.effect.xat.elf=精灵变形药水
+splash_potion.effect.xat.elf=喷溅型精灵变形药水
+lingering_potion.effect.xat.elf=滞留型精灵变形药水
+tipped_arrow.effect.xat.elf=精灵变形之箭
+xat.effect.elf=精灵
+xat.item.potion.elf.tooltip1=变形为精灵$elfticks:秒
 
 potion.effect.xat.faelis=Potion of Faelis Transformation
 splash_potion.effect.xat.faelis=Splash Potion of Faelis Transformation
@@ -343,20 +338,20 @@ tipped_arrow.effect.xat.faelis=Tipped Arrow of Faelis Transformation
 xat.effect.faelis=Faelis Transformation
 xat.item.potion.faelis.tooltip1=Become a Faelis for $faelisticks: seconds
 
-potion.effect.xat.dragon=Potion of Dragon Transformation
-splash_potion.effect.xat.dragon=Splash Potion of Dragon Transformation
-lingering_potion.effect.xat.dragon=Lingering Potion of Dragon Transformation
-tipped_arrow.effect.xat.dragon=Tipped Arrow of Dragon Transformation
-xat.effect.dragon=Dragon Transformation
-xat.item.potion.dragon.tooltip1=Become a Dragon for $dragonticks: seconds
+potion.effect.xat.dragon=巨龙变形药水
+splash_potion.effect.xat.dragon=喷溅型巨龙变形药水
+lingering_potion.effect.xat.dragon=滞留型巨龙变形药水
+tipped_arrow.effect.xat.dragon=巨龙变形之箭
+xat.effect.dragon=巨龙
+xat.item.potion.dragon.tooltip1=变形为巨龙$dragonticks:秒
 
 ####################################Potions End####################################
 
 ####################################Blocks####################################
 
-tile.moon_rose.name=Moon Rose
-tile.moon_rose.tooltip1=#aqua:Enchanted Flower
-tile.moon_rose.tooltip2=#aqua:<You can feel strong magical fluctuations coming from this>
+tile.moon_rose.name=月光玫瑰
+tile.moon_rose.tooltip1=#aqua:被施加了魔法的花朵
+tile.moon_rose.tooltip2=#aqua:<你可以感受到其中散发出强烈的魔法波动>
 tile.moon_rose.tooltip3=
 tile.moon_rose.tooltip4=
 
@@ -407,34 +402,34 @@ xat.config.potion.registry.enabled.tooltip=加载时是否注册 Trinkets and Ba
 xat.config.potion.toughasnails.water=药水补充水分
 xat.config.potion.toughasnails.water.tooltip=如果已安装 Tough as Nails，药水是否补充水分
 
-xat.config.potion.catalyst=Catalyst
-xat.config.potion.catalyst.tooltip=This is the Item Used to Craft this Potion in a Brewing Stand
-xat.config.potion.duration=Duration
-xat.config.potion.duration.tooltip=How Long in Ticks the Tranformation Lasts
+xat.config.potion.catalyst=触媒
+xat.config.potion.catalyst.tooltip=这是在酿造台中用于酿造这种药水的物品
+xat.config.potion.duration=持续时间
+xat.config.potion.duration.tooltip=变形将持续多少刻
 
 xat.config.potion.restore.catalyst=恢复药水触媒
-xat.config.potion.restore.catalyst.tooltip=这个物品用于酿造台中酿造药水
+xat.config.potion.restore.catalyst.tooltip=这是在酿造台中用于酿造这种药水的物品
 
-xat.config.potion.dwarf=Dwarf Potion
+xat.config.potion.dwarf=矮人变形药水
 xat.config.potion.dwarf.tooltip=
-xat.config.potion.elf=Elf Potion
+xat.config.potion.elf=精灵变形药水
 xat.config.potion.elf.tooltip=
-xat.config.potion.fairy=Fairy Potion
+xat.config.potion.fairy=仙女变形药水
 xat.config.potion.fairy.tooltip=
-xat.config.potion.goblin=Goblin Potion
+xat.config.potion.goblin=哥布林变形药水
 xat.config.potion.goblin.tooltip=
-xat.config.potion.titan=Titan Potion
+xat.config.potion.titan=泰坦变形药水
 xat.config.potion.titan.tooltip=
 xat.config.potion.faelis=Faelis Potion
 xat.config.potion.faelis.tooltip=
-xat.config.potion.dragon=Dragon Potion
+xat.config.potion.dragon=巨龙变形药水
 xat.config.potion.dragon.tooltip=
 
 xat.config.potion.playersonly=药水仅对玩家有效
 xat.config.potion.playersonly.tooltip=变形药水只对玩家有效或对所有生物有效
 
 xat.config.items=物品设置
-xat.config.items.transformation=Transformation Items
+xat.config.items.transformation=有变形效果的物品
 
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
@@ -442,20 +437,20 @@ xat.config.glow_ring.tooltip=
 xat.config.weightless_stone=反重力之石
 xat.config.weightless_stone.tooltip=
 
-xat.config.dragons_eye=末影龙之眼设置
+xat.config.dragons_eye=巨龙之眼设置
 xat.config.dragons_eye.tooltip=
 xat.config.dragons_eye.orefinder=寻宝
-xat.config.dragons_eye.orefinder.tooltip=末影龙之眼是否检测附近的方块
+xat.config.dragons_eye.orefinder.tooltip=巨龙之眼是否检测附近的方块
 xat.config.dragons_eye.orefinder.range=寻宝范围
 xat.config.dragons_eye.orefinder.range.tooltip=警告！这些值设置过高将导致延迟。尽量设置在 4 - 16 范围内
 xat.config.dragons_eye.orefinder.range.vertical=垂直距离
-xat.config.dragons_eye.orefinder.range.vertical.tooltip=末影龙之眼能在竖直方向（上、下）多少方块内被触发。默认 6，最小 0，最大 32
+xat.config.dragons_eye.orefinder.range.vertical.tooltip=巨龙之眼能在竖直方向（上、下）多少方块内被触发。默认 6，最小 0，最大 32
 xat.config.dragons_eye.orefinder.range.horizontal=水平距离
-xat.config.dragons_eye.orefinder.range.horizontal.tooltip=末影龙之眼能在水平方向（东、西、南、北）多少方块内被触发。默认 12，最小 0，最大 32
+xat.config.dragons_eye.orefinder.range.horizontal.tooltip=巨龙之眼能在水平方向（东、西、南、北）多少方块内被触发。默认 12，最小 0，最大 32
 xat.config.dragons_eye.orefinder.blocks=方块设置
 xat.config.dragons_eye.orefinder.blocks.tooltip=
 xat.config.dragons_eye.orefinder.blocks.list=寻宝列表
-xat.config.dragons_eye.orefinder.blocks.list.tooltip=末影龙之眼的寻宝功能可以探测什么
+xat.config.dragons_eye.orefinder.blocks.list.tooltip=巨龙之眼的寻宝功能可以探测什么
 xat.config.dragons_eye.toughasnails.immunity.heat=免疫炽热
 xat.config.dragons_eye.toughasnails.immunity.heat.tooltip=如果已安装 Tough as Nails，玩家是否免疫炽热
 xat.config.dragons_eye.client.growl.enabled=巨龙咆哮
@@ -491,19 +486,19 @@ xat.config.ender_tiara.toughasnails.immunity.cold.tooltip=如果已安装 Tough 
 xat.config.dwarf_ring=矮人之戒设置
 xat.config.dwarf_ring.tooltip=
 
-xat.config.elf_ring=Ring of the Elves Settings
+xat.config.elf_ring=精灵之戒设置
 xat.config.elf_ring.tooltip=
 
 xat.config.fairy_ring=仙女之戒设置
 xat.config.fairy_ring.tooltip=
 
-xat.config.goblin_ring=Ring of the Goblins Settings
+xat.config.goblin_ring=哥布林之戒设置
 xat.config.goblin_ring.tooltip=
 
 xat.config.titan_ring=泰坦之戒设置
 xat.config.titan_ring.tooltip=
 
-xat.config.dragon_ring=Ring of the Dragons Settings
+xat.config.dragon_ring=巨龙之戒设置
 xat.config.dragon_ring.tooltip=
 
 xat.config.damage_shield=荣耀之盾设置
@@ -530,13 +525,13 @@ xat.config.damage_shield.firstaid.ignore.headshots.chance.tooltip=x 分之一的
 xat.config.inertia_null_stone=零惯性之石设置
 xat.config.inertia_null_stone.tooltip=
 xat.config.inertia_null_stone.falldamage=修改摔落伤害
-xat.config.inertia_null_stone.falldamage.tooltip=零惯性之石是否调整摔落伤害？
-xat.config.inertia_null_stone.falldamage.amount=调整摔落伤害量
+xat.config.inertia_null_stone.falldamage.tooltip=零惯性之石是否修改摔落伤害？
+xat.config.inertia_null_stone.falldamage.amount=修改摔落伤害量
 xat.config.inertia_null_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
 
-xat.config.greater_inertia_stone=Stone of Greater Inertia
+xat.config.greater_inertia_stone=巨惯性之石设置
 xat.config.greater_inertia_stone.tooltip=
-xat.config.greater_inertia_stone.falldamage=Modify Fall Damage
+xat.config.greater_inertia_stone.falldamage=修改摔落伤害
 xat.config.greater_inertia_stone.falldamage.tooltip=Should the Stone of Greater Inertia Modify Fall Damage?
 xat.config.greater_inertia_stone.falldamage.amount=Modified Fall Damage Amount
 xat.config.greater_inertia_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
@@ -603,17 +598,17 @@ xat.config.wither_ring.wither.tooltip=是否有几率使敌人凋零
 xat.config.wither_ring.wither.chance=凋零几率
 xat.config.wither_ring.wither.chance.tooltip=每次攻击有 x 分之一的几率使敌人凋零 2 秒
 
-xat.config.arcing_orb=Arcing Orb Settings
+xat.config.arcing_orb=电弧球设置
 xat.config.arcing_orb.tooltip=
 
-xat.config.teddy_bear=Teddy Bear Settings
+xat.config.teddy_bear=泰迪熊设置
 xat.config.teddy_bear.tooltip=
 
-xat.config.faelis_claw=Faelis Claw Settings
-xat.config.faelis_claw.bleeding=Bleed
-xat.config.faelis_claw.bleeding.tooltip=Should this Item cause Bleeding when Attacking an Entity
-xat.config.faelis_claw.bleeding.duration=Bleed Duration
-xat.config.faelis_claw.bleeding.duration.tooltip=How long bleeding lasts in ticks
+xat.config.faelis_claw=猫爪设置
+xat.config.faelis_claw.bleeding=流血
+xat.config.faelis_claw.bleeding.tooltip=当攻击实体时这个物品是否造成流血
+xat.config.faelis_claw.bleeding.duration=流血持续时间
+xat.config.faelis_claw.bleeding.duration.tooltip=流血持续多少刻
 
 xat.config.magic=魔法设置
 xat.config.magic.tooltip=
@@ -668,7 +663,7 @@ xat.config.races.dwarf.fortune.stacking=自然财富叠加
 xat.config.races.dwarf.fortune.stacking.tooltip=自然财富是否与时运附魔叠加？
 xat.config.races.dwarf.fortune.blocks.list=自然财富方块列表
 xat.config.races.dwarf.fortune.blocks.list.tooltip=自然财富只对列表中的方块生效
-xat.config.races.dwarf.skilledminer=熟练的矿工
+xat.config.races.dwarf.skilledminer=熟练矿工
 xat.config.races.dwarf.skilledminer.tooltip=矮人之戒是否能降低镐的采掘等级要求，即，铁镐可以破坏黑曜石。
 xat.config.races.dwarf.static_mining=平等挖掘
 xat.config.races.dwarf.static_mining.tooltip=固定以4倍方块硬度速度进行采集，不兼容其他模组。
