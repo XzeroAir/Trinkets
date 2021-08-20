@@ -99,7 +99,7 @@ item.fairy_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
 item.fairy_ring.0.tooltip2=@creativeflight:
 item.fairy_ring.0.creativeflight=#gold:Grants Creative flight
 
-item.faelis_ring.0.name=#gold:Ring of the Faelis
+item.faelis_ring.0.name=#gold:Ring of the Faeles
 item.faelis_ring.0.tooltip1=#gold:Entity Size $rsize: of normal
 item.faelis_ring.0.tooltip2=#green:Increased bare handed damage
 item.faelis_ring.0.tooltip3=#red:Movement penalty when wearing heavy armor
