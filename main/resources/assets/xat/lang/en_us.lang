@@ -837,3 +837,16 @@ xat.config.attributes.stepheight.amount.tooltip=Attribute Modifier Amount
 xat.config.attributes.stepheight.amount=Step Height Amount
 xat.config.attributes.stepheight.operation.tooltip=Determines the Math used for the Attribute Modifer
 xat.config.attributes.stepheight.operation=Step Height Operation
+
+####################################Potion Descriptions Compatibility####################################
+
+description.xat.effect.sparkling=Restores one quarter of the target's maximum health and mana.
+description.xat.effect.glittering=Restores half of the target's maximum health and mana, and grants 10 points of saturation.
+description.xat.effect.glowing=Fully restores the target's maximum health and mana, and grants 20 points of saturation.
+description.xat.effect.restorative=Fully restores the target's maximum health and mana, grants 20 points of saturation, and reverts its race to a human permanently.
+description.xat.effect.human=Temporarily transforms the target into the Human race.
+description.xat.effect.fairy=Temporarily transforms the target into the Fairy race.
+description.xat.effect.titan=Temporarily transforms the target into the Titan race.
+description.xat.effect.goblin=Temporarily transforms the target into the Goblin race.
+description.xat.effect.faelis=Temporarily transforms the target into the Faelis race.
+description.xat.effect.dragon=Temporarily transforms the target into the Dragon race.
