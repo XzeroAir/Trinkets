@@ -80,9 +80,9 @@ public class BaubleEventHandler {
 				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 				if (baubles != null) {
 					for (int i = 0; i < baubles.getSlots(); i++) {
-						ItemStack stack = baubles.getStackInSlot(i);
+						final ItemStack stack = baubles.getStackInSlot(i);
 						if (!stack.isEmpty()) {
-							TrinketProperties prop = Capabilities.getTrinketProperties(stack);
+							final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
 							if (prop != null) {
 								prop.sendInformationToPlayer(player, player);
 							}
@@ -203,7 +203,7 @@ public class BaubleEventHandler {
 
 	@SubscribeEvent
 	public void experienceDropEvent(LivingExperienceDropEvent event) {
-		if (event.getAttackingPlayer() instanceof EntityPlayer) {
+		if (event.getAttackingPlayer() != null) {
 			final EntityPlayer player = event.getAttackingPlayer();
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 			for (int i = 0; i < baubles.getSlots(); i++) {

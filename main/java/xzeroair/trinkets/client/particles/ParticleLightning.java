@@ -100,11 +100,11 @@ public class ParticleLightning extends Particle {
 			final int lmv = 240;
 			final int lmv2 = 240;
 			for (double done = 0; done <= 15.0D; done += 1D) {
-				double alpha = done / 15.0D;
-				double x1 = interpolate(posX, posX2, alpha);
-				double y1 = interpolate(posY, posY2, alpha);
-				double z1 = interpolate(posZ, posZ2, alpha);
-				Vec3d test = new Vec3d(x1, y1, z1);
+				final double alpha = done / 15.0D;
+				final double x1 = interpolate(posX, posX2, alpha);
+				final double y1 = interpolate(posY, posY2, alpha);
+				final double z1 = interpolate(posZ, posZ2, alpha);
+				final Vec3d test = new Vec3d(x1, y1, z1);
 				if (done < 1) {
 					//					points.add(test);
 				} else if (done == 1) {
@@ -119,10 +119,10 @@ public class ParticleLightning extends Particle {
 				}
 			}
 			GlStateManager.pushMatrix();
-			float r = particleRed;
-			float g = particleGreen;
-			float b = particleBlue;
-			float a = particleAlpha;
+			final float r = particleRed;
+			final float g = particleGreen;
+			final float b = particleBlue;
+			final float a = particleAlpha;
 			GlStateManager.disableLighting();
 			GlStateManager.enableBlend();
 			GlStateManager.disableTexture2D();
@@ -131,14 +131,15 @@ public class ParticleLightning extends Particle {
 			buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
 			GlStateManager.glLineWidth(particleScale);
 			for (int p = 0; p < (points.size() - 1); p++) {
-				int clamped = MathHelper.clamp(p, 0, (points.size() - 1));
-				Vec3d lp = i == 0 ? points.get(clamped) : points.get(clamped);
+				final int clamped = MathHelper.clamp(p, 0, (points.size() - 1));
+				final Vec3d lp = i == 0 ? points.get(clamped) : points.get(clamped);
 				final float t1 = (float) ((lp.x + ((points.get(clamped).x - lp.x) * partialTicks)) - interpPosX);
 				final float t2 = (float) ((lp.y + ((points.get(clamped).y - lp.y) * partialTicks)) - interpPosY);
 				final float t3 = (float) ((lp.z + ((points.get(clamped).z - lp.z) * partialTicks)) - interpPosZ);
 				buffer.pos(t1, t2, t3)
 						.tex(0, 0)
 						.color(r, g, b, a)
+						//						.lightmap(lmv, lmv2)
 						.endVertex();
 			}
 			Tessellator.getInstance().draw();
@@ -146,14 +147,15 @@ public class ParticleLightning extends Particle {
 			buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
 			GlStateManager.glLineWidth(particleScale * 4F);
 			for (int p = 0; p < (points.size() - 1); p++) {
-				int clamped = MathHelper.clamp(p, 0, (points.size() - 1));
-				Vec3d lp = i == 0 ? points.get(clamped) : points.get(clamped);
+				final int clamped = MathHelper.clamp(p, 0, (points.size() - 1));
+				final Vec3d lp = i == 0 ? points.get(clamped) : points.get(clamped);
 				final float t1 = (float) ((lp.x + ((points.get(clamped).x - lp.x) * partialTicks)) - interpPosX);
 				final float t2 = (float) ((lp.y + ((points.get(clamped).y - lp.y) * partialTicks)) - interpPosY);
 				final float t3 = (float) ((lp.z + ((points.get(clamped).z - lp.z) * partialTicks)) - interpPosZ);
 				buffer.pos(t1, t2, t3)
 						.tex(0, 0)
 						.color(r, g, b, a * 0.5F)
+						//						.lightmap(lmv, lmv2)
 						.endVertex();
 			}
 			Tessellator.getInstance().draw();

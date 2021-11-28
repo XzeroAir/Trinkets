@@ -1,18 +1,15 @@
 package xzeroair.trinkets.items.trinkets;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
+import xzeroair.trinkets.traits.abilities.AbilityWeightless;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigWeightlessStone;
 
@@ -28,38 +25,13 @@ public class TrinketWeightless extends AccessoryBase {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+	public void initAbilities(EntityLivingBase entity) {
+		this.addAbility(entity, Abilities.weightless, new AbilityWeightless());
 	}
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		if (!player.onGround) {
-			player.motionY = 0;
-			if ((!(player.isSneaking())) && player.isSwingInProgress) {
-				player.motionY += 0.1;
-			}
-			if (player.isSneaking() && player.isSwingInProgress) {
-				player.motionY -= 0.1;
-			}
-		}
-	}
-
-	@Override
-	public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
-		if (entity instanceof EntityPlayer) {
-			final EntityPlayer player = (EntityPlayer) entity;
-			if (player.inventory.getCurrentItem().getItem() == this) {
-				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 2, 1));
-			}
-		}
-	}
-
-	@Override
-	public void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase player) {
-		event.setDamageMultiplier(0.1F);
 	}
 
 	@Override
@@ -75,6 +47,12 @@ public class TrinketWeightless extends AccessoryBase {
 	@Override
 	public boolean ItemEnabled() {
 		return serverConfig.enabled;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerModels() {
+		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
 }

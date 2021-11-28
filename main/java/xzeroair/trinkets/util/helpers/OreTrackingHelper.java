@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -21,15 +20,8 @@ public class OreTrackingHelper {
 		this.block = block;
 	}
 
-	public static String translateOreName(String name) {
+	public static String translateOreName(String name, String meta) {
 		String target = name;
-		String meta = "";
-		if (name.contains("[")) {
-			final int metaStart = name.indexOf("[");
-			final int metaEnd = name.lastIndexOf("]");
-			target = name.substring(0, metaStart);
-			meta = name.substring(metaStart + 1, metaEnd);
-		}
 		if (name.contains(":")) {
 			final Item itemTarget = Item.getByNameOrId(target);
 			ItemStack parseName = new ItemStack(itemTarget, 1);
@@ -39,8 +31,7 @@ public class OreTrackingHelper {
 				}
 			}
 			target = parseName.getTextComponent().getUnformattedText();
-
-			if (!meta.isEmpty() && (itemTarget != null) && itemTarget.getHasSubtypes()) {
+			if (!meta.isEmpty() && !(meta.contentEquals(OreDictionary.WILDCARD_VALUE + "")) && (itemTarget != null) && itemTarget.getHasSubtypes()) {
 				final NonNullList<ItemStack> parseMeta = NonNullList.create();
 				itemTarget.getSubItems(CreativeTabs.SEARCH, parseMeta);
 				for (final ItemStack t : parseMeta) {

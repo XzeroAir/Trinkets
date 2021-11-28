@@ -1,7 +1,6 @@
 package xzeroair.trinkets.util.handlers;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

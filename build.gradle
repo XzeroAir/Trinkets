@@ -25,7 +25,7 @@ ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
 
 version = "${config.version}.${config.build_number}"
-group = "xzeroair.xat" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "mod.group" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
 
 task wrapper(type: Wrapper) {
@@ -85,6 +85,7 @@ dependencies {
 	
 	// compile against the JEI API but do not include it at runtime
 	runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+	
 }
 
 processResources {
@@ -140,30 +141,6 @@ repositories {
 	}
 }
 
-task deobfJar(type: Jar) {
-    from(sourceSets.main.output)
-    archiveName = "${baseName}-${version}-deobf.${extension}"
-}
-
-artifacts {
-    archives deobfJar
-}
-
-/**
- * Increments the buildnumber in your config file, and saves it
- */
-task incrementBuildNumber {
-    config.build_number = (config.build_number.toString().toInteger()) + 1
-    configFile.withWriter {
-        config.toProperties().store(it, "")
-    }
-}
-
-task sort(type: Delete) {
-    dependsOn "outputDeobf"
-    delete "${config.dir_output}/${deobfJar.archiveName}", "${config.dir_output}/wtf"
-}
-
 def parseConfig(File config) {
     config.withReader {
         def prop = new Properties()
@@ -171,21 +148,3 @@ def parseConfig(File config) {
         return (new ConfigSlurper().parse(prop))
     }
 }
-
-task signJar(type: SignJar, dependsOn: reobfJar) {
-
-    onlyIf {
-        project.hasProperty('keyStore')
-    }
-
-    keyStore = project.findProperty('keyStore')
-    alias = project.findProperty('keyStoreAlias')
-    storePass = project.findProperty('keyStorePass')
-    keyPass = project.findProperty('keyStoreKeyPass')
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
-}
-
-//build.dependsOn signJar
-
-defaultTasks 'clean', 'build', 'sort', 'incrementBuildNumber'

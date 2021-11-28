@@ -1,6 +1,6 @@
 {
-	"name": "Trinkets",
-	"description": "The core of the mod. This section is dedicated to the wearable items which have the potential to alter gameplay.",
+	"name": "饰品",
+	"description": "模组的核心。本节专门介绍可能改变游戏玩法的可穿戴物品。",
 	"icon": "xat:textures/items/glow_ring.png",
 	"sortnum": 2
 }

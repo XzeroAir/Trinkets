@@ -4,12 +4,14 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -31,11 +33,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerProvider;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.container.TrinketContainerHandler;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.SyncItemDataPacket;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class TrinketEventHandler {
@@ -48,12 +50,12 @@ public class TrinketEventHandler {
 			if ((player == null) || player.isDead || (player.world == null)) {
 				return;
 			}
-			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler(player);
-			for (int i = 0; i < Trinket.getSlots(); i++) {
-				final ItemStack stack = Trinket.getStackInSlot(i);
+			final ITrinketContainerHandler trinkets = TrinketHelper.getTrinketHandler(player);
+			for (int i = 0; i < trinkets.getSlots(); i++) {
+				final ItemStack stack = trinkets.getStackInSlot(i);
 				if ((stack != null) && (stack.getItem() instanceof IAccessoryInterface)) {
-					final IAccessoryInterface bauble = (IAccessoryInterface) stack.getItem();
-					bauble.eventClientTick(stack, player);
+					final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+					trinket.eventClientTick(stack, player);
 				}
 			}
 		}
@@ -65,17 +67,27 @@ public class TrinketEventHandler {
 			final EntityPlayer player = event.player;
 			final boolean client = player.world.isRemote;
 
-			// config Sync
-			if (!client) {
-				final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler(player);
-				if (Trinket != null) {
-					for (int i = 0; i < Trinket.getSlots(); i++) {
-						ItemStack stack = Trinket.getStackInSlot(i);
-						if (!stack.isEmpty()) {
-							TrinketProperties prop = Capabilities.getTrinketProperties(stack);
-							if (prop != null) {
-								prop.sendInformationToPlayer(player, player);
-							}
+			final World world = player.getEntityWorld();
+			// sync Trinkets
+			final ITrinketContainerHandler trinkets = TrinketHelper.getTrinketHandler(player);
+			if (trinkets != null) {
+				for (int i = 0; i < trinkets.getSlots(); i++) {
+					final ItemStack stack = trinkets.getStackInSlot(i);
+					final boolean empty = stack.isEmpty();
+					if (!client) {
+						if (world instanceof WorldServer) {
+							final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, 1, true, !empty);
+							NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+							NetworkHandler.sendToClients(
+									(WorldServer) world, player.getPosition(),
+									packet
+							);
+						}
+					}
+					if (!empty) {
+						if (stack.getItem() instanceof IAccessoryInterface) {
+							final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+							trinket.eventEntityJoinWorld(stack, player);
 						}
 					}
 				}
@@ -90,22 +102,19 @@ public class TrinketEventHandler {
 			if (player.isDead || (player.world == null)) {
 				return;
 			}
-			final boolean client = player.getEntityWorld().isRemote;
+			final World world = player.getEntityWorld();
+			final boolean client = world.isRemote;
 			// sync Trinkets
 			final ITrinketContainerHandler trinkets = TrinketHelper.getTrinketHandler(player);
 			if (trinkets != null) {
 				for (int i = 0; i < trinkets.getSlots(); i++) {
 					final ItemStack stack = trinkets.getStackInSlot(i);
 					final boolean empty = stack.isEmpty();
-					TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
-					if (iCap != null) {
-						iCap.syncStackTo(player, i, !empty, 1, player);
+					if (world instanceof WorldServer) {
+						final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, 1, true, !empty);
+						NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
 					}
 					if (!empty) {
-						if ((iCap != null)) {
-							iCap.sendInformationToPlayer(player, player);
-							//							NetworkHandler.sendItemDataTo(player, stack, iCap, true, (EntityPlayerMP) player);
-						}
 						if (stack.getItem() instanceof IAccessoryInterface) {
 							final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
 							trinket.eventEntityJoinWorld(stack, player);
@@ -119,17 +128,19 @@ public class TrinketEventHandler {
 
 	@SubscribeEvent
 	public void playerStartTracking(PlayerEvent.StartTracking event) {
-		Entity target = event.getTarget();
-		if (target instanceof EntityPlayer) {
-			final ITrinketContainerHandler trinkets = TrinketHelper.getTrinketHandler((EntityPlayer) target);
-			if (trinkets != null) {
-				for (int i = 0; i < trinkets.getSlots(); i++) {
-					final ItemStack stack = trinkets.getStackInSlot(i);
-					final boolean empty = stack.isEmpty();
-					//					NetworkHandler.INSTANCE.sendTo(new PacketAccessorySync((EntityPlayer) target, i, true, !empty), (EntityPlayerMP) event.getEntityPlayer());
-					TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
-					if (iCap != null) {
-						iCap.syncStackTo((EntityLivingBase) target, i, !empty, 1, event.getEntityPlayer());
+		final EntityPlayer player = event.getEntityPlayer();
+		final Entity target = event.getTarget();
+		final World playerWorld = player.getEntityWorld();
+		if (!playerWorld.isRemote && (playerWorld instanceof WorldServer)) {
+			if (target instanceof EntityPlayer) {
+				final EntityPlayer targetPlayer = (EntityPlayer) target;
+				final ITrinketContainerHandler trinkets = TrinketHelper.getTrinketHandler(targetPlayer);
+				if (trinkets != null) {
+					for (int i = 0; i < trinkets.getSlots(); i++) {
+						final ItemStack stack = trinkets.getStackInSlot(i);
+						final boolean empty = stack.isEmpty();
+						final SyncItemDataPacket packet = new SyncItemDataPacket(targetPlayer, stack, stack.getTagCompound(), i, 1, true, !empty);
+						NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
 					}
 				}
 			}
@@ -165,6 +176,10 @@ public class TrinketEventHandler {
 				if (stack.getItem() instanceof IAccessoryInterface) {
 					final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
 					trinket.eventPlayerTick(stack, player);
+				} else {
+					//					if (stack.getItem() instanceof IBauble) {
+					//						((IBauble) stack.getItem()).onWornTick(stack, player);
+					//					}
 				}
 			}
 		}
@@ -295,7 +310,7 @@ public class TrinketEventHandler {
 
 	@SubscribeEvent
 	public void experienceDropEvent(LivingExperienceDropEvent event) {
-		if (event.getAttackingPlayer() instanceof EntityPlayer) {
+		if (event.getAttackingPlayer() != null) {
 			final EntityPlayer player = event.getAttackingPlayer();
 			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler(player);
 			for (int i = 0; i < Trinket.getSlots(); i++) {
@@ -322,6 +337,11 @@ public class TrinketEventHandler {
 			}
 		}
 	}
+
+	//	@SubscribeEvent
+	//	public void playerRespawn(PlayerRespawnEvent event) {
+	//
+	//	}
 
 	@SubscribeEvent
 	public void playerDeath(PlayerDropsEvent event) {

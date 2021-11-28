@@ -1,37 +1,34 @@
 package xzeroair.trinkets.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Trinkets;
+import net.minecraft.world.World;
 
-public class IncreasedReachPacket implements IMessage {
+public class IncreasedReachPacket extends ThreadSafePacket {
 
 	public IncreasedReachPacket() {
 	}
 
-	public int attackerEntityID = 0;
-	public int targetEntityID = 0;
-	public double x = 0;
-	public double y = 0;
-	public double z = 0;
+	private int targetEntityID;
+	private int hand;
+	private double x;
+	private double y;
+	private double z;
 
-	public IncreasedReachPacket(EntityLivingBase entity, Entity targetEntity, Vec3d vec) {
-		attackerEntityID = entity.getEntityId();
-		targetEntityID = targetEntity.getEntityId();
-		x = vec.x;
-		y = vec.y;
-		z = vec.z;
+	public IncreasedReachPacket(EntityLivingBase entity, EnumHand hand, Entity targetEntity, Vec3d vec) {
+		this(entity, hand, targetEntity, vec.x, vec.y, vec.z);
 	}
 
-	public IncreasedReachPacket(EntityLivingBase entity, Entity targetEntity, double x, double y, double z) {
-		attackerEntityID = entity.getEntityId();
+	public IncreasedReachPacket(EntityLivingBase entity, EnumHand hand, Entity targetEntity, double x, double y, double z) {
+		entityID = entity.getEntityId();
 		targetEntityID = targetEntity.getEntityId();
+		this.hand = hand == EnumHand.MAIN_HAND ? 0 : 1;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -39,37 +36,43 @@ public class IncreasedReachPacket implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		// Writes the int into the buf
-		buf.writeInt(attackerEntityID);
+		buf.writeInt(entityID);
+		buf.writeInt(hand);
 		buf.writeInt(targetEntityID);
+		buf.writeDouble(x);
+		buf.writeDouble(y);
+		buf.writeDouble(z);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		attackerEntityID = buf.readInt();
+		entityID = buf.readInt();
+		hand = buf.readInt();
 		targetEntityID = buf.readInt();
+		x = buf.readDouble();
+		y = buf.readDouble();
+		z = buf.readDouble();
 	}
 
-	public static class Handler implements IMessageHandler<IncreasedReachPacket, IMessage> {
+	@Override
+	public void handleClientSafe(NetHandlerPlayClient client) {
 
-		@Override
-		public IMessage onMessage(IncreasedReachPacket message, MessageContext ctx) {
+	}
 
-			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if ((Trinkets.proxy.getPlayer(ctx) != null) && (Trinkets.proxy.getPlayer(ctx).getEntityWorld() != null)) {
-					final Entity player = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.attackerEntityID);
-					Entity interacted = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.targetEntityID);
-					if ((player != null) && (player instanceof EntityPlayer)) {
-						EntityPlayer p = (EntityPlayer) player;
-						if (interacted != null) {
-							interacted.processInitialInteract((EntityPlayer) player, p.getActiveHand());
-						} else {
-
-						}
-					}
+	@Override
+	public void handleServerSafe(NetHandlerPlayServer server) {
+		final World world = server.player.getEntityWorld();
+		final Entity entity = world.getEntityByID(entityID);
+		final Entity interacted = world.getEntityByID(targetEntityID);
+		if ((entity instanceof EntityPlayer) && (interacted != null)) {
+			final EntityPlayer player = (EntityPlayer) entity;
+			if (hand == 1) {
+				//				final EnumActionResult action = interacted.applyPlayerInteraction(player, new Vec3d(x, y, z), EnumHand.MAIN_HAND);
+				if (!interacted.processInitialInteract(player, EnumHand.OFF_HAND)) {
 				}
-			});
-			return null;
+			} else {
+				player.attackTargetEntityWithCurrentItem(interacted);
+			}
 		}
 	}
 }

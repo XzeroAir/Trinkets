@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerProvider;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
@@ -35,14 +34,14 @@ public class TrinketInventoryContainer extends Container {
 	public TrinketInventoryContainer(InventoryPlayer playerInv, boolean client, EntityPlayer player) {
 		this.player = player;
 
-		this.trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+		trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
 
-		this.addSlotToContainer(new SlotCrafting(playerInv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
+		this.addSlotToContainer(new SlotCrafting(playerInv.player, craftMatrix, craftResult, 0, 154, 28));
 
 		//Crafting Area
 		for (int i = 0; i < 2; ++i) {
 			for (int j = 0; j < 2; ++j) {
-				this.addSlotToContainer(new Slot(this.craftMatrix, j + (i * 2), 98 + (j * 18), 18 + (i * 18)));
+				this.addSlotToContainer(new Slot(craftMatrix, j + (i * 2), 98 + (j * 18), 18 + (i * 18)));
 			}
 		}
 		// End Crafting
@@ -128,7 +127,7 @@ public class TrinketInventoryContainer extends Container {
 						y = y + 4;
 					}
 				}
-				this.addSlotToContainer(new TrinketSlot(player, this.trinket, index, x, y));
+				this.addSlotToContainer(new TrinketSlot(player, trinket, index, x, y));
 			}
 		}
 		if (slotRowAmount > 1) {
@@ -144,32 +143,32 @@ public class TrinketInventoryContainer extends Container {
 							y = y + 4;
 						}
 					}
-					this.addSlotToContainer(new TrinketSlot(player, this.trinket, index, x, y));
+					this.addSlotToContainer(new TrinketSlot(player, trinket, index, x, y));
 				}
 			}
 		}
-		this.onCraftMatrixChanged(this.craftMatrix);
+		this.onCraftMatrixChanged(craftMatrix);
 	}
 
 	@Override
 	public void onCraftMatrixChanged(IInventory par1IInventory) {
-		this.slotChangedCraftingGrid(this.player.getEntityWorld(), this.player, this.craftMatrix, this.craftResult);
+		this.slotChangedCraftingGrid(player.getEntityWorld(), player, craftMatrix, craftResult);
 	}
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
-		this.craftResult.clear();
+		craftResult.clear();
 
 		if (!player.world.isRemote) {
-			this.clearContainer(player, player.world, this.craftMatrix);
+			this.clearContainer(player, player.world, craftMatrix);
 		}
 	}
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
-		final Slot slot = this.inventorySlots.get(index);
+		final Slot slot = inventorySlots.get(index);
 
 		if ((slot != null) && slot.getHasStack()) {
 			final ItemStack itemstack1 = slot.getStack();
@@ -203,14 +202,20 @@ public class TrinketInventoryContainer extends Container {
 			// inv -> Trinkets
 			//			else if ((index >= 9) && (index < 45))
 			else if (itemstack.hasCapability(Capabilities.ITEM_TRINKET, null) && (itemstack.getItem() instanceof IAccessoryInterface)) {
-				TrinketProperties iCap = Capabilities.getTrinketProperties(itemstack);
-				if (((IAccessoryInterface) itemstack1.getItem()).playerCanEquip(itemstack1, this.player) && !this.mergeItemStack(itemstack1, 46, 46 + slotShift, false)) {
-					return ItemStack.EMPTY;
+				//				final TrinketProperties iCap = Capabilities.getTrinketProperties(itemstack);
+				try {
+					final boolean canEquip = ((IAccessoryInterface) itemstack1.getItem()).playerCanEquip(itemstack1, player);
+					final boolean placeItem = canEquip && !this.mergeItemStack(itemstack1, 46, 46 + slotShift, false);
+					if (placeItem) {
+						return ItemStack.EMPTY;
+					}
+				} catch (final Exception e) {
+					e.printStackTrace();
 				}
 			}
 
 			// inv -> armor
-			else if ((entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR) && !this.inventorySlots.get(8 - entityequipmentslot.getIndex()).getHasStack()) {
+			else if ((entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR) && !inventorySlots.get(8 - entityequipmentslot.getIndex()).getHasStack()) {
 				final int i = 8 - entityequipmentslot.getIndex();
 
 				if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
@@ -219,7 +224,7 @@ public class TrinketInventoryContainer extends Container {
 			}
 
 			// inv -> offhand
-			else if ((entityequipmentslot == EntityEquipmentSlot.OFFHAND) && !this.inventorySlots.get(45).getHasStack()) {
+			else if ((entityequipmentslot == EntityEquipmentSlot.OFFHAND) && !inventorySlots.get(45).getHasStack()) {
 				if (!this.mergeItemStack(itemstack1, 45, 46, false)) {
 					return ItemStack.EMPTY;
 				}
@@ -250,7 +255,7 @@ public class TrinketInventoryContainer extends Container {
 				return ItemStack.EMPTY;
 			}
 
-			if (itemstack1.isEmpty() && !this.trinket.isEventBlocked() && (slot instanceof TrinketSlot) &&
+			if (itemstack1.isEmpty() && !trinket.isEventBlocked() && (slot instanceof TrinketSlot) &&
 					(itemstack.getItem() instanceof IAccessoryInterface)) {
 				//				final IAccessoryInterface accessory = (IAccessoryInterface) itemstack.getItem();
 				//				accessory.playerUnequipped(itemstack, playerIn);
@@ -260,8 +265,8 @@ public class TrinketInventoryContainer extends Container {
 				//				}
 			}
 
-			if (Loader.isModLoaded("baubles")) {
-				final IBaublesItemHandler baubles = this.player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+			if (Loader.isModLoaded("baubles") && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+				final IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
 				if (itemstack1.isEmpty() && !baubles.isEventBlocked() && (slot instanceof TrinketSlot) &&
 						itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 					itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(itemstack, playerIn);
@@ -280,7 +285,7 @@ public class TrinketInventoryContainer extends Container {
 
 	@Override
 	public boolean canMergeSlot(ItemStack stack, Slot slot) {
-		return (slot.inventory != this.craftResult) && super.canMergeSlot(stack, slot);
+		return (slot.inventory != craftResult) && super.canMergeSlot(stack, slot);
 	}
 
 	@Override

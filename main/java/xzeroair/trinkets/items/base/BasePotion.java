@@ -9,12 +9,11 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.race.MagicStats;
-import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
+import xzeroair.trinkets.util.helpers.MagicHelper;
 
 public class BasePotion extends Potion {
 
@@ -44,22 +43,21 @@ public class BasePotion extends Potion {
 
 	@Override
 	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
-		EntityProperties prop = Capabilities.getEntityRace(entity);
+		final EntityProperties prop = Capabilities.getEntityRace(entity);
 		if (prop != null) {
-			MagicStats magic = prop.getMagic();
 			if (name.equals(ModPotionTypes.restore)) {
 				// TODO Maybe redo this?
-				prop.setImbuedRace(EntityRaces.human);
-				magic.setMana(magic.getMaxMana());
-				prop.onUpdate();
+				prop.setImbuedRace(null);
+				MagicHelper.refillMana(entity);
+				//				prop.onUpdate();
 				prop.sendInformationToAll();
 			} else {
 				if (name.equals(ModPotionTypes.advancedGlowing)) {
-					prop.getMagic().setMana(prop.getMagic().getMaxMana());
+					MagicHelper.refillMana(entity);
 				} else if (name.equals(ModPotionTypes.enhancedGlittering)) {
-					prop.getMagic().addMana(prop.getMagic().getMaxMana() * 0.50F);
+					MagicHelper.refillManaByPrecentage(entity, 0.5F);
 				} else {
-					prop.getMagic().addMana(prop.getMagic().getMaxMana() * 0.25F);
+					MagicHelper.refillManaByPrecentage(entity, 0.25F);
 				}
 			}
 		}

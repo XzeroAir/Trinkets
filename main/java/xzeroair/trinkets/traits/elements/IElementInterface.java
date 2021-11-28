@@ -4,6 +4,8 @@ public interface IElementInterface {
 
 	public String getName();
 
+	public void elementTick();
+
 	public ElementalEnum getWeakeness();
 
 }

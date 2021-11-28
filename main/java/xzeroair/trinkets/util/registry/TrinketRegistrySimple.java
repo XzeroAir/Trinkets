@@ -1,4 +1,4 @@
-package xzeroair.trinkets.races.util;
+package xzeroair.trinkets.util.registry;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Maps;
 
-public class RaceRegistrySimple<K, V> implements IRaceRegistry<K, V> {
+import javax.annotation.Nullable;
+
+public class TrinketRegistrySimple<K, V> implements ITrinketRegistry<K, V> {
 	private static final Logger LOGGER = LogManager.getLogger();
 	/** Objects registered on this registry. */
 	protected final Map<K, V> registryObjects = this.createUnderlyingMap();

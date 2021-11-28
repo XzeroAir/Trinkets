@@ -2,7 +2,7 @@ package xzeroair.trinkets.items.potions;
 
 import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
-import net.minecraft.item.Item;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionHelper;
@@ -17,13 +17,13 @@ public class PotionObject {
 	private PotionType base;
 	private PotionType normal;
 	private PotionType extended;
-	private Item ingredient;
+	private Ingredient ingredient;
 	private int duration;
 	private String name;
 	private int color;
 	private boolean isBase;
 
-	public PotionObject(Potion potion, String name, int color, int duration, Item ingredient) {
+	public PotionObject(Potion potion, String name, int color, int duration, Ingredient ingredient) {
 		this.potion = potion;
 		this.name = name;
 		this.color = color;
@@ -34,19 +34,13 @@ public class PotionObject {
 		isBase = true;
 	}
 
-	public PotionObject(Potion potion, PotionType base, String name, int color, int duration, Item ingredient) {
-		this.potion = potion;
+	public PotionObject(Potion potion, PotionType base, String name, int color, int duration, Ingredient ingredient) {
+		this(potion, name, color, duration, ingredient);
 		this.base = base;
-		this.name = name;
-		this.color = color;
-		this.duration = duration;
-		this.ingredient = ingredient;
-		normal = this.createPotionType(name, potion, duration);
-		extended = this.createPotionTypeExtended(name, potion, duration);
 		isBase = false;
 	}
 
-	public Item getIngredient() {
+	public Ingredient getIngredient() {
 		return ingredient;
 	}
 
@@ -105,16 +99,16 @@ public class PotionObject {
 	}
 
 	private PotionType createPotionType(String name, Potion pot, int duration) {
-		PotionType type = new PotionType(Reference.MODID + "." + name, new PotionEffect[] { new PotionEffect(pot, duration) }).setRegistryName(name);
+		final PotionType type = new PotionType(Reference.MODID + "." + name, new PotionEffect[] { new PotionEffect(pot, duration) }).setRegistryName(name);
 		return type;
 	}
 
 	private PotionType createPotionTypeExtended(String name, Potion pot, int duration) {
-		PotionType type = new PotionType(Reference.MODID + "." + name, new PotionEffect[] { new PotionEffect(pot, duration * 3) }).setRegistryName("extended_" + name);
+		final PotionType type = new PotionType(Reference.MODID + "." + name, new PotionEffect[] { new PotionEffect(pot, duration * 3) }).setRegistryName("extended_" + name);
 		return type;
 	}
 
-	private void addBaseMix(PotionType potion, Item ingredient) {
+	private void addBaseMix(PotionType potion, Ingredient ingredient) {
 		PotionHelper.addMix(PotionTypes.MUNDANE, ingredient, potion);
 		PotionHelper.addMix(PotionTypes.AWKWARD, ingredient, potion);
 		PotionHelper.addMix(PotionTypes.THICK, ingredient, potion);

@@ -140,6 +140,17 @@ public class LycanitesCompat {
 		}
 	}
 
+	public static Potion getPotionEffectByName(String name) {
+		if (Loader.isModLoaded("lycanitesmobs") && enabled) {
+			try {
+				return Potion.getPotionFromResourceLocation("lycanitesmobs:" + name);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	public static void convertManaToSpirit(EntityLivingBase entity) {
 		//		if (Loader.isModLoaded("lycanitesmobs") && enabled) {
 		//			if ((entity == null) || !(entity instanceof EntityPlayer)) {

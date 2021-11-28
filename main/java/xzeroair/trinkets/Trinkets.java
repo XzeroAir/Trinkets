@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -22,10 +23,14 @@ import xzeroair.trinkets.capabilities.CapabilitiesHandler;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.proxy.CommonProxy;
 import xzeroair.trinkets.races.EntityRace;
-import xzeroair.trinkets.races.util.RaceRegistry;
+import xzeroair.trinkets.traits.abilities.Ability;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.IElementInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.TrinketsConfigEvent;
+import xzeroair.trinkets.util.registry.TrinketRegistry;
 import xzeroair.trinkets.vip.VIPHandler;
 
 // @formatter:off
@@ -60,7 +65,13 @@ public class Trinkets {
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
 
-	public static final RaceRegistry<ResourceLocation, EntityRace> RaceRegistry = new RaceRegistry<>();
+	public static final TrinketRegistry<ResourceLocation, EntityRace> RaceRegistry = new TrinketRegistry<>();
+	public static final TrinketRegistry<ResourceLocation, IElementInterface> elementRegistry = new TrinketRegistry<>();
+	public static final TrinketRegistry<ResourceLocation, IAbilityInterface> abilityRegistry = new TrinketRegistry<>();
+
+	public static boolean ToughAsNails = false;
+	public static boolean SimpleDifficulty = false;
+	public static boolean FirstAid = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -69,27 +80,29 @@ public class Trinkets {
 		config = new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg"));
 		TrinketsConfig.readConfig();
 
+		ConfigHelper.initConfigLists();
 		if (gotVIPs != true) {
 			log.info("Trinkets and Baubles: Generating VIP List");
 			//Needs to be on Client only
-			//			if (Minecraft.getMinecraft().getSession() != null) {
-			//				Session session = Minecraft.getMinecraft().getSession();
-			//				if (session.getProfile() != null) {
-			//					GameProfile profile = session.getProfile();
-			VIPHandler.popVIPList();
-			//					System.out.println(session.getUsername() + " with ID:" + session.getPlayerID());
-			//					System.out.println(profile.getName() + " with ID:" + profile.getId());
-			//				}
-			//			}
+			try {
+				VIPHandler.popVIPList();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 			gotVIPs = true;
 		}
+		ToughAsNails = Loader.isModLoaded("toughasnails");
+		SimpleDifficulty = Loader.isModLoaded("simpledifficulty");
+		FirstAid = Loader.isModLoaded("firstaid");
 
+		Ability.init();
 		EntityRace.registerRaces();
 		//Capabilities
 		Capabilities.init();
 
 		//Network
-		NetworkHandler.init();
+		//		NetworkHandler.init();
+		NetworkHandler.INSTANCE.init();
 
 		proxy.preInit(event);
 	}
@@ -101,8 +114,9 @@ public class Trinkets {
 		//TODO Add Reskillable Support?
 		//		if (Loader.isModLoaded("reskillable")) {
 		//			codersafterdark.reskillable.api.ReskillableRegistries.UNLOCKABLES.register(
-		//                new ReskillableTrait();
-		//        )
+		//					new ReskillableTrait()
+		//			);
+		//		}
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		proxy.init(event);
 	}
@@ -119,6 +133,14 @@ public class Trinkets {
 		}
 	}
 
+	//	@EventHandler
+	//	public void serverStarting(FMLServerStartingEvent event) {
+	//		event.registerServerCommand(new CommandMana());
+	//	}
+
+	//	static {
+	//		FluidRegistry.enableUniversalBucket();
+	//	}
 	//	@EventHandler
 	//	public void fingerprintViolated(FMLFingerprintViolationEvent event) {
 	//

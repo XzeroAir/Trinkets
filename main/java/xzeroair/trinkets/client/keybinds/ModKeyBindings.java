@@ -5,8 +5,11 @@ import org.lwjgl.input.Keyboard;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.util.Reference;
 
+@SideOnly(Side.CLIENT)
 public class ModKeyBindings {
 
 	public static KeyBinding TRINKET_GUI = new KeyBinding("key." + Reference.MODID + ".trinket_gui.desc", Keyboard.KEY_P, "key." + Reference.MODID + ".category");

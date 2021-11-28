@@ -1,7 +1,6 @@
 package xzeroair.trinkets.races.mixed;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.entity.EntityLivingBase;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.races.EntityRace;
@@ -18,7 +17,7 @@ public class RaceMixed extends EntityRacePropertiesHandler {
 		super(e, properties, null);//EntityRaces.mixed);
 		main = mainRace;
 		sub = subRace;
-		color = new ColorHelper().setColor(properties.getTraitColor()).setAlpha(properties.getTraitOpacity());
+		color = new ColorHelper().setColor(properties.getTraitColor());
 	}
 
 	public boolean isMixed() {

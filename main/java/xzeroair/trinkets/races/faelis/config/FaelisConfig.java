@@ -46,6 +46,24 @@ public class FaelisConfig {
 	public String[] milk = new String[] {
 			"minecraft:milk_bucket"
 	};
+	@Config.Comment("List of Items that count as Heavy Armor")
+	@Name("09. Heavy Armor")
+	@LangKey(PREFIX + ".armor.heavy.list")
+	public String[] heavyArmor = new String[] {
+			"minecraft:chainmail_helmet;*;0.01",
+			"minecraft:chainmail_chestplate;*;0.09",
+			"minecraft:chainmail_leggings;*;0.075",
+			"minecraft:chainmail_boots;*;0.025",
+			"materialIron;head;0.025",
+			"materialIron;chest;0.15",
+			"materialIron;legs;0.075",
+			"materialIron;feet;0.05",
+			"minecraft:golden_helmet;*;0.04",
+			"minecraft:golden_chestplate;*;0.2",
+			"minecraft:golden_leggings;*;0.1",
+			"minecraft:golden_boots;*;0.06",
+			"materialDiamond;0.075",
+	};
 
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")
@@ -72,19 +90,19 @@ public class FaelisConfig {
 	private final int		attackSpeedOperation = 2;
 	private final boolean 	damage = true;
 	private final double 	damageAmount = -0.25;
-	private final int		damageOperation = 2;
+	private final int		damageOperation = 1;
 	private final boolean 	health = true;
 	private final double 	healthAmount = -0.25;
-	private final int		healthOperation = 2;
+	private final int		healthOperation = 1;
 	private final boolean 	knockback = false;
 	private final double 	knockbackAmount = 0;
 	private final int		knockbackOperation = 0;
 	private final boolean 	speed = true;
 	private final double 	speedAmount = 0.15;
-	private final int		speedOperation = 2;
+	private final int		speedOperation = 1;
 	private final boolean 	swimSpeed = true;
 	private final double 	swimSpeedAmount = 0.3;
-	private final int		swimSpeedOperation = 2;
+	private final int		swimSpeedOperation = 1;
 	private final boolean 	toughness = true;
 	private final double 	toughnessAmount = -0.15;
 	private final int		toughnessOperation = 2;
@@ -93,10 +111,10 @@ public class FaelisConfig {
 	private final int		luckOperation = 0;
 	private final boolean	reach = true;
 	private final double	reachAmount = -0.1;
-	private final int		reachOperation = 2;
+	private final int		reachOperation = 1;
 	private final boolean	jump = true;
 	private final double	jumpAmount = 0.6;
-	private final int		jumpOperation = 2;
+	private final int		jumpOperation = 1;
 	private final boolean	stepHeight = true;
 	private final double	stepHeightAmount = 0.6;
 	private final int		stepHeightOperation = 0;

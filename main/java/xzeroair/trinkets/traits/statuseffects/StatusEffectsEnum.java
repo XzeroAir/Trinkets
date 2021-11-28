@@ -15,7 +15,8 @@ public enum StatusEffectsEnum {
 	Infected	(		nextID(), "Infected"	, 100	),
 	Inspiration	(		nextID(), "Inspiration", 100	),
 	Undead		(		nextID(), "Undead"		, 100	),
-	Incorporeal	(		nextID(), "Incorporeal", 100	)
+	Incorporeal	(		nextID(), "Incorporeal", 100	),
+	ManaUp		(		nextID(), "ManaUp"		, 100	)
 	// Sun Blessed, Moon Walker, Lucky, Demonification, The Fallen
 	//TODO Don't do an Enum, Do something else
 	;

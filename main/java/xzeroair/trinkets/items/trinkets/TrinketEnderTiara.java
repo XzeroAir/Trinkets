@@ -1,7 +1,5 @@
 package xzeroair.trinkets.items.trinkets;
 
-import java.util.List;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -9,24 +7,17 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.DamageSource;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.model.Tiara;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
+import xzeroair.trinkets.traits.abilities.AbilityEnderQueen;
+import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Crown;
-import xzeroair.trinkets.util.compat.SurvivalCompat;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
 
 public class TrinketEnderTiara extends AccessoryBase {
@@ -42,48 +33,16 @@ public class TrinketEnderTiara extends AccessoryBase {
 	}
 
 	@Override
+	public void initAbilities(EntityLivingBase entity) {
+		this.addAbility(entity, Abilities.enderQueen, new AbilityEnderQueen());
+		if ((Trinkets.ToughAsNails || Trinkets.SimpleDifficulty) && serverConfig.compat.tan.immuneToCold) {
+			this.addAbility(entity, Abilities.survivalColdImmunity, new AbilityColdImmunity());
+		}
+	}
+
+	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		LycanitesCompat.removeInstability(player);
-		EntityProperties prop = Capabilities.getEntityRace(player);
-		if (serverConfig.water_hurts) {
-			if ((player.isInWater() || player.isWet())) {
-				if ((player.ticksExisted % 20) == 0) {
-					if ((prop != null) && (prop.getMagic().spendMana(5F))) {
-
-					} else {
-						if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye)) {
-							player.attackEntityFrom(DamageSource.WITHER, 4);
-						} else {
-							player.attackEntityFrom(DamageSource.WITHER, 2);
-						}
-					}
-				}
-			}
-		}
-
-		if (serverConfig.compat.tan.immuneToCold) {
-			SurvivalCompat.immuneToCold(player);
-		}
-	}
-
-	@Override
-	public void eventPlayerHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-		//		if (event.getSource().getDamageType().equalsIgnoreCase("dragon_ice")) {
-		//			event.setCanceled(true);
-		//		}
-	}
-
-	@Override
-	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
-		List<Potion> hypothermia = SurvivalCompat.getHypothermiaEffects();
-		if (!hypothermia.isEmpty()) {
-			for (Potion hypo : hypothermia) {
-				if ((hypo != null) && event.getPotionEffect().getPotion().equals(hypo)) {
-					event.setResult(Result.DENY);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -100,7 +59,7 @@ public class TrinketEnderTiara extends AccessoryBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isBauble) {
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isBauble) {
 		if (!clientConfig.doRender) {
 			return;
 		}

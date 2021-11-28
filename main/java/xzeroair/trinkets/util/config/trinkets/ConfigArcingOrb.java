@@ -38,6 +38,10 @@ public class ConfigArcingOrb {
 	@Config.LangKey(PREFIX + "dodge.stuns.enabled")
 	public boolean dodgeStuns = true;
 
+	@Config.Name("Stun Radius")
+	@Config.LangKey(PREFIX + "dodge.stuns.radius")
+	public double stunDistance = 2;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")
@@ -88,8 +92,8 @@ public class ConfigArcingOrb {
 	protected final double 	knockbackAmount = 0;
 	protected final int		knockbackOperation = 0;
 	protected final boolean speed = true;
-	protected final double 	speedAmount = 1.1;
-	protected final int		speedOperation = 2;
+	protected final double 	speedAmount = 0.25;
+	protected final int		speedOperation = 1;
 	protected final boolean swimSpeed = false;
 	protected final double 	swimSpeedAmount = 0;
 	protected final int		swimSpeedOperation = 0;

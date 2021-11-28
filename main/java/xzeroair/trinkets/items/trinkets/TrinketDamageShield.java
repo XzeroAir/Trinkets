@@ -7,28 +7,27 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.items.effects.EffectsDamageShield;
+import xzeroair.trinkets.traits.abilities.AbilityResistance;
+import xzeroair.trinkets.traits.abilities.compat.firstaid.AbilityIgnoreHeadshot;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Shield;
 import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
-import xzeroair.trinkets.util.handlers.TickHandler;
 
 public class TrinketDamageShield extends AccessoryBase {
 
@@ -43,52 +42,33 @@ public class TrinketDamageShield extends AccessoryBase {
 	}
 
 	@Override
+	public void initAbilities(EntityLivingBase entity) {
+		this.addAbility(entity, Abilities.safeGuard, new AbilityResistance());
+		if (Trinkets.FirstAid && serverConfig.compat.firstaid.chance_ignore) {
+			this.addAbility(entity, Abilities.firstAidReflex, new AbilityIgnoreHeadshot());
+		}
+	}
+
+	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		int duration = 30;
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
-		if (cap != null) {
-			if (!player.isPotionActive(MobEffects.RESISTANCE)) {
-				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, serverConfig.resistance_level, false, false));
-				cap.removeCounter("CheckResist");
-			} else {
-				final int dur = player.getActivePotionEffect(MobEffects.RESISTANCE).getDuration();
-				final int amp = player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier();
-				TickHandler counter = cap.getCounter("CheckResist");
-				boolean trigger = counter.Tick();
-				if (trigger) {
-					cap.removeCounter("CheckResist");
-				}
-				if ((dur > duration) && serverConfig.resistance_stacks) {
-					//Assume it was given by something else
-					if ((amp <= serverConfig.resistance_level)) {
-						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, amp + 1, false, false));
-					} else {
-						if (trigger && ((amp + 1) < 3)) {
-							player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, dur, amp + 1, false, false));
-						}
-					}
-				} else {
-					if ((amp <= serverConfig.resistance_level)) {
-						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, duration, serverConfig.resistance_level, false, false));
+		try {
+			final VipStatus status = Capabilities.getVipStatus(player);
+			if (status != null) {
+				if (this.stackHasStatus(stack)) {
+					if (this.getTagCompoundSafe(stack).getInteger("status") != status.getStatus()) {
+						this.getTagCompoundSafe(stack).setInteger("status", status.getStatus());
 					}
 				}
 			}
+		} catch (final Exception e) {
 		}
 	}
 
 	@Override
-	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
-		if ((cap != null) && event.getPotionEffect().getPotion().equals(MobEffects.RESISTANCE)) {
-			TickHandler counter = cap.getCounter("CheckResist");
-			counter.setLength(event.getPotionEffect().getDuration() - 1).setCountdown(true);
-		}
-	}
-
-	@Override
-	public void eventPlayerHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-		EffectsDamageShield.eventPlayerHurt(event, stack, player);
+	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+		super.onUpdate(stack, world, entity, itemSlot, isSelected);
+		this.removePlayerStatus(stack);
 	}
 
 	@Override
@@ -101,11 +81,7 @@ public class TrinketDamageShield extends AccessoryBase {
 	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
 		super.playerUnequipped(stack, player);
 		if (!TrinketHelper.AccessoryCheck(player, stack.getItem())) {
-			this.removePlayerStatus(stack, player);
-			if (player.isPotionActive(MobEffects.RESISTANCE)) {
-				player.removeActivePotionEffect(MobEffects.RESISTANCE);
-				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 10, serverConfig.resistance_level, false, false));
-			}
+			this.removePlayerStatus(stack);
 		}
 	}
 
@@ -117,13 +93,13 @@ public class TrinketDamageShield extends AccessoryBase {
 		if (this.stackHasStatus(stack)) {
 			this.getTagCompoundSafe(stack).removeTag("status");
 		}
-		VipStatus status = Capabilities.getVipStatus(player);
-		if ((status != null) && (status.getStatus() > 0)) {
+		final VipStatus status = Capabilities.getVipStatus(player);
+		if (status != null) {
 			this.getTagCompoundSafe(stack).setInteger("status", status.getStatus());
 		}
 	}
 
-	private void removePlayerStatus(ItemStack stack, EntityLivingBase player) {
+	private void removePlayerStatus(ItemStack stack) {
 		if (this.stackHasStatus(stack)) {
 			this.getTagCompoundSafe(stack).removeTag("status");
 		}
@@ -132,21 +108,29 @@ public class TrinketDamageShield extends AccessoryBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerModels() {
-		ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
-		ModelResourceLocation bro = new ModelResourceLocation(this.getRegistryName().toString() + "_bro", "inventory");
-		ModelResourceLocation panda = new ModelResourceLocation(this.getRegistryName().toString() + "_panda", "inventory");
-		ModelResourceLocation vip = new ModelResourceLocation(this.getRegistryName().toString() + "_vip", "inventory");
-		ModelBakery.registerItemVariants(this, normal, bro, panda, vip);
+		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
+		final ModelResourceLocation bro = new ModelResourceLocation(this.getRegistryName().toString() + "_bro", "inventory");
+		final ModelResourceLocation panda = new ModelResourceLocation(this.getRegistryName().toString() + "_panda", "inventory");
+		final ModelResourceLocation vip = new ModelResourceLocation(this.getRegistryName().toString() + "_vip", "inventory");
+		final ModelResourceLocation artsy = new ModelResourceLocation(this.getRegistryName().toString() + "_artsy", "inventory");
+		final ModelResourceLocation twilight = new ModelResourceLocation(this.getRegistryName().toString() + "_twilight", "inventory");
+		ModelBakery.registerItemVariants(this, normal, bro, panda, vip, artsy, twilight);
 		ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
 			@Override
 			public ModelResourceLocation getModelLocation(ItemStack stack) {
 				if (TrinketDamageShield.this.stackHasStatus(stack)) {
-					if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 1) {
+					if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 0) {
+						return normal;
+					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 1) {
 						return vip;
 					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 2) {
 						return bro;
 					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 3) {
 						return panda;
+					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 4) {
+						return artsy;
+					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 5) {
+						return twilight;
 					} else {
 						return vip;
 					}
@@ -159,13 +143,13 @@ public class TrinketDamageShield extends AccessoryBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isBauble) {
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isBauble) {
 		if (!clientConfig.doRender) {
 			return;
 		}
-		float offsetX = 0.17F;
-		float offsetY = 0.22F;
-		float offsetZ = 0.16F;
+		final float offsetX = 0.17F;
+		final float offsetY = 0.22F;
+		final float offsetZ = 0.16F;
 		GlStateManager.pushMatrix();
 		if (player.isSneaking()) {
 			GlStateManager.translate(0F, 0.2F, 0F);
@@ -176,7 +160,7 @@ public class TrinketDamageShield extends AccessoryBase {
 		if (player.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
 			GlStateManager.translate(offsetX - 0.14F, 0, -(offsetZ - 0.2F));
 		}
-		float bS = 3f;
+		final float bS = 3f;
 		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
 		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
 		GlStateManager.popMatrix();

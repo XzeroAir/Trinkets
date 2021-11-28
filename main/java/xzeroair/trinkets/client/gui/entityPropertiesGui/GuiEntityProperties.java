@@ -15,15 +15,21 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
 
+@SideOnly(Side.CLIENT)
 public class GuiEntityProperties extends GuiScreen {
 
 	public EntityPlayer player;
@@ -33,10 +39,18 @@ public class GuiEntityProperties extends GuiScreen {
 	public ColorHelper color;
 	public int buttonPressed;
 
-	public int redSlider = 5;
-	public int greenSlider = 6;
-	public int blueSlider = 7;
-	public int alphaSlider = 8;
+	public int manaBar = 1;
+	public int abilityMenu = 2;
+	public int manaOrientation = 3;
+	public int toggleTrait = 4;
+	public int colorFieldID = 5;
+	public int flipPlayer = 6;
+	public int resetColor = 7;
+	public int redSlider = 8;
+	public int greenSlider = 9;
+	public int blueSlider = 10;
+	//		public int alphaSlider = 11;
+	public int closeGui = 11;
 
 	protected boolean flip = false;
 
@@ -61,23 +75,22 @@ public class GuiEntityProperties extends GuiScreen {
 		buttonList.clear();
 		super.initGui();
 
-		this.addButton(new GuiPropertiesButton(1, 2, 0, 60, 20, "Mana Bar")); // Mana Gui
-		this.addButton(new GuiPropertiesButton(4, 64, 0, 14, 20, "")); // Mana Gui
-		//		this.addButton(new GuiPropertiesButton(5, 80, 0, 14, 20, "")); // Mana Gui
-		this.addButton(new GuiPropertiesButton(9, (width / 2) - 30, 0, 60, 20, "Flip")); // Mana Gui
-		if (!properties.isFake()) {
-			this.addButton(new GuiPropertiesButton(2, 2, 40, 60, 20, "")); // Toggle Trait Shown
-		}
+		this.addButton(new GuiPropertiesButton(manaBar, 2, height - 22, 60, 20, "Mana Bar")); // Open Mana bar gui
+		this.addButton(new GuiPropertiesButton(abilityMenu, 2, 2, 50, 20, "Stats"));
+		this.addButton(new GuiPropertiesButton(manaOrientation, 64, height - 22, 14, 20, "")); // Change Mana Bar Direction
+		this.addButton(new GuiPropertiesButton(toggleTrait, 2, 40, 60, 20, "")); // Toggle Trait Shown
 
 		int bX = (width - (width / 4));
 		int bY = (height - (height / 2));
 		bX -= 30;
 		bY -= (height / 4);
-		colorField = new GuiTextField(4, fontRenderer, bX, bY, 100, 20);
+		colorField = new GuiTextField(colorFieldID, fontRenderer, bX, bY, 100, 20);
 		colorField.setMaxStringLength(8);
 		colorField.setText(properties.getTraitColor());
 		color.setColor(properties.getTraitColor());
-		this.addButton(new GuiPropertiesButton(3, bX + 102, bY - 1, 20, 20, "R")); // Color Reset
+		this.addButton(new GuiPropertiesButton(flipPlayer, (width / 2) - 30, 0, 60, 20, "Flip")); // Flip Player
+		// WAS ID 3
+		this.addButton(new GuiPropertiesButton(resetColor, bX + 102, bY - 1, 20, 20, "R")); // Color Reset
 		bY += 24;
 		r = new GuiPropertiesSlider(this, redSlider, bX, bY, 100, 20, "Red", color.getRed(), 1F, 0F);
 		bY += 20;
@@ -85,19 +98,16 @@ public class GuiEntityProperties extends GuiScreen {
 		bY += 20;
 		b = new GuiPropertiesSlider(this, blueSlider, bX, bY, 100, 20, "Blue", color.getBlue(), 1F, 0F);
 		bY += 20;
-		//		a = new GuiPropertiesSlider(this, alphaSlider, bX, bY, 100, 20, "Opacity", properties.getTraitOpacity(), 1F, 0F);
 		this.addButton(r);
 		this.addButton(g);
 		this.addButton(b);
-		//		this.addButton(a);
+
+		this.addButton(new GuiPropertiesButton(closeGui, width - 16, 2, 14, 20, TextFormatting.RED + "X")); // Change Mana Bar Direction
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		super.mouseReleased(mouseX, mouseY, state);
-		//		if (buttonPressed == alphaSlider) {
-		//			properties.setTraitOpacity(a.sliderValue);
-		//		}
 		buttonPressed = 0;
 	}
 
@@ -105,25 +115,36 @@ public class GuiEntityProperties extends GuiScreen {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		colorField.mouseClicked(mouseX, mouseY, mouseButton);
-		//		mc.player.closeScreen();
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
 		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-		//		if (buttonPressed == alphaSlider) {
-		//			properties.setTraitOpacity(a.sliderValue);
-		//		}
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		buttonPressed = button.id;
-		if (button.id == 2) {
+		if (button.id == manaBar) {
+			//			mc.player.closeScreen();
+			mc.player.openGui(Trinkets.instance, 1, mc.player.world, 0, 0, 0);
+		}
+		if (button.id == abilityMenu) {
+			//			mc.player.closeScreen();
+			mc.player.openGui(Trinkets.instance, 3, mc.player.world, 0, 0, 0);
+		}
+		if (button.id == manaOrientation) {
+			TrinketsConfig.CLIENT.MPBar.mana_horizontal = !TrinketsConfig.CLIENT.MPBar.mana_horizontal;
+			ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+		}
+		if (button.id == toggleTrait) {
 			properties.setTraitsShown(!properties.showTraits());
 		}
-		if (button.id == 3) {
+		if (button.id == flipPlayer) {
+			flip = !flip;
+		}
+		if (button.id == resetColor) {
 			properties.setTraitColor("#ffffff");
 			color.setColor("#ffffff");
 			colorField.setText(properties.getTraitColor());
@@ -132,20 +153,8 @@ public class GuiEntityProperties extends GuiScreen {
 			g.sliderValue = 1F;
 			b.sliderValue = 1F;
 		}
-		if (button.id == 4) {
-			TrinketsConfig.CLIENT.MPBar.mana_horizontal = !TrinketsConfig.CLIENT.MPBar.mana_horizontal;
-			ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-		}
-		if (button.id == 5) {
-		}
-		if (button.id == 6) {
-		}
-		if (button.id == 7) {
-		}
-		if (button.id == 8) {
-		}
-		if (button.id == 9) {
-			flip = !flip;
+		if (button.id == closeGui) {
+			this.displayNormalInventory();
 		}
 
 	}
@@ -175,10 +184,16 @@ public class GuiEntityProperties extends GuiScreen {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 
 		final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-		if (!properties.isFake()) {
-			DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, 30, 0, 0, 0, 0, 0, 0.5F);
-			fontRenderer.drawStringWithShadow("Show Trait", 4, 32, 16777215);
+		//		if (!properties.isFake()) {
+		int backHeight = 30;
+		if (properties.getCurrentRace().equals(EntityRaces.dragon) || properties.getCurrentRace().equals(EntityRaces.fairy)) {
+			backHeight = 42;
+			int flying = properties.showTraits() ? 51200 : 13107200;
+			fontRenderer.drawStringWithShadow("Flying", 17, 62, flying);
 		}
+		DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, backHeight, 0, 0, 0, 0, 0, 0.5F);
+		fontRenderer.drawStringWithShadow("Show Trait", 6, 32, 16777215);
+		//		}
 
 		colorField.drawTextBox();
 		GlStateManager.pushMatrix();
@@ -211,10 +226,10 @@ public class GuiEntityProperties extends GuiScreen {
 		super.keyTyped(par1, par2);
 		colorField.textboxKeyTyped(par1, par2);
 		properties.setTraitColor(colorField.getText());
-		if (par2 == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
-			player.closeScreen();
-			this.displayNormalInventory();
-		}
+		//		if (par2 == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
+		//			player.closeScreen();
+		//			this.displayNormalInventory();
+		//		}
 	}
 
 	public void displayNormalInventory() {

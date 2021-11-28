@@ -2,17 +2,22 @@ package xzeroair.trinkets.items.trinkets;
 
 import java.util.UUID;
 
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
-import xzeroair.trinkets.Trinkets;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
+import xzeroair.trinkets.traits.abilities.AbilityWellRested;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.trinkets.ConfigTeddyBear;
 
 public class TrinketTeddyBear extends AccessoryBase {
@@ -24,6 +29,13 @@ public class TrinketTeddyBear extends AccessoryBase {
 		this.setUUID("33b34669-715d-4caa-a31e-9c643c52ba66");
 		this.setItemAttributes(serverConfig.Attributes);
 		ModItems.trinkets.ITEMS.add(this);
+	}
+
+	@Override
+	public void initAbilities(EntityLivingBase entity) {
+		if (serverConfig.sleep_bonus) {
+			this.addAbility(entity, Abilities.wellRested, new AbilityWellRested());
+		}
 	}
 
 	@Override
@@ -45,7 +57,7 @@ public class TrinketTeddyBear extends AccessoryBase {
 				}
 			}
 		} else {
-			EntityPlayer player = entity.world.getPlayerEntityByUUID(UUID.fromString(this.getTagCompoundSafe(stack).getString("crafter.id")));
+			final EntityPlayer player = entity.world.getPlayerEntityByUUID(UUID.fromString(this.getTagCompoundSafe(stack).getString("crafter.id")));
 			if ((player != null) && this.getTagCompoundSafe(stack).getString("crafter.name").isEmpty()) {
 				this.getTagCompoundSafe(stack).setString("crafter.name", player.getDisplayNameString());
 			}
@@ -55,13 +67,6 @@ public class TrinketTeddyBear extends AccessoryBase {
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		LycanitesCompat.removeFear(player);
-		LycanitesCompat.removeInsomnia(player);
-	}
-
-	@Override
-	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
-
 	}
 
 	@Override
@@ -80,7 +85,24 @@ public class TrinketTeddyBear extends AccessoryBase {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
-		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
+		final ModelResourceLocation rembo = new ModelResourceLocation(this.getRegistryName().toString() + "_rembos", "inventory");
+		final ModelResourceLocation scary = new ModelResourceLocation(this.getRegistryName().toString() + "_scary", "inventory");
+		ModelBakery.registerItemVariants(this, normal, scary, rembo);
+		ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
+			@Override
+			public ModelResourceLocation getModelLocation(ItemStack stack) {
+				final String name = stack.getDisplayName().toLowerCase();
+				if (TrinketTeddyBear.this.getTagCompoundSafe(stack).getString("crafter.id").equalsIgnoreCase("6b5d5e9b-1fe8-4c61-a043-1d84ce95765d") || name.contains("rembo") || name.contains("cool") || name.contains("badass")) {
+					return rembo;
+				} else if (name.contains("scary") || name.contains("freddy") || name.contains("snuggles")) {
+					return scary;
+				} else {
+					return normal;
+				}
+			}
+		});
 	}
 }

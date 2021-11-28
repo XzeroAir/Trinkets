@@ -10,17 +10,20 @@ import xzeroair.trinkets.client.events.PlayerCameraSetupEvents;
 import xzeroair.trinkets.client.events.RenderEntitiesEvent;
 import xzeroair.trinkets.client.events.ScreenOverlayEvents;
 import xzeroair.trinkets.events.BaubleEventHandler;
+import xzeroair.trinkets.events.BlockBreakEvents;
 import xzeroair.trinkets.events.CombatHandler;
 import xzeroair.trinkets.events.EnderQueenHandler;
 import xzeroair.trinkets.events.EventHandler;
 import xzeroair.trinkets.events.EventHandlerServer;
-import xzeroair.trinkets.events.LootHandler;
 import xzeroair.trinkets.events.MovementHandler;
 import xzeroair.trinkets.events.OnWorldJoinHandler;
 import xzeroair.trinkets.events.PlayerEventMC;
 import xzeroair.trinkets.events.TrinketEventHandler;
 import xzeroair.trinkets.init.ModEntities;
+import xzeroair.trinkets.init.ModSounds;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.compat.elenaidodge.ElenaiDodgeCompat;
 import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsRenderEvent;
 import xzeroair.trinkets.util.compat.firstaid.FirstAidDamageEvent;
 
@@ -31,7 +34,7 @@ public class EventRegistry {
 	}
 
 	public static void init() {
-
+		ModSounds.init();
 		MinecraftForge.EVENT_BUS.register(new EventHandlerServer());
 
 		MinecraftForge.EVENT_BUS.register(new OnWorldJoinHandler());
@@ -46,9 +49,9 @@ public class EventRegistry {
 
 		MinecraftForge.EVENT_BUS.register(new MovementHandler());
 
-		MinecraftForge.EVENT_BUS.register(new LootHandler());
+		MinecraftForge.EVENT_BUS.register(new BlockBreakEvents());
 
-		if (Loader.isModLoaded("baubles")) {
+		if (Loader.isModLoaded("baubles") && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			MinecraftForge.EVENT_BUS.register(new BaubleEventHandler());
 		}
 		MinecraftForge.EVENT_BUS.register(new TrinketEventHandler());
@@ -78,13 +81,17 @@ public class EventRegistry {
 		if (Loader.isModLoaded("enhancedvisuals")) {
 			try {
 				MinecraftForge.EVENT_BUS.register(EnhancedVisualsRenderEvent.instance);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	public static void clientPostInit() {
+		registerCommands();
+	}
+
+	public static void registerCommands() {
 
 	}
 
@@ -98,7 +105,17 @@ public class EventRegistry {
 		if (Loader.isModLoaded("firstaid")) {
 			try {
 				MinecraftForge.EVENT_BUS.register(new FirstAidDamageEvent());
-			} catch (Exception e) {
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void modCompatPostInit() {
+		if (Loader.isModLoaded("elenaidodge") && TrinketsConfig.compat.elenaiDodge) {
+			try {
+				MinecraftForge.EVENT_BUS.register(new ElenaiDodgeCompat());
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}

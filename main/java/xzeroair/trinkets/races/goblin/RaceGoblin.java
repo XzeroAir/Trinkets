@@ -14,12 +14,14 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,45 +29,51 @@ import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.model.GoblinEars;
 import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.network.AlphaWolfPacket;
-import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.goblin.config.GoblinConfig;
+import xzeroair.trinkets.traits.abilities.AbilityClimbing;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.handlers.ClimbHandler;
 
 public class RaceGoblin extends EntityRacePropertiesHandler {
 
 	public static final GoblinConfig serverConfig = TrinketsConfig.SERVER.races.goblin;
-	private ClimbHandler climbing;
 	private int cooldown = 0;
 
 	public RaceGoblin(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.goblin);
-		climbing = new ClimbHandler(e, e.world);
+	}
+
+	@Override
+	public void startTransformation() {
+		this.addAbility(Abilities.blockClimbing, new AbilityClimbing());
+		try {
+			final Entity mount = entity.getRidingEntity();
+			if (mount instanceof AlphaWolf) {
+				mount.dismountRidingEntity();
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void endTransformation() {
-		if (entity.getRidingEntity() instanceof EntityWolf) {
-			this.DismountWolf((EntityWolf) entity.getRidingEntity());
+		try {
+			final Entity mount = entity.getRidingEntity();
+			if (mount instanceof AlphaWolf) {
+				mount.dismountRidingEntity();
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void whileTransformed() {
-		if (entity instanceof EntityPlayer) { // Start Player Effects
-			//			EntityPlayer player = (EntityPlayer) entity;
-
-		} else { // End player effects
-
-		}
 		if (entity.getRidingEntity() instanceof AlphaWolf) {
-			//			if (entity.isSneaking()) {
-			//				this.DismountWolf((EntityWolf) entity.getRidingEntity());
-			//			}
 			if (!entity.isPotionActive(MobEffects.STRENGTH)) {
 				entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
 			}
@@ -90,9 +98,9 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	public float isHurt(DamageSource source, float dmg) {
 		if (source.isExplosion()) {
 			if (!TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketDamageShield)) {
-				float maxHP = entity.getHealth();
-				float modifier = ((maxHP * 100) / 20F) * 0.01F;
-				float clampModifier = MathHelper.clamp(modifier, 0.01F, 1F);
+				final float maxHP = entity.getHealth();
+				final float modifier = ((maxHP * 100) / 20F) * 0.01F;
+				final float clampModifier = MathHelper.clamp(modifier, 0.01F, 1F);
 				return dmg * clampModifier;
 			}
 		}
@@ -107,13 +115,11 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	}
 
 	public void MountWolf(EntityWolf wolf) {
-		if (!wolf.isTamed() || entity.isSneaking() || (magic.spendMana(magic.getMaxMana() * 0.6F) == false)) {
-			return;
-		}
-		if (wolf.isTamed() && (wolf.getOwner() == entity)) {
-			if (!entity.world.isRemote) {
-				AlphaWolf newWolf = new AlphaWolf(entity.world);
-				NBTTagCompound tag = new NBTTagCompound();
+		if (wolf.isTamed() && wolf.isOwner(entity)) {
+			final World world = entity.getEntityWorld();
+			if (!world.isRemote) {
+				final AlphaWolf newWolf = new AlphaWolf(world);
+				final NBTTagCompound tag = new NBTTagCompound();
 				wolf.writeToNBT(tag);
 				tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
 				newWolf.storeOldWolf(tag);
@@ -121,42 +127,76 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 				newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
 				newWolf.setTamedBy(entity);
 				newWolf.setHealth(wolf.getHealth());
-				entity.world.spawnEntity(newWolf);
+				world.spawnEntity(newWolf);
 				entity.startRiding(newWolf);
 				wolf.setDead();
 			}
 		}
 	}
 
-	//Client Side, sending to server
-	public void DismountWolf(EntityWolf wolf) {
-		if (entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToServer(new AlphaWolfPacket(wolf));
-		}
-		entity.dismountRidingEntity();
-	}
-
 	@Override
 	public void interact(PlayerInteractEvent event) {
-		if (event.getEntityPlayer().getRidingEntity() instanceof AlphaWolf) {
+		final boolean canRide = serverConfig.rider;
+		if (!canRide) {
+			return;
+		}
+		if (entity.getRidingEntity() instanceof AlphaWolf) {
 			if (event.getHand() == EnumHand.OFF_HAND) {
-				IAttributeInstance reach = event.getEntityPlayer().getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE);
-				AlphaWolf wolf = (AlphaWolf) event.getEntityPlayer().getRidingEntity();
-				wolf.MountedAttack(event.getEntityPlayer(), reach.getAttributeValue());
+				double reachDistance = 5;
+				final IAttributeInstance reachAttribe = entity.getEntityAttribute(EntityPlayer.REACH_DISTANCE);
+				if (reachAttribe != null) {
+					reachDistance = reachAttribe.getAttributeValue();
+				}
+
+				final AlphaWolf wolf = (AlphaWolf) entity.getRidingEntity();
+				wolf.MountedAttack(event.getEntityPlayer(), reachDistance);
 			}
 		}
 	}
 
 	@Override
 	public void interactWithEntity(PlayerInteractEvent.EntityInteract event) {
-		Entity target = event.getTarget();
+		final boolean canRide = serverConfig.rider;
+		if (!canRide) {
+			return;
+		}
+		final Entity target = event.getTarget();
 		if ((event.getHand() == EnumHand.OFF_HAND) && (target instanceof EntityWolf)) {
-			EntityWolf wolf = (EntityWolf) target;
-			this.MountWolf(wolf);
+			final EntityWolf wolf = (EntityWolf) target;
+			if (wolf.isChild()) {
+				return;
+			}
+			final ItemStack mainStack = entity.getHeldItemMainhand();
+			final ItemStack offStack = entity.getHeldItemOffhand();
+
+			final boolean flag = !mainStack.isEmpty() && !(mainStack.getItem() instanceof ItemFood);
+			final boolean flag1 = !offStack.isEmpty();
+			final boolean hasBone = flag || flag1;
+			if (mainStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon") || offStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon")) {
+				return;
+			}
+			if (wolf.isTamed() && wolf.isOwner(entity) && hasBone) {
+				this.MountWolf(wolf);
+			}
 		}
 	}
 
-	private ModelBase ears = new GoblinEars();
+	@Override
+	public boolean mountEntity(Entity mount) {
+		return super.mountEntity(mount);
+	}
+
+	@Override
+	public boolean dismountedEntity(Entity mount) {
+		//		if (mount instanceof AlphaWolf) {
+		//			((AlphaWolf) mount).dismountEntity(entity);
+		//			return true;
+		//		} else {
+		return super.dismountedEntity(mount);
+		//		}
+	}
+
+	private final ModelBase ears = new GoblinEars();
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -169,14 +209,14 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0, 0.2, 0);
 		}
 		if (renderer instanceof RenderPlayer) {
-			RenderPlayer rend = (RenderPlayer) renderer;
+			final RenderPlayer rend = (RenderPlayer) renderer;
 			rend.getMainModel().bipedHead.postRender(scale);
 		}
 		if (entity.hasItemInSlot(EntityEquipmentSlot.HEAD)) {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -189,13 +229,13 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void doRenderPlayerPre(RenderPlayerEvent.Pre event) {
+	public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
 		if (entity.isRiding()) {
 			if (!(entity.getRidingEntity() instanceof AlphaWolf)) {
 				double t = 0;
 				t = (100 - properties.getSize()) * 0.01D;
-				double t1 = (entity.height * 100) / (1.8 * 100);
-				double t2 = (1.8 * 100) / (entity.height * 100);
+				final double t1 = (entity.height * 100) / (1.8 * 100);
+				final double t2 = (1.8 * 100) / (entity.height * 100);
 				t *= t2 * 0.5D;
 				GlStateManager.translate(0, t, 0);
 			}

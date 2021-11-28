@@ -13,46 +13,63 @@ public class CompatabilityConfigs {
 	@Config.Name("Baubles")
 	public boolean baubles = false;
 
+	public boolean xatItemsInTrinketGuiOnly = false;
+
 	//	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles use ArtemisLib to handle Height Adjustments to the player")
 	@Config.Name("ArtemisLib")
-	public boolean artemislib = true;
+	public boolean artemislib = false;
+
+	@Config.RequiresWorldRestart
+	@Config.Name("ElenaiDodge")
+	public boolean elenaiDodge = true;
 
 	//	@Config.RequiresMcRestart
 	//	@Config.Comment("Should Trinkets and Baubles Interact with First Aid")
 	//	@Config.Name("First Aid")
 	//	public boolean firstaid = true;
 
-	@Config.RequiresMcRestart
+	//	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles Interact with Tough as Nails")
 	@Config.Name("Tough as Nails")
 	public boolean toughasnails = true;
 
-	@Config.RequiresMcRestart
+	//	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles Interact with Simple Difficulty")
 	@Config.Name("Simple Difficulty")
 	public boolean simpledifficulty = true;
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should Trinkets and Baubles prevent morphing while transformed")
-	@Config.Name("Morph")
-	public boolean morph = true;
+	//	@Config.RequiresMcRestart
+	//	@Config.Comment("Should Trinkets and Baubles prevent morphing while transformed")
+	//	@Config.Name("Morph")
+	//	public boolean morph = true;
 
 	//	@Config.RequiresMcRestart
 	//	@Config.Comment("Should Trinkets and Baubles not have an emc value")
 	//	@Config.Name("ProjectE")
 	//	public boolean projecte = true;
 
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles Interact with Lycanites Mobs")
 	@Config.Name("Lycanites Mobs")
 	public boolean lycanites = true;
 
-	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
+	@Config.Comment("Should Trinkets and Baubles Interact with Defiled Lands")
+	@Config.Name("Defiled Lands")
+	public boolean defiledlands = true;
+
+	//	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles prevent some of the Visuals in Enhanced Visuals")
 	@Config.Name("Enhanced Visuals")
 	public boolean enhancedvisuals = true;
 
-	@Config.RequiresMcRestart
+	//	@Config.RequiresMcRestart
+	@Config.RequiresWorldRestart
 	@Config.Comment("Should Trinkets and Baubles Stone of the Sea work Infinite Oxygen work with Better Diving")
 	@Config.Name("Better Diving")
 	public boolean betterdiving = true;

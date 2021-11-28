@@ -15,7 +15,7 @@ public class SDCompat {
 
 	public static void addThirst(EntityPlayer player, int amount, int saturation) {
 		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
-			IThirstCapability thirst = SDCapabilities.getThirstData(player);
+			final IThirstCapability thirst = SDCapabilities.getThirstData(player);
 			thirst.addThirstLevel(amount);
 			thirst.addThirstSaturation(saturation);
 		}
@@ -23,7 +23,7 @@ public class SDCompat {
 
 	public static void ClearTempurature(EntityPlayer player) {
 		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
-			ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
+			final ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
 			temp.setTemperatureLevel(12);
 			if (player.isPotionActive(SDPotions.hyperthermia)) {
 				player.removePotionEffect(SDPotions.hyperthermia);
@@ -36,7 +36,7 @@ public class SDCompat {
 
 	public static void immuneToHeat(EntityPlayer player) {
 		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
-			ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
+			final ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
 			if (temp.getTemperatureLevel() > 14) {
 				temp.setTemperatureLevel(14);
 				if (player.isPotionActive(SDPotions.hyperthermia)) {
@@ -48,7 +48,7 @@ public class SDCompat {
 
 	public static void immuneToCold(EntityPlayer player) {
 		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
-			ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
+			final ITemperatureCapability temp = SDCapabilities.getTemperatureData(player);
 			if (temp.getTemperatureLevel() < 11) {
 				temp.setTemperatureLevel(11);
 				if (player.isPotionActive(SDPotions.hypothermia)) {
@@ -59,13 +59,18 @@ public class SDCompat {
 		}
 	}
 
-	public static void clearThirst(EntityLivingBase player) {
+	public static void clearThirst(EntityLivingBase entity) {
 		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
-			if (player.isPotionActive(SDPotions.thirsty)) {
-				player.removePotionEffect(SDPotions.thirsty);
+			if (entity.isPotionActive(SDPotions.thirsty)) {
+				entity.removePotionEffect(SDPotions.thirsty);
 			}
-			if (player.isPotionActive(SDPotions.parasites)) {
-				player.removePotionEffect(SDPotions.parasites);
+		}
+	}
+
+	public static void clearParasites(EntityLivingBase entity) {
+		if (TrinketsConfig.compat.simpledifficulty && Loader.isModLoaded("simpledifficulty")) {
+			if (entity.isPotionActive(SDPotions.parasites)) {
+				entity.removePotionEffect(SDPotions.parasites);
 			}
 		}
 	}

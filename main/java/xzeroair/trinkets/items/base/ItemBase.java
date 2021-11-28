@@ -3,7 +3,6 @@ package xzeroair.trinkets.items.base;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

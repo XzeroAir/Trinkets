@@ -13,10 +13,9 @@ public class RaceAttributesWrapper extends AttributeConfigWrapper {
 	protected int color3 = 16374701;
 	protected float opacity = 1F;
 	protected float trait_opacity = 1F;
-	protected IAttributeConfigHelper config;
 
 	public RaceAttributesWrapper() {
-
+		super();
 	}
 
 	public RaceAttributesWrapper(IAttributeConfigHelper config) {
@@ -24,7 +23,7 @@ public class RaceAttributesWrapper extends AttributeConfigWrapper {
 	}
 
 	public RaceAttributesWrapper(int size, int width, int height, int primaryColor, int secondaryColor, int optionalColor, float opacity, float traitOpacity, IAttributeConfigHelper config) {
-		super(config);
+		this(config);
 		this.size = size;
 		this.width = width;
 		this.height = height;

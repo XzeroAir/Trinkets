@@ -1,70 +1,131 @@
 package xzeroair.trinkets.capabilities.race;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.api.events.TransformationEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.RaceChangedEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.endTransformationEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.startTransformationEvent;
 import xzeroair.trinkets.attributes.JumpAttribute;
+import xzeroair.trinkets.capabilities.CapabilityBase;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.SizeDataPacket;
+import xzeroair.trinkets.network.SyncRaceDataPacket;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.races.EntityRaceHelper;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.human.RaceHuman;
+import xzeroair.trinkets.traits.AbilityHandler;
+import xzeroair.trinkets.traits.AbilityHandler.Storage;
+import xzeroair.trinkets.traits.abilities.IAbilityHandler;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.EyeHeightHandler;
 
-public class EntityProperties {
+public class EntityProperties extends CapabilityBase<EntityProperties, EntityLivingBase> {
 
-	int size = 100;
-	int target = 100;
-	float defaultWidth;
-	float defaultHeight;
-	boolean first_login = true;
-	boolean login = true;
+	protected int size, width, height = 100;
+	protected int target, targetWidth, targetHeight = 100;
+	protected float defaultWidth;
+	protected float defaultHeight;
+	protected boolean first_login = true;
+	protected boolean login = true;
 
-	boolean changed = false;
-	boolean sync = false;
+	protected boolean changed = false;
+	protected boolean sync = false;
 
-	EntityRace previous, original, imbued, current;
+	protected EntityRace previous, original, imbued, current;
 
-	boolean traitShown = true;
-	String traitColor = "16777215";
-	float traitOpacity = 1F;
+	protected boolean traitShown = true;
+	protected String traitColor = "16777215";
+	//	float traitOpacity = 1F;
 	protected ColorHelper color;
 
-	boolean isFake = false;
+	protected boolean isFake = false;
 
-	MagicStats magic;
-	StatusHandler status;
+	protected KeybindHandler keybindHandler;
 
-	EntityLivingBase entity;
-	EntityRacePropertiesHandler properties;
+	protected EntityRacePropertiesHandler properties;
+
+	protected AbilityHandler abilities;
 
 	public EntityProperties(EntityLivingBase e) {
-		entity = e;
+		super(e);
+		size = 100;
+		width = 100;
+		height = 100;
+		target = 100;
+		targetWidth = 100;
+		targetHeight = 100;
 		original = EntityRace.getByNameOrId(Reference.MODID + ":none");
 		previous = EntityRace.getByNameOrId(Reference.MODID + ":none");
 		imbued = EntityRace.getByNameOrId(Reference.MODID + ":none");
 		current = EntityRace.getByNameOrId(Reference.MODID + ":none");
-		magic = new MagicStats(e, this);
+		//		magic = new MagicStats(e, this);
 		properties = new RaceHuman(e, this);
-		status = new StatusHandler(e, this);
-		color = new ColorHelper().setColor(this.getTraitColor()).setAlpha(this.getTraitOpacity());
+		//		status = new StatusHandler(e, this);
+		color = new ColorHelper().setColor(this.getTraitColor());
+		equippedItems = new TreeMap<>();
+		abilities = new AbilityHandler(e);
+		keybindHandler = new KeybindHandler();
+
 	}
+
+	@Override
+	public NBTTagCompound getTag() {
+		if (object.getEntityData() != null) {
+			tag = object.getEntityData();
+			return tag;
+		}
+		return super.getTag();
+	}
+
+	protected Map<String, ItemStack> equippedItems;
+	protected Map<Integer, ItemStack> equippedBaubles;
+	protected Map<Integer, ItemStack> equippedTrinkets;
+
+	public void parseEquipped() {
+		if (object instanceof EntityPlayer) {
+			//			if (equippedBaubles == null) {
+			//				equippedBaubles = new TreeMap<>();
+			//			}
+			//			if (equippedTrinkets == null) {
+			//				equippedTrinkets = new TreeMap<>();
+			//			}
+			//			TrinketHelper.getEquippedBaubles(equippedBaubles, (EntityPlayer) object);
+			//			TrinketHelper.getEquippedTrinkets(equippedTrinkets, (EntityPlayer) object);
+			TrinketHelper.getEquippedList(equippedItems, (EntityPlayer) object);
+		}
+	}
+
+	public Map<String, ItemStack> getEquippedItems() {
+		return equippedItems;
+	}
+
+	// ABILITIES
+	public AbilityHandler getAbilityHandler() {
+		return abilities;
+	}
+
+	// ABILITIES END
 
 	@SideOnly(Side.CLIENT)
 	public void onRender(RenderLivingBase renderer, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
@@ -72,13 +133,29 @@ public class EntityProperties {
 	}
 
 	private float stepHeightPrev = 0.6F;
+	private boolean onGround;
 
+	public void onUpdatePre() {
+		onGround = object.onGround;
+	}
+
+	@Override
 	public void onUpdate() {
-		color = color.setColor(this.getTraitColor()).setAlpha(this.getTraitOpacity());
-		if (!(entity instanceof EntityPlayer)) {
+		if ((object instanceof EntityPlayer) && !object.getEntityWorld().isRemote) {
+			object.onGround = onGround;
+		}
+		this.parseEquipped();
+		abilities.accessoriesCheck(equippedItems);
+		abilities.cleanUp();
+		color = color.setColor(this.getTraitColor());
+		if (!(object instanceof EntityPlayer)) {
 			if (this.isLogin()) {
-				this.setDefaultHeight(entity.height);
-				this.setDefaultWidth(entity.width);
+				final IAttributeInstance stepheight = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
+				if (stepheight != null) {
+					stepheight.setBaseValue(object.stepHeight);
+				}
+				this.setDefaultHeight(object.height);
+				this.setDefaultWidth(object.width);
 				this.setLogin(false);
 			}
 		} else {
@@ -88,79 +165,107 @@ public class EntityProperties {
 
 		this.stepHeightHandler();
 
-		//		try {
-		//			EntityRace race = EntityRace.Registry.getObjectByUUID(UUID.fromString("b01713bd-5af8-4786-bb88-0575df34ed74"));
-		//			//			Trinkets.RaceRegistry.containsKey("artemislib:bob");
-		//			if (race != null) {
-		//				//				System.out.println("Woo it worked?");
-		//				System.out.println(race.getName() + " | " + race.getRaceSize());
-		//			} else {
-		//				System.out.println("Failed");
-		//			}
-		//		} catch (Exception e) {
-		//
-		//		}
-
-		if ((original == null) || (previous == null) || (imbued == null)) {
-			Trinkets.log.warn(
-					entity.getName() + " with ID " + entity.getEntityId() + " errored when adding Race Capability" +
-							" Original:" + original +
-							" | Previous:" + previous +
-							" | Imbued:" + imbued
-
-			);
-			original = EntityRace.getByNameOrId(Reference.MODID + ":none");
-			previous = EntityRace.getByNameOrId(Reference.MODID + ":none");
-			imbued = EntityRace.getByNameOrId(Reference.MODID + ":none");
-			return;
-		}
-
-		EntityRace race = this.getEntityRace();
-		TransformationEvent.RaceChangedEvent rc = new RaceChangedEvent(entity, this, current, race);
-		if (!MinecraftForge.EVENT_BUS.post(rc) && !rc.raceChanged()) {
-			EntityRace newRace = rc.getNewRace();
-			if (!current.equals(newRace)) {
-				SizeAttribute artemisLib = new SizeAttribute(entity, 0, 0, 0);
+		final EntityRace race = this.getEntityRace();
+		final TransformationEvent.RaceChangedEvent rc = new RaceChangedEvent(object, this, current, race);
+		if (!MinecraftForge.EVENT_BUS.post(rc)) {
+			if (rc.raceChanged()) {
+				EntityRace newRace = rc.getNewRace();
+				if (newRace == null) {
+					newRace = EntityRace.getByNameOrId(Reference.MODID + ":none");
+				}
+				final SizeAttribute artemisLib = new SizeAttribute(object, 0, 0, 0);
 				artemisLib.removeModifiers();
 				properties.onTransformEnd();
-				if (entity.stepHeight != 0.6) {
-					entity.stepHeight = 0.6F;
+				final IAttributeInstance attribute = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
+				if ((attribute != null)) {
+					if (object.stepHeight != attribute.getBaseValue()) {
+						object.stepHeight = (float) attribute.getBaseValue();
+					}
 				}
-				TransformationEvent.endTransformationEvent end = new endTransformationEvent(entity, this, current, previous);
+				final TransformationEvent.endTransformationEvent end = new endTransformationEvent(object, this, current, previous);
 				MinecraftForge.EVENT_BUS.post(end);
-				previous = end.getPreviousRace();//EntityRace.getByUUID(current.getUUID());
+				previous = end.getPreviousRace();
 
-				current = newRace;//race;//EntityRace.getByNameOrId(race.getName());
-				properties = newRace.getRaceHandler(entity);
+				current = newRace;
+				properties = newRace.getRaceHandler(object);
 				properties.onTransform();
+
 				this.setTargetSize(newRace.getRaceSize());
 
-				TransformationEvent.startTransformationEvent event = new startTransformationEvent(entity, this, current);
+				final TransformationEvent.startTransformationEvent event = new startTransformationEvent(object, this, current);
 				MinecraftForge.EVENT_BUS.post(event);
-				magic.syncToManaHud();
 				sync = true;
 			}
 		}
 
 		//Handle Races
 		properties.onTick();
-		status.onUpdate();
-		this.getMagic().regenMana();
 		this.sizeHandler();
 		if (sync == true) {
 			this.sendInformationToAll();
 			sync = false;
 		}
-		//		magic.setMana(150);
-		//TODO Lycanite thing shivaxi requested
-		//		LycanitesCompat.convertManaToSpirit(entity);
-		keyPressed = -1;
-		auxPressed = -1;
+		abilities.tickAbilities(object);
+		if (object instanceof EntityPlayer) {
+			//			for (final IAbilityInterface ability : abilities.getAbilitiesList()) {
+			//				System.out.println(ability.getName());
+			//			}
+			//			if (object.getEntityWorld().isRemote) {
+			//				final boolean hasItem = TrinketHelper.AccessoryCheck(object, ModItems.RaceTrinkets.TrinketFaelisRing);
+			//				System.out.println(hasItem);
+			//			}
+			//			try {
+			//
+			//				final int t = this.getTargetSize();
+			//				final int s = this.getSize();
+			//				final boolean tr = current.equals(EntityRaces.none);//this.isTransforming() || this.isTransformed();
+			//				//				System.out.println(current.getName() + " | " + imbued.getName());
+			//				int ta = t - s;
+			//				if (s < 100) {
+			//					ta = 100 - s;
+			//				} else if (s == 100) {
+			//					ta = 100;
+			//				} else {
+			//					ta = 100 - s;
+			//				}
+			//				if (ta < 0) {
+			//					ta = -ta;
+			//				}
+			//				int st = 100;//t >= 100 ? t - 100 : 100 - t;
+			//				// st is the static difference between the old target size, and current target size
+			//				if (t < 100) {
+			//					st = 100 - t; // if less then zero reverse it so it's a positive number
+			//				} else if (t == 100) {
+			//					st = 100; // if it's zero, set it to 100 so we don't end up dividing by zero
+			//				} else {
+			//					st = t - 100;
+			//				}
+			//				final float a = ta < st ? st - ta : ta - 100;
+			//
+			//				//				System.out.println(a + " | " + ta + " | " + st);
+			//				/*
+			//				 * if target > 100 then target - 100, if target < 100 then 100 - target
+			//				 */
+			//				//				float a = t >= s ? ((s * 1F) / (t * 1F)) : ((t * 1F) / (s * 1F));
+			//				//				float a = t < s ? ((st * 1F) / (ta * 1F)) : ((ta * 1F) / (st * 1F));
+			//				//				float a = t < s ? ((ta * 1F) / (st * 1F)) : ((st * 1F) / (ta * 1F));
+			//				//		attributes.addAttributes((properties.getSize() * 100) / 100);
+			//				final float percent = this.isTransformed() ? 1F : a;//(ta * 1F) / (st * 1F);//(properties.getSize() * 1) * 0.01F;
+			//				//				System.out.println(percent + " | Size:" + s + " | Target:" + t);
+			//				//				System.out.println(ta + " | " + st + " | " + percent);
+			//			} catch (final Exception e) {
+			//				System.out.println("Whoops");
+			//			}
+		}
+	}
+
+	public KeybindHandler getKeybindHandler() {
+		return keybindHandler;
 	}
 
 	private EntityRace getEntityRace() {
-		EntityRace potionRace = EntityRaceHelper.getAttributeRace(entity);
-		EntityRace TrinketRace = EntityRaceHelper.getTrinketRace(entity);
+		final EntityRace potionRace = EntityRaceHelper.getAttributeRace(object);
+		final EntityRace TrinketRace = EntityRaceHelper.getTrinketRace(object);
 		if ((potionRace != null) && !potionRace.equals(EntityRaces.none)) {
 			this.setFake(true);
 			return potionRace;
@@ -172,6 +277,9 @@ public class EntityProperties {
 			return imbued;
 		} else {
 			this.setFake(false);
+			if (original == null) {
+				original = EntityRace.getByNameOrId(Reference.MODID + ":none");
+			}
 			return original;
 		}
 	}
@@ -180,35 +288,34 @@ public class EntityProperties {
 		/*
 		 * Handles the Step Height Attribute
 		 */
-		if (entity instanceof EntityPlayer) {
-			final IAttributeInstance attribute = entity.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
-			if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
-				double f = attribute.getAttributeValue();
-				float result = (float) (f);
-				float step = entity.stepHeight;
-				entity.stepHeight = 0.6F;
-				if ((step - entity.stepHeight) == 0F) {
-					entity.stepHeight = result;
-					stepHeightPrev = 0.6F;
-				} else if (((step - entity.stepHeight) - result) == -0.6F) {
-					entity.stepHeight = result;
-					stepHeightPrev = 0.6F;
+		//		if (entity instanceof EntityPlayer) {
+		final IAttributeInstance attribute = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
+		if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
+			final double f = attribute.getAttributeValue();
+			final float defaultStepHeight = (float) attribute.getBaseValue();
+			final float result = (float) (f);
+			final float step = object.stepHeight;
+			object.stepHeight = defaultStepHeight;
+			if ((step - object.stepHeight) == 0F) {
+				object.stepHeight = result;
+				stepHeightPrev = defaultStepHeight;
+			} else if (((step - object.stepHeight) - result) == -defaultStepHeight) {
+				object.stepHeight = result;
+				stepHeightPrev = defaultStepHeight;
+			} else {
+				final float stepP = stepHeightPrev;
+				stepHeightPrev = step;
+				if (((result - defaultStepHeight) + step) == ((result - defaultStepHeight) + stepP)) {
+					object.stepHeight = (result - defaultStepHeight) + stepHeightPrev;
 				} else {
-					float stepP = stepHeightPrev;
-					stepHeightPrev = step;
-					if (((result - 0.6F) + step) == ((result - 0.6F) + stepP)) {
-						entity.stepHeight = (result - 0.6F) + stepHeightPrev;
-					} else {
 
-					}
 				}
 			}
-			//			System.out.println(entity.stepHeight + " | Step Height Side");
 		}
 	}
 
 	private void sizeHandler() {
-		int defaultSize = 100;
+		final int defaultSize = 100;
 		if (this.isTransforming() || this.isTransformed()) {
 			if ((this.getSize() > this.getTargetSize())) {
 				this.setSize(this.getSize() - 1);
@@ -216,15 +323,17 @@ public class EntityProperties {
 			if ((this.getSize() < this.getTargetSize())) {
 				this.setSize(this.getSize() + 1);
 			}
-			if (entity instanceof EntityPlayer) {
-				EyeHeightHandler.eyeHeightHandler((EntityPlayer) entity, this);
+			if (object instanceof EntityPlayer) {
+				EyeHeightHandler.eyeHeightHandler((EntityPlayer) object, this);
 			}
 		}
 	}
 
 	public void sendInformationToAll() {
-		if (!entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToAll(new SizeDataPacket(entity, this));
+		if (!object.getEntityWorld().isRemote) {
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			NetworkHandler.sendToAll(new SyncRaceDataPacket(object, tag));
 		}
 	}
 
@@ -232,20 +341,37 @@ public class EntityProperties {
 	 * @param receiver Send Capability Information to receiver
 	 */
 	public void sendInformationToPlayer(EntityLivingBase receiver) {
-		if (!entity.getEntityWorld().isRemote && (receiver instanceof EntityPlayer)) {
-			NetworkHandler.INSTANCE.sendTo(new SizeDataPacket(entity, this), (EntityPlayerMP) receiver);
+		if (!object.getEntityWorld().isRemote && (receiver instanceof EntityPlayerMP)) {
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			this.saveAbilitiesToNBT(tag);
+			NetworkHandler.sendTo(new SyncRaceDataPacket(object, tag), (EntityPlayerMP) receiver);
+		}
+	}
+
+	public void sendInformationToPlayer(EntityLivingBase receiver, NBTTagCompound tag) {
+		if (!object.getEntityWorld().isRemote && (receiver instanceof EntityPlayerMP)) {
+			NetworkHandler.sendTo(new SyncRaceDataPacket(object, tag), (EntityPlayerMP) receiver);
 		}
 	}
 
 	public void sendInformationToTracking() {
-		if (!entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToAllTracking(new SizeDataPacket(entity, this), entity);
+		final World world = object.getEntityWorld();
+		if (!world.isRemote && (world instanceof WorldServer)) {
+			final WorldServer w = (WorldServer) world;
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			this.saveAbilitiesToNBT(tag);
+			NetworkHandler.sendToClients(w, object.getPosition(), new SyncRaceDataPacket(object, tag));
 		}
 	}
 
 	public void sendInformationToServer() {
-		if (entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToServer(new SizeDataPacket(entity, this));
+		if (object.getEntityWorld().isRemote) {
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			this.saveAbilitiesToNBT(tag);
+			NetworkHandler.sendToServer(new SyncRaceDataPacket(object, tag));
 		}
 	}
 
@@ -267,25 +393,6 @@ public class EntityProperties {
 		return traitShown;
 	}
 
-	int keyPressed = -1;
-	int auxPressed = -1;
-
-	public int getKeyPressed() {
-		return keyPressed;
-	}
-
-	public int getAuxPressed() {
-		return auxPressed;
-	}
-
-	public void KeyPressed(int key) {
-		keyPressed = key;
-	}
-
-	public void AuxKeyPressed(int key) {
-		auxPressed = key;
-	}
-
 	/*-----------------------------------Boolean Checks-------------------------------*/
 
 	public void setTraitsShown(boolean shown) {
@@ -304,13 +411,13 @@ public class EntityProperties {
 		traitColor = color;
 	}
 
-	public float getTraitOpacity() {
-		return traitOpacity;
-	}
-
-	public void setTraitOpacity(float alpha) {
-		traitOpacity = alpha;
-	}
+	//	public float getTraitOpacity() {
+	//		return traitOpacity;
+	//	}
+	//
+	//	public void setTraitOpacity(float alpha) {
+	//		traitOpacity = alpha;
+	//	}
 
 	/**
 	 * Get the Entity Race Handler
@@ -341,7 +448,11 @@ public class EntityProperties {
 	}
 
 	public EntityRace setImbuedRace(EntityRace race) {
-		imbued = race;
+		if (race != null) {
+			imbued = race;
+		} else {
+			imbued = EntityRace.getByNameOrId(Reference.MODID + ":none");
+		}
 		return imbued;
 	}
 
@@ -409,37 +520,47 @@ public class EntityProperties {
 		this.isFake = isFake;
 	}
 
-	public MagicStats getMagic() {
-		return magic;
+	public void scheduleResync() {
+		sync = true;
 	}
 
-	public StatusHandler getStatusHandler() {
-		return status;
-	}
-
-	public void copyFrom(EntityProperties source) {
+	@Override
+	public void copyFrom(EntityProperties source, boolean wasDeath, boolean keepInv) {
 		login = source.login;
 		first_login = source.first_login;
-
 		defaultWidth = source.defaultWidth;
 		defaultHeight = source.defaultHeight;
 
-		size = source.size;
-		target = source.target;
-
-		previous = source.previous;
 		original = source.original;
 		imbued = source.imbued;
+
+		if (wasDeath) {
+			if (keepInv) {
+				size = source.size;
+				previous = source.previous;
+			} else {
+				final boolean isNormal = imbued.equals(EntityRaces.none);
+				if (isNormal) {
+				} else {
+					size = imbued.getRaceSize();
+				}
+				previous = source.current;
+			}
+		} else {
+			size = source.size;
+			target = source.target;
+			previous = source.previous;
+		}
+
 		traitColor = source.traitColor;
-		traitOpacity = source.traitOpacity;
 		traitShown = source.traitShown;
 
-		isFake = source.isFake;
-		this.getMagic().copyFrom(source.getMagic());
-		this.getRaceProperties().copyFrom(source.getRaceProperties());
+		//		abilities = source.abilities;
+		this.getRaceProperties().copyFrom(source.getRaceProperties(), wasDeath, keepInv);
 	}
 
-	public void savedNBTData(NBTTagCompound compound) {
+	@Override
+	public void saveToNBT(NBTTagCompound compound) {
 		compound.setInteger("size", size);
 		compound.setInteger("target", target);
 		compound.setString("original_race", original.getName());
@@ -447,17 +568,33 @@ public class EntityProperties {
 		compound.setString("prev_race", previous.getName());
 		compound.setBoolean("trait_shown", traitShown);
 		compound.setString("trait_color", traitColor);
-		compound.setFloat("trait_opacity", traitOpacity);
+		//		compound.setFloat("trait_opacity", traitOpacity);
 		compound.setFloat("default_height", defaultHeight);
 		compound.setFloat("default_width", defaultWidth);
 		compound.setBoolean("login", login);
 		compound.setBoolean("first_login", false);
 		compound.setBoolean("fake", isFake);
-		this.getMagic().saveToNBT(compound);
 		this.getRaceProperties().savedNBTData(compound);
 	}
 
-	public void loadNBTData(NBTTagCompound compound) {
+	public void saveAbilitiesToNBT(NBTTagCompound compound) {
+		for (final Entry<IAbilityInterface, Storage> ability : abilities.getAbilities().entrySet()) {
+			try {
+				if (ability.getValue() != null) {
+					final IAbilityHandler handler = ability.getValue().handler();
+					if ((handler != null)) {
+						handler.saveStorage(compound);
+					}
+				}
+			} catch (final Exception e) {
+				Trinkets.log.error("Error when saving ability:" + ability.getKey().getName());
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void loadFromNBT(NBTTagCompound compound) {
 		if (compound.hasKey("first_login")) {
 			first_login = compound.getBoolean("first_login");
 		}
@@ -471,25 +608,25 @@ public class EntityProperties {
 			target = compound.getInteger("target");
 		}
 		if (compound.hasKey("original_race")) {
-			EntityRace originalRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("original_race"));
+			final EntityRace originalRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("original_race"));
 			if (originalRace == null) {
-				original = EntityRace.getByNameOrId(Reference.MODID + ":human");
+				original = EntityRace.getByNameOrId(Reference.MODID + ":none");
 			} else {
 				original = originalRace;
 			}
 		}
 		if (compound.hasKey("imbued_race")) {
-			EntityRace imbuedRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("imbued_race"));
+			final EntityRace imbuedRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("imbued_race"));
 			if (imbuedRace == null) {
-				imbued = EntityRace.getByNameOrId(Reference.MODID + ":human");
+				imbued = EntityRace.getByNameOrId(Reference.MODID + ":none");
 			} else {
 				imbued = imbuedRace;
 			}
 		}
 		if (compound.hasKey("prev_race")) {
-			EntityRace previousRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("prev_race"));
+			final EntityRace previousRace = EntityRace.getByNameOrId(Reference.MODID + ":" + compound.getString("prev_race"));
 			if (previousRace == null) {
-				previous = EntityRace.getByNameOrId(Reference.MODID + ":human");
+				previous = EntityRace.getByNameOrId(Reference.MODID + ":none");
 			} else {
 				previous = previousRace;
 			}
@@ -501,9 +638,9 @@ public class EntityProperties {
 		if (compound.hasKey("trait_color")) {
 			traitColor = compound.getString("trait_color");
 		}
-		if (compound.hasKey("trait_opacity")) {
-			traitOpacity = compound.getFloat("trait_opacity");
-		}
+		//		if (compound.hasKey("trait_opacity")) {
+		//			traitOpacity = compound.getFloat("trait_opacity");
+		//		}
 		if (compound.hasKey("default_height")) {
 			defaultHeight = compound.getFloat("default_height");
 		}
@@ -513,8 +650,23 @@ public class EntityProperties {
 		if (compound.hasKey("fake")) {
 			isFake = compound.getBoolean("fake");
 		}
-		this.getMagic().loadFromNBT(compound);
 		this.getRaceProperties().loadNBTData(compound);
+	}
+
+	public void loadAbilitiesFromNBT(NBTTagCompound compound) {
+		for (final Entry<IAbilityInterface, Storage> ability : abilities.getAbilities().entrySet()) {
+			try {
+				if (ability.getValue() != null) {
+					final IAbilityHandler handler = ability.getValue().handler();
+					if ((handler != null)) {
+						handler.loadStorage(compound);
+					}
+				}
+			} catch (final Exception e) {
+				Trinkets.log.error("Error when loading ability:" + ability.getKey().getName());
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

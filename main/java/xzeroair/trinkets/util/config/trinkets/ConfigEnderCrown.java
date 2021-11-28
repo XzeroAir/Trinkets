@@ -52,6 +52,10 @@ public class ConfigEnderCrown {
 	@LangKey(PREFIX + ".endermen.items")
 	public boolean itemDrop = false;
 
+	@Name("09. teleport")
+	@LangKey(PREFIX + ".endermen.ignoredamage.teleport")
+	public boolean teleport = false;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")

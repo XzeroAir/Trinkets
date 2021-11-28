@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -43,21 +42,25 @@ public class Mana_Candy extends FoodBase {
 		//				prop.getMagic().addMana(manaAmount);
 		//			}
 		//		}
-		this.setCooldown(20);
-		super.onItemUseFinish(stack, worldIn, entityLiving);
-		return stack;
+		//		this.setCooldown(20);
+		return super.onItemUseFinish(stack, worldIn, entityLiving);
 	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		final ItemStack itemstack = player.getHeldItem(handIn);
-		boolean flag = this.getEdible();
-		if (player.canEat(flag)) {
-			player.setActiveHand(handIn);
-			return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
-		} else {
-			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
-		}
+		return super.onItemRightClick(worldIn, player, handIn);
+		//		final ItemStack itemstack = player.getHeldItem(handIn);
+		//		boolean flag = this.getEdible();
+		//		System.out.println(flag);
+		//		if (flag) {
+		//			return super.onItemRightClick(worldIn, player, handIn);
+		//			//		if (player.canEat(flag)) {
+		//			//			player.setActiveHand(handIn);
+		//			//			return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
+		//		} else {
+		//
+		//			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
+		//		}
 	}
 
 	@Override

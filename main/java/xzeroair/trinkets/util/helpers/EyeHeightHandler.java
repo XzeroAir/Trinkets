@@ -61,7 +61,7 @@ public class EyeHeightHandler {
 		final float defaultEyeHeight = player.getDefaultEyeHeight();
 		if (!race.getCurrentRace().equals(EntityRaces.none) && !race.isNormalHeight()) {
 			if (race.isTransformed()) {
-				float ne = ((defaultEyeHeight) * (race.getSize() * 0.01F));
+				float ne = ((defaultEyeHeight) * (race.getSize() * 0.01F));//player.height * 0.9F;//
 				float offset = 0.0050000099F;
 				ne -= offset;
 				ne -= 0.05F;

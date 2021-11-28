@@ -29,6 +29,13 @@ import xzeroair.trinkets.attributes.AttributeConfigWrapper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.traits.AbilityHandler;
+import xzeroair.trinkets.traits.AbilityHandler.AbilitySource;
+import xzeroair.trinkets.traits.abilities.IAbilityHandler;
+import xzeroair.trinkets.traits.abilities.base.AbilityBase;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 import xzeroair.trinkets.util.handlers.ItemAttributeHandler;
@@ -48,6 +55,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	protected ItemAttributeHandler attributes;
 
 	public AccessoryBase(String name) {
+		//		BaubleType = baubleType;
 		this.setTranslationKey(name);
 		this.setRegistryName(name);
 		this.setMaxStackSize(1);
@@ -82,44 +90,47 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	}
 
 	@Override
-	public void playerEquipped(ItemStack stack, EntityLivingBase player) {
-		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+	public void playerEquipped(ItemStack stack, EntityLivingBase entity) {
+		entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
+		final TrinketProperties cap = Capabilities.getTrinketProperties(stack);
 		if ((cap != null)) {
-			cap.itemEquipped(player, this.getEquippedSlot(stack, player), this.getIsTrinketOrBauble(stack, player));
+			cap.itemEquipped(entity, this.getEquippedSlot(stack, entity), this.getIsTrinketOrBauble(stack, entity));
 		}
 	}
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		attributes.addAttributes(player);
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+		this.initAbilities(player);
+		final TrinketProperties cap = Capabilities.getTrinketProperties(stack);
 		if ((cap != null)) {
 			cap.onUpdate();
 		}
 	}
 
 	@Override
-	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
-		TrinketProperties cap = Capabilities.getTrinketProperties(stack);
-		if ((cap != null)) {
-			cap.itemUnequipped();
-			if (!cap.isEquipped(player)) {
-				player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
+	public void playerUnequipped(ItemStack stack, EntityLivingBase entity) {
+		final TrinketProperties cap = Capabilities.getTrinketProperties(stack);
+		if (cap != null) {
+			cap.itemUnequipped(entity);
+			if (!cap.isEquipped(entity)) {
+				entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
 			}
 		}
-		AttributeHelper.removeAttributes(player, this.getUUID());
+		attributes.removeAttibutes(entity);
+		AttributeHelper.removeAttributes(entity, this.getUUID());
 	}
 
 	@Override
-	public void eventPlayerLogout(ItemStack stack, EntityLivingBase player) {
-		AttributeHelper.removeAttributes(player, this.getUUID());
+	public void eventPlayerLogout(ItemStack stack, EntityLivingBase entity) {
+		attributes.removeAttibutes(entity);
+		AttributeHelper.removeAttributes(entity, this.getUUID());
 	}
 
-	public int getIsTrinketOrBauble(ItemStack stack, EntityLivingBase player) {
-		if (player instanceof EntityPlayer) {
+	public int getIsTrinketOrBauble(ItemStack stack, EntityLivingBase entity) {
+		if (entity instanceof EntityPlayer) {
 			boolean skip = false;
-			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler((EntityPlayer) player);
+			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
 			if (Trinket != null) {
 				for (int i = 0; i < Trinket.getSlots(); i++) {
 					if (Trinket.getStackInSlot(i) == stack) {
@@ -129,7 +140,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 				}
 			}
 			if ((skip != true) && Loader.isModLoaded("baubles")) {
-				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
+				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 				if (baubles != null) {
 					for (int i = 0; i < baubles.getSlots(); i++) {
 						if (baubles.getStackInSlot(i) == stack) {
@@ -142,15 +153,15 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		return 0;
 	}
 
-	public int getEquippedSlot(ItemStack stack, EntityLivingBase player) {
-		if (player instanceof EntityPlayer) {
+	public int getEquippedSlot(ItemStack stack, EntityLivingBase entity) {
+		if (entity instanceof EntityPlayer) {
 			boolean skip = false;
-			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler((EntityPlayer) player);
+			final ITrinketContainerHandler Trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
 			if (Trinket != null) {
 				for (int i = 0; i < Trinket.getSlots(); i++) {
 					if (Trinket.getStackInSlot(i) == stack) {
 						skip = true;
-						TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
+						final TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 						iCap.setSlot(i);
 						iCap.setHandler(1);
 						return i;
@@ -158,11 +169,11 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 				}
 			}
 			if ((skip != true) && Loader.isModLoaded("baubles")) {
-				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
+				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 				if (baubles != null) {
 					for (int i = 0; i < baubles.getSlots(); i++) {
 						if (baubles.getStackInSlot(i) == stack) {
-							TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
+							final TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 							iCap.setSlot(i);
 							iCap.setHandler(2);
 							return i;
@@ -174,16 +185,63 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		return -1;
 	}
 
+	// API
+
+	protected boolean isItemAbility(IAbilityInterface ability, EntityLivingBase entity) {
+		final EntityProperties prop = Capabilities.getEntityRace(entity);
+		if ((prop != null)) {
+			final AbilityHandler handler = prop.getAbilityHandler();
+			return handler.isSource(Abilities.blockDetection, AbilitySource.EQUIPPED, this.getRegistryName().toString());
+		}
+		return false;
+	}
+
+	public void initAbilities(EntityLivingBase entity) {
+
+	}
+
+	protected void addAbility(EntityLivingBase entity, IAbilityInterface ability, IAbilityHandler handler) {
+		final EntityProperties prop = Capabilities.getEntityRace(entity);
+		if (prop != null) {
+			if (handler instanceof AbilityBase) {
+				((AbilityBase) handler).setEntity(entity);
+			}
+			prop.getAbilityHandler().addAbility(ability, AbilitySource.EQUIPPED.getName() + ";" + this.getRegistryName(), handler);
+		}
+	}
+
+	//	for (Entry<IAbilityInterface, IAbilityHandler> ability : abilities.getAbilities()) {
+	//		if (ability.getValue() instanceof ITickableAbility) {
+	//			((ITickableAbility) ability.getValue()).tickAbility(entity);
+	//		}
+	//	}
+	//	@Override
+	//	public void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
+	//		for (Entry<IAbilityInterface, Storage> ability : abilities.getAbilities()) {
+	//			if (ability.getValue().handler() instanceof IPotionAbility) {
+	//				Result isImmune = ((IPotionAbility) ability.getValue().handler()).immuneToPotion(event.getPotionEffect());
+	//				if (isImmune != null) {
+	//					event.setResult(isImmune);
+	//				}
+	//			}
+	//		}
+	//	}
+
+	// API END
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
+		if (worldIn == null) {
+			return;
+		}
 		if (TrinketsConfig.CLIENT.GUI.SLOT.showID) {
 			tooltip.add("Currently Equipped in Slot: " + String.valueOf(this.getEquippedSlot(stack, Minecraft.getMinecraft().player)));
 		}
 		TranslationHelper.addTooltips(stack, worldIn, tooltip);
 		if ((attributes != null) && (attributesConfig != null)) {
-			TranslationHelper.addOtherTooltips(stack, worldIn, attributesConfig, tooltip);
+			TranslationHelper.addOtherTooltips(attributesConfig, tooltip);
 		}
 	}
 

@@ -1,11 +1,11 @@
 {
-    "name": "Dragon",
+    "name": "巨龙",
     "icon": "xat:dragon_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Dragon race is a powerful being which gets creative flight as well as strong combat affinity. More overpowered than all other races, however also the hardest to obtain."
+            "text": "巨龙是一个强大的种族，它们能够像创造模式那样飞行并拥有强大的战斗能力。巨龙远比其他所有种族更强大，但是也是最难获取。"
         },
 		{
             "type": "text",

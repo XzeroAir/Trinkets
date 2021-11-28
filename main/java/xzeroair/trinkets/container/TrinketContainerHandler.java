@@ -32,23 +32,23 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
 			size = slots;
 		}
 		super.setSize(size);
-		final boolean[] old = this.changed;
-		this.changed = new boolean[size];
-		for (int i = 0; (i < old.length) && (i < this.changed.length); i++) {
-			this.changed[i] = old[i];
+		final boolean[] old = changed;
+		changed = new boolean[size];
+		for (int i = 0; (i < old.length) && (i < changed.length); i++) {
+			changed[i] = old[i];
 		}
 	}
 
 	@Override
 	public void setStackInSlot(int slot, ItemStack stack) {
-		if ((stack == null) || (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.player))) {
+		if ((stack == null) || (stack.isEmpty() || this.isItemValidForSlot(slot, stack, player))) {
 			super.setStackInSlot(slot, stack);
 		}
 	}
 
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-		if (!this.isItemValidForSlot(slot, stack, this.player)) {
+		if (!this.isItemValidForSlot(slot, stack, player)) {
 			return stack;
 		}
 		return super.insertItem(slot, stack, simulate);
@@ -65,7 +65,7 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
 		if ((stack == null) || stack.isEmpty() || !((stack.getItem() instanceof IAccessoryInterface) || (TrinketsConfig.compat.baubles && Loader.isModLoaded("baubles") && (stack.getItem() instanceof IBauble)))) {
 			return false;
 		}
-		TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
+		final TrinketProperties iCap = Capabilities.getTrinketProperties(stack);
 		if ((stack.getItem() instanceof IAccessoryInterface) && (iCap != null)) {
 			final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
 			return trinket.playerCanEquip(stack, player);
@@ -79,7 +79,7 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
 
 	@Override
 	public boolean isEventBlocked() {
-		return this.blockEvents;
+		return blockEvents;
 	}
 
 	@Override

@@ -19,29 +19,32 @@ public class FairyConfig {
 		private final String name = "fairy";
 		private final String PREFIX = Reference.MODID + ".config.races." + name;
 
-		@Config.RequiresMcRestart
+//		@Config.RequiresMcRestart
+		@Config.RequiresWorldRestart
 		@Config.Comment("Creative Flight. Set to False to Disable. Default True")
 		@Name("01. Creative Flight")
 		@LangKey(PREFIX + ".flight")
 		public boolean creative_flight = true;
 
-		@Config.RequiresMcRestart
+//		@Config.RequiresMcRestart
+		@Config.RequiresWorldRestart
 		@Config.Comment("Change the flight speed from the Vanilla Default of 0.05")
 		@Name("02. Change Flight Speed")
 		@LangKey(PREFIX + ".flight.speed")
 		public boolean creative_flight_speed = true;
 
-		@Config.RequiresMcRestart
+//		@Config.RequiresMcRestart
+		@Config.RequiresWorldRestart
 		@Config.Comment("How Fast the player moves when in Creative Flight. Vanilla Default 0.05. Default 0.02")
 		@Name("03. Creative Flight Speed")
 		@Config.RangeDouble(min = 0.01, max = 1)
 		@LangKey(PREFIX + ".flight.speed.amount")
 		public double flight_speed = 0.02;
 
-		@Config.Comment("Jump Height Adjustment. Set to False to Disable. Default True")
-		@Name("04. Jump Height")
-		@LangKey(PREFIX + ".jumpheight")
-		public boolean step_height = true;
+//		@Config.Comment("Jump Height Adjustment. Set to False to Disable. Default True")
+//		@Name("04. Jump Height")
+//		@LangKey(PREFIX + ".jumpheight")
+//		public boolean step_height = true;
 
 		@Config.Comment("Fairy's Climbing Ability. Set to False to Disable. Default True")
 		@Name("05. Climbing")
@@ -54,28 +57,33 @@ public class FairyConfig {
 			        "minecraft:dirt",
 	                "minecraft:grass",
 	                "minecraft:sand",
-	                "minecraft:cobblestone",
-	                "minecraft:mossy_cobblestone",
-	                "minecraft:oak_stairs",
-	                "minecraft:stone_stairs",
-	                "minecraft:brick_stairs",
-	                "minecraft:stone_brick_stairs",
-	                "minecraft:nether_brick_stairs",
-	                "minecraft:sandstone_stairs",
-	                "minecraft:spruce_stairs",
-	                "minecraft:birch_stairs",
-	                "minecraft:jungle_stairs",
-	                "minecraft:arcacia_stairs",
-	                "minecraft:quartz_stairs",
-	                "minecraft:dark_oak_stairs",
-	                "minecraft:red_sandstone_stairs",
-	                "minecraft:purpur_stairs",
-	                "minecraft:stone_slab",
-	                "minecraft:wooden_slab",
-	                "minecraft:stone_slab2",
-	                "minecraft:purpur_slab",
+	                "minecraft:*cobblestone*",
+	                "minecraft:*planks*",
+	                "minecraft:*stairs",
+	                "minecraft:*slab",
+	                "minecraft:*slab2",
+//	                "minecraft:cobblestone",
+//	                "minecraft:mossy_cobblestone",
+//	                "minecraft:oak_stairs",
+//	                "minecraft:stone_stairs",
+//	                "minecraft:brick_stairs",
+//	                "minecraft:stone_brick_stairs",
+//	                "minecraft:nether_brick_stairs",
+//	                "minecraft:sandstone_stairs",
+//	                "minecraft:spruce_stairs",
+//	                "minecraft:birch_stairs",
+//	                "minecraft:jungle_stairs",
+//	                "minecraft:arcacia_stairs",
+//	                "minecraft:quartz_stairs",
+//	                "minecraft:dark_oak_stairs",
+//	                "minecraft:red_sandstone_stairs",
+//	                "minecraft:purpur_stairs",
+//	                "minecraft:stone_slab",
+//	                "minecraft:wooden_slab",
+//	                "minecraft:stone_slab2",
+//	                "minecraft:purpur_slab",
 	                "minecraft:stone",
-	                "minecraft:planks",
+//	                "minecraft:planks",
 	                "minecraft:gravel",
 	                "minecraft:gold_ore",
 	                "minecraft:iron_ore",
@@ -210,14 +218,46 @@ public class FairyConfig {
 	                "minecraft:acacia_door"
 		};
 
+		@Name("07. Climbing Whitelist")
+		@LangKey(PREFIX + ".climbing.whitelist")
+		public boolean whitelistClimbables = true;
+
+		@Config.Comment("If the player can Mount Entities at all")
+		@Name("08. Able to Mount Entities")
+		@LangKey(PREFIX + ".mount.enabled")
+		public boolean canMount = true;
+
+		@Config.Comment("If the player can Control Boats")
+		@Name("09. Can Control Boats")
+		@LangKey(PREFIX + ".mount.boat.control")
+		public boolean canControlBoats = false;
+
+		@Config.Comment("Should the Mount Blacklist to a Whitelist")
+		@Name("10. Toggle Whitelist")
+		@LangKey(PREFIX + ".mount.whitelist")
+		public boolean whitelist = false;
+
+		@Config.Comment("Entities that can not be mounted, or can only be mounted")
+		@Name("11. Mount Blacklist")
+		@LangKey(PREFIX + ".mount.blacklist")
+		public String[] mountBlacklist = new String[] {
+				"quark:seat",
+				"sit:entity_sit"
+		};
+
+		@Config.Comment("Mana Cost per second while flying")
+		@Name("12. Flight Cost")
+		@LangKey(PREFIX + ".flight.cost")
+		public float flight_cost = 0F;
+
 		@Name("Compatability Settings")
 		@LangKey(Reference.MODID + ".config.compatability")
-		private Compatability compat = new Compatability();
+		private final Compatability compat = new Compatability();
 		public class Compatability {
 
 			@Name("Tough as Nails Compatability")
 			@LangKey(Reference.MODID + ".config.toughasnails")
-			private TANCompat tan = new TANCompat();
+			private final TANCompat tan = new TANCompat();
 			public class TANCompat {
 
 			}

@@ -1,9 +1,6 @@
 package xzeroair.trinkets.races;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.MathHelper;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.races.mixed.RaceMixed;
 
 public class EntityRaceMixed extends EntityRace {
 
@@ -34,10 +31,10 @@ public class EntityRaceMixed extends EntityRace {
 		return this;
 	}
 
-	@Override
-	public EntityRacePropertiesHandler getRaceHandler(EntityLivingBase e) {
-		return new RaceMixed(e, primary, sub, Capabilities.getEntityRace(e));
-	}
+	//	@Override
+	//	public EntityRacePropertiesHandler getRaceHandler(EntityLivingBase e) {
+	//		return new RaceMixed(e, primary, sub, Capabilities.getEntityRace(e));
+	//	}
 
 	@Override
 	public int getMagicAffinity() {

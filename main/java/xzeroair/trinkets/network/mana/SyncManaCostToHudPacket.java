@@ -1,13 +1,12 @@
 package xzeroair.trinkets.network.mana;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Trinkets;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.NetHandlerPlayServer;
 import xzeroair.trinkets.client.events.ScreenOverlayEvents;
+import xzeroair.trinkets.network.ThreadSafePacket;
 
-public class SyncManaCostToHudPacket implements IMessage {
+public class SyncManaCostToHudPacket extends ThreadSafePacket {
 
 	public SyncManaCostToHudPacket() {
 	}
@@ -28,16 +27,13 @@ public class SyncManaCostToHudPacket implements IMessage {
 		this.cost = cost;
 	}
 
-	public static class Handler implements IMessageHandler<SyncManaCostToHudPacket, IMessage> {
-		@Override
-		public IMessage onMessage(SyncManaCostToHudPacket message, MessageContext ctx) {
-			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if (Trinkets.proxy.getPlayer(ctx) != null) {
-					ScreenOverlayEvents.instance.SyncCost(message.cost);
-				}
-			});
-			return null;
-		}
+	@Override
+	public void handleClientSafe(NetHandlerPlayClient client) {
+		ScreenOverlayEvents.instance.SyncCost(cost);
+	}
+
+	@Override
+	public void handleServerSafe(NetHandlerPlayServer server) {
 
 	}
 

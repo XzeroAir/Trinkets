@@ -1,7 +1,9 @@
 package xzeroair.trinkets.util.helpers;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraftforge.fml.common.Loader;
 
 public class PotionHelper {
 
@@ -74,6 +76,25 @@ public class PotionHelper {
 
 	public static PotionHolder getPotionHolder(String potConfig) {
 		return new PotionHolder(potConfig);
+	}
+
+	public static boolean isModPotionActive(EntityLivingBase entity, String modID, String potionEffect) {
+		Potion potion = getModPotion(modID, potionEffect);
+		if ((potion != null) && entity.isPotionActive(potion)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static Potion getModPotion(String modID, String potionEffect) {
+		if (Loader.isModLoaded(modID)) {
+			try {
+				return Potion.getPotionFromResourceLocation(potionEffect);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	//	private Potion getPotion(String potID) {

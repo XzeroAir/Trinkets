@@ -72,8 +72,8 @@ public class ManaHud extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		oldMouseX = mouseX;
 		oldMouseY = mouseY;
-		TrinketsConfig.CLIENT.MPBar.X = ((mouseX * 100) / width) * 0.01D;
-		TrinketsConfig.CLIENT.MPBar.Y = ((mouseY * 100) / height) * 0.01D;
+		TrinketsConfig.CLIENT.MPBar.translatedX = ((mouseX * 100D) / width) * 0.01D;
+		TrinketsConfig.CLIENT.MPBar.translatedY = ((mouseY * 100D) / height) * 0.01D;
 		//		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		//		drawHoveringText(text, mouseX, y);

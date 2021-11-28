@@ -1,14 +1,11 @@
 package xzeroair.trinkets.races;
 
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.api.events.RegisterRaceEvent;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.races.dragon.RaceDragon;
 import xzeroair.trinkets.races.dragon.RaceDragonAttributes;
@@ -25,18 +22,18 @@ import xzeroair.trinkets.races.goblin.RaceGoblinAttributes;
 import xzeroair.trinkets.races.human.RaceHuman;
 import xzeroair.trinkets.races.titan.RaceTitan;
 import xzeroair.trinkets.races.titan.RaceTitanAttributes;
-import xzeroair.trinkets.races.util.RaceRegistry;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.registry.TrinketRegistry;
 
 public class EntityRace {
 
-	public static final RaceRegistry<ResourceLocation, EntityRace> Registry = Trinkets.RaceRegistry;
+	public static final TrinketRegistry<ResourceLocation, EntityRace> Registry = Trinkets.RaceRegistry;
 	private static int IndexID = 0;
 
 	/*----------------------------------Constructor----------------------------------------*/
 
-	private UUID uuid;
-	private String name;
+	private final UUID uuid;
+	private final String name;
 	private int primaryColor = 0;
 	private int secondaryColor = 16777215;
 
@@ -78,12 +75,12 @@ public class EntityRace {
 	 */
 	@Nullable
 	public static EntityRace getByNameOrId(String id) {
-		EntityRace race = Registry.getObject(new ResourceLocation(id.toLowerCase()));
+		final EntityRace race = Registry.getObject(new ResourceLocation(id.toLowerCase()));
 
 		if (race == null) {
 			try {
 				return getRaceById(Integer.parseInt(id));
-			} catch (NumberFormatException var3) {
+			} catch (final NumberFormatException var3) {
 			}
 		}
 
@@ -178,14 +175,14 @@ public class EntityRace {
 	public static void registerRaces() {
 		registerRace(nextID(), (new EntityRace("None"		, "00000000-0000-0000-0000-000000000000", 11107684, 16374701)).setRaceSize(100).setMagicAffinity(100));
 		registerRace(nextID(), (new EntityRace("Human"		, "c82ec7c3-2a9d-4a08-b0dd-7ce086c6771b", 11107684, 16374701)).setRaceSize(100).setMagicAffinity(100));
-		registerRace(nextID(), (new EntityRace("Fairy"		, "e5869fac-0949-41f2-889b-4e6b8ca6d2e7", 12514535, 962222)).setRaceSize(25).setMagicAffinity(300));
+		registerRace(nextID(), (new EntityRace("Fairy"		, "e5869fac-0949-41f2-889b-4e6b8ca6d2e7", 12514535, 962222)).setRaceSize(25).setMagicAffinity(500));
 		registerRace(nextID(), (new EntityRace("Dwarf"		, "917b555b-944a-4e44-afb6-ca638c6d91e5", 10832170, 7039851)).setRaceSize(75).setMagicAffinity(100));
 		registerRace(nextID(), (new EntityRace("Titan"		, "a3bc433b-7bb7-4bd9-a88c-5fd120d04d59", 10066329, 3223595)).setRaceSize(300).setMagicAffinity(50));
 		registerRace(nextID(), (new EntityRace("Elf"		, "25f92404-35f3-453b-ad48-9b788b2e12fc", 40960, 962222)).setRaceSize(100).setMagicAffinity(200));
 		registerRace(nextID(), (new EntityRace("Goblin"		, "d917999a-0399-4c39-bfc5-79784dfff6ed", 6588004, 3096367)).setRaceSize(50).setMagicAffinity(75));
 		registerRace(nextID(), (new EntityRace("Faelis"		, "cdccefa8-6a67-4394-b70d-c737953887a2", 16571252, 4465933)).setRaceSize(85).setMagicAffinity(125));
 //		registerRace(nextID(), (new EntityRace("Slime"		, "5db9c85c-f830-44c7-b02f-8368ee5eca8a", 0, 0)).setRaceSize(100).setMagicAffinity(500));
-		registerRace(nextID(), (new EntityRace("Dragon"		, "3b75821e-6ec6-4dfe-9612-b7a988a7b30b", 0, 0)).setRaceSize(120).setMagicAffinity(500));
+		registerRace(nextID(), (new EntityRace("Dragon"		, "3b75821e-6ec6-4dfe-9612-b7a988a7b30b", 0, 0)).setRaceSize(120).setMagicAffinity(400));
 
 //		registerRace(nextID(), (new EntityRace("Orc"		, "591d7d19-dd46-471f-b24f-e9967b1b95ef", 0, 0)).setRaceSize(150).setMagicAffinity(25));
 //		registerRace(nextID(), (new EntityRace("Succubus"	, "cce3a5ca-134e-40ed-a27d-a89e1f05dc5f", 0, 0)).setRaceSize(100).setMagicAffinity(250));
@@ -193,12 +190,14 @@ public class EntityRace {
 //		registerRace(nextID(), (new EntityRace("Nymph"		, "14f31596-09a7-4be0-9592-4cb63d7e74bb", 0, 0)).setRaceSize(100).setMagicAffinity(400));
 //		registerRace(nextID(), (new EntityRace("Siren"		, "1403f7e8-a427-4326-bcd9-1d7fdc1e22bb", 0, 0)).setRaceSize(100).setMagicAffinity(200));
 //		registerRace(nextID(), (new EntityRaceMixed("Mixed"	, "10172391-1b14-4a2d-9387-5f819d56426f")).setRaceSize(100).setMagicAffinity(100));
-		RegisterRaceEvent registryEvent = new RegisterRaceEvent(Registry);
-		MinecraftForge.EVENT_BUS.post(registryEvent);
-		for(Entry<ResourceLocation, EntityRace> entry : registryEvent.getNewRaceEntries().entrySet()) {
-			System.out.println("Registering " + entry.getKey());
-			registerRace(nextID(), entry.getKey(), entry.getValue());
-		}
+
+		// TODO Move this event somewhere where it actually works
+//		RegisterRaceEvent registryEvent = new RegisterRaceEvent(Registry);
+//		MinecraftForge.EVENT_BUS.post(registryEvent);
+//		for(Entry<ResourceLocation, EntityRace> entry : registryEvent.getEntries().entrySet()) {
+//			Trinkets.log.info("Registering " + entry.getKey());
+//			registerRace(nextID(), entry.getKey(), entry.getValue());
+//		}
 	}
 //@formatter:on
 

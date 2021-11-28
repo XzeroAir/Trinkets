@@ -34,17 +34,17 @@ public class ManaSphere {
 	}
 
 	public static boolean isCenterChunk(Long seed, int chunkX, int chunkZ) {
-		final Random random = new Random(seed + (chunkX * 1766557063L) + (chunkZ *21766558031L));
+		final Random random = new Random(seed + (chunkX * 1766557063L) + (chunkZ * 21766558031L));
 		return random.nextFloat() < 0.03f;
 	}
 
 	public static float getRadius(Long seed, int chunkX, int chunkZ) {
-		final Random random = new Random(seed + (chunkX * 31766435083L) + (chunkZ *655987873L));
+		final Random random = new Random(seed + (chunkX * 31766435083L) + (chunkZ * 655987873L));
 		return (random.nextFloat() * 40) + 20;
 	}
 
 	public static int getRandomYOffset(Long seed, int chunkX, int chunkZ) {
-		final Random random = new Random(seed + (chunkX * 3556692499L) + (chunkZ *2998604447L));
+		final Random random = new Random(seed + (chunkX * 3556692499L) + (chunkZ * 2998604447L));
 		return random.nextInt(60) + 40;
 	}
 

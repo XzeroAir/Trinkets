@@ -2,12 +2,14 @@ package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
+import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigGlowRing;
 
@@ -24,14 +26,13 @@ public class TrinketGlowRing extends AccessoryBase {
 	}
 
 	@Override
+	public void initAbilities(EntityLivingBase entity) {
+		this.addAbility(entity, Abilities.nightVision, new AbilityNightVision().toggleAbility(true));
+	}
+
+	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
-		player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 250, 0, false, false));
-		if (serverConfig.prevent_blindness) {
-			if (player.isPotionActive(MobEffects.BLINDNESS)) {
-				player.removePotionEffect(MobEffects.BLINDNESS);
-			}
-		}
 	}
 
 	@Override
@@ -50,6 +51,7 @@ public class TrinketGlowRing extends AccessoryBase {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
 	}

@@ -1,18 +1,17 @@
-package xzeroair.trinkets.races.util;
+package xzeroair.trinkets.util.registry;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import javax.annotation.Nullable;
 import net.minecraft.util.IntIdentityHashBiMap;
 
-public class RaceRegistry<K, V> extends RaceRegistrySimple<K, V> {
+public class TrinketRegistry<K, V> extends TrinketRegistrySimple<K, V> {
 	/** The backing store that maps Integers to objects. */
 	protected final IntIdentityHashBiMap<V> underlyingIntegerMap = new IntIdentityHashBiMap<>(256);
 	/** A BiMap of objects (key) to their names (value). */
@@ -20,7 +19,7 @@ public class RaceRegistry<K, V> extends RaceRegistrySimple<K, V> {
 
 	protected final Map<UUID, V> uuidObjectRegistry = new HashMap<>();
 
-	public RaceRegistry() {
+	public TrinketRegistry() {
 		this.inverseObjectRegistry = ((BiMap) registryObjects).inverse();
 	}
 

@@ -22,6 +22,10 @@ public class ConfigFaelisClaw {
 	@LangKey(PREFIX + ".bleeding.duration")
 	public int duration = 300;
 
+	@Name("03. Bleed chance")
+	@LangKey(PREFIX + ".bleeding.chance")
+	public int chance = 4;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")
@@ -40,6 +44,21 @@ public class ConfigFaelisClaw {
 
 		public class TANCompat {
 
+		}
+
+		public LycanitesCompat lycanites = new LycanitesCompat();
+
+		public class LycanitesCompat {
+
+			public boolean useLycaniteBleed = true;
+
+		}
+
+		public DefiledLandsCompat defiledlands = new DefiledLandsCompat();
+
+		public class DefiledLandsCompat {
+
+			public boolean useDefiledLandsBleed = true;
 		}
 
 		@Name("Baubles Compatability")
@@ -67,7 +86,7 @@ public class ConfigFaelisClaw {
 	private final int		attackSpeedOperation = 0;
 	private final boolean 	damage = true;
 	private final double 	damageAmount = 0.25;
-	private final int		damageOperation = 0;
+	private final int		damageOperation = 1;
 	private final boolean 	health = false;
 	private final double 	healthAmount = 0;
 	private final int		healthOperation = 0;

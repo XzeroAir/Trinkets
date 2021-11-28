@@ -10,7 +10,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.trinketcontainer.OpenDefaultInventory;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.baubles.BaublesHelperFunctions;
@@ -24,7 +23,7 @@ public class TrinketGuiButton extends GuiButton {
 	public static ResourceLocation closeButtonTex = null;
 
 	private final GuiContainer parentGui;
-	private ColorHelper color;
+	private final ColorHelper color;
 
 	public TrinketGuiButton(int buttonId, GuiContainer parentGui, int x, int y, int width, int height,
 			String buttonText) {
@@ -50,7 +49,7 @@ public class TrinketGuiButton extends GuiButton {
 
 					} else {
 						((TrinketGui) parentGui).displayNormalInventory();
-						NetworkHandler.INSTANCE.sendToServer(new OpenDefaultInventory());
+						NetworkHandler.sendToServer(new OpenTrinketGui(99));
 					}
 				}
 			}
@@ -84,10 +83,10 @@ public class TrinketGuiButton extends GuiButton {
 				openButtonTex = new ResourceLocation(TrinketsConfig.CLIENT.GUI.button.open.image);
 				closeButtonTex = new ResourceLocation(TrinketsConfig.CLIENT.GUI.button.close.image);
 
-				ConfigGuiButtonShared open = TrinketsConfig.CLIENT.GUI.button.open;
-				ConfigGuiButtonShared close = TrinketsConfig.CLIENT.GUI.button.close;
-				ColorHelper openColor = color.setColor(open.color);
-				ColorHelper closeColor = color.setColor(close.color);
+				final ConfigGuiButtonShared open = TrinketsConfig.CLIENT.GUI.button.open;
+				final ConfigGuiButtonShared close = TrinketsConfig.CLIENT.GUI.button.close;
+				final ColorHelper openColor = color.setColor(open.color);
+				final ColorHelper closeColor = color.setColor(close.color);
 				if (k == 1) {
 					if (parentGui instanceof TrinketGui) {
 						mc.getTextureManager().bindTexture(closeButtonTex);

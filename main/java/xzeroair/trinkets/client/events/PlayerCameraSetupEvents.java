@@ -11,6 +11,7 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.init.ModItems;
@@ -164,18 +165,22 @@ public class PlayerCameraSetupEvents {
 		//		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderFogDensityEvent(FogDensity event) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		float d = event.getDensity();
+		final EntityPlayer player = Minecraft.getMinecraft().player;
+		//		final float d = event.getDensity();
 		if (player.isInWater()) {
 			if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketSea)) {
-				event.setCanceled(true);
+				if (event.isCancelable() && !event.isCanceled()) {
+					event.setCanceled(true);
+				}
 				event.setDensity(0);
+				//			} else {
+				//				event.setCanceled(false);
 			}
-		} else {
-			event.setCanceled(false);
-			event.setDensity(d);
+			//		} else {
+			//			event.setCanceled(false);
+			//			event.setDensity(d);
 		}
 	}
 
@@ -186,7 +191,7 @@ public class PlayerCameraSetupEvents {
 	@SubscribeEvent
 	public void renderBlockOverlay(RenderBlockOverlayEvent event) {
 		if (event.getOverlayType() == OverlayType.FIRE) {
-			if (TrinketHelper.AccessoryCheck(event.getPlayer(), ModItems.trinkets.TrinketDragonsEye)) {
+			if (TrinketHelper.AccessoryCheck(event.getPlayer(), ModItems.trinkets.TrinketDragonsEye) || TrinketHelper.AccessoryCheck(event.getPlayer(), ModItems.RaceTrinkets.TrinketDragonRing)) {
 				event.setCanceled(true);
 			}
 		}

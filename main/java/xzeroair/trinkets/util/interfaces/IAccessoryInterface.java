@@ -157,8 +157,9 @@ public interface IAccessoryInterface {
 	 * This Renders things on the Trinkets Render Layer
 	 *
 	 * @param scale
+	 * @param isSlim - True if using Slim Model
 	 */
-	default void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isTrinket) {
+	default void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isTrinket) {
 	}
 
 	/**

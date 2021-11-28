@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,8 +23,8 @@ import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 public class FoodBase extends ItemFood implements IsModelLoaded {
 
 	private UUID uuid;
-	private int cooldown = 0;
-	private boolean canEat = true;
+	protected int cooldown = 0;
+	protected boolean canEat = true;
 
 	public FoodBase(String name, int heal, float saturation) {
 		super(heal, saturation, false);
@@ -48,7 +51,11 @@ public class FoodBase extends ItemFood implements IsModelLoaded {
 	}
 
 	public void setUUID(String uuid) {
-		this.uuid = UUID.fromString(uuid);
+		if (!uuid.isEmpty()) {
+			this.uuid = UUID.fromString(uuid);
+		} else {
+			this.uuid = UUID.randomUUID();
+		}
 	}
 
 	@Override
@@ -57,11 +64,19 @@ public class FoodBase extends ItemFood implements IsModelLoaded {
 			canEat = false;
 			cooldown--;
 		} else {
-			if (canEat == false) {
-				canEat = true;
-			}
+			canEat = true;
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		return super.onItemRightClick(worldIn, playerIn, handIn);
+	}
+
+	@Override
+	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		return super.onItemUseFinish(stack, worldIn, entityLiving);
 	}
 
 	public int getCooldown() {

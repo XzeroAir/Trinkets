@@ -11,7 +11,6 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import xzeroair.trinkets.client.gui.TrinketGui;
 import xzeroair.trinkets.client.gui.TrinketGuiButton;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.trinketcontainer.OpenDefaultInventory;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.util.TrinketsConfig;
 
@@ -35,7 +34,7 @@ public class BaublesHelperFunctions {
 
 	public static void mousePressedHelper(GuiContainer gui, int ID) {
 		if (gui instanceof GuiPlayerExpanded) {
-			NetworkHandler.INSTANCE.sendToServer(new OpenTrinketGui());
+			NetworkHandler.sendToServer(new OpenTrinketGui());
 		} else {
 			if ((gui instanceof TrinketGui) && (ID == 55)) {
 				PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
@@ -44,7 +43,7 @@ public class BaublesHelperFunctions {
 
 				} else {
 					((TrinketGui) gui).displayNormalInventory();
-					NetworkHandler.INSTANCE.sendToServer(new OpenDefaultInventory());
+					NetworkHandler.sendToServer(new OpenTrinketGui(99));
 				}
 			}
 		}

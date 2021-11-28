@@ -37,7 +37,7 @@ public class ConfigDamageShield {
 
 	@Config.Comment("The Resistance level given when worn")
 	@Name("05. Resistance Level")
-	@Config.RangeInt(min = 0, max = 3)
+	@Config.RangeInt(min = 0, max = 10)
 	@LangKey(PREFIX + ".resistance.level")
 	public int resistance_level = 0;
 
@@ -45,6 +45,9 @@ public class ConfigDamageShield {
 	@Name("06. Resistance stacks")
 	@LangKey(PREFIX + ".resistance.stacks")
 	public boolean resistance_stacks = true;
+
+	@Name("07. Resistance potion")
+	public String potionEffect = "minecraft:resistance";
 
 	@Config.Comment("Only Disable this if You're the Epic Pro Gamer")
 	@Name("69. Epic Pro Gamer")

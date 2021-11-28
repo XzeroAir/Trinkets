@@ -2,17 +2,24 @@ package xzeroair.trinkets.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Random;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -21,11 +28,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.UpdateThrowable;
+import xzeroair.trinkets.network.particles.EffectsRenderPacket;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class MovingThrownProjectile extends EntityFireball implements IProjectile {
@@ -50,6 +58,8 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 
 	private boolean ignoreBlocks = false;
 
+	//TODO Rewrite this
+
 	public MovingThrownProjectile(World worldIn) {
 		super(worldIn);
 		color = 12582912;
@@ -58,15 +68,16 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 	public MovingThrownProjectile(World worldIn, EntityLivingBase shooter, double accelX, double accelY, double accelZ, int color) {
 		//		this(worldIn, shooter.posX, (shooter.posY + shooter.getEyeHeight()) - 0.10000000149011612D, shooter.posZ);
 		super(worldIn, shooter, accelX, accelY, accelZ);
+		//		isImmuneToFire = true;
 		this.color = color;
-		float f = -MathHelper.sin(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
-		float f1 = -MathHelper.sin((shooter.rotationPitch + 0) * 0.017453292F);
-		float f2 = MathHelper.cos(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
+		final float f = -MathHelper.sin(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
+		final float f1 = -MathHelper.sin((shooter.rotationPitch + 0) * 0.017453292F);
+		final float f2 = MathHelper.cos(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
 		damage = TrinketsConfig.SERVER.races.dragon.breath_damage;
 		this.setSize(0.5F, 0.5F);
-		//		float f = MathHelper.sqrt(x * x + y * y + z * z);
-		double d0 = MathHelper.sqrt((f * f) + (f1 * f1) + (f2 * f2));
-		//MathHelper.sqrt((accelX * accelX) + (accelY * accelY) + (accelZ * accelZ));
+		//		final float f = MathHelper.sqrt((x * x) + (y * y) + (z * z));
+		final double d0 = MathHelper.sqrt((f * f) + (f1 * f1) + (f2 * f2));
+		//		//MathHelper.sqrt((accelX * accelX) + (accelY * accelY) + (accelZ * accelZ));
 		accelerationX = (accelX / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
 		accelerationY = (accelY / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
 		accelerationZ = (accelZ / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
@@ -85,9 +96,12 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 	 * Sets throwable heading based on an entity that's throwing it
 	 */
 	public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy) {
-		float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
-		float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
-		float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
+		final float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
+		final float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
+		final float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
+		//		final float f = rotationPitchIn;
+		//		final float f1 = rotationYawIn;
+		//		final float f2 = pitchOffset;
 		this.shoot(f, f1, f2, velocity, inaccuracy);
 		motionX += entityThrower.motionX;
 		motionZ += entityThrower.motionZ;
@@ -103,7 +117,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 	 */
 	@Override
 	public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
-		float f = MathHelper.sqrt((x * x) + (y * y) + (z * z));
+		final float f = MathHelper.sqrt((x * x) + (y * y) + (z * z));
 		x = x / f;
 		y = y / f;
 		z = z / f;
@@ -116,7 +130,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		motionX = x;
 		motionY = y;
 		motionZ = z;
-		float f1 = MathHelper.sqrt((x * x) + (z * z));
+		final float f1 = MathHelper.sqrt((x * x) + (z * z));
 		rotationYaw = (float) (MathHelper.atan2(x, z) * (180D / Math.PI));
 		rotationPitch = (float) (MathHelper.atan2(y, f1) * (180D / Math.PI));
 		prevRotationYaw = rotationYaw;
@@ -135,7 +149,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		motionZ = z;
 
 		if ((prevRotationPitch == 0.0F) && (prevRotationYaw == 0.0F)) {
-			float f = MathHelper.sqrt((x * x) + (z * z));
+			final float f = MathHelper.sqrt((x * x) + (z * z));
 			rotationYaw = (float) (MathHelper.atan2(x, z) * (180D / Math.PI));
 			rotationPitch = (float) (MathHelper.atan2(y, f) * (180D / Math.PI));
 			prevRotationYaw = rotationYaw;
@@ -159,7 +173,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 
 	@Override
 	protected boolean isFireballFiery() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -169,6 +183,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 
 	@Override
 	public void onUpdate() {
+		//		super.onUpdate();
 		lastTickPosX = posX;
 		lastTickPosY = posY;
 		lastTickPosZ = posZ;
@@ -213,12 +228,18 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 			vec3d1 = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
 		}
 
+		//		final Predicate<Entity> Targets = Predicates.and(
+		//				EntitySelectors.NOT_SPECTATING,
+		//				ent -> (ent != null) && !ent.canBeCollidedWith() && (ent != shootingEntity)
+		//						&& !(ent instanceof MovingThrownProjectile)
+		//		);
 		Entity entity = null;
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D));
+		//		final List<Entity> list = world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D), Targets);
+		final List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D));
 		double d0 = 0.0D;
 		boolean flag = false;
 
-		for (Entity entity1 : list) {
+		for (final Entity entity1 : list) {
 			if (entity1.canBeCollidedWith()) {
 				if (entity1 == ignoreEntity) {
 					flag = true;
@@ -227,11 +248,11 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 					flag = true;
 				} else {
 					flag = false;
-					AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
-					RayTraceResult raytraceresult1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
+					final AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
+					final RayTraceResult raytraceresult1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
 
 					if (raytraceresult1 != null) {
-						double d1 = vec3d.squareDistanceTo(raytraceresult1.hitVec);
+						final double d1 = vec3d.squareDistanceTo(raytraceresult1.hitVec);
 
 						if ((d1 < d0) || (d0 == 0.0D)) {
 							entity = entity1;
@@ -241,7 +262,6 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 				}
 			}
 		}
-
 		if (ignoreEntity != null) {
 			if (flag) {
 				ignoreTime = 2;
@@ -249,7 +269,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 				ignoreEntity = null;
 			}
 		}
-
+		//		System.out.println(entity);
 		if (entity != null) {
 			raytraceresult = new RayTraceResult(entity);
 		}
@@ -265,7 +285,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		posX += motionX;
 		posY += motionY;
 		posZ += motionZ;
-		float f = MathHelper.sqrt((motionX * motionX) + (motionZ * motionZ));
+		final float f = MathHelper.sqrt((motionX * motionX) + (motionZ * motionZ));
 		rotationYaw = (float) (MathHelper.atan2(motionX, motionZ) * (180D / Math.PI));
 
 		for (rotationPitch = (float) (MathHelper.atan2(motionY, f) * (180D / Math.PI)); (rotationPitch - prevRotationPitch) < -180.0F; prevRotationPitch -= 360.0F) {
@@ -287,11 +307,11 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		rotationPitch = prevRotationPitch + ((rotationPitch - prevRotationPitch) * 0.2F);
 		rotationYaw = prevRotationYaw + ((rotationYaw - prevRotationYaw) * 0.2F);
 		float f1 = 0.99F;
-		float f2 = 0.03F;//this.getGravityVelocity();
+		final float f2 = 0.03F;//this.getGravityVelocity();
 
 		if (this.isInWater()) {
 			for (int j = 0; j < 4; ++j) {
-				float f3 = 0.25F;
+				final float f3 = 0.25F;
 				world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - (motionX * 0.25D), posY - (motionY * 0.25D), posZ - (motionZ * 0.25D), motionX, motionY, motionZ);
 			}
 
@@ -306,81 +326,98 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 			motionY -= f2;
 		}
 
-		int life = 30;
+		final int life = 30;
 		this.setPosition(posX, posY, posZ);
-		//		for (int i = 0; i < 6; ++i) {
-		//			Trinkets.proxy.spawnParticle(3, world, posX, posY, posZ, 0, 0, 0, color, 1F);
 		this.spawnParticle();
-		//		}
-		if (!world.isRemote) {
-			AxisAlignedBB bb1 = this.getEntityBoundingBox().grow(1);
-			List<Entity> splash = world.getEntitiesWithinAABB(Entity.class, bb1);
-			for (Entity e : splash) {
-				if ((e instanceof EntityLivingBase) && (e != shootingEntity)) {
-					if ((e instanceof EntityPlayer) && !world.getMinecraftServer().isPVPEnabled()) {
-						continue;
-					}
-					e.attackEntityFrom(DamageSource.causeThrownDamage(this, shootingEntity), (float) damage);
-					e.setFire(5);
-				}
-			}
-		}
+		//		//		}
+
 		if (ticksExisted >= life) {
 			this.setDead();
 		}
 		if (this.isInWater()) {
 			this.setDead();
 		}
-		if (onGround) {
-		}
+		//		if (onGround) {
+		//		}
 	}
 
 	int frame = 0;
 
 	public void spawnParticle() {
-		int life = 30;
-		int frame2 = (ticksExisted % life);
-		if (frame2 > 0) {
-			int frame = frame2;
-			if (frame2 < (life / 2)) {
-			} else {
-				frame = frame2 - life;
+		try {
+			final Random random = Reference.random;
+			//			for (int i = 0; i < 1; i++) {
+			final double d0 = (random.nextFloat() * 2.0F) - 1.0F;
+			final double d1 = (random.nextFloat() * 2.0F) - 1.0F;
+			final double d2 = (random.nextFloat() * 2.0F) - 1.0F;
+
+			if (((d0 * d0) + (d1 * d1) + (d2 * d2)) <= 1.0D) {
+				final double d3 = posX + ((d0 * 1F) / 4.0D);
+				final double d4 = posY + (1F / 2.0F) + ((d1 * 1F) / 4.0D);
+				final double d5 = posZ + ((d2 * 1F) / 4.0D);
+				//            this.world.spawnParticle(this.particleTypes, false, d3, d4, d5, d0, d1 + 0.2D, d2);
+				if ((world instanceof WorldServer)) {
+					NetworkHandler.sendToClients(
+							(WorldServer) world, this.getPosition(),
+							new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, color, 4, 1F, 1F)
+					);
+					//				new EffectsRenderPacket(this, posX, posY, posZ, d3, d4, d5, color, 4, 1F, 1F)
+				}
 			}
-			if (!world.isRemote) {
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setInteger("BreathColor", color);
-				tag.setInteger("frame", frame);
-				tag.setDouble("x", posX);
-				tag.setDouble("y", posY);
-				tag.setDouble("z", posZ);
-				NetworkHandler.INSTANCE.sendToAllTracking(new UpdateThrowable(this, tag), this);
-			}
-			if (world.isRemote) {
-				Trinkets.proxy.spawnParticle(3, world, posX, posY, posZ, 0, 0, 0, color, this.frame);
-			}
+			//			}
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
+
+		//		final float f2 = random.nextFloat() * 4.0F;
+		//		final float f3 = random.nextFloat() * ((float) Math.PI * 2F);
+		//		final double d6 = MathHelper.cos(f3) * f2;
+		//		final double d7 = 0.01D + (random.nextDouble() * 0.5D);
+		//		final double d8 = MathHelper.sin(f3) * f2;
+
+		//			if (!world.isRemote) {
+		//				final NBTTagCompound tag = new NBTTagCompound();
+		//				tag.setInteger("BreathColor", color);
+		//				tag.setDouble("x", posX);
+		//				tag.setDouble("y", posY);
+		//				tag.setDouble("z", posZ);
+		//				//				NetworkHandler.INSTANCE.sendToAllTracking(new UpdateThrowable(this, tag), this);
+		//		}
 	}
 
 	@Override
 	protected void onImpact(RayTraceResult movingObject) {
-		boolean flag = world.getGameRules().getBoolean("mobGriefing");
-
+		final boolean flag = world.getGameRules().getBoolean("mobGriefing");
+		final Entity hit = movingObject.entityHit;
 		if (!world.isRemote) {
-			if ((movingObject.entityHit != null) && (movingObject.entityHit instanceof MovingThrownProjectile)) {
+			if ((hit != null) && (hit instanceof MovingThrownProjectile)) {
 				return;
 			}
-			if (((movingObject.entityHit != null) && !(movingObject.entityHit instanceof MovingThrownProjectile) && (shootingEntity != null) && (shootingEntity instanceof EntityLivingBase) && (movingObject.entityHit != shootingEntity)) || (movingObject.entityHit == null)) {
-				if ((shootingEntity != null)) {// && (shootingEntity instanceof EntityDragonBase) && (IceAndFire.CONFIG.dragonGriefing != 2)) {
-					//					FireExplosion explosion = new FireExplosion(world, shootingEntity, posX, posY, posZ, ((EntityDragonBase) shootingEntity).getDragonStage() * 2.5F, flag);
-					//					explosion.doExplosionA();
-					//					explosion.doExplosionB(true);
-					if (movingObject.entityHit != null) {
-						//						movingObject.entityHit.setFire(5);
+			if ((shootingEntity != null) && (hit != null)) {
+				boolean pvpEnabled = false;
+				try {
+					if (shootingEntity instanceof EntityPlayerMP) {
+						pvpEnabled = ((EntityPlayerMP) shootingEntity).getServer().isPVPEnabled();
 					}
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+				final AxisAlignedBB bb1 = this.getEntityBoundingBox().grow(1);
+				final Predicate<Entity> Targets = Predicates.and(
+						EntitySelectors.NOT_SPECTATING,
+						ent -> (ent != null) && ent.canBeCollidedWith() && (ent != shootingEntity)
+								&& !(ent instanceof MovingThrownProjectile) && !ent.isImmuneToFire()
+				);
+				//
+				final List<Entity> splash = world.getEntitiesInAABBexcluding(this, bb1, Targets);
+				for (final Entity e : splash) {
+					if ((e instanceof EntityPlayer) && !pvpEnabled) {
 
-				} else {
-					if (movingObject.entityHit != null) {
-						//						movingObject.entityHit.setFire(5);
+					} else {
+						if (!e.isImmuneToFire()) {
+							e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.DRAGON_BREATH.damageType, this, shootingEntity).setDamageBypassesArmor().setFireDamage().setMagicDamage(), (float) damage);
+							e.setFire(5);
+						}
 					}
 				}
 				this.setDead();
@@ -389,10 +426,11 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 				this.applyEnchantments(shootingEntity, movingObject.entityHit);
 				this.setDead();
 			}
-
-			if ((movingObject.typeOfHit != Type.ENTITY) || ((movingObject.entityHit != null) && !(movingObject.entityHit instanceof MovingThrownProjectile))) {
+			if ((movingObject.typeOfHit != Type.ENTITY) ||
+					((movingObject.entityHit != null) &&
+							!(movingObject.entityHit instanceof MovingThrownProjectile))) {
 				if ((movingObject.typeOfHit == Type.BLOCK) && flag) {
-					BlockPos blockpos = movingObject.getBlockPos().offset(movingObject.sideHit);
+					final BlockPos blockpos = movingObject.getBlockPos().offset(movingObject.sideHit);
 					if (world.isAirBlock(blockpos)) {
 						world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
 					}
@@ -400,7 +438,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 				this.setDead();
 			}
 		}
-		this.setDead();
+		//		this.setDead();
 	}
 
 	@Override
@@ -409,9 +447,9 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 	}
 
 	public void setAim(Entity fireball, Entity entity, float p_184547_2_, float p_184547_3_, float p_184547_4_, float p_184547_5_, float p_184547_6_) {
-		float f = -MathHelper.sin(p_184547_3_ * 0.017453292F) * MathHelper.cos(p_184547_2_ * 0.017453292F);
-		float f1 = -MathHelper.sin(p_184547_2_ * 0.017453292F);
-		float f2 = MathHelper.cos(p_184547_3_ * 0.017453292F) * MathHelper.cos(p_184547_2_ * 0.017453292F);
+		final float f = -MathHelper.sin(p_184547_3_ * 0.017453292F) * MathHelper.cos(p_184547_2_ * 0.017453292F);
+		final float f1 = -MathHelper.sin(p_184547_2_ * 0.017453292F);
+		final float f2 = MathHelper.cos(p_184547_3_ * 0.017453292F) * MathHelper.cos(p_184547_2_ * 0.017453292F);
 		fireball.motionX = entity.motionX;
 		fireball.motionZ = entity.motionZ;
 		if (!entity.onGround) {
@@ -430,7 +468,7 @@ public class MovingThrownProjectile extends EntityFireball implements IProjectil
 		fireball.motionX = x;
 		fireball.motionY = y;
 		fireball.motionZ = z;
-		float f1 = MathHelper.sqrt((x * x) + (z * z));
+		final float f1 = MathHelper.sqrt((x * x) + (z * z));
 		fireball.rotationYaw = (float) (MathHelper.atan2(x, z) * (180D / Math.PI));
 		fireball.rotationPitch = (float) (MathHelper.atan2(y, f1) * (180D / Math.PI));
 		fireball.prevRotationYaw = fireball.rotationYaw;

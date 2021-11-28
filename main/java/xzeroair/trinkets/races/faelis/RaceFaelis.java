@@ -8,64 +8,79 @@ import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.attributes.GenericAttribute;
+import xzeroair.trinkets.attributes.JumpAttribute;
+import xzeroair.trinkets.attributes.UpdatingAttribute;
+import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.client.model.FaelisEars;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class RaceFaelis extends EntityRacePropertiesHandler {
 
 	public static FaelisConfig serverConfig = TrinketsConfig.SERVER.races.faelis;
+	protected UpdatingAttribute movement, jump;
 
 	public RaceFaelis(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.faelis);
+		movement = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), SharedMonsterAttributes.MOVEMENT_SPEED);
+		jump = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), JumpAttribute.Jump);
+	}
+
+	@Override
+	public void startTransformation() {
+		//		this.addAbility(Abilities.blockClimbing, new AbilityClimbing());
 	}
 
 	@Override
 	public void whileTransformed() {
 		if (TrinketsConfig.SERVER.races.faelis.penalties) {
-			ItemStack Head = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-			ItemStack Chest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-			ItemStack Legs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-			ItemStack Feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-
 			double amount = 0;
-			double weight = serverConfig.penalty_amount;//0.0125;
-
-			if (!(Head.isEmpty()) && !(Head.getItem() == Items.LEATHER_HELMET)) {
-				amount -= weight;
-			}
-
-			if (!(Chest.isEmpty()) && !((Chest.getItem() == Items.LEATHER_CHESTPLATE) || (Chest.getItem() == Items.ELYTRA))) {
-				amount -= weight;
-			}
-
-			if (!(Legs.isEmpty()) && !(Legs.getItem() == Items.LEATHER_LEGGINGS)) {
-				amount -= weight;
-			}
-
-			if (!(Feet.isEmpty()) && !(Feet.getItem() == Items.LEATHER_BOOTS)) {
-				amount -= weight;
+			final double weight = serverConfig.penalty_amount;//0.0125;
+			try {
+				for (final ItemStack stack : entity.getArmorInventoryList()) {
+					if (!stack.isEmpty() && (stack.getItem() instanceof ItemArmor)) {
+						//						final ItemArmor armor = (ItemArmor) stack.getItem();
+						//						final ArmorMaterial mat = armor.getArmorMaterial();
+						//						if (!(mat.equals(ArmorMaterial.LEATHER)
+						//								|| mat.toString().toLowerCase().contains("silk")
+						//								|| mat.toString().toLowerCase().contains("wool")
+						//								|| mat.toString().toLowerCase().contains("cloth")
+						//								|| mat.toString().toLowerCase().contains("manaweave"))) {
+						//							amount -= weight;
+						//						}
+						if (!entity.world.isRemote) {
+							amount -= ConfigHelper.parseItemArmor(stack, serverConfig.heavyArmor);
+						}
+					}
+				}
+			} catch (final Exception e) {
 			}
 
 			if (amount != 0) {
-				GenericAttribute armor = new GenericAttribute(entity, amount, UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), 2, SharedMonsterAttributes.MOVEMENT_SPEED);
-				if (properties.getStatusHandler().getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
-					amount = 0;
-					armor.removeModifier();
-				} else {
-					armor.addModifier();
+				final StatusHandler status = Capabilities.getStatusHandler(entity);
+				if (status != null) {
+					if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
+						amount = 0;
+						movement.removeModifier(entity);
+						jump.removeModifier(entity);
+					} else {
+						movement.addModifier(entity, amount, 2);
+						jump.addModifier(entity, amount, 2);
+					}
 				}
 			}
 		}
@@ -78,11 +93,13 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 
 	@Override
 	public float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		if ((dmg > 0)) {
-			ItemStack stack1 = entity.getHeldItemMainhand();
-			ItemStack stack2 = entity.getHeldItemOffhand();
-			if ((stack1.isEmpty() && stack2.isEmpty())) {
-				dmg += serverConfig.bonus;
+		if (!((source instanceof EntityDamageSourceIndirect) || source.isExplosion() || source.isMagicDamage() || source.isProjectile())) {
+			if ((dmg > 0)) {
+				final ItemStack stack1 = entity.getHeldItemMainhand();
+				final ItemStack stack2 = entity.getHeldItemOffhand();
+				if ((stack1.isEmpty() && stack2.isEmpty())) {
+					dmg += serverConfig.bonus;
+				}
 			}
 		}
 		return dmg;
@@ -101,14 +118,14 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0, 0.2, 0);
 		}
 		if (renderer instanceof RenderPlayer) {
-			RenderPlayer rend = (RenderPlayer) renderer;
+			final RenderPlayer rend = (RenderPlayer) renderer;
 			rend.getMainModel().bipedHead.postRender(scale);
 		}
 		if (entity.hasItemInSlot(EntityEquipmentSlot.HEAD)) {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue(), properties.getTraitOpacity());
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

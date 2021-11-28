@@ -1,5 +1,9 @@
 package xzeroair.trinkets.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
@@ -35,6 +39,7 @@ import xzeroair.trinkets.util.config.trinkets.ConfigTeddyBear;
 import xzeroair.trinkets.util.config.trinkets.ConfigWeightlessStone;
 import xzeroair.trinkets.util.config.trinkets.ConfigWitherRing;
 import xzeroair.trinkets.util.config.trinkets.shared.TransformationRingConfig;
+import xzeroair.trinkets.util.helpers.CallHelper;
 
 @Config(name = Reference.configPath, modid = Reference.MODID)
 @Config.LangKey("xat.config.title")
@@ -47,6 +52,14 @@ public class TrinketsConfig {
 	public static xClient CLIENT = new xClient();
 
 	public static class xClient {
+
+		public DebugConfig debug = new DebugConfig();
+
+		public class DebugConfig {
+
+			public boolean debugArmorMaterials = false;
+
+		}
 
 		@Name("Gui Settings")
 		@LangKey(cfgPrefix + ".client.gui.settings")
@@ -83,10 +96,23 @@ public class TrinketsConfig {
 
 			@Name("05. Location X")
 			@LangKey(PREFIX + ".location.x")
-			public double X = 0;
+			public double translatedX = 0;
+			//			public int X = 0;
 			@Name("06. Location Y")
 			@LangKey(PREFIX + ".location.y")
-			public double Y = 0;
+			public double translatedY = 0;
+			//			public int Y = 0;
+			//			@Name("07. Translated X")
+			//			@LangKey(PREFIX + ".location.x")
+			//			public double translatedX = 0;
+			//			@Name("08. Translated Y")
+			//			@LangKey(PREFIX + ".location.y")
+			//			public double translatedY = 0;
+
+			@Name("09. Width")
+			public int width = 104;
+			@Name("10. Height")
+			public int height = 14;
 
 		}
 
@@ -106,12 +132,12 @@ public class TrinketsConfig {
 		@Config.Comment("When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?")
 		@Name("Replace EntityRenderer")
 		@LangKey(cfgPrefix + ".client.entity.renderer.replace")
-		public boolean entityRenderer = true;
+		public boolean entityRenderer = false;
 
 		@Config.Comment("When Trinket and Baubles Replaces the EntityRenderer is breaks some settings with Optifine, Specifically Fog, use this to turn Fog on or off")
 		@Name("EntityRenderer Fog")
 		@LangKey(cfgPrefix + ".client.entity.renderer.replace.fog")
-		public boolean RendererFog = true;
+		public boolean RendererFog = false;
 
 		@Name("Items")
 		public TrinketItems items = new TrinketItems();
@@ -163,6 +189,8 @@ public class TrinketsConfig {
 				@Name("Render Trinket on Player")
 				@LangKey(cfgPrefix + ".client.render.trinket")
 				public boolean doRender = true;
+
+				public double effectVolume = 0.2D;
 			}
 
 			@Name("Ender Queen's Crown Settings")
@@ -446,34 +474,135 @@ public class TrinketsConfig {
 		public MiscConfigs misc = new MiscConfigs();
 
 		public class MiscConfigs {
+			@Config.RequiresWorldRestart
 			@Config.Comment("Does Depth Strider Stack with Swim Speed Attributes?")
 			@Name("Depth Strider Stacks")
 			@LangKey(cfgPrefix + "." + "misc." + "depth")
 			public boolean depthStacks = false;
 
+			@Config.RequiresWorldRestart
 			@Config.Comment("If enabled, the player will be unable to move when transforming from one race to another")
-			@Name("Movement while transforming")
+			@Name("Prevent Movement while transforming")
 			@LangKey(cfgPrefix + "." + "misc." + "movement")
 			public boolean movement = false;
-
 		}
-
 	}
 
 	@Name("Compatability Settings")
 	@LangKey(cfgPrefix + ".compatability")
 	public static CompatabilityConfigs compat = new CompatabilityConfigs();
 
-	public static void setBlocklist(String[] string, boolean whitelist) {
-		if ((string != null)) {
-			if (SERVER.Items.DRAGON_EYE.BLOCKS.Blocks != string.clone()) {
-				SERVER.Items.DRAGON_EYE.BLOCKS.Blocks = string;
-			}
-		}
+	public static Map<String, String> writeConfigMap() {
+		final Map<String, String> configMap = new HashMap<>();
+		configMap.put("oreEnabled", "" + TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder);
+		configMap.put("oreEnabled.closest", "" + TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.closest);
+		configMap.put("oreEnabled.blocks", CallHelper.combineStringArray(TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.Blocks));
+		configMap.put("oreEnabled.hd", "" + TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.DR.C001_HD);
+		configMap.put("oreEnabled.vd", "" + TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.DR.C00_VD);
+		configMap.put("dragonFlight", "" + TrinketsConfig.SERVER.races.dragon.creative_flight);
+		configMap.put("dragonFlightCost", "" + TrinketsConfig.SERVER.races.dragon.flight_cost);
+		configMap.put("dragonFlightSpeed", "" + TrinketsConfig.SERVER.races.dragon.flight_speed);
+		configMap.put("dragonBreathCost", "" + TrinketsConfig.SERVER.races.dragon.breath_cost);
+		configMap.put("dragonBreathDamage", "" + TrinketsConfig.SERVER.races.dragon.breath_damage);
+		configMap.put("fairyFlight", "" + TrinketsConfig.SERVER.races.fairy.creative_flight);
+		configMap.put("fairyFlightSpeed", "" + TrinketsConfig.SERVER.races.fairy.flight_speed);
+		configMap.put("fairyFlightCost", "" + TrinketsConfig.SERVER.races.fairy.flight_cost);
+		configMap.put("TrinketContainer", "" + TrinketsConfig.SERVER.GUI.guiEnabled);
+		configMap.put("compatTAN", "" + TrinketsConfig.compat.toughasnails);
+		configMap.put("compatSD", "" + TrinketsConfig.compat.simpledifficulty);
+		configMap.put("compatArtemisLib", "" + TrinketsConfig.compat.artemislib);
+		configMap.put("compatElenaiDodge1", "" + TrinketsConfig.compat.elenaiDodge);
+		configMap.put("compatElenaiDodge2", "" + TrinketsConfig.compat.elenaiDodge);
+		configMap.put("compatEnhancedVisuals", "" + TrinketsConfig.compat.enhancedvisuals);
+		configMap.put("compatLycanites", "" + TrinketsConfig.compat.lycanites);
+		configMap.put("compatDefiledLands", "" + TrinketsConfig.compat.defiledlands);
+		configMap.put("miscDepthStacking", "" + TrinketsConfig.SERVER.misc.depthStacks);
+		configMap.put("miscBlockMovement", "" + TrinketsConfig.SERVER.misc.movement);
+		return configMap;
 	}
 
-	public static String[] getBlockListArray(boolean whitelist) {
-		return SERVER.Items.DRAGON_EYE.BLOCKS.Blocks;
+	public static void readConfigMap(Map<String, String> configMap) {
+		if ((configMap != null) && !configMap.isEmpty()) {
+			Trinkets.log.info("Found Server Config");
+			for (final Entry<String, String> config : configMap.entrySet()) {
+				try {
+					if (config.getKey().contentEquals("oreEnabled")) {
+						TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("oreEnabled.closest")) {
+						TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.closest = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("oreEnabled.blocks")) {
+						TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.Blocks = CallHelper.deconstructStringArray(config.getValue());
+					}
+					if (config.getKey().contentEquals("oreEnabled.hd")) {
+						TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.DR.C001_HD = Integer.parseInt(config.getValue());
+					}
+					if (config.getKey().contentEquals("oreEnabled.vd")) {
+						TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.DR.C00_VD = Integer.parseInt(config.getValue());
+					}
+					if (config.getKey().contentEquals("dragonFlight")) {
+						TrinketsConfig.SERVER.races.dragon.creative_flight = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("dragonFlightCost")) {
+						TrinketsConfig.SERVER.races.dragon.flight_cost = Float.parseFloat(config.getValue());
+					}
+					if (config.getKey().contentEquals("dragonFlightSpeed")) {
+						TrinketsConfig.SERVER.races.dragon.flight_speed = Double.parseDouble(config.getValue());
+					}
+					if (config.getKey().contentEquals("dragonBreathCost")) {
+						TrinketsConfig.SERVER.races.dragon.breath_cost = Float.parseFloat(config.getValue());
+					}
+					if (config.getKey().contentEquals("dragonBreathDamage")) {
+						TrinketsConfig.SERVER.races.dragon.breath_damage = Float.parseFloat(config.getValue());
+					}
+					if (config.getKey().contentEquals("fairyFlight")) {
+						TrinketsConfig.SERVER.races.fairy.creative_flight = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("fairyFlightSpeed")) {
+						TrinketsConfig.SERVER.races.fairy.flight_speed = Double.parseDouble(config.getValue());
+					}
+					if (config.getKey().contentEquals("fairyFlightCost")) {
+						TrinketsConfig.SERVER.races.fairy.flight_cost = Float.parseFloat(config.getValue());
+					}
+					if (config.getKey().contentEquals("TrinketContainer")) {
+						TrinketsConfig.SERVER.GUI.guiEnabled = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatTAN")) {
+						TrinketsConfig.compat.toughasnails = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatSD")) {
+						TrinketsConfig.compat.simpledifficulty = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatArtemisLib")) {
+						TrinketsConfig.compat.artemislib = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatElenaiDodge1")) {
+						TrinketsConfig.compat.elenaiDodge = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatElenaiDodge2")) {
+						TrinketsConfig.SERVER.GUI.guiEnabled = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatEnhancedVisuals")) {
+						TrinketsConfig.compat.enhancedvisuals = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatLycanites")) {
+						TrinketsConfig.compat.lycanites = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("compatDefiledLands")) {
+						TrinketsConfig.compat.defiledlands = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("miscDepthStacking")) {
+						TrinketsConfig.SERVER.misc.depthStacks = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("miscBlockMovement")) {
+						TrinketsConfig.SERVER.misc.movement = Boolean.parseBoolean(config.getValue());
+					}
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static void Save() {
@@ -484,6 +613,7 @@ public class TrinketsConfig {
 		final Configuration cfg = Trinkets.config;
 		try {
 			cfg.load();
+
 		} catch (final Exception e1) {
 			Trinkets.log.error("Xat had a problem loading it's configuration");
 		} finally {

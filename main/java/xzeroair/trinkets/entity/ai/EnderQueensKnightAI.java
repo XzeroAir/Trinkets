@@ -8,34 +8,33 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 
-public class EnderQueensKnightAI extends EntityAITarget
-{
+public class EnderQueensKnightAI extends EntityAITarget {
 	EntityPlayer queen;
 	EntityEnderman knight;
 	EntityLivingBase attacker;
 	private int timestamp;
 
-	public EnderQueensKnightAI(EntityEnderman theDefendingKnightIn)
-	{
+	public EnderQueensKnightAI(EntityEnderman theDefendingKnightIn) {
 		super(theDefendingKnightIn, false);
 		knight = theDefendingKnightIn;
-		setMutexBits(1);
+		this.setMutexBits(1);
 	}
 
 	/**
 	 * Returns whether the EntityAIBase should begin execution.
 	 */
 	@Override
-	public boolean shouldExecute()
-	{
+	public boolean shouldExecute() {
 		final AxisAlignedBB bBox = knight.getEntityBoundingBox().grow(16, 4, 16);
 		final List<EntityPlayer> entLivList = knight.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
-		if(!entLivList.isEmpty()) {
-			for(final EntityPlayer stuff : entLivList) {
+		if (!entLivList.isEmpty()) {
+			for (final EntityPlayer stuff : entLivList) {
 				final EntityPlayer player = stuff;
-				if(TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
+				final boolean ability = TrinketHelper.entityHasAbility(Abilities.enderQueen, player);
+				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) || ability) {
 					queen = player;
 				} else {
 					queen = null;
@@ -43,12 +42,9 @@ public class EnderQueensKnightAI extends EntityAITarget
 			}
 		}
 
-		if (queen == null)
-		{
+		if (queen == null) {
 			return false;
-		}
-		else
-		{
+		} else {
 			attacker = queen.getRevengeTarget();
 			final int i = queen.getRevengeTimer();
 			return (i != timestamp) && this.isSuitableTarget(attacker, false);
@@ -59,13 +55,11 @@ public class EnderQueensKnightAI extends EntityAITarget
 	 * Execute a one shot task or start executing a continuous task
 	 */
 	@Override
-	public void startExecuting()
-	{
+	public void startExecuting() {
 		taskOwner.setAttackTarget(attacker);
 		final EntityLivingBase entitylivingbase = queen;
 
-		if (entitylivingbase != null)
-		{
+		if (entitylivingbase != null) {
 			timestamp = entitylivingbase.getRevengeTimer();
 		}
 

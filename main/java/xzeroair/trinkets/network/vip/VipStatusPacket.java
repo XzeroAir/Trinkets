@@ -1,79 +1,70 @@
 package xzeroair.trinkets.network.vip;
 
+import java.util.UUID;
+
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Trinkets;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
+import xzeroair.trinkets.network.ThreadSafePacket;
+import xzeroair.trinkets.vip.VIPHandler;
 
-public class VipStatusPacket implements IMessage {
-	// A default constructor is always required
+public class VipStatusPacket extends ThreadSafePacket {
+
 	public VipStatusPacket() {
+		super();
 	}
 
-	public int entityID;
-	public boolean login;
-	public int status;
-	public boolean isBro;
-	public boolean isPanda;
-	public boolean isVip;
-
-	public VipStatusPacket(EntityLivingBase entity, VipStatus status) {
-		entityID = entity.getEntityId();
-		status.getStatus();
+	public VipStatusPacket(EntityPlayer entity, NBTTagCompound tag) {
+		super(entity.getEntityId(), tag);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		// Writes the int into the buf
-		buf.writeBoolean(login);
-		buf.writeInt(status);
-		buf.writeBoolean(isBro);
-		buf.writeBoolean(isPanda);
-		buf.writeBoolean(isVip);
 		buf.writeInt(entityID);
+		ByteBufUtils.writeTag(buf, tag);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		login = buf.readBoolean();
-		status = buf.readInt();
-		isBro = buf.readBoolean();
-		isPanda = buf.readBoolean();
-		isVip = buf.readBoolean();
 		entityID = buf.readInt();
+		tag = ByteBufUtils.readTag(buf);
 	}
 
-	public static class Handler implements IMessageHandler<VipStatusPacket, IMessage> {
+	@Override
+	public void handleClientSafe(NetHandlerPlayClient client) {
 
-		@Override
-		public IMessage onMessage(VipStatusPacket message, MessageContext ctx) {
+	}
 
-			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if ((Trinkets.proxy.getPlayer(ctx) != null) && (Trinkets.proxy.getPlayer(ctx).world != null)) {
-					EntityLivingBase entity = Trinkets.proxy.getEntityLivingBase(ctx, message.entityID);
-					if (Trinkets.proxy.getPlayer(ctx).world.getEntityByID(message.entityID).getUniqueID().compareTo(Trinkets.proxy.getPlayer(ctx).getUniqueID()) == 0) {
-						entity = Trinkets.proxy.getPlayer(ctx);
-					}
-					if (entity instanceof EntityLivingBase) {
-						if (entity.hasCapability(Capabilities.ENTITY_RACE, null)) {
-							VipStatus cap = Capabilities.getVipStatus(entity);
-							if (cap != null) {
-								//TODO Fix VIP
-								cap.setStatus(message.status);
-								//								cap.setIsBro(message.isBro);
-								//								cap.setIsBro(message.isPanda);
-								//								cap.setIsBro(message.isVip);
-								cap.setLogin(message.login);
-							}
-						}
+	@Override
+	public void handleServerSafe(NetHandlerPlayServer server) {
+		final EntityPlayerMP serverPlayer = server.player;
+		try {
+			if (tag == null) {
+				return;
+			} else {
+				if (!tag.hasKey("uuid")) {
+					return;
+				}
+			}
+			final String id = tag.getString("uuid");
+			if (VIPHandler.Vips.containsKey(id.replaceAll("-", ""))) {
+				final Entity entity = serverPlayer.getServerWorld().getEntityFromUuid(UUID.fromString(id));
+				if ((entity != null) && (entity instanceof EntityPlayerMP)) {
+					final EntityPlayerMP vip = (EntityPlayerMP) entity;
+					final VipStatus status = Capabilities.getVipStatus(vip);
+					if (status != null) {
+						status.confirmedStatus();
 					}
 				}
-			});
-			return null;
+			}
+		} catch (final Exception e) {
 		}
 	}
 

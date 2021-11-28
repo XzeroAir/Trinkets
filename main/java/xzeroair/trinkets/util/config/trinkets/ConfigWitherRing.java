@@ -33,6 +33,11 @@ public class ConfigWitherRing {
 	@LangKey(PREFIX + ".wither.chance")
 	public int wither_chance = 5;
 
+	@Config.Comment("")
+	@Name("05. Wither Duration")
+	@LangKey(PREFIX + ".wither.duration")
+	public int wither_duration = 40;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")

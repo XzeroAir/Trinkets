@@ -1,18 +1,28 @@
 package xzeroair.trinkets.items.foods;
 
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
+import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.FoodBase;
+import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class Mana_Crystal extends FoodBase {
 
@@ -28,28 +38,42 @@ public class Mana_Crystal extends FoodBase {
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if (entityLiving instanceof EntityPlayer) {
-			EntityProperties prop = Capabilities.getEntityRace(entityLiving);
-			if (prop != null) {
-				prop.getMagic().setBonusMana(prop.getMagic().getBonusMana() + 1);
-			}
+	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entity) {
+		final MagicStats magic = Capabilities.getMagicStats(entity);
+		if (magic != null) {
+			magic.setBonusMana(magic.getBonusMana() + 1);
 		}
-		this.setCooldown(20);
-		super.onItemUseFinish(stack, worldIn, entityLiving);
-		return stack;
+		return super.onItemUseFinish(stack, worldIn, entity);
+	}
+
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (TrinketsConfig.SERVER.mana.crystalExplodes) {
+			final IBlockState state = worldIn.getBlockState(pos);
+			if ((Reference.random.nextInt(10) == 0) && (state.getMaterial() == Material.ROCK) && state.isNormalCube() && (facing == EnumFacing.UP)) {
+				if (!worldIn.isRemote) {
+					//		System.out.println(facing + " | " + state.getMaterial().toString() + " | " + state.isNormalCube());
+					final ItemStack itemstack = player.getHeldItem(hand);
+					itemstack.shrink(1);
+					worldIn.spawnEntity(new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, new ItemStack(ModItems.foods.mana_reagent, 1)));
+					worldIn.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3F, false);
+					worldIn.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				}
+				return EnumActionResult.SUCCESS;
+			} else {
+				if (!worldIn.isRemote) {
+					worldIn.playSound(null, pos, SoundEvents.BLOCK_GLASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				}
+				return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+			}
+		} else {
+			return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		}
 	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		final ItemStack itemstack = player.getHeldItem(handIn);
-		boolean flag = this.getEdible();
-		if (player.canEat(flag)) {
-			player.setActiveHand(handIn);
-			return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
-		} else {
-			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
-		}
+		return super.onItemRightClick(worldIn, player, handIn);
 	}
 
 	@Override

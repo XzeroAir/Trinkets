@@ -33,6 +33,14 @@ public class ConfigTeddyBear {
 	@LangKey(PREFIX + ".sleepbonus.buff.random")
 	public int randomBuff = 0;
 
+	@Config.Comment("Which effects to prevent")
+	@Name("10. Immunities")
+	@LangKey(PREFIX + ".immunities")
+	public String[] immunities = new String[] {
+			"lycanitesmobs:fear",
+			"lycanitesmobs:insomnia"
+	};
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")
@@ -50,6 +58,22 @@ public class ConfigTeddyBear {
 		private TANCompat tan = new TANCompat();
 
 		public class TANCompat {
+
+		}
+
+		public LycanitesCompat lycanites = new LycanitesCompat();
+
+		public class LycanitesCompat {
+
+			public boolean preventFear = true;
+
+		}
+
+		public ParasitesCompat parasites = new ParasitesCompat();
+
+		public class ParasitesCompat {
+
+			public boolean preventFear = true;
 
 		}
 

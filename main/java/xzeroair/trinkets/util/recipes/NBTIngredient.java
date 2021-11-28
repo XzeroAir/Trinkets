@@ -38,9 +38,13 @@ public class NBTIngredient extends Ingredient {
 		for (final ItemStack stack : matchingStacks) {
 			if (stack.getItem() == stackToCheck.getItem()) {
 				final int metadata = stack.getMetadata();
-
+				// TODO Redo this Whole Class
+				boolean isSkull = (stack.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull")) && (stackToCheck.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull"));
+				int skull1 = stack.hasTagCompound() ? stack.getTagCompound().getInteger("Stage") : -1;
+				int skull2 = stackToCheck.hasTagCompound() ? stackToCheck.getTagCompound().getInteger("Stage") : -1;
+				boolean allowCraft = ((skull1 != -1) && (skull2 != -1)) && (skull1 == skull2);
 				if (((metadata == OreDictionary.WILDCARD_VALUE) || (metadata == stackToCheck.getMetadata())) &&
-						ItemStack.areItemStackTagsEqual(stackToCheck, stack)) {
+						(ItemStack.areItemStackTagsEqual(stackToCheck, stack) || (isSkull && allowCraft))) {
 					return true;
 				}
 			}

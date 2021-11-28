@@ -9,19 +9,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.CapabilityBase;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
-import xzeroair.trinkets.network.ItemCapDataMessage;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.PacketAccessorySync;
-import xzeroair.trinkets.util.handlers.DodgeHandler;
+import xzeroair.trinkets.network.SyncItemDataPacket;
 import xzeroair.trinkets.util.handlers.TickHandler;
 
-public class TrinketProperties {
+public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemStack> {
 
-	ItemStack stack;
-	EntityLivingBase entity;
+	//	EntityLivingBase entity;
 	int target = -1;
 	int slot = -1;
 	int count = 0;
@@ -32,11 +31,18 @@ public class TrinketProperties {
 	int playerStatus = -1;
 	int handler = 0;
 	Map<String, TickHandler> Counters;
-	private DodgeHandler dodge;
 
 	public TrinketProperties(ItemStack stack) {
-		this.stack = stack;
+		super(stack);
 		Counters = new HashMap<>();
+	}
+
+	@Override
+	public NBTTagCompound getTag() {
+		if (object.getTagCompound() != null) {
+			return object.getTagCompound();
+		}
+		return super.getTag();
 	}
 
 	public void itemRightClicked() {
@@ -51,6 +57,7 @@ public class TrinketProperties {
 
 	}
 
+	@Override
 	public void onUpdate() {
 		//		if(!Counters.isEmpty()) {
 		//			for(Entry<String, TickHandler> counter:Counters.entrySet()) {
@@ -61,68 +68,47 @@ public class TrinketProperties {
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~Keybind handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public DodgeHandler DodgeHandler(World world) {
-		if ((dodge == null) && world.isRemote) {
-			dodge = new DodgeHandler();
-		}
-		return dodge;
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Counters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	public void addCounter(String key, int length) {
-		if (!Counters.isEmpty() && !Counters.containsKey(key)) {
-			Counters.put(key, new TickHandler(key, length));
-		}
-	}
-
-	public void removeCounter(String key) {
-		if (!Counters.isEmpty() && Counters.containsKey(key)) {
-			Counters.remove(key);
-		}
-	}
-
-	public void clearCounters() {
-		if (!Counters.isEmpty()) {
-			Counters.clear();
-		}
-	}
-
-	public TickHandler getCounter(String key, int length, boolean isCountdown) {
-		TickHandler value;
-		if (!Counters.isEmpty() && Counters.containsKey(key)) {
-			value = Counters.get(key);//.setLength(length).setCountdown(isCountdown);
-		} else {
-			value = new TickHandler(key, length, isCountdown);
-			Counters.put(key, value);
-		}
-		return value;
-	}
-
-	public TickHandler getCounter(String key) {
-		return this.getCounter(key, 20, false);
-	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Counters End~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	public void itemEquipped(EntityLivingBase entity, int slot, int handler) {
+	public void itemEquipped(EntityLivingBase e, int slot, int handler) {
 		this.handler = handler;
 		this.slot = slot;
-		this.entity = entity;
-		VipStatus status = Capabilities.getVipStatus(entity);
+		//		this.entity = entity;
+		final VipStatus status = Capabilities.getVipStatus(e);
 		if (status != null) {
 			playerStatus = status.getStatus();
 		}
 		this.saveNBT();
-		this.sendInformationToServer(entity);
+		try {
+			final World world = e.getEntityWorld();
+			if (!world.isRemote && (world instanceof WorldServer)) {
+				final WorldServer w = (WorldServer) world;
+				NetworkHandler.sendToClients(
+						w, e.getPosition(),
+						new SyncItemDataPacket(e, object, object.getTagCompound(), slot, handler, true, true)
+				);
+			}
+		} catch (final Exception e2) {
+			e2.printStackTrace();
+		}
 	}
 
-	public void itemUnequipped() {
-		if (!this.getStackFromSlot(slot, handler).isEmpty() && this.getStackFromSlot(slot, handler).isItemEqual(stack)) {
+	public void itemUnequipped(EntityLivingBase e) {
+		final ItemStack stack = this.getStackFromSlot(e, slot, handler);
+		if (!stack.isEmpty() && stack.isItemEqual(object)) {
 			return;
 		}
+		try {
+			final World world = e.getEntityWorld();
+			if (!world.isRemote && (world instanceof WorldServer)) {
+				final WorldServer w = (WorldServer) world;
+				NetworkHandler.sendToClients(
+						w, e.getPosition(),
+						new SyncItemDataPacket(e, object, object.getTagCompound(), slot, handler, true, false)
+				);
+			}
+		} catch (final Exception e2) {
+			e2.printStackTrace();
+		}
 		slot = -1;
-		entity = null;
 		playerStatus = -1;
 		handler = 0;
 		this.saveNBT();
@@ -135,67 +121,48 @@ public class TrinketProperties {
 		this.setTarget(-1);
 	}
 
-	public boolean isEquipped(EntityLivingBase entity) {
-		return ItemStack.areItemsEqual(stack, this.getStackFromSlot(slot, handler));//TrinketHelper.AccessoryCheck(entity, stack.getItem());
+	public boolean isEquipped(EntityLivingBase e) {
+		return ItemStack.areItemsEqual(object, this.getStackFromSlot(e, slot, handler));//TrinketHelper.AccessoryCheck(entity, stack.getItem());
 	}
 
-	public ItemStack getStackFromSlot(int slot, int handler) {
-		return TrinketHelper.getItemStackFromSlot(entity, slot, handler);
+	public ItemStack getStackFromSlot(EntityLivingBase e, int slot, int handler) {
+		return TrinketHelper.getItemStackFromSlot(e, slot, handler);
 	}
 
 	private void saveNBT() {
-		this.savedNBTData(this.getTagCompoundSafe(stack));
+		final NBTTagCompound tag = this.getTagCompoundSafe(object);
+		this.saveToNBT(tag);
 	}
 
 	//Handle Network stuff
-	public void sendInformationToAll(EntityLivingBase entity) {
-		if (!entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToAll(new ItemCapDataMessage(entity, stack, this, slot, handler));
+
+	public void sendInformationToPlayer(EntityLivingBase e, EntityLivingBase receiver) {
+		if (!e.getEntityWorld().isRemote && (receiver instanceof EntityPlayer)) {
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			NetworkHandler.sendTo(new SyncItemDataPacket(e, object, tag, slot, handler), (EntityPlayerMP) receiver);
 		}
 	}
 
-	public void sendInformationToPlayer(EntityLivingBase entity, EntityLivingBase receiver) {
-		if (!entity.getEntityWorld().isRemote && (receiver instanceof EntityPlayer)) {
-			NetworkHandler.INSTANCE.sendTo(new ItemCapDataMessage(entity, stack, this, slot, handler), (EntityPlayerMP) receiver);
+	public void sendInformationToServer(EntityLivingBase e) {
+		if (e.getEntityWorld().isRemote) {
+			NetworkHandler.sendToServer(
+					new SyncItemDataPacket(e, object, object.getTagCompound(), slot, handler)
+			);
 		}
 	}
 
-	public void sendInformationToServer(EntityLivingBase entity) {
-		if (entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToServer(new ItemCapDataMessage(entity, stack, this, slot, handler));
-		}
-	}
-
-	public void sendInformationToTracking(EntityLivingBase entity) {
-		if (!entity.getEntityWorld().isRemote) {
-			NetworkHandler.INSTANCE.sendToAllTracking(new ItemCapDataMessage(entity, stack, this, slot, handler), entity);
-		}
-	}
-
-	//	public void syncStackToAll(EntityLivingBase entity, boolean equipping) {
-	//		if (!entity.getEntityWorld().isRemote) {
-	//			if (entity instanceof EntityPlayer) {
-	//				NBTTagCompound tag = this.getTagCompoundSafe(stack);
-	//				this.savedNBTData(tag);
-	//				NetworkHandler.INSTANCE.sendToAll(new PacketAccessorySync((EntityPlayer) entity, stack, slot, isTrinket, tag, equipping));
-	//			}
-	//		}
-	//	}
-
-	public void syncStackTo(EntityLivingBase target, int slot, boolean equipping, int handler, EntityLivingBase self) {
-		if (!target.getEntityWorld().isRemote) {
-			if ((self instanceof EntityPlayerMP) && (target instanceof EntityPlayer)) {
-				//				if (!client) {
-				//					NetworkHandler.INSTANCE.sendTo(new PacketAccessorySync(player, stack, i, true, null, !empty), (EntityPlayerMP) player);
-				//				}
-				//				boolean isTrinket = handler.equalsIgnoreCase("Trinket");
-				//				String hand = ((IAccessoryInterface) stack.getItem()).getIsTrinketOrBauble(stack, target);
-				//				boolean isTrinket = hand.equalsIgnoreCase(hand);
-
-				NBTTagCompound tag = this.getTagCompoundSafe(stack);
-				this.savedNBTData(tag);
-				NetworkHandler.INSTANCE.sendTo(new PacketAccessorySync((EntityPlayer) target, stack, tag, slot, handler, equipping), (EntityPlayerMP) self);
-			}
+	public void sendInformationToTracking(EntityLivingBase e) {
+		final World world = e.getEntityWorld();
+		if (!world.isRemote && (world instanceof WorldServer)) {
+			final WorldServer w = (WorldServer) world;
+			final NBTTagCompound tag = new NBTTagCompound();
+			this.saveToNBT(tag);
+			//			NetworkHandler.INSTANCE.sendToAllTracking(
+			NetworkHandler.sendToClients(
+					w, e.getPosition(),
+					new SyncItemDataPacket(e, object, tag, slot, handler)
+			);
 		}
 	}
 
@@ -297,11 +264,12 @@ public class TrinketProperties {
 	 * mainAbility = false; boolean altAbility = false;
 	 */
 
-	public void savedNBTData(NBTTagCompound compound) {
+	@Override
+	public void saveToNBT(NBTTagCompound compound) {
 		compound.setInteger("target", target);
 		compound.setInteger("slot", slot);
 		compound.setInteger("handler", handler);
-		compound.setInteger("count", count);
+		compound.setInteger("hitcount", count);
 		compound.setInteger("exp", exp);
 		compound.setInteger("mana", mana);
 		compound.setBoolean("main.ability", mainAbility);
@@ -309,7 +277,8 @@ public class TrinketProperties {
 		compound.setInteger("player.status", playerStatus);
 	}
 
-	public void loadNBTData(NBTTagCompound compound) {
+	@Override
+	public void loadFromNBT(NBTTagCompound compound) {
 		if (compound.hasKey("target")) {
 			target = compound.getInteger("target");
 		}
@@ -319,8 +288,8 @@ public class TrinketProperties {
 		if (compound.hasKey("handler")) {
 			handler = compound.getInteger("handler");
 		}
-		if (compound.hasKey("count")) {
-			count = compound.getInteger("count");
+		if (compound.hasKey("hitcount")) {
+			count = compound.getInteger("hitcount");
 		}
 		if (compound.hasKey("exp")) {
 			exp = compound.getInteger("exp");

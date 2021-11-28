@@ -18,7 +18,7 @@ public class ConfigInertiaNull {
 	@Config.Comment("Should you Take Fall Damage?. Set to true to Enable. Default False")
 	@Name("01. Fall Damage")
 	@LangKey(PREFIX + ".falldamage")
-	public boolean fall_damage = true;
+	public boolean fall_damage = false;
 
 	@Name("02. Fall Damage Amount")
 	@Config.RangeDouble(min = 0, max = 10)

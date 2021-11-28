@@ -19,7 +19,7 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
-@EventBusSubscriber
+@EventBusSubscriber(modid = Reference.MODID)
 public class ModItemRegistryHandler {
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
@@ -40,7 +40,7 @@ public class ModItemRegistryHandler {
 		//		});
 		//		}
 
-		if (Loader.isModLoaded("baubles")) {
+		if (Loader.isModLoaded("baubles") && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			for (final Item item : ModItems.baubles.ITEMS) {
 				if (item instanceof IAccessoryInterface) {
 					if (((IAccessoryInterface) item).ItemEnabled()) {
@@ -97,7 +97,7 @@ public class ModItemRegistryHandler {
 				((IsModelLoaded) item).registerModels();
 			}
 		}
-		for (Block block : ModBlocks.Flowers.BLOCKS) {
+		for (final Block block : ModBlocks.Flowers.BLOCKS) {
 			if (block instanceof IsModelLoaded) {
 				((IsModelLoaded) block).registerModels();
 			}
@@ -109,7 +109,7 @@ public class ModItemRegistryHandler {
 				}
 			}
 		}
-		if (Loader.isModLoaded("baubles")) {
+		if (Loader.isModLoaded("baubles") && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			for (final Item item : ModItems.baubles.ITEMS) {
 				if (item instanceof IsModelLoaded) {
 					((IsModelLoaded) item).registerModels();

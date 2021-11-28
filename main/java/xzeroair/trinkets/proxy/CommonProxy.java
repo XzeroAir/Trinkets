@@ -1,7 +1,6 @@
 package xzeroair.trinkets.proxy;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.container.TrinketInventoryContainer;
 import xzeroair.trinkets.util.compat.OreDictionaryCompat;
@@ -23,28 +23,32 @@ import xzeroair.trinkets.util.registry.EventRegistry;
 @EventBusSubscriber
 public class CommonProxy implements IGuiHandler {
 
+	public Side getSide() {
+		return Side.SERVER;
+	}
+
 	public void preInit(FMLPreInitializationEvent e) {
-		//Other Mod Compatibility
-		EventRegistry.modCompatPreInit();
 
 		//Register Mod Stuff
 
 		//Event Handlers
 		EventRegistry.preInit();
-
+		//Other Mod Compatibility
+		EventRegistry.modCompatPreInit();
 	}
 
 	public void init(FMLInitializationEvent e) {
 		OreDictionaryCompat.registerOres();
 
 		EventRegistry.serverInit();
-		EventRegistry.init();
 
+		EventRegistry.init();
 		EventRegistry.modCompatInit();
 	}
 
 	public void postInit(FMLPostInitializationEvent e) {
 		EventRegistry.postInit();
+		EventRegistry.modCompatPostInit();
 	}
 
 	public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
@@ -103,6 +107,8 @@ public class CommonProxy implements IGuiHandler {
 				return null;//Mana Hud
 			case 2:
 				return null;// Properties
+			case 3:
+				return null;// Properties Attributes
 			}
 		}
 		return null;

@@ -4,7 +4,8 @@
 	},
 	"ingredients":{
 		"skull_stage": "xzeroair.trinkets.util.compat.iceandfire.crafting.conditions.DragonSkullIngredientFactory",
-		"conditional": "xzeroair.trinkets.util.recipes.ConditionalIngredientFactory"
+		"conditional": "xzeroair.trinkets.util.recipes.ConditionalIngredientFactory",
+		"nbt": "xzeroair.trinkets.util.recipes.NBTIngredient$Factory"
 	},
 	"recipes": {
 		"dragon_eye_inf": "xzeroair.trinkets.util.recipes.RecipeDragonEye$Factory"

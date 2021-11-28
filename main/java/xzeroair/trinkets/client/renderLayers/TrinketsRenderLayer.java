@@ -1,11 +1,11 @@
 package xzeroair.trinkets.client.renderLayers;
 
-import javax.annotation.Nonnull;
-
 import org.lwjgl.opengl.GL11;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -32,48 +32,51 @@ public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
 
 	@Override
 	public void doRenderLayer(@Nonnull EntityPlayer player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-
-		if ((player.getActivePotionEffect(MobEffects.INVISIBILITY) != null) || !TrinketsConfig.CLIENT.rendering) {
+		if (player.isInvisible() || (player.getActivePotionEffect(MobEffects.INVISIBILITY) != null) || !TrinketsConfig.CLIENT.rendering) {
 			return;
 		}
+		Minecraft.getMinecraft().profiler.startSection("Trinkets Render Layer");
 
-		EntityProperties cap = Capabilities.getEntityRace(player);
+		final EntityProperties cap = Capabilities.getEntityRace(player);
 		if (cap != null) {
 			GlStateManager.pushMatrix();
-			//TODO something is breaking the renderer
+			GlStateManager.color(1F, 1F, 1F, 1F);
 			cap.onRender(renderer, isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
-			GlStateManager.popMatrix();
-			GlStateManager.pushMatrix();
-			if (Loader.isModLoaded("baubles")) {
-				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
-				for (int i = 0; i < baubles.getSlots(); i++) {
-					final ItemStack stack = baubles.getStackInSlot(i);
-					if (stack.getItem() instanceof IAccessoryInterface) {
-						final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
-						GlStateManager.pushMatrix();
-						GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
-						GlStateManager.color(1F, 1F, 1F, 1F);
-						trinket.playerRender(stack, player, renderer, partialTicks, scale, false);
-						GlStateManager.popMatrix();
-					}
-				}
-			}
-			final ITrinketContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
-			if (Trinket != null) {
-				for (int i = 0; i < Trinket.getSlots(); i++) {
-					final ItemStack stack = Trinket.getStackInSlot(i);
-					if (stack.getItem() instanceof IAccessoryInterface) {
-						final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
-						GlStateManager.pushMatrix();
-						GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
-						GlStateManager.color(1F, 1F, 1F, 1F);
-						trinket.playerRender(stack, player, renderer, partialTicks, scale, false);
-						GlStateManager.popMatrix();
-					}
-				}
-			}
+			GlStateManager.color(1F, 1F, 1F, 1F);
 			GlStateManager.popMatrix();
 		}
+
+		if (Loader.isModLoaded("baubles")) {
+			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+			for (int i = 0; i < baubles.getSlots(); i++) {
+				final ItemStack stack = baubles.getStackInSlot(i);
+				if (stack.getItem() instanceof IAccessoryInterface) {
+					final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+					GlStateManager.pushMatrix();
+					GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
+					GlStateManager.color(1F, 1F, 1F, 1F);
+					trinket.playerRender(stack, player, renderer, isSlim, partialTicks, scale, false);
+					GlStateManager.color(1F, 1F, 1F, 1F);
+					GlStateManager.popMatrix();
+				}
+			}
+		}
+		final ITrinketContainerHandler Trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+		if (Trinket != null) {
+			for (int i = 0; i < Trinket.getSlots(); i++) {
+				final ItemStack stack = Trinket.getStackInSlot(i);
+				if (stack.getItem() instanceof IAccessoryInterface) {
+					final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+					GlStateManager.pushMatrix();
+					GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
+					GlStateManager.color(1F, 1F, 1F, 1F);
+					trinket.playerRender(stack, player, renderer, isSlim, partialTicks, scale, false);
+					GlStateManager.color(1F, 1F, 1F, 1F);
+					GlStateManager.popMatrix();
+				}
+			}
+		}
+		Minecraft.getMinecraft().profiler.endSection();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 {
     "parent" : "item/generated", 
     "textures" : {
-        "layer0" : "xat:items/damage_shield_panda"
+        "layer0" : "xat:items/soh/damage_shield_panda"
     }, 
 
     "display" : {

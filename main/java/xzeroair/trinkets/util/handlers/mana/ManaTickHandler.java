@@ -10,7 +10,7 @@ public class ManaTickHandler {
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
-		if(event.phase == TickEvent.Phase.START) {
+		if (event.phase == TickEvent.Phase.START) {
 			return;
 		}
 		final World world = event.world;

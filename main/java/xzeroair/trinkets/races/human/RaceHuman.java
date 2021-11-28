@@ -1,7 +1,6 @@
 package xzeroair.trinkets.races.human;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import xzeroair.trinkets.capabilities.race.EntityProperties;

@@ -134,22 +134,22 @@ public class GuiPropertiesSlider extends GuiButton {
 
 				}
 
-				if (id == 5) {
+				if (id == gui.redSlider) {
 					color.setRed(sliderValue);
 					gui.properties.setTraitColor(color.getHex());
 				}
-				if (id == 6) {
+				if (id == gui.greenSlider) {
 					color.setGreen(sliderValue);
 					gui.properties.setTraitColor(color.getHex());
 				}
-				if (id == 7) {
+				if (id == gui.blueSlider) {
 					color.setBlue(sliderValue);
 					gui.properties.setTraitColor(color.getHex());
 				}
-				if (id == 8) {
-					color.setAlpha(sliderValue);
-					gui.properties.setTraitOpacity(color.getAlpha());
-				}
+				//				if (id == 8) {
+				//					color.setAlpha(sliderValue);
+				//					gui.properties.setTraitOpacity(color.getAlpha());
+				//				}
 				if (field != null) {
 					field.setTextColor(color.getDecimal());
 					field.setText(color.getHex());

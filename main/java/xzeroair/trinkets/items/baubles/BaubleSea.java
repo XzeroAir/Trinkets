@@ -6,10 +6,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.items.trinkets.TrinketSea;
+import xzeroair.trinkets.items.trinkets.TrinketSeaStone;
 import xzeroair.trinkets.util.compat.baubles.BaubleHelper;
 
-public class BaubleSea extends TrinketSea implements IBauble {
+public class BaubleSea extends TrinketSeaStone implements IBauble {
 
 	public BaubleSea(String name) {
 		super(name);

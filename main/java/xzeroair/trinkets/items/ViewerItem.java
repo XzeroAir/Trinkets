@@ -13,9 +13,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.util.compat.simpledifficulty.SDCompat;
+import xzeroair.trinkets.util.helpers.MagicHelper;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
@@ -35,10 +34,7 @@ public class ViewerItem extends Item implements IsModelLoaded, IAccessoryInterfa
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		EntityProperties props = Capabilities.getEntityRace(player);
-		if (props.getMagic().needMana()) {
-			props.getMagic().setMana(props.getMagic().getMaxMana());
-		}
+		MagicHelper.refillMana(player);
 		if (player.getHealth() < player.getMaxHealth()) {
 			player.heal(player.getMaxHealth());
 		}
@@ -53,7 +49,6 @@ public class ViewerItem extends Item implements IsModelLoaded, IAccessoryInterfa
 	@Override
 	public void eventPlayerHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
 		if (event.getEntityLiving() == player) {
-			System.out.println(event.getAmount());
 			event.setAmount(0);
 		}
 	}

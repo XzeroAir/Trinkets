@@ -9,32 +9,33 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.CapabilityBase;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.tileentities.TileEntityMoonRose;
 import xzeroair.trinkets.util.TrinketsConfig;
 
-public class ManaEssenceProperties {
+public class ManaEssenceProperties extends CapabilityBase<ManaEssenceProperties, TileEntity> {
 
-	TileEntity te;
 	World world;
 	int essence = TrinketsConfig.SERVER.mana.essence_amount;
 	int counter = 0;
 	boolean skip = false;
 
 	public ManaEssenceProperties(TileEntity te, World world) {
-		this.te = te;
+		super(te);
 		this.world = world;
 	}
 
+	@Override
 	public void onUpdate() {
-		BlockPos pos1 = te.getPos().add(-10, -10, -10);
-		BlockPos pos2 = te.getPos().add(10, 10, 10);
+		final BlockPos pos1 = object.getPos().add(-10, -10, -10);
+		final BlockPos pos2 = object.getPos().add(10, 10, 10);
 
-		Iterable<BlockPos> blockList = BlockPos.getAllInBox(pos1, pos2);
+		final Iterable<BlockPos> blockList = BlockPos.getAllInBox(pos1, pos2);
 		blockList.forEach(block -> {
-			if (!block.equals(te.getPos())) {
-				if ((te.getWorld().getTileEntity(block) != null)) {
-					if ((te.getWorld().getTileEntity(block) instanceof TileEntityMoonRose)) {
+			if (!block.equals(object.getPos())) {
+				if ((object.getWorld().getTileEntity(block) != null)) {
+					if ((object.getWorld().getTileEntity(block) instanceof TileEntityMoonRose)) {
 						skip = true;
 					}
 				}
@@ -44,31 +45,27 @@ public class ManaEssenceProperties {
 			skip = false;
 			return;
 		}
-		if (!te.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(te.getPos()).grow(10)).isEmpty()) {
-			List<EntityLivingBase> entities = te.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(te.getPos()).grow(4));
-			for (EntityLivingBase e : entities) {
-				if (e.hasCapability(Capabilities.ENTITY_RACE, null)) {
-					EntityProperties prop = Capabilities.getEntityRace(e);
-					if (prop != null) {
-						if (e.isSneaking()) {
-							counter++;
-							if (counter >= TrinketsConfig.SERVER.mana.essence_cooldown) {
-								int currentBonus = prop.getMagic().getBonusMana();
-								prop.getMagic().setBonusMana(currentBonus + 1);
-								prop.getMagic().sendManaToPlayer(e);
-								prop.getMagic().syncToManaHud();
-								essence--;
-								counter = 0;
-								te.markDirty();
-							}
+		if (!object.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(object.getPos()).grow(10)).isEmpty()) {
+			final List<EntityLivingBase> entities = object.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(object.getPos()).grow(4));
+			for (final EntityLivingBase e : entities) {
+				final MagicStats prop = Capabilities.getMagicStats(e);
+				if (prop != null) {
+					if (e.isSneaking()) {
+						counter++;
+						if (counter >= TrinketsConfig.SERVER.mana.essence_cooldown) {
+							final int currentBonus = prop.getBonusMana();
+							prop.setBonusMana(currentBonus + 1);
+							essence--;
+							counter = 0;
+							object.markDirty();
 						}
 					}
 				}
 			}
 		}
 		if (essence <= 0) {
-			te.markDirty();
-			te.getWorld().setBlockToAir(te.getPos());
+			object.markDirty();
+			object.getWorld().setBlockToAir(object.getPos());
 		}
 	}
 
@@ -80,11 +77,13 @@ public class ManaEssenceProperties {
 		this.essence = essence;
 	}
 
+	@Override
 	public void saveToNBT(NBTTagCompound compound) {
 		compound.setInteger("essence", essence);
 		compound.setInteger("counter", counter);
 	}
 
+	@Override
 	public void loadFromNBT(NBTTagCompound compound) {
 		if (compound.hasKey("essence")) {
 			essence = compound.getInteger("essence");

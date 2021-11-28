@@ -1,24 +1,37 @@
 package xzeroair.trinkets.util.compat.elenaidodge;
 
-import com.elenai.elenaidodge.ModConfig;
-import com.elenai.elenaidodge.util.Keybinds;
+import com.elenai.elenaidodge.api.DodgeEvent.ServerDodgeEvent;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.traits.abilities.AbilityDodge;
+import xzeroair.trinkets.traits.abilities.IAbilityHandler;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class ElenaiDodgeCompat {
 
-	@SideOnly(Side.CLIENT)
-	public static boolean isDodgeKeyDown() {
-		if (Loader.isModLoaded("elenaidodge")) {
+	@SubscribeEvent
+	public void DodgeEvent(ServerDodgeEvent event) {
+		final EntityPlayer player = event.getPlayer();
+		final EntityProperties prop = Capabilities.getEntityRace(player);
+		if (prop != null) {
 			try {
-				return (ModConfig.client.controls.doubleTapMode == 0) && Keybinds.dodge.isKeyDown();
-			} catch (Exception e) {
-
+				final IAbilityHandler ability = prop.getAbilityHandler().getAbilityInstance(Abilities.dodging);
+				if (ability instanceof AbilityDodge) {
+					final MagicStats magic = Capabilities.getMagicStats(player);
+					final float cost = TrinketsConfig.SERVER.Items.ARCING_ORB.dodgeCost;
+					if ((magic != null) && magic.spendMana(cost)) {
+						final AbilityDodge dodge = (AbilityDodge) ability;
+						dodge.dodge(player);
+					}
+				}
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		}
-		return false;
 	}
-
 }

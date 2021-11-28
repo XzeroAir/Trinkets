@@ -36,15 +36,41 @@ public class TitanConfig {
 	@LangKey(PREFIX + ".mining.extended.inverted")
 	public boolean miningExtendInverted = false;
 
+	@Config.Comment("what blocks can not be AoE Mined")
+	@Name("06. AoE Mining Blacklist")
+	@LangKey(PREFIX + ".mining.extended.blacklist")
+	public String[] miningAoEBlacklist = new String[] {
+			"dynamictrees:*"
+	};
+
+	@Config.Comment("If the player can Mount Entities at all")
+	@Name("07. Able to Mount Entities")
+	@LangKey(PREFIX + ".mount.enabled")
+	public boolean canMount = true;
+
+	@Config.Comment("Should the Mount Blacklist to a Whitelist")
+	@Name("08. Toggle Whitelist")
+	@LangKey(PREFIX + ".mount.whitelist")
+	public boolean whitelist = false;
+
+	@Config.Comment("Entities that can not be mounted, or can only be mounted")
+	@Name("09. Mount Blacklist")
+	@LangKey(PREFIX + ".mount.blacklist")
+	public String[] mountBlacklist = new String[] {
+			"quark:seat",
+			"sit:entity_sit",
+			"minecraft:minecart"
+	};
+
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")
-	private Compatability compat = new Compatability();
+	private final Compatability compat = new Compatability();
 
 	public class Compatability {
 
 		@Name("Tough as Nails Compatability")
 		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
+		private final TANCompat tan = new TANCompat();
 
 		public class TANCompat {
 
@@ -64,13 +90,13 @@ public class TitanConfig {
 	private final int		damageOperation = 2;
 	private final boolean 	health = true;
 	private final double 	healthAmount = 1D;
-	private final int		healthOperation = 2;
+	private final int		healthOperation = 1;
 	private final boolean 	knockback = true;
-	private final double 	knockbackAmount = 0.3D;
+	private final double 	knockbackAmount = 1D;
 	private final int		knockbackOperation = 0;
 	private final boolean 	speed = true;
-	private final double 	speedAmount = -0.25D;
-	private final int		speedOperation = 2;
+	private final double 	speedAmount = 0D;
+	private final int		speedOperation = 0;
 	private final boolean 	swimSpeed = false;
 	private final double 	swimSpeedAmount = 0;
 	private final int		swimSpeedOperation = 0;
@@ -81,11 +107,11 @@ public class TitanConfig {
 	private final double	luckAmount = 0;
 	private final int		luckOperation = 0;
 	private final boolean	reach = true;
-	private final double	reachAmount = 0.6D;
-	private final int		reachOperation = 2;
+	private final double	reachAmount = 1D;
+	private final int		reachOperation = 1;
 	private final boolean	jump = true;
 	private final double	jumpAmount = 0.75;
-	private final int		jumpOperation = 2;
+	private final int		jumpOperation = 1;
 	private final boolean	stepHeight = true;
 	private final double	stepHeightAmount = 1.4;
 	private final int		stepHeightOperation = 0;

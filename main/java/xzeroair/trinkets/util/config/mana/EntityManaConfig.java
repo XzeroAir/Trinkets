@@ -51,23 +51,39 @@ public class EntityManaConfig {
 	public boolean cap_affinity = false;
 
 	@Config.Comment("")
+	@Name("09. Mana Crystals Explode")
+	@LangKey(PREFIX + ".mana_crystal.explodes")
+	public boolean crystalExplodes = false;
+
+	@Config.Comment("")
+	@Name("10. Mana Reagent Harmful")
+	@LangKey(PREFIX + ".mana_reagent.harmful")
+	public boolean reagentHarmful = true;
+
+	//	@Config.Comment("")
+	//	@Name("97. MP Recovery Items")
+	//	@LangKey(PREFIX + ".cap.recovery.list")
+	//	public boolean cap_affinity = false;
+
+	@Config.Comment("modid:item_name:meta:amount")
 	@Name("97. MP Recovery Items")
 	@LangKey(PREFIX + ".cap.recovery.list")
 	public String[] recovery = new String[] {
-			"xat:dwarf_stout:0:100%",
-			"xat:elf_sap:0:100%",
-			"xat:faelis_food:0:100%",
-			"xat:fairy_dew:0:100%",
-			"xat:goblin_soup:0:100%",
-			"xat:titan_spirit:0:100%",
-			"xat:dragon_gem:0:100%",
-			"xat:mana_crystal:0:100%",
-			"xat:mana_reagent:0:100%",
-			"xat:mana_candy:0:50",
-			"minecraft:golden_apple:0:20",
-			"minecraft:golden_apple:1:50",
-			"simpledifficulty:juice:0:10%",
-			"simpledifficulty:juice:5:50%",
+			"xat:dwarf_stout;0;100%",
+			"xat:elf_sap;0;100%",
+			"xat:faelis_food;0;100%",
+			"xat:fairy_dew;0;100%",
+			"xat:goblin_soup;0;100%",
+			"xat:titan_spirit;0;100%",
+			"xat:dragon_gem;0;100%",
+			"xat:mana_crystal;0;100%",
+			"xat:mana_reagent;0;100%",
+			"xat:mana_candy;0;50",
+			"minecraft:golden_apple;0;20",
+			"minecraft:golden_apple;1;50",
+			"simpledifficulty:juice;0;10%",
+			"simpledifficulty:juice;5;50%",
+			"botania:manacookie;0;10%",
 	};
 
 }

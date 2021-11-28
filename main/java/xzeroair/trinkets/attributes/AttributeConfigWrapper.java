@@ -5,14 +5,18 @@ import xzeroair.trinkets.util.interfaces.IAttributeConfigHelper;
 
 public class AttributeConfigWrapper {
 
-	private IAttributeConfigHelper config;
+	protected IAttributeConfigHelper config;
 
 	public AttributeConfigWrapper() {
 		config = new ConfigAttribs(false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0);
 	}
 
 	public AttributeConfigWrapper(IAttributeConfigHelper config) {
-		this.config = config;
+		if (config != null) {
+			this.config = config;
+		} else {
+			this.config = new ConfigAttribs(false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0);
+		}
 	}
 
 	public boolean armorEnabled() {

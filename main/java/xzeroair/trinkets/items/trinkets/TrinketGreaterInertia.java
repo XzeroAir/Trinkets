@@ -3,10 +3,11 @@ package xzeroair.trinkets.items.trinkets;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
+import xzeroair.trinkets.traits.abilities.AbilitySturdy;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigGreaterInertia;
 
@@ -22,15 +23,17 @@ public class TrinketGreaterInertia extends AccessoryBase {
 	}
 
 	@Override
-	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		super.eventPlayerTick(stack, player);
+	public void initAbilities(EntityLivingBase entity) {
+		final float fallMultiplier = serverConfig.fall_damage ? serverConfig.falldamage_amount : 0;
+		this.addAbility(
+				entity, Abilities.fallResistance,
+				new AbilitySturdy().setFallMultiplier(fallMultiplier)
+		);
 	}
 
 	@Override
-	public void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase player) {
-		if (serverConfig.fall_damage) {
-			event.setDamageMultiplier(serverConfig.falldamage_amount);
-		}
+	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
+		super.eventPlayerTick(stack, player);
 	}
 
 	@Override

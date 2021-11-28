@@ -8,9 +8,9 @@ import xzeroair.trinkets.races.EntityRace;
 
 public abstract class TransformationEvent extends Event {
 
-	EntityLivingBase entity;
-	EntityRace prevRace, currentRace, newRace;
-	EntityProperties properties;
+	protected EntityLivingBase entity;
+	protected EntityRace currentRace;
+	protected EntityProperties properties;
 
 	public TransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
 		this.entity = entity;
@@ -33,11 +33,12 @@ public abstract class TransformationEvent extends Event {
 	@Cancelable
 	public static class RaceChangedEvent extends TransformationEvent {
 
-		boolean changed = false;
+		protected boolean changed = false;
+		protected EntityRace newRace;
 
 		public RaceChangedEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace next) {
 			super(entity, properties, current);
-			this.setChanged(currentRace.equals(this.getNewRace()));
+			this.setChanged(!currentRace.equals(next));
 			this.setNewRace(next);
 		}
 
@@ -66,6 +67,8 @@ public abstract class TransformationEvent extends Event {
 	}
 
 	public static class endTransformationEvent extends TransformationEvent {
+
+		protected EntityRace prevRace;
 
 		public endTransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace prev) {
 			super(entity, properties, current);

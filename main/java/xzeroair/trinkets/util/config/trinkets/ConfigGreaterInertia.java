@@ -15,18 +15,6 @@ public class ConfigGreaterInertia {
 	private final String PREFIX = Reference.MODID + ".config." + name;
 	private final String registry = Reference.MODID + ".config.registry";
 
-	//TODO Sort this out
-//	@Config.Comment("Jump Modifications. Set to true to Enable. Default False")
-//	@Name("Modified Jump Height")
-//	@LangKey(PREFIX + ".jumpheight")
-//	public boolean jump = true;
-
-//	@Config.Comment("Jump Height Modification Amount.")
-//	@Name("Modified Jump Height Amount")
-//	@Config.RangeDouble(min = 1, max = 10)
-//	@LangKey(PREFIX + ".jumpheight.amount")
-//	public float jumpheight = 2f;
-
 	@Config.Comment("Should you Take Fall Damage?. Set to true to Enable. Default False")
 	@Name("Modified Fall Damage")
 	@LangKey(PREFIX + ".falldamage")
@@ -102,10 +90,10 @@ public class ConfigGreaterInertia {
 	private final double	reachAmount = 0;
 	private final int		reachOperation = 0;
 	private final boolean	jump = true;
-	private final double	jumpAmount = 2;
-	private final int		jumpOperation = 2;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
+	private final double	jumpAmount = 1;
+	private final int		jumpOperation = 1;
+	private final boolean	stepHeight = true;
+	private final double	stepHeightAmount = 0.6;
 	private final int		stepHeightOperation = 0;
 
 

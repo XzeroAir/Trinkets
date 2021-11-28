@@ -8,11 +8,8 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityProperties;
 import net.minecraft.world.WorldServer;
-import xzeroair.trinkets.network.HealthUpdatePacket;
-import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.Reference;
 
 public class UpdatingAttribute {
@@ -50,7 +47,7 @@ public class UpdatingAttribute {
 		if (entity == null) {
 			return;
 		}
-		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(attrib);
+		final IAttributeInstance AttributeInstance = entity.getEntityAttribute(attrib);//.getAttributeMap().getAttributeInstance(attrib);
 		if ((AttributeInstance == null) || (uuid.compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0)) {
 			return;
 		}
@@ -66,21 +63,30 @@ public class UpdatingAttribute {
 					final AttributeModifier modifier = this.createModifier(amount, operation);
 					float Health = entity.getHealth();
 					AttributeInstance.applyModifier(modifier);
-					if (!entity.world.isRemote) {
-						if (Health > AttributeInstance.getAttributeValue()) {
-							if (entity instanceof EntityPlayerMP) {
-								entity.setHealth(entity.getMaxHealth());
-								NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
-							}
+					//					if (!entity.world.isRemote) {
+					//					if (Health > AttributeInstance.getAttributeValue()) {
+					//						if (entity instanceof EntityPlayerMP) {
+					//							entity.setHealth(entity.getMaxHealth());
+					//							//							System.out.println("Sending?");
+					//							NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
+					//						}
+					//					}
+					if ((entity != null) && !entity.getEntityWorld().isRemote) {
+						if (entity.getEntityWorld() instanceof WorldServer) {
+							final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
+							((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
 						}
 					}
+					//					}
 				} else {
 					AttributeInstance.applyModifier(this.createModifier(amount, operation));
 				}
-				if ((entity != null) && !entity.getEntityWorld().isRemote) {
-					final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-					((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
-				}
+				//				if ((entity != null) && !entity.getEntityWorld().isRemote) {
+				//					if (entity.getEntityWorld() instanceof WorldServer) {
+				//						final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
+				//						((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
+				//					}
+				//				}
 			}
 		}
 	}
@@ -89,7 +95,7 @@ public class UpdatingAttribute {
 		if (entity == null) {
 			return;
 		}
-		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(attrib);
+		final IAttributeInstance AttributeInstance = entity.getEntityAttribute(attrib);//.getAttributeMap().getAttributeInstance(attrib);
 		if ((AttributeInstance == null) || (AttributeInstance.getModifier(uuid) == null)) {
 			return;
 		}
@@ -97,20 +103,27 @@ public class UpdatingAttribute {
 			float health = entity.getHealth();
 			AttributeInstance.removeModifier(uuid);
 			if (health > AttributeInstance.getAttributeValue()) {
-				if (!entity.world.isRemote) {
-					if (entity instanceof EntityPlayerMP) {
-						entity.setHealth(entity.getMaxHealth());
-						NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
-					}
+				//				if (!entity.world.isRemote) {
+				//					if (entity instanceof EntityPlayerMP) {
+				entity.setHealth(entity.getMaxHealth());
+				//						NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
+				//			}
+				//							}
+			}
+		} else
+
+		{
+			if (attrib == JumpAttribute.stepHeight) {
+				if (entity.stepHeight != AttributeInstance.getBaseValue()) {
+					entity.stepHeight = (float) AttributeInstance.getBaseValue();
 				}
 			}
-		} else {
 			AttributeInstance.removeModifier(uuid);
 		}
-		if ((entity != null) && !entity.getEntityWorld().isRemote) {
-			final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-			((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
-		}
+		//		if ((entity != null) && !entity.getEntityWorld().isRemote) {
+		//			final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
+		//			((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
+		//		}
 	}
 
 	public void removeModifier(EntityLivingBase entity) {

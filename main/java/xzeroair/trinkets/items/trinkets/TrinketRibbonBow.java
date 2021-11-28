@@ -163,7 +163,7 @@ public class TrinketRibbonBow extends BaseBow implements IsModelLoaded, IAccesso
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isTrinket) {
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isTrinket) {
 
 		final ModelBase bow = new bowHat();//CallHelper.getModel("bow");
 		GlStateManager.pushMatrix();

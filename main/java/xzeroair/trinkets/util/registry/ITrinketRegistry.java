@@ -1,13 +1,12 @@
-package xzeroair.trinkets.races.util;
+package xzeroair.trinkets.util.registry;
 
 import java.util.Set;
 
 import javax.annotation.Nullable;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public interface IRaceRegistry<K, V> extends Iterable<V> {
+public interface ITrinketRegistry<K, V> extends Iterable<V> {
 	@Nullable
 	@SideOnly(Side.CLIENT)
 	V getObject(K name);

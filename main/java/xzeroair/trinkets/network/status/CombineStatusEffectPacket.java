@@ -10,7 +10,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.util.TrinketStatusEffect;
+import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
+import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
 
 public class CombineStatusEffectPacket implements IMessage {
 
@@ -72,8 +73,10 @@ public class CombineStatusEffectPacket implements IMessage {
 							if (cap != null) {
 								final Entity targetEntity = Trinkets.proxy.getPlayer(ctx).getEntityWorld().getEntityByID(message.targetEntityID);
 								if (targetEntity instanceof EntityLivingBase) {
-									EntityProperties tprop = Capabilities.getEntityRace((EntityLivingBase) targetEntity);
-									tprop.getStatusHandler().combine(message.effectID, message.duration, message.level);
+									StatusHandler status = Capabilities.getStatusHandler((EntityLivingBase) targetEntity);
+									if (status != null) {
+										status.combine(message.effectID, message.duration, message.level);
+									}
 								}
 
 							}

@@ -15,10 +15,6 @@ public class ConfigGlowRing {
 	private final String PREFIX = Reference.MODID + ".config." + name;
 	private final String registry = Reference.MODID + ".config.registry";
 
-	@Name("01. Prevent Blindess")
-	@LangKey(PREFIX + ".blindness")
-	public boolean prevent_blindness = true;
-
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")

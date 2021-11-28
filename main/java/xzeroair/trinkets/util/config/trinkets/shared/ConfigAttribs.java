@@ -62,15 +62,16 @@ public class ConfigAttribs implements IAttributeConfigHelper {
 	}
 
 	private static final String PREFIX = Reference.MODID + ".config.attributes";
-	private static final String armorKey = PREFIX + ".armor";
-	private static final String armortoughnessKey = PREFIX + ".armortoughness";
-	private static final String attackspeedKey = PREFIX + ".attackspeed";
-	private static final String damageKey = PREFIX + ".damage";
-	private static final String healthKey = PREFIX + ".health";
-	private static final String knockbackKey = PREFIX + ".knockback";
-	private static final String luckKey = PREFIX + ".luck";
+	private static final String armorKey = PREFIX + ".armor";//"attribute.name.generic.armor";//
+	private static final String armortoughnessKey = PREFIX + ".armortoughness";//"attribute.name.generic.armorToughness";//
+	private static final String attackspeedKey = PREFIX + ".attackspeed";//"attribute.name.generic.attackSpeed";//
+	private static final String damageKey = PREFIX + ".damage";// "attribute.name.generic.attackDamage";//
+	private static final String healthKey = PREFIX + ".health";//"attribute.name.generic.maxHealth";//
+	private static final String knockbackKey = PREFIX + ".knockback";//"attribute.name.generic.knockbackResistance";//
+	private static final String luckKey = PREFIX + ".luck";//"attribute.name.generic.luck";//
+	private static final String movementspeedKey = PREFIX + ".movementspeed";//"attribute.name.generic.movementSpeed";//
+
 	private static final String reachKey = PREFIX + ".reach";
-	private static final String movementspeedKey = PREFIX + ".movementspeed";
 	private static final String swimspeedKey = PREFIX + ".swimspeed";
 	private static final String jumpKey = PREFIX + ".jump";
 	private static final String stepHeightKey = PREFIX + ".stepheight";

@@ -2,7 +2,7 @@ package xzeroair.trinkets.capabilities;
 
 import java.util.concurrent.Callable;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
@@ -15,65 +15,43 @@ import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContai
 import xzeroair.trinkets.capabilities.TileEntityCap.ManaEssenceProperties;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.container.TrinketContainerHandler;
 
 public class Capabilities {
 
 	public static void init() {
-		CapabilityManager.INSTANCE.register(ITrinketContainerHandler.class, TrinketContainerStorage.storage, new TrinketContainerFactory());
+		registerNewCap(ITrinketContainerHandler.class, TrinketContainerStorage.storage, new TrinketContainerFactory());
 
-		CapabilityManager.INSTANCE.register(EntityProperties.class, new Capability.IStorage<EntityProperties>() {
-			@Override
-			public NBTBase writeNBT(Capability<EntityProperties> capability, EntityProperties instance, EnumFacing side) {
-				throw new UnsupportedOperationException();
-			}
+		// RACE
+		registerNewCap(EntityProperties.class);
 
-			@Override
-			public void readNBT(Capability<EntityProperties> capability, EntityProperties instance, EnumFacing side, NBTBase nbt) {
-				throw new UnsupportedOperationException();
-			}
-		}, () -> null);
+		// MAGIC
+		registerNewCap(MagicStats.class);
 
-		CapabilityManager.INSTANCE.register(TrinketProperties.class, new Capability.IStorage<TrinketProperties>() {
-			@Override
-			public NBTBase writeNBT(Capability<TrinketProperties> capability, TrinketProperties instance, EnumFacing side) {
-				throw new UnsupportedOperationException();
-			}
+		// STATUS EFFECTS
+		registerNewCap(StatusHandler.class);
 
-			@Override
-			public void readNBT(Capability<TrinketProperties> capability, TrinketProperties instance, EnumFacing side, NBTBase nbt) {
-				throw new UnsupportedOperationException();
-			}
-		}, () -> null);
+		// VIP STATUS COSMETICS
+		registerNewCap(VipStatus.class);
 
-		CapabilityManager.INSTANCE.register(VipStatus.class, new Capability.IStorage<VipStatus>() {
-			@Override
-			public NBTBase writeNBT(Capability<VipStatus> capability, VipStatus instance, EnumFacing side) {
-				throw new UnsupportedOperationException();
-			}
+		// ITEMs
+		registerNewCap(TrinketProperties.class);
 
-			@Override
-			public void readNBT(Capability<VipStatus> capability, VipStatus instance, EnumFacing side, NBTBase nbt) {
-				throw new UnsupportedOperationException();
-			}
-		}, () -> null);
-
-		CapabilityManager.INSTANCE.register(ManaEssenceProperties.class, new Capability.IStorage<ManaEssenceProperties>() {
-			@Override
-			public NBTBase writeNBT(Capability<ManaEssenceProperties> capability, ManaEssenceProperties instance, EnumFacing side) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void readNBT(Capability<ManaEssenceProperties> capability, ManaEssenceProperties instance, EnumFacing side, NBTBase nbt) {
-				throw new UnsupportedOperationException();
-			}
-		}, () -> null);
+		// TEs
+		registerNewCap(ManaEssenceProperties.class);
 	}
 
 	@CapabilityInject(EntityProperties.class)
 	public static Capability<EntityProperties> ENTITY_RACE;
+
+	@CapabilityInject(MagicStats.class)
+	public static Capability<MagicStats> ENTITY_MAGIC;
+
+	@CapabilityInject(StatusHandler.class)
+	public static Capability<StatusHandler> STATUS_HANDLER;
 
 	@CapabilityInject(TrinketProperties.class)
 	public static Capability<TrinketProperties> ITEM_TRINKET;
@@ -85,19 +63,45 @@ public class Capabilities {
 	public static Capability<ManaEssenceProperties> TILE_ENTITY_MANA_ESSENCE;
 
 	public static ManaEssenceProperties getTileEntityManaProperties(TileEntity te) {
+		//		if(te == null) {
+		//			return null;
+		//		}
 		return te.getCapability(TILE_ENTITY_MANA_ESSENCE, null);
 	}
 
-	public static EntityProperties getEntityRace(EntityLivingBase entity) {
+	public static StatusHandler getStatusHandler(Entity entity) {
+		if (entity == null) {
+			return null;
+		}
+		return entity.getCapability(STATUS_HANDLER, null);
+	}
+
+	public static EntityProperties getEntityRace(Entity entity) {
+		if (entity == null) {
+			return null;
+		}
 		return entity.getCapability(ENTITY_RACE, null);
 	}
 
 	public static TrinketProperties getTrinketProperties(ItemStack stack) {
+		if ((stack == null) || stack.isEmpty()) {
+			return null;
+		}
 		return stack.getCapability(ITEM_TRINKET, null);
 	}
 
-	public static VipStatus getVipStatus(EntityLivingBase player) {
-		return player.getCapability(VIP_STATUS, null);
+	public static VipStatus getVipStatus(Entity entity) {
+		if (entity == null) {
+			return null;
+		}
+		return entity.getCapability(VIP_STATUS, null);
+	}
+
+	public static MagicStats getMagicStats(Entity entity) {
+		if (entity == null) {
+			return null;
+		}
+		return entity.getCapability(ENTITY_MAGIC, null);
 	}
 
 	private static class TrinketContainerFactory implements Callable<ITrinketContainerHandler> {
@@ -105,5 +109,27 @@ public class Capabilities {
 		public ITrinketContainerHandler call() throws Exception {
 			return new TrinketContainerHandler();
 		}
+	}
+
+	private static <T> void registerNewCap(Class<T> type) {
+		registerNewCap(type, new Capability.IStorage<T>() {
+			@Override
+			public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
+				throw new UnsupportedOperationException();
+			}
+		});
+	}
+
+	private static <T> void registerNewCap(Class<T> type, Capability.IStorage<T> storage) {
+		registerNewCap(type, storage, () -> null);
+	}
+
+	private static <T> void registerNewCap(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory) {
+		CapabilityManager.INSTANCE.register(type, storage, factory);
 	}
 }

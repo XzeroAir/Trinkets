@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import xzeroair.trinkets.util.config.ConfigHelper;
 
 public class BlockHelper {
 
@@ -36,19 +37,19 @@ public class BlockHelper {
 	}
 
 	public static boolean isBlockInList(World world, IBlockState state, BlockPos pos, List<String> list) {
-		boolean check = false;
-		for (String s : list) {
-			check = isBlockInList(world, state, pos, s, getMeta(s));
-		}
-		return check;
+		return isBlockInList(world, state, pos, list);
 	}
 
 	public static boolean isBlockInList(World world, IBlockState state, BlockPos pos, String[] list) {
 		boolean check = false;
-		for (String s : list) {
-			if (isBlockInList(world, state, pos, s, getMeta(s)) == true) {
+		for (final String s : list) {
+			if (ConfigHelper.checkBlockInConfig(state, s)) {
 				check = true;
+				return true;
 			}
+			//			if (isBlockInList(world, state, pos, s, getMeta(s)) == true) {
+			//				check = true;
+			//			}
 		}
 		return check;
 	}

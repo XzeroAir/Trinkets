@@ -3,21 +3,21 @@ package xzeroair.trinkets.network;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 
-public class PolarizedStoneSyncPacket implements IMessage {
+public class PolarizedStoneSyncPacket extends ThreadSafePacket {
 	// A default constructor is always required
 	public PolarizedStoneSyncPacket() {
 	}
@@ -33,7 +33,7 @@ public class PolarizedStoneSyncPacket implements IMessage {
 		this.slot = slot;
 		this.handler = handler;
 		tag = new NBTTagCompound();
-		properties.savedNBTData(tag);
+		properties.saveToNBT(tag);
 		item = stack;
 		entityID = player.getEntityId();
 		this.damage = damage;
@@ -62,44 +62,108 @@ public class PolarizedStoneSyncPacket implements IMessage {
 		damage = buf.readInt();
 	}
 
-	public static class Handler implements IMessageHandler<PolarizedStoneSyncPacket, IMessage> {
+	//	public static class Handler implements IMessageHandler<PolarizedStoneSyncPacket, IMessage> {
+	//
+	//		@Override
+	//		public IMessage onMessage(PolarizedStoneSyncPacket message, MessageContext ctx) {
+	//
+	//			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+	//				if (Trinkets.proxy.getEntityLivingBase(ctx, message.entityID) != null) {
+	//					final EntityLivingBase entity = Trinkets.proxy.getEntityLivingBase(ctx, message.entityID);
+	//					if (entity instanceof EntityPlayer) {
+	//						if (message.handler == 1) {
+	//							final ITrinketContainerHandler trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
+	//							final ItemStack stack = trinket.getStackInSlot(message.slot);
+	//							if (!stack.isEmpty()) {
+	//								stack.setItemDamage(message.damage);
+	//								final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+	//								if (properties != null) {
+	//									properties.loadFromNBT(message.tag);
+	//									properties.sendInformationToTracking(entity);
+	//								}
+	//							}
+	//						} else if (message.handler == 2) {
+	//							final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+	//							final ItemStack stack = baubles.getStackInSlot(message.slot);
+	//							if (!stack.isEmpty()) {
+	//								stack.setItemDamage(message.damage);
+	//								final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+	//								if (properties != null) {
+	//									properties.loadFromNBT(message.tag);
+	//									properties.sendInformationToTracking(entity);
+	//								}
+	//							}
+	//						} else {
+	//
+	//						}
+	//					}
+	//				}
+	//			});
+	//			return null;
+	//		}
+	//	}
 
-		@Override
-		public IMessage onMessage(PolarizedStoneSyncPacket message, MessageContext ctx) {
-
-			Trinkets.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if (Trinkets.proxy.getEntityLivingBase(ctx, message.entityID) != null) {
-					EntityLivingBase entity = Trinkets.proxy.getEntityLivingBase(ctx, message.entityID);
-					if (entity instanceof EntityPlayer) {
-						if (message.handler == 1) {
-							ITrinketContainerHandler trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
-							ItemStack stack = trinket.getStackInSlot(message.slot);
-							if (!stack.isEmpty()) {
-								stack.setItemDamage(message.damage);
-								TrinketProperties properties = Capabilities.getTrinketProperties(stack);
-								if (properties != null) {
-									properties.loadNBTData(message.tag);
-									properties.sendInformationToTracking(entity);
-								}
-							}
-						} else if (message.handler == 2) {
-							IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
-							ItemStack stack = baubles.getStackInSlot(message.slot);
-							if (!stack.isEmpty()) {
-								stack.setItemDamage(message.damage);
-								TrinketProperties properties = Capabilities.getTrinketProperties(stack);
-								if (properties != null) {
-									properties.loadNBTData(message.tag);
-									properties.sendInformationToTracking(entity);
-								}
-							}
-						} else {
-
-						}
+	@Override
+	public void handleClientSafe(NetHandlerPlayClient client) {
+		final Entity entity = Minecraft.getMinecraft().world.getEntityByID(entityID);
+		if (entity instanceof EntityPlayer) {
+			if (handler == 1) {
+				final ITrinketContainerHandler trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
+				final ItemStack stack = trinket.getStackInSlot(slot);
+				if (!stack.isEmpty()) {
+					stack.setItemDamage(damage);
+					final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+					if (properties != null) {
+						properties.loadFromNBT(tag);
+						//						properties.sendInformationToTracking(entity);
 					}
 				}
-			});
-			return null;
+			} else if (handler == 2) {
+				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+				final ItemStack stack = baubles.getStackInSlot(slot);
+				if (!stack.isEmpty()) {
+					stack.setItemDamage(damage);
+					final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+					if (properties != null) {
+						properties.loadFromNBT(tag);
+						//						properties.sendInformationToTracking(entity);
+					}
+				}
+			} else {
+
+			}
+		}
+	}
+
+	@Override
+	public void handleServerSafe(NetHandlerPlayServer server) {
+		final Entity entity = server.player.getEntityWorld().getEntityByID(entityID);
+		if (entity instanceof EntityPlayer) {
+			if (handler == 1) {
+				final ITrinketContainerHandler trinket = TrinketHelper.getTrinketHandler((EntityPlayer) entity);
+				final ItemStack stack = trinket.getStackInSlot(slot);
+				if (!stack.isEmpty()) {
+					stack.setItemDamage(damage);
+					final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+					if (properties != null) {
+						properties.loadFromNBT(tag);
+						properties.sendInformationToTracking((EntityLivingBase) entity);
+					}
+				}
+			} else if (handler == 2) {
+				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+				final ItemStack stack = baubles.getStackInSlot(slot);
+				if (!stack.isEmpty()) {
+					stack.setItemDamage(damage);
+					final TrinketProperties properties = Capabilities.getTrinketProperties(stack);
+					if (properties != null) {
+						properties.loadFromNBT(tag);
+						properties.sendInformationToTracking((EntityLivingBase) entity);
+					}
+				}
+			} else {
+
+			}
 		}
 	}
 }

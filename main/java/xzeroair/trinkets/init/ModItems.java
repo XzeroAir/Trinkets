@@ -3,11 +3,13 @@ package xzeroair.trinkets.init;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import xzeroair.trinkets.items.ViewerItem;
 import xzeroair.trinkets.items.base.BaseArrow;
 import xzeroair.trinkets.items.base.BaseBow;
 import xzeroair.trinkets.items.base.ItemBase;
+import xzeroair.trinkets.items.base.RaceFood;
 import xzeroair.trinkets.items.base.TrinketRaceBase;
 import xzeroair.trinkets.items.baubles.BaubleArcingOrb;
 import xzeroair.trinkets.items.baubles.BaubleDamageShield;
@@ -24,16 +26,10 @@ import xzeroair.trinkets.items.baubles.BaubleSea;
 import xzeroair.trinkets.items.baubles.BaubleTeddyBear;
 import xzeroair.trinkets.items.baubles.BaubleWeightless;
 import xzeroair.trinkets.items.baubles.BaubleWitherRing;
-import xzeroair.trinkets.items.foods.Dragon_Food;
-import xzeroair.trinkets.items.foods.Dwarf_Stout;
-import xzeroair.trinkets.items.foods.Elf_Sap;
-import xzeroair.trinkets.items.foods.Faelis_Food;
-import xzeroair.trinkets.items.foods.Fairy_Food;
-import xzeroair.trinkets.items.foods.Goblin_Soup;
 import xzeroair.trinkets.items.foods.Mana_Candy;
 import xzeroair.trinkets.items.foods.Mana_Crystal;
 import xzeroair.trinkets.items.foods.Mana_Reagent;
-import xzeroair.trinkets.items.foods.Titan_Spirit;
+import xzeroair.trinkets.items.foods.Restore_Item;
 import xzeroair.trinkets.items.trinkets.TrinketArcingOrb;
 import xzeroair.trinkets.items.trinkets.TrinketDamageShield;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
@@ -42,10 +38,10 @@ import xzeroair.trinkets.items.trinkets.TrinketFaelisClaws;
 import xzeroair.trinkets.items.trinkets.TrinketGlowRing;
 import xzeroair.trinkets.items.trinkets.TrinketGreaterInertia;
 import xzeroair.trinkets.items.trinkets.TrinketInertiaNull;
-import xzeroair.trinkets.items.trinkets.TrinketPoison;
+import xzeroair.trinkets.items.trinkets.TrinketPoisonStone;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.items.trinkets.TrinketRibbonBow;
-import xzeroair.trinkets.items.trinkets.TrinketSea;
+import xzeroair.trinkets.items.trinkets.TrinketSeaStone;
 import xzeroair.trinkets.items.trinkets.TrinketTeddyBear;
 import xzeroair.trinkets.items.trinkets.TrinketWeightless;
 import xzeroair.trinkets.items.trinkets.TrinketWitherRing;
@@ -101,16 +97,18 @@ public class ModItems {
 	public static class foods {
 		public static final List<Item> ITEMS = new ArrayList<>();
 
-		public static final Item dwarf_stout 				= new Dwarf_Stout("dwarf_stout");
-		public static final Item elf_sap	 				= new Elf_Sap("elf_sap");
-		public static final Item faelis_nip	 				= new Faelis_Food("faelis_food");
-		public static final Item fairy_food 				= new Fairy_Food("fairy_dew");
-		public static final Item goblin_soup 				= new Goblin_Soup("goblin_soup");
-		public static final Item titan_spirit				= new Titan_Spirit("titan_spirit");
-		public static final Item dragon_gem					= new Dragon_Food("dragon_gem");
+
+		public static final Item dwarf_stout	 			= new RaceFood("dwarf_stout", 16, EnumAction.DRINK ,EntityRaces.dwarf);
+		public static final Item elf_sap	 				= new RaceFood("elf_sap", 32, EnumAction.DRINK, EntityRaces.elf);
+		public static final Item faelis_nip	 				= new RaceFood("faelis_food", 32, EnumAction.EAT, EntityRaces.faelis);
+		public static final Item fairy_food	 				= new RaceFood("fairy_dew", 16, EnumAction.DRINK, EntityRaces.fairy);
+		public static final Item goblin_soup	 			= new RaceFood("goblin_soup", 32, EnumAction.DRINK, EntityRaces.goblin);
+		public static final Item titan_spirit	 			= new RaceFood("titan_spirit", 32, EnumAction.DRINK, EntityRaces.titan);
+		public static final Item dragon_gem	 				= new RaceFood("dragon_gem", 32, EnumAction.EAT, EntityRaces.dragon);
 		public static final Item mana_candy					= new Mana_Candy("mana_candy");
 		public static final Item mana_crystal				= new Mana_Crystal("mana_crystal");
 		public static final Item mana_reagent				= new Mana_Reagent("mana_reagent");
+		public static final Item restore_Item				= new Restore_Item("restoration_serum");
 
 	}
 
@@ -167,11 +165,11 @@ public class ModItems {
 		public static final Item TrinketInertiaNull 	= new TrinketInertiaNull(InertiaNull);
 		public static final Item TrinketGreaterInertia 	= new TrinketGreaterInertia(GreaterInertia);
 		public static final Item TrinketGlowRing		= new TrinketGlowRing(GlowRing);
-		public static final Item TrinketSea 			= new TrinketSea(Sea);
+		public static final Item TrinketSea 			= new TrinketSeaStone(Sea);
 		public static final Item TrinketPolarized 		= new TrinketPolarized(Polarized);
 		public static final Item TrinketDragonsEye 		= new TrinketDragonsEye(DragonsEye);
 		public static final Item TrinketWitherRing 		= new TrinketWitherRing(WitherRing);
-		public static final Item TrinketPoison 			= new TrinketPoison(Poison);
+		public static final Item TrinketPoison 			= new TrinketPoisonStone(Poison);
 		public static final Item TrinketEnderTiara 		= new TrinketEnderTiara(EnderTiara);
 		public static final Item TrinketDamageShield	= new TrinketDamageShield(DamageShield);
 		public static final Item TrinketArcingOrb		= new TrinketArcingOrb(ArcingOrb);

@@ -3,6 +3,7 @@ package xzeroair.trinkets.client.model;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -28,7 +29,8 @@ public class Wings extends ModelBase {
 		RightWing.setRotationPoint(-2.0F, 1.0F, 2.0F);
 		RightWing.addBox(0.0F, -2.0F, 0.0F, 0, 16, 8, 0.0F);
 		LeftWing = new ModelRenderer(this, 0, 0);
-		LeftWing.mirror = true;
+		// TODO Mirror Caused Visual Bugs?
+		//		LeftWing.mirror = true;
 		LeftWing.setRotationPoint(1.0F, 1.0F, 2.0F);
 		LeftWing.addBox(0.0F, -2.0F, 0.0F, 0, 16, 8, 0.0F);
 
@@ -37,10 +39,12 @@ public class Wings extends ModelBase {
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 
+		GlStateManager.pushMatrix();
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 		RightWing.render(scale);
 		LeftWing.render(scale);
+		GlStateManager.popMatrix();
 	}
 
 	public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {

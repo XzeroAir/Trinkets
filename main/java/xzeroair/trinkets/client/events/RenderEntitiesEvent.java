@@ -6,8 +6,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -22,17 +24,17 @@ public class RenderEntitiesEvent {
 	@SubscribeEvent
 	public void renderPlayerPre(RenderPlayerEvent.Pre event) {
 		final EntityPlayer player = event.getEntityPlayer();
-		EntityProperties cap = Capabilities.getEntityRace(player);
+		final EntityProperties cap = Capabilities.getEntityRace(player);
 		//		System.out.println(Minecraft.getMinecraft().currentScreen);
 		if (cap != null) {
-			int size = cap.getSize();
-			float scale = size * 0.01F;
+			final int size = cap.getSize();
+			final float scale = size * 0.01F;
 			GlStateManager.pushMatrix();
-			GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+			final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 			if ((player == Minecraft.getMinecraft().player) && (screen != null) && !((screen instanceof GuiChat) || (screen instanceof GuiEntityProperties) || (screen instanceof ManaHud))) {
 				return;
 			}
-			float W = 1F;
+			final float W = 1F;
 			if (cap.isTransforming()) {
 				//				if ((Loader.isModLoaded("artemislib")) && TrinketsConfig.compat.artemislib) {
 				//					scale = (size * 0.01F) * 0.5F;
@@ -58,16 +60,20 @@ public class RenderEntitiesEvent {
 					GlStateManager.translate((event.getX() / scale) - event.getX(), (event.getY() / scale) - event.getY(), (event.getZ() / scale) - event.getZ());
 				}
 			}
-			cap.getRaceProperties().doRenderPlayerPre(event);
+			cap.getRaceProperties().doRenderPlayerPre(player, event.getX(), event.getY(), event.getZ(), event.getRenderer(), event.getPartialRenderTick());
 		}
+		//		boolean moving = ((player.getHorizontalFacing().getDirectionVec().getX() * player.motionX) > 0) || ((player.getHorizontalFacing().getDirectionVec().getZ() * player.motionZ) > 0);
+		//		if (moving && (player.isInWater() || player.isInLava())) {
+		//			GlStateManager.translate(0, -(cap.getHeight() / 2), 0);
+		//		}
 	}
 
 	@SubscribeEvent
 	public void renderPlayerPost(RenderPlayerEvent.Post event) {
 		final EntityPlayer player = event.getEntityPlayer();
-		EntityProperties cap = Capabilities.getEntityRace(player);
+		final EntityProperties cap = Capabilities.getEntityRace(player);
 		if (cap != null) {
-			cap.getRaceProperties().doRenderPlayerPost(event);
+			cap.getRaceProperties().doRenderPlayerPost(player, event.getX(), event.getY(), event.getZ(), event.getRenderer(), event.getPartialRenderTick());
 			GlStateManager.popMatrix();
 		}
 	}
@@ -76,7 +82,7 @@ public class RenderEntitiesEvent {
 	public void onRenderSpecialPre(RenderLivingEvent.Specials.Pre event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) event.getEntity();
-			EntityProperties cap = Capabilities.getEntityRace(player);
+			final EntityProperties cap = Capabilities.getEntityRace(player);
 			if (cap != null) {
 				if (!cap.getCurrentRace().equals(EntityRaces.none)) {
 					GlStateManager.pushMatrix();
@@ -92,7 +98,7 @@ public class RenderEntitiesEvent {
 	public void onRenderSpecialPost(RenderLivingEvent.Specials.Post event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) event.getEntity();
-			EntityProperties cap = Capabilities.getEntityRace(player);
+			final EntityProperties cap = Capabilities.getEntityRace(player);
 			if (cap != null) {
 				cap.getRaceProperties().doRenderLivingSpecialsPost(event);
 				if (!cap.getCurrentRace().equals(EntityRaces.none)) {
@@ -106,7 +112,7 @@ public class RenderEntitiesEvent {
 	public void onRenderLivingPre(RenderLivingEvent.Pre event) {
 		if ((event.getEntity() != null) && !(event.getEntity() instanceof EntityPlayer)) {
 			final EntityLivingBase entity = event.getEntity();
-			EntityProperties cap = Capabilities.getEntityRace(entity);
+			final EntityProperties cap = Capabilities.getEntityRace(entity);
 			if (cap != null) {
 				final int size = cap.getSize();
 				final float scale = size * 0.01F;
@@ -147,7 +153,7 @@ public class RenderEntitiesEvent {
 	public void onRenderLivingPost(RenderLivingEvent.Post event) {
 		if ((event.getEntity() != null) && !(event.getEntity() instanceof EntityPlayer)) {
 			final EntityLivingBase entity = event.getEntity();
-			EntityProperties cap = Capabilities.getEntityRace(entity);
+			final EntityProperties cap = Capabilities.getEntityRace(entity);
 			if (cap != null) {
 				cap.getRaceProperties().doRenderLivingPost(event);
 				if (!cap.getCurrentRace().equals(EntityRaces.none)) {
@@ -159,6 +165,16 @@ public class RenderEntitiesEvent {
 				}
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public void onRenderHand(RenderHandEvent event) {
+
+	}
+
+	@SubscribeEvent
+	public void onRenderSpecificHand(RenderSpecificHandEvent event) {
+
 	}
 
 }

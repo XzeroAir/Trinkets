@@ -30,10 +30,15 @@ public class ConfigPoisonStone {
 	@LangKey(PREFIX + ".poison")
 	public boolean poison = true;
 
-	@Config.Comment("1 in X chance to Poison an Enemy on Attack for 2 seconds")
+	@Config.Comment("1 in X chance to Poison an Enemy on Attack for 2 seconds, Settings this value to 0 always poisons")
 	@Name("04. Poison Chance")
 	@LangKey(PREFIX + ".poison.chance")
 	public int poison_chance = 5;
+
+	@Config.Comment("")
+	@Name("05. Poison Duration")
+	@LangKey(PREFIX + ".poison.duration")
+	public int poison_duration = 40;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")

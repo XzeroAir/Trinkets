@@ -16,4 +16,9 @@ public class NeutralElement implements IElementInterface {
 		return null;
 	}
 
+	@Override
+	public void elementTick() {
+
+	}
+
 }

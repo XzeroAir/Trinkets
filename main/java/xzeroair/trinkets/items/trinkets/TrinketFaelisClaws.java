@@ -2,25 +2,23 @@ package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
-import xzeroair.trinkets.util.TrinketStatusEffect;
+import xzeroair.trinkets.traits.abilities.AbilityViciousStrike;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Claw;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
+import xzeroair.trinkets.util.helpers.DrawingHelper;
 
 public class TrinketFaelisClaws extends AccessoryBase {
 
@@ -35,29 +33,15 @@ public class TrinketFaelisClaws extends AccessoryBase {
 	}
 
 	@Override
-	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		super.eventPlayerTick(stack, player);
+	public void initAbilities(EntityLivingBase entity) {
+		if (serverConfig.bleed) {
+			this.addAbility(entity, Abilities.viciousStrike, new AbilityViciousStrike());
+		}
 	}
 
 	@Override
-	public void eventLivingHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-		EntityProperties prop = Capabilities.getEntityRace(player);
-		if ((prop != null)) {
-			EntityProperties p = Capabilities.getEntityRace(event.getEntityLiving());
-			if ((p != null)) {
-				boolean faelis = prop.getCurrentRace().equals(EntityRaces.faelis);
-				int duration = (int) (faelis ? serverConfig.duration : serverConfig.duration * 0.33);
-				int level = 1;//faelis ? 2 : 1;
-				if (Loader.isModLoaded("lycanitesmobs")) {
-					LycanitesCompat.applyEffect(event.getEntityLiving(), "bleed", duration, 0);
-				} else {
-					if (!p.getStatusHandler().getActiveEffects().containsKey(StatusEffectsEnum.bleed.getName())) {
-						TrinketStatusEffect effect = new TrinketStatusEffect(StatusEffectsEnum.bleed, duration, level, player);
-						p.getStatusHandler().apply(effect);
-					}
-				}
-			}
-		}
+	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
+		super.eventPlayerTick(stack, player);
 	}
 
 	@Override
@@ -76,30 +60,34 @@ public class TrinketFaelisClaws extends AccessoryBase {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/claws.png");
+
 	@Override
-	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, float partialTicks, float scale, boolean isTrinket) {
+	@SideOnly(Side.CLIENT)
+	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isTrinket) {
 		if (!clientConfig.doRender) {
 			return;
 		}
-		float offsetX = -0.66F;
-		float offsetY = -0.031F;
-		float offsetZ = 0.11F;
-		float bS = 4f;
+
+		final float offsetX = isSlim ? -12.4F : -18.6F;
+		final float offsetY = 61F;
+		final float offsetZ = -21F;
+		final float bS = 0.16f;
 		GlStateManager.pushMatrix();
+		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		if (player.isSneaking()) {
 			GlStateManager.translate(0F, 0.2F, 0F);
 		}
 		renderer.getMainModel().bipedLeftArm.postRender(scale);
-		GlStateManager.rotate(90F, 1F, 0F, 0F);
-		GlStateManager.rotate(90F, 0F, 1F, 0F);
-		GlStateManager.rotate(180F, 0F, 0F, 1F);
-		GlStateManager.translate(offsetX, -offsetY, offsetZ);
 		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
-		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
+		GlStateManager.translate(-offsetX, offsetY, offsetZ);
+		GlStateManager.rotate(-90F, 0F, 1F, 0F);
+		DrawingHelper.Draw(0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32);
 		GlStateManager.popMatrix();
 
 		GlStateManager.pushMatrix();
@@ -107,13 +95,10 @@ public class TrinketFaelisClaws extends AccessoryBase {
 			GlStateManager.translate(0F, 0.2F, 0F);
 		}
 		renderer.getMainModel().bipedRightArm.postRender(scale);
-		GlStateManager.rotate(90F, 1F, 0F, 0F);
-		GlStateManager.rotate(90F, 0F, 1F, 0F);
-		GlStateManager.rotate(180F, 0F, 0F, 1F);
-		GlStateManager.translate(offsetX, -offsetY, offsetZ);
-		GlStateManager.translate(0, 0, -0.22F);
 		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
-		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
+		GlStateManager.translate(offsetX, offsetY, offsetZ);
+		GlStateManager.rotate(-90F, 0F, 1F, 0F);
+		DrawingHelper.Draw(0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32);
 		GlStateManager.popMatrix();
 	}
 

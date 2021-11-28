@@ -3,6 +3,7 @@ package xzeroair.trinkets.races.elf.config;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
+import net.minecraftforge.common.config.Config.RangeInt;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
@@ -19,6 +20,35 @@ public class ElfConfig {
 	@Name("02. Charge Shot Cost")
 	@LangKey(PREFIX + ".chargeshot.cost")
 	public float CS_Cost = 20f;
+
+	@Config.Comment("If a fully charged shot should explode on impact causing splash damage")
+	@Name("03. Full Charge Explodes")
+	@LangKey(PREFIX + ".chargeshot.explode")
+	public boolean explode = true;
+
+	@Config.Comment("")
+	@Name("04. Max Charge Time")
+	@LangKey(PREFIX + ".chargeshot.max.time")
+	@RangeInt(min = 12, max = 72000)
+	public int ChargeTime = 120;
+
+	// THis isn't setup to do anything, it's also not going to be possible to do this, I need a better way to do the bonus damage
+	@Config.Comment("")
+	@Name("05. Damage Base Multiplier")
+	@LangKey(PREFIX + ".chargeshot.base.multiplier")
+	public float baseMultiplier = 1F;
+
+	@Config.Comment("")
+	@Name("06. Minimum damage Multiplier")
+	@LangKey(PREFIX + ".chargeshot.minimum.damage.multiplier")
+	public float minimumDamageMultiplier = 10F;
+
+	@Config.Comment("Used for when a mod bow is not working properly with Charged Shot")
+	@Name("7. Bow Blacklist")
+	@LangKey(PREFIX + ".chargeshot.bow.blacklist")
+	public String[] bowBlacklist = new String[] {
+			"*:*crossbow*"
+	};
 
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")
@@ -69,10 +99,10 @@ public class ElfConfig {
 		private final int		reachOperation = 0;
 		private final boolean	jump = false;
 		private final double	jumpAmount = 0;
-		private final int		jumpOperation = 2;
+		private final int		jumpOperation = 1;
 		private final boolean	stepHeight = false;
 		private final double	stepHeightAmount = 0;
-		private final int		stepHeightOperation = 2;
+		private final int		stepHeightOperation = 1;
 
 
 		@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})

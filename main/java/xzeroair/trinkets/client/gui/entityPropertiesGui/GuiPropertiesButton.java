@@ -2,7 +2,6 @@ package xzeroair.trinkets.client.gui.entityPropertiesGui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -18,22 +17,29 @@ public class GuiPropertiesButton extends GuiButton {
 		final boolean flag = mc.player.getRecipeBook().isGuiOpen();
 		final boolean pressed = flag ? false : super.mousePressed(mc, mouseX, mouseY);
 		if (pressed) {
-			if (id == 1) {
-				mc.player.openGui(Trinkets.instance, 1, mc.player.world, 0, 0, 0);
-			}
+			//			if (id == 1) {
+			//				mc.player.openGui(Trinkets.instance, 1, mc.player.world, 0, 0, 0);
+			//			}
+			//			if (id == 2) {
+			//				mc.player.openGui(Trinkets.instance, 3, mc.player.world, 0, 0, 0);
+			//			}
+			//			if (id == 3) {
+			//				mc.player.openGui(Trinkets.instance, 2, mc.player.world, 0, 0, 0);
+			//		}
 		}
 		return pressed;
+
 	}
 
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible && !mc.player.getRecipeBook().isGuiOpen()) {
 			int k = this.getHoverState(hovered);
-			if (id == 2) {
+			if (id == 4) {
 				EntityProperties properties = Capabilities.getEntityRace(mc.player);
 				displayString = "" + properties.showTraits();
 			}
-			if (id == 4) {
+			if (id == 3) {
 				if (TrinketsConfig.CLIENT.MPBar.mana_horizontal) {
 					displayString = "H";
 				} else {

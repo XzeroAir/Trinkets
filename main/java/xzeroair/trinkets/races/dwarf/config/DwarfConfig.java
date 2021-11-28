@@ -103,40 +103,40 @@ public class DwarfConfig {
 
 		private final boolean 	armor = false;
 		private final double 	armorAmount = 0;
-		private final int		armorOperation = 2;
+		private final int		armorOperation = 1;
 		private final boolean 	attackSpeed = true;
 		private final double 	attackSpeedAmount = -0.25D;
 		private final int		attackSpeedOperation = 2;
 		private final boolean 	damage = true;
 		private final double 	damageAmount = 0.25D;
-		private final int		damageOperation = 2;
+		private final int		damageOperation = 1;
 		private final boolean 	health = true;
 		private final double 	healthAmount = -0.3D;
-		private final int		healthOperation = 2;
+		private final int		healthOperation = 1;
 		private final boolean 	knockback = true;
 		private final double 	knockbackAmount = 0.2;
-		private final int		knockbackOperation = 2;
+		private final int		knockbackOperation = 1;
 		private final boolean 	speed = true;
 		private final double 	speedAmount = -0.25D;
-		private final int		speedOperation = 2;
+		private final int		speedOperation = 1;
 		private final boolean 	swimSpeed = false;
 		private final double 	swimSpeedAmount = 0;
-		private final int		swimSpeedOperation = 2;
+		private final int		swimSpeedOperation = 1;
 		private final boolean 	toughness = true;
 		private final double 	toughnessAmount = 0.25D;
 		private final int		toughnessOperation = 2;
 		private final boolean	luck = false;
 		private final double	luckAmount = 0;
-		private final int		luckOperation = 2;
+		private final int		luckOperation = 1;
 		private final boolean	reach = false;
 		private final double	reachAmount = 0;
-		private final int		reachOperation = 2;
+		private final int		reachOperation = 1;
 		private final boolean	jump = false;
 		private final double	jumpAmount = 0;
-		private final int		jumpOperation = 2;
+		private final int		jumpOperation = 1;
 		private final boolean	stepHeight = false;
 		private final double	stepHeightAmount = 0;
-		private final int		stepHeightOperation = 2;
+		private final int		stepHeightOperation = 1;
 
 
 		@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})

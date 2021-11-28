@@ -31,12 +31,14 @@ public class ConfigDragonsEye {
 		@Name("Generate Block List")
 		private boolean generate = false;
 
+		@Config.RequiresWorldRestart
 		@Config.Comment("Find the Closest Block to the player. False to Compile a list of all nearby")
 		@Config.Name("Find Closest")
 		@LangKey(PREFIX + ".orefinder.blocks.closest")
 		public boolean closest = true;
 
-		@Config.RequiresMcRestart
+//		@Config.RequiresMcRestart
+		@Config.RequiresWorldRestart
 		@Config.Comment({
 				"Accepts:",
 				"oreDictionary Names, example: oreCoal",
@@ -46,15 +48,15 @@ public class ConfigDragonsEye {
 		@Name("Ore Blocks The Dragon's Eye can See")
 		@LangKey(PREFIX + ".orefinder.blocks.list")
 		public String[] Blocks = new String[] {
-				"oreCoal",
-				"oreIron",
-				"oreGold",
-				"oreLapis",
-				"oreRedstone",
-				"oreDiamond",
-				"oreEmerald",
-				"oreQuartz",
-				"minecraft:chest"
+				"oreCoal;4605510",
+				"oreIron;16764057",
+				"oreGold;16766720",
+				"oreLapis;2515356",
+				"oreRedstone;11546150",
+				"oreDiamond;59135",
+				"oreEmerald;65357",
+				"oreQuartz;15461355",
+				"minecraft:chest;*;16766720"
 		};
 
 		@Config.Comment("WARNING! SETTING THESE VALUES TOO HIGH WILL CAUSE YOU TO LAG. Try to Keep within a range of 4-16")
@@ -79,10 +81,6 @@ public class ConfigDragonsEye {
 			public int C001_HD = 12;
 		}
 	}
-
-	@Name("02. Prevent Blindess")
-	@LangKey(PREFIX + ".blindness")
-	public boolean prevent_blindness = true;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
