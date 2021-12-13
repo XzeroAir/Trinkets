@@ -127,10 +127,12 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 		}
 		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
 		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		ears.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1F);
 		GlStateManager.enableLighting();
+		GlStateManager.enableCull();
 		GlStateManager.disableBlend();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.popMatrix();

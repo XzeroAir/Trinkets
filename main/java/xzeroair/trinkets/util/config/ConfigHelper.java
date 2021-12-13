@@ -407,4 +407,73 @@ public class ConfigHelper {
 		}
 	}
 
+	public static AttributeHolder parseAttributeConfig(String attribute) {
+		try {
+			final String[] itemConfig = attribute.replace("|", ";").trim().split(";");
+			final String attributeName = CallHelper.getStringFromArray(itemConfig, 0);
+			final String attributeValue = CallHelper.getStringFromArray(itemConfig, 1);
+			final String attributeOperation = CallHelper.getStringFromArray(itemConfig, 2);
+			final String attributeSaved = CallHelper.getStringFromArray(itemConfig, 3);
+
+			final String name = "";
+			double amount = 0;
+			int operation = 0;
+			boolean isSaved = true;
+			if (!attributeName.isEmpty()) {
+				if (!attributeValue.isEmpty()) {
+					final String value = attributeValue.replaceAll("[^.\\d]", "");
+					if (!value.isEmpty()) {
+						amount = Double.parseDouble(value);
+					}
+				}
+				if (!attributeOperation.isEmpty()) {
+					final String value = attributeOperation.replaceAll("[^\\d]", "");
+					if (!value.isEmpty()) {
+						operation = Integer.parseInt(value);
+					} else {
+						if (attributeOperation.equalsIgnoreCase("multiply")) {
+							operation = 2;
+						} else if (attributeOperation.equalsIgnoreCase("multiply_base")) {
+							operation = 1;
+						} else {
+
+						}
+					}
+				}
+				if (!attributeSaved.isEmpty()) {
+					if (attributeSaved.equalsIgnoreCase("false")) {
+						isSaved = false;
+					}
+				}
+
+				if (operation < 0) {
+					operation = 0;
+				}
+				if (operation > 2) {
+					operation = 2;
+				}
+				return new AttributeHolder(name, amount, operation, isSaved);
+			} else {
+				return null;
+			}
+		} catch (final Exception e) {
+			Trinkets.log.error("Failed to get ConfigObject: " + attribute);
+			return null;
+		}
+	}
+
+	public static class AttributeHolder {
+		private String name;
+		private double amount;
+		private int operation;
+		private boolean isSaved;
+
+		public AttributeHolder(String name, double amount, int operation, boolean isSaved) {
+			this.name = name;
+			this.amount = amount;
+			this.operation = operation;
+			this.isSaved = isSaved;
+		}
+	}
+
 }

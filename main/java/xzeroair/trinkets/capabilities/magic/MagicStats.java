@@ -40,9 +40,9 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 
 	@Override
 	public NBTTagCompound getTag() {
-		if (object.getEntityData() != null) {
-			tag = object.getEntityData();
-		}
+		//		if (object.getEntityData() != null) {
+		//			tag = object.getEntityData();
+		//		}
 		return super.getTag();
 	}
 

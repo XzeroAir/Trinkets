@@ -122,7 +122,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		}
 
 		final double x = -12;
-		final double y = -18;
+		final double y = isSlim ? -19 : -20;
 		final double z = 0;
 		final int width = 8;
 		final int height = 32;
@@ -144,14 +144,13 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		final int outerVHeight = 64;
 		final int outerTexWidth = 64;
 		final int outerTexHeight = 64;
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
-		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
-		GlStateManager.scale(0.8, 0.8, 0.8);
-
+		GlStateManager.pushMatrix();
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
+		GlStateManager.scale(0.9, 0.9, 0.9);
 		GlStateManager.rotate((float) frames[angleTick][0], 0, 1, 0);
 		//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
 		//			GlStateManager.rotate((float) -frames[angleTick][3], 1, 0, 0);
@@ -167,6 +166,8 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		GlStateManager.popMatrix();
 
 		GlStateManager.pushMatrix();
+		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
+		GlStateManager.scale(0.9, 0.9, 0.9);
 		GlStateManager.rotate((float) -frames[angleTick][0], 0, 1, 0);
 		//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
 		//			GlStateManager.rotate((float) frames[angleTick][3], 1, 0, 0);
@@ -182,6 +183,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		GlStateManager.popMatrix();
 
 		GlStateManager.enableLighting();
+		GlStateManager.enableCull();
 		GlStateManager.disableBlend();
 		//			armSwing = flap;
 		GlStateManager.color(1, 1, 1, 1);

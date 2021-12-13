@@ -110,9 +110,9 @@ public class TrinketsConfig {
 			//			public double translatedY = 0;
 
 			@Name("09. Width")
-			public int width = 104;
+			public int width = 106;
 			@Name("10. Height")
-			public int height = 14;
+			public int height = 16;
 
 		}
 

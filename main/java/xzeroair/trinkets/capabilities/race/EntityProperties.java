@@ -91,10 +91,10 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
 	@Override
 	public NBTTagCompound getTag() {
-		if (object.getEntityData() != null) {
-			tag = object.getEntityData();
-			return tag;
-		}
+		//		if (object.getEntityData() != null) {
+		//			tag = object.getEntityData();
+		//			return tag;
+		//		}
 		return super.getTag();
 	}
 
@@ -206,57 +206,6 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 			sync = false;
 		}
 		abilities.tickAbilities(object);
-		if (object instanceof EntityPlayer) {
-			//			for (final IAbilityInterface ability : abilities.getAbilitiesList()) {
-			//				System.out.println(ability.getName());
-			//			}
-			//			if (object.getEntityWorld().isRemote) {
-			//				final boolean hasItem = TrinketHelper.AccessoryCheck(object, ModItems.RaceTrinkets.TrinketFaelisRing);
-			//				System.out.println(hasItem);
-			//			}
-			//			try {
-			//
-			//				final int t = this.getTargetSize();
-			//				final int s = this.getSize();
-			//				final boolean tr = current.equals(EntityRaces.none);//this.isTransforming() || this.isTransformed();
-			//				//				System.out.println(current.getName() + " | " + imbued.getName());
-			//				int ta = t - s;
-			//				if (s < 100) {
-			//					ta = 100 - s;
-			//				} else if (s == 100) {
-			//					ta = 100;
-			//				} else {
-			//					ta = 100 - s;
-			//				}
-			//				if (ta < 0) {
-			//					ta = -ta;
-			//				}
-			//				int st = 100;//t >= 100 ? t - 100 : 100 - t;
-			//				// st is the static difference between the old target size, and current target size
-			//				if (t < 100) {
-			//					st = 100 - t; // if less then zero reverse it so it's a positive number
-			//				} else if (t == 100) {
-			//					st = 100; // if it's zero, set it to 100 so we don't end up dividing by zero
-			//				} else {
-			//					st = t - 100;
-			//				}
-			//				final float a = ta < st ? st - ta : ta - 100;
-			//
-			//				//				System.out.println(a + " | " + ta + " | " + st);
-			//				/*
-			//				 * if target > 100 then target - 100, if target < 100 then 100 - target
-			//				 */
-			//				//				float a = t >= s ? ((s * 1F) / (t * 1F)) : ((t * 1F) / (s * 1F));
-			//				//				float a = t < s ? ((st * 1F) / (ta * 1F)) : ((ta * 1F) / (st * 1F));
-			//				//				float a = t < s ? ((ta * 1F) / (st * 1F)) : ((st * 1F) / (ta * 1F));
-			//				//		attributes.addAttributes((properties.getSize() * 100) / 100);
-			//				final float percent = this.isTransformed() ? 1F : a;//(ta * 1F) / (st * 1F);//(properties.getSize() * 1) * 0.01F;
-			//				//				System.out.println(percent + " | Size:" + s + " | Target:" + t);
-			//				//				System.out.println(ta + " | " + st + " | " + percent);
-			//			} catch (final Exception e) {
-			//				System.out.println("Whoops");
-			//			}
-		}
 	}
 
 	public KeybindHandler getKeybindHandler() {

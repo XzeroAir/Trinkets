@@ -53,30 +53,6 @@ public class ConfigTeddyBear {
 
 	public class Compatability {
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
-
-		public class TANCompat {
-
-		}
-
-		public LycanitesCompat lycanites = new LycanitesCompat();
-
-		public class LycanitesCompat {
-
-			public boolean preventFear = true;
-
-		}
-
-		public ParasitesCompat parasites = new ParasitesCompat();
-
-		public class ParasitesCompat {
-
-			public boolean preventFear = true;
-
-		}
-
 		@Name("Baubles Compatability")
 		@Config.Comment({
 				"If the mod Baubles is installed what bauble slot should it use",
@@ -93,42 +69,42 @@ public class ConfigTeddyBear {
 		public BaubleCompat baubles = new BaubleCompat("trinket");
 	}
 
-	private final boolean armor = false;
-	private final double armorAmount = 0;
-	private final int armorOperation = 0;
-	private final boolean attackSpeed = false;
-	private final double attackSpeedAmount = 0;
-	private final int attackSpeedOperation = 0;
-	private final boolean damage = false;
-	private final double damageAmount = 0;
-	private final int damageOperation = 0;
-	private final boolean health = false;
-	private final double healthAmount = 0;
-	private final int healthOperation = 0;
-	private final boolean knockback = false;
-	private final double knockbackAmount = 0;
-	private final int knockbackOperation = 0;
-	private final boolean speed = false;
-	private final double speedAmount = 0;
-	private final int speedOperation = 0;
-	private final boolean swimSpeed = false;
-	private final double swimSpeedAmount = 0;
-	private final int swimSpeedOperation = 0;
-	private final boolean toughness = false;
-	private final double toughnessAmount = 0;
-	private final int toughnessOperation = 0;
-	private final boolean luck = false;
-	private final double luckAmount = 0;
-	private final int luckOperation = 0;
-	private final boolean reach = false;
-	private final double reachAmount = 0;
-	private final int reachOperation = 0;
-	private final boolean jump = false;
-	private final double jumpAmount = 0;
-	private final int jumpOperation = 0;
-	private final boolean stepHeight = false;
-	private final double stepHeightAmount = 0;
-	private final int stepHeightOperation = 0;
+	protected final boolean armor = false;
+	protected final double armorAmount = 0;
+	protected final int armorOperation = 0;
+	protected final boolean attackSpeed = false;
+	protected final double attackSpeedAmount = 0;
+	protected final int attackSpeedOperation = 0;
+	protected final boolean damage = false;
+	protected final double damageAmount = 0;
+	protected final int damageOperation = 0;
+	protected final boolean health = false;
+	protected final double healthAmount = 0;
+	protected final int healthOperation = 0;
+	protected final boolean knockback = false;
+	protected final double knockbackAmount = 0;
+	protected final int knockbackOperation = 0;
+	protected final boolean speed = false;
+	protected final double speedAmount = 0;
+	protected final int speedOperation = 0;
+	protected final boolean swimSpeed = false;
+	protected final double swimSpeedAmount = 0;
+	protected final int swimSpeedOperation = 0;
+	protected final boolean toughness = false;
+	protected final double toughnessAmount = 0;
+	protected final int toughnessOperation = 0;
+	protected final boolean luck = false;
+	protected final double luckAmount = 0;
+	protected final int luckOperation = 0;
+	protected final boolean reach = false;
+	protected final double reachAmount = 0;
+	protected final int reachOperation = 0;
+	protected final boolean jump = false;
+	protected final double jumpAmount = 0;
+	protected final int jumpOperation = 0;
+	protected final boolean stepHeight = false;
+	protected final double stepHeightAmount = 0;
+	protected final int stepHeightOperation = 0;
 
 	@Config.Comment({ "For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute" })
 	@Name("Attributes")

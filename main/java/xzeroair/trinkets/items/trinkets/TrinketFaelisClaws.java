@@ -79,7 +79,10 @@ public class TrinketFaelisClaws extends AccessoryBase {
 		final float offsetZ = -21F;
 		final float bS = 0.16f;
 		GlStateManager.pushMatrix();
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.disableCull();
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+		GlStateManager.pushMatrix();
 		if (player.isSneaking()) {
 			GlStateManager.translate(0F, 0.2F, 0F);
 		}
@@ -99,6 +102,8 @@ public class TrinketFaelisClaws extends AccessoryBase {
 		GlStateManager.translate(offsetX, offsetY, offsetZ);
 		GlStateManager.rotate(-90F, 0F, 1F, 0F);
 		DrawingHelper.Draw(0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32);
+		GlStateManager.popMatrix();
+		GlStateManager.enableCull();
 		GlStateManager.popMatrix();
 	}
 

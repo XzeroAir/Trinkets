@@ -39,9 +39,9 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 
 	@Override
 	public NBTTagCompound getTag() {
-		if (object.getTagCompound() != null) {
-			return object.getTagCompound();
-		}
+		//		if (object.getTagCompound() != null) {
+		//			return object.getTagCompound();
+		//		}
 		return super.getTag();
 	}
 

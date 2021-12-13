@@ -16,25 +16,37 @@ public class UpdatingAttribute {
 	private final String id = Reference.MODID + ".";
 	private EntityLivingBase entity;
 	private String name;
+	private String attribute;
 	private UUID uuid;
-	private IAttribute attrib;
 	private double amount;
 	private int operation;
+	private boolean isSavedInNBT;
 
 	public UpdatingAttribute(EntityLivingBase entity, UUID uuid, IAttribute attribute) {
+		this(uuid, attribute);
 		this.entity = entity;
-		name = id + attribute.getName();
-		this.uuid = uuid;
-		attrib = attribute;
 	}
 
 	public UpdatingAttribute(UUID uuid, IAttribute attribute) {
-		name = id + attribute.getName();
+		this(Reference.MODID + "." + attribute.getName(), uuid, attribute.getName());
+	}
+
+	public UpdatingAttribute(String name, UUID uuid, String attributeName) {
+		this.name = name;
 		this.uuid = uuid;
-		attrib = attribute;
+		attribute = attributeName;
+		isSavedInNBT = true;
+	}
+
+	public UpdatingAttribute setSavedInNBT(boolean isSavedInNBT) {
+		this.isSavedInNBT = isSavedInNBT;
+		return this;
 	}
 
 	private AttributeModifier createModifier(double amount, int operation) {
+		if (!isSavedInNBT) {
+			return new AttributeModifier(uuid, name, amount, operation).setSaved(false);
+		}
 		return new AttributeModifier(uuid, name, amount, operation);
 	}
 
@@ -47,21 +59,21 @@ public class UpdatingAttribute {
 		if (entity == null) {
 			return;
 		}
-		final IAttributeInstance AttributeInstance = entity.getEntityAttribute(attrib);//.getAttributeMap().getAttributeInstance(attrib);
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);
 		if ((AttributeInstance == null) || (uuid.compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0)) {
 			return;
 		}
 		if ((AttributeInstance.getModifier(uuid) != null)) {
-			AttributeModifier m = AttributeInstance.getModifier(uuid);
+			final AttributeModifier m = AttributeInstance.getModifier(uuid);
 			if ((m.getAmount() != amount) || (m.getOperation() != operation)) {
 				this.removeModifier();
 			}
 		}
 		if (amount != 0) {
 			if (AttributeInstance.getModifier(uuid) == null) {
-				if (attrib == SharedMonsterAttributes.MAX_HEALTH) {
+				if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
 					final AttributeModifier modifier = this.createModifier(amount, operation);
-					float Health = entity.getHealth();
+					final float Health = entity.getHealth();
 					AttributeInstance.applyModifier(modifier);
 					//					if (!entity.world.isRemote) {
 					//					if (Health > AttributeInstance.getAttributeValue()) {
@@ -95,12 +107,12 @@ public class UpdatingAttribute {
 		if (entity == null) {
 			return;
 		}
-		final IAttributeInstance AttributeInstance = entity.getEntityAttribute(attrib);//.getAttributeMap().getAttributeInstance(attrib);
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);
 		if ((AttributeInstance == null) || (AttributeInstance.getModifier(uuid) == null)) {
 			return;
 		}
-		if (attrib == SharedMonsterAttributes.MAX_HEALTH) {
-			float health = entity.getHealth();
+		if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
+			final float health = entity.getHealth();
 			AttributeInstance.removeModifier(uuid);
 			if (health > AttributeInstance.getAttributeValue()) {
 				//				if (!entity.world.isRemote) {
@@ -110,10 +122,8 @@ public class UpdatingAttribute {
 				//			}
 				//							}
 			}
-		} else
-
-		{
-			if (attrib == JumpAttribute.stepHeight) {
+		} else {
+			if (AttributeInstance.getAttribute() == JumpAttribute.stepHeight) {
 				if (entity.stepHeight != AttributeInstance.getBaseValue()) {
 					entity.stepHeight = (float) AttributeInstance.getBaseValue();
 				}

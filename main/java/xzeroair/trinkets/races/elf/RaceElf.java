@@ -33,8 +33,8 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
 	public RaceElf(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.elf);
-		bonusSpeed = new UpdatingAttribute(e, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.MOVEMENT_SPEED);
-		bonusAtkSpeed = new UpdatingAttribute(e, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.ATTACK_SPEED);
+		bonusSpeed = new UpdatingAttribute(UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.MOVEMENT_SPEED);
+		bonusAtkSpeed = new UpdatingAttribute(UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.ATTACK_SPEED);
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public class RaceElf extends EntityRacePropertiesHandler {
 		if (entity.world.getBiome(entity.getPosition()) != null) {
 			final Set<Type> biomeType = BiomeDictionary.getTypes(entity.world.getBiome(entity.getPosition()));
 			if (biomeType.contains(Type.FOREST)) {
-				bonusSpeed.addModifier(0.2, 2);
-				bonusAtkSpeed.addModifier(0.5, 2);
+				bonusSpeed.addModifier(entity, 0.2, 2);
+				bonusAtkSpeed.addModifier(entity, 0.5, 2);
 			} else {
 				bonusSpeed.removeModifier();
 				bonusAtkSpeed.removeModifier();
@@ -87,10 +87,12 @@ public class RaceElf extends EntityRacePropertiesHandler {
 		}
 		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
 		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		ears.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1F);
 		GlStateManager.enableLighting();
+		GlStateManager.enableCull();
 		GlStateManager.disableBlend();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.popMatrix();

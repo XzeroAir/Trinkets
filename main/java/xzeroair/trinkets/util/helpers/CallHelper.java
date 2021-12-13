@@ -95,10 +95,10 @@ public class CallHelper {
 		return false;
 	}
 
-	public static void sendMessageToPlayer(Entity entity, String msg, boolean inChat) {
+	public static void sendMessageToPlayer(Entity entity, String msg, boolean onScreen) {
 		if ((entity instanceof EntityPlayer) && !msg.isEmpty()) {
 			final TextComponentString message = new TextComponentString(msg);
-			((EntityPlayer) entity).sendStatusMessage(message, inChat);
+			((EntityPlayer) entity).sendStatusMessage(message, onScreen);
 		}
 	}
 

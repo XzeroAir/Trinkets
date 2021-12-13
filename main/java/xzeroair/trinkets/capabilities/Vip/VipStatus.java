@@ -38,9 +38,9 @@ public class VipStatus extends CapabilityBase<VipStatus, EntityPlayer> {
 
 	@Override
 	public NBTTagCompound getTag() {
-		if (player.getEntityData() != null) {
-			tag = player.getEntityData();
-		}
+		//		if (player.getEntityData() != null) {
+		//			tag = player.getEntityData();
+		//		}
 		return super.getTag();
 	}
 

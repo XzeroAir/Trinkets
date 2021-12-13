@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
@@ -22,6 +23,7 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -123,6 +125,19 @@ public class CombatHandler extends EventBaseHandler {
 			prop.getRaceProperties().targetedByEnemy(event.getEntityLiving());
 		}
 	}
+
+	//	public static void printDamageSource(Entity entity, DamageSource source, float dmg) {
+	//
+	//		if (source.getImmediateSource() != null) {
+	//			//			final Entity trueAttacker = source.getTrueSource();
+	//			String attacker = "None";
+	//			if (source.getTrueSource() != null) {
+	//				attacker = source.getTrueSource().getName();
+	//			}
+	//			System.out.println(entity.getName() + " is being attacked by");
+	//			System.out.println("Immediate Source: " + source.getImmediateSource().getName() + " | True Source: " + attacker + " | Type: " + source.damageType + " | damage: " + dmg);
+	//		}
+	//	}
 
 	// First Attempt at Attack
 	@SubscribeEvent
@@ -373,11 +388,15 @@ public class CombatHandler extends EventBaseHandler {
 	public void onDeathEvent(LivingDeathEvent event) {
 		final DamageSource source = event.getSource();
 		final EntityLivingBase attacked = event.getEntityLiving();
+		if ((attacked instanceof EntityPlayer) && attacked.world.isRemote) {
+			return;
+		}
 		EntityLivingBase attacker = null;
 		if (source.getTrueSource() instanceof EntityLivingBase) {
 			attacker = (EntityLivingBase) source.getTrueSource();
 		}
 		boolean cancel = false;
+
 		// Handle Attacker
 		if (attacker != null) {
 			final EntityProperties prop = Capabilities.getEntityRace(attacker);
@@ -467,6 +486,7 @@ public class CombatHandler extends EventBaseHandler {
 		final Entity attacker = source.getTrueSource();
 		final int lootingLevel = event.getLootingLevel();
 		final List<EntityItem> drops = event.getDrops();
+
 		if (attacker instanceof EntityLivingBase) {
 			final EntityProperties prop = Capabilities.getEntityRace(attacker);
 			if (prop != null) {
@@ -484,11 +504,11 @@ public class CombatHandler extends EventBaseHandler {
 			}
 		}
 	}
+
 	//	// Happens after the Player Dies
-	//	@SubscribeEvent
-	//	public void onPlayerDropEvent(PlayerDropsEvent event) {
-	//
-	//	}
+	@SubscribeEvent
+	public void onPlayerDropEvent(PlayerDropsEvent event) {
+	}
 
 	@SubscribeEvent
 	public void healEvent(LivingHealEvent event) {

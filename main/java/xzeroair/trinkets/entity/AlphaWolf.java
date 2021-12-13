@@ -161,8 +161,8 @@ public class AlphaWolf extends EntityWolf {
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getAttributeMap().registerAttribute(JUMP_STRENGTH);
-		final UpdatingAttribute atkDamage = new UpdatingAttribute(this, UUID.fromString("76c436ad-d830-48ff-8b3c-fa3bcc1891c2"), SharedMonsterAttributes.ATTACK_DAMAGE);
-		atkDamage.addModifier(4, 2);
+		final UpdatingAttribute atkDamage = new UpdatingAttribute(UUID.fromString("76c436ad-d830-48ff-8b3c-fa3bcc1891c2"), SharedMonsterAttributes.ATTACK_DAMAGE);
+		atkDamage.addModifier(this, 4, 2);
 	}
 
 	/**

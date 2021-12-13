@@ -127,6 +127,9 @@ public class EventHandlerClient {
 									final boolean keyDown = (keybind1 == null) || keybind1.isEmpty() ? false : Keyboard.isKeyDown(key1);
 									final boolean auxDown = (keybind2 == null) || keybind2.isEmpty() ? false : Keyboard.isKeyDown(key2);
 									final KeyHandler keyHand = cap.getKeybindHandler().getKeyHandler(ability.getName() + "." + keybind1);
+									//									if (handler instanceof AbilityBlockFinder) {
+									//										System.out.println(keybind1 + " | " + key1 + " | " + keyDown + " | " + (ability.getName() + "." + keybind1) + " | ");
+									//									}
 									if (keyHand != null) {
 										keyHand.handler(
 												keyDown, press -> {

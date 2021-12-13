@@ -51,6 +51,8 @@ public class GuiEntityProperties extends GuiScreen {
 	public int blueSlider = 10;
 	//		public int alphaSlider = 11;
 	public int closeGui = 11;
+	public int traitX = 12;
+	public int traitY = 12;
 
 	protected boolean flip = false;
 
@@ -188,7 +190,7 @@ public class GuiEntityProperties extends GuiScreen {
 		int backHeight = 30;
 		if (properties.getCurrentRace().equals(EntityRaces.dragon) || properties.getCurrentRace().equals(EntityRaces.fairy)) {
 			backHeight = 42;
-			int flying = properties.showTraits() ? 51200 : 13107200;
+			final int flying = properties.showTraits() ? 51200 : 13107200;
 			fontRenderer.drawStringWithShadow("Flying", 17, 62, flying);
 		}
 		DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, backHeight, 0, 0, 0, 0, 0, 0.5F);
@@ -206,7 +208,7 @@ public class GuiEntityProperties extends GuiScreen {
 		GlStateManager.color(1, 1, 1);
 
 		//		float t = 30 / (((30 * (properties.getSize() * 0.001F)) * 100) / 30);//(int) (30 * properties.getSize() * 0.01F);
-		float t = ((30 * 10) / properties.getSize());
+		final float t = ((30 * 10) / properties.getSize());
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.enableBlend();
@@ -243,17 +245,17 @@ public class GuiEntityProperties extends GuiScreen {
 		GlStateManager.translate(posX, posY, 50.0F);
 		GlStateManager.scale((-scale), scale, scale);
 		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-		float f = ent.renderYawOffset;
-		float f1 = ent.rotationYaw;
-		float f2 = ent.rotationPitch;
-		float f3 = ent.prevRotationYawHead;
-		float f4 = ent.rotationYawHead;
+		final float f = ent.renderYawOffset;
+		final float f1 = ent.rotationYaw;
+		final float f2 = ent.rotationPitch;
+		final float f3 = ent.prevRotationYawHead;
+		final float f4 = ent.rotationYawHead;
 		GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
 		RenderHelper.enableStandardItemLighting();
 		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-		float YawOffset = (float) Math.atan(mouseX / 40.0F) * 20.0F;
-		float yaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
+		final float YawOffset = (float) Math.atan(mouseX / 40.0F) * 20.0F;
+		final float yaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
 		ent.renderYawOffset = flip ? -YawOffset : YawOffset;
 		ent.rotationYaw = flip ? -yaw : yaw;
 		ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
@@ -263,7 +265,7 @@ public class GuiEntityProperties extends GuiScreen {
 		if (flip) {
 			GlStateManager.rotate(-180, 0.0F, 1.0F, 0.0F);
 		}
-		RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+		final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
 		rendermanager.setPlayerViewY(180.0F);
 		rendermanager.setRenderShadow(false);
 		rendermanager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
