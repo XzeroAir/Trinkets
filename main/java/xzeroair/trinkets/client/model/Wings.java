@@ -42,8 +42,10 @@ public class Wings extends ModelBase {
 		GlStateManager.pushMatrix();
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
+		GlStateManager.disableCull();
 		RightWing.render(scale);
 		LeftWing.render(scale);
+		GlStateManager.enableCull();
 		GlStateManager.popMatrix();
 	}
 

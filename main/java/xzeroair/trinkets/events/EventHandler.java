@@ -44,6 +44,8 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.ItemObjectHolder;
 import xzeroair.trinkets.util.helpers.CallHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper.PotionHolder;
 
 public class EventHandler extends EventBaseHandler {
 
@@ -514,12 +516,24 @@ public class EventHandler extends EventBaseHandler {
 							final String metaString = CallHelper.getStringFromArray(itemConfig, 1);
 							final String levelString = CallHelper.getStringFromArray(itemConfig, 2);
 							final String durationString = CallHelper.getStringFromArray(itemConfig, 3);
+							//							final PotionHolder potion = PotionHelper.getPotionHolder(milk);
+							//							if (potion.getPotion() != null) {
+							//
+							//							}
 							if (event.getItem().getItem().getRegistryName().toString().equalsIgnoreCase(itemString)) {
 								final int meta = metaString.isEmpty() ? OreDictionary.WILDCARD_VALUE : Integer.parseInt(metaString);
 								final int level = levelString.isEmpty() ? 0 : Integer.parseInt(levelString);
 								final int Iduration = durationString.isEmpty() ? faelisConfig.Invigorated_Duration : Integer.parseInt(durationString);
 								if ((meta == OreDictionary.WILDCARD_VALUE) || (event.getItem().getMetadata() == meta)) {
 									status.apply(new TrinketStatusEffect("Invigorated", Iduration, level, null));
+									if (!entity.world.isRemote) {
+										for (final String potID : faelisConfig.buffs) {
+											final PotionHolder potion = PotionHelper.getPotionHolder(potID);
+											if (potion.getPotion() != null) {
+												entity.addPotionEffect(potion.getPotionEffect());
+											}
+										}
+									}
 								}
 								break;
 							}

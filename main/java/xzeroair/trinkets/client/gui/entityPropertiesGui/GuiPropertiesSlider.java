@@ -33,7 +33,7 @@ public class GuiPropertiesSlider extends GuiButton {
 		this.gui = gui;
 
 		field = gui.colorField;
-		color = gui.color;
+		color = gui.colorHelper;
 
 		this.label = label;
 
@@ -59,7 +59,7 @@ public class GuiPropertiesSlider extends GuiButton {
 
 		{
 
-			FontRenderer fontrenderer = mc.fontRenderer;
+			final FontRenderer fontrenderer = mc.fontRenderer;
 
 			mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
 
@@ -67,7 +67,7 @@ public class GuiPropertiesSlider extends GuiButton {
 
 			hovered = (mouseX >= x) && (mouseY >= y) && (mouseX < (x + width)) && (mouseY < (y + height));
 
-			int k = this.getHoverState(hovered);
+			final int k = this.getHoverState(hovered);
 
 			GlStateManager.enableBlend();
 

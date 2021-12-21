@@ -138,9 +138,15 @@ ability.safe_guard.tooltip2=Can Ignore Damage every $sohcount: Hits
 ability.firstaid_reflex.name=Fast Reflexes
 ability.firstaid_reflex.tooltip1=Chance to Ignore Fatal Headshots
 
+damagetype.xat.water=water
+death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
+
 xat.jump=Jump
 xat.stepheight=Step Height
 xat.entityMagic.regen=MP Regen
+attribute.name.xat.jump=Jump
+attribute.name.xat.stepheight=Step Height
+attribute.name.xat.entityMagic.regen=MP Regen
 
 ####################################Materials####################################
 

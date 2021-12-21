@@ -47,42 +47,41 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 
 	@Override
 	public void whileTransformed() {
+		if (entity.world.isRemote) {
+			return;
+		}
+		boolean hasMilkBuff = false;
 		if (TrinketsConfig.SERVER.races.faelis.penalties) {
 			double amount = 0;
 			final double weight = serverConfig.penalty_amount;//0.0125;
+			final StatusHandler status = Capabilities.getStatusHandler(entity);
+			if (status != null) {
+				if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
+					hasMilkBuff = true;
+				} else {
+					hasMilkBuff = false;
+				}
+			}
 			try {
 				for (final ItemStack stack : entity.getArmorInventoryList()) {
 					if (!stack.isEmpty() && (stack.getItem() instanceof ItemArmor)) {
-						//						final ItemArmor armor = (ItemArmor) stack.getItem();
-						//						final ArmorMaterial mat = armor.getArmorMaterial();
-						//						if (!(mat.equals(ArmorMaterial.LEATHER)
-						//								|| mat.toString().toLowerCase().contains("silk")
-						//								|| mat.toString().toLowerCase().contains("wool")
-						//								|| mat.toString().toLowerCase().contains("cloth")
-						//								|| mat.toString().toLowerCase().contains("manaweave"))) {
-						//							amount -= weight;
-						//						}
-						if (!entity.world.isRemote) {
-							amount -= ConfigHelper.parseItemArmor(stack, serverConfig.heavyArmor);
-						}
+						final double w = ConfigHelper.parseItemArmor(stack, serverConfig.heavyArmor);
+						amount -= w == 0 ? weight : w;
 					}
 				}
 			} catch (final Exception e) {
 			}
 
-			if (amount != 0) {
-				final StatusHandler status = Capabilities.getStatusHandler(entity);
-				if (status != null) {
-					if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
-						amount = 0;
-						movement.removeModifier(entity);
-						jump.removeModifier(entity);
-					} else {
-						movement.addModifier(entity, amount, 2);
-						jump.addModifier(entity, amount, 2);
-					}
-				}
+			if ((amount != 0) && !hasMilkBuff) {
+				movement.addModifier(entity, amount, 2);
+				jump.addModifier(entity, amount, 2);
+			} else {
+				movement.removeModifier(entity);
+				jump.removeModifier(entity);
 			}
+		} else {
+			movement.removeModifier(entity);
+			jump.removeModifier(entity);
 		}
 	}
 

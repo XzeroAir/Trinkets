@@ -212,10 +212,11 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 				final int texWidth = 36;
 				final int texHeight = 42;
 
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+				GlStateManager.disableLighting();
+				GlStateManager.disableCull();
 				GlStateManager.enableBlend();
+				GlStateManager.pushMatrix();
 				GlStateManager.rotate(angle - tick, 0, 1, 0);
 				GlStateManager.translate(-1, 0, 0);
 				GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
@@ -226,9 +227,10 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 				GlStateManager.rotate(-angle + tick, 0, 1, 0);
 				GlStateManager.translate(-1, 0, 0);
 				DrawingHelper.Draw(-x, y, -z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
-				GlStateManager.enableLighting();
-				GlStateManager.disableBlend();
 				GlStateManager.popMatrix();
+				GlStateManager.enableLighting();
+				GlStateManager.enableCull();
+				GlStateManager.disableBlend();
 				armSwing = flap;
 			}
 		}

@@ -44,7 +44,7 @@ public class TrinketsDamageSource extends EntityDamageSource {
 
 	@Override
 	public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn) {
-		return new TextComponentTranslation("damagetype." + damageType);
+		//		return new TextComponentTranslation("damagetype." + damageType);
 		//		ItemStack itemstack = damageSourceEntity instanceof EntityLivingBase ? ((EntityLivingBase) damageSourceEntity).getHeldItemMainhand() : ItemStack.EMPTY;
 		//		String s = "death.attack." + damageType;
 		//		String s1 = s + ".item";
@@ -52,6 +52,14 @@ public class TrinketsDamageSource extends EntityDamageSource {
 		//		boolean flag1 = !itemstack.isEmpty() && itemstack.hasDisplayName() && I18n.canTranslate(s1);
 		//		return flag1 ? new TextComponentTranslation(s1, new Object[] { entityLivingBaseIn.getDisplayName(), source, itemstack.getTextComponent() })
 		//				: new TextComponentTranslation(s, new Object[] { entityLivingBaseIn.getDisplayName(), source });
+		//		final ITextComponent source = new TextComponentTranslation("damagetype." + damageType);
+		//		ItemStack itemstack = damageSourceEntity instanceof EntityLivingBase ? ((EntityLivingBase) damageSourceEntity).getHeldItemMainhand() : ItemStack.EMPTY;
+		final ITextComponent source = new TextComponentTranslation("damagetype." + damageType);
+		final String s = "death.attack." + damageType;
+		//		ITextComponent source = damageSourceEntity.getDisplayName();//damageSourceEntity != null ? damageSourceEntity.getDisplayName() : "Poison";
+		//		boolean flag1 = !itemstack.isEmpty() && itemstack.hasDisplayName() && I18n.canTranslate(s1);
+		return new TextComponentTranslation(s, new Object[] { entityLivingBaseIn.getDisplayName(), source });
+		//		return source;//new TextComponentTranslation(message);
 	}
 
 }

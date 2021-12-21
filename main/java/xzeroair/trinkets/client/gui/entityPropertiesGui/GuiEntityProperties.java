@@ -34,9 +34,10 @@ public class GuiEntityProperties extends GuiScreen {
 
 	public EntityPlayer player;
 	public EntityProperties properties;
-	public GuiTextField colorField;
-	protected GuiPropertiesSlider r, g, b, a;
-	public ColorHelper color;
+	public GuiTextField colorField, colorField2;
+	protected GuiPropertiesSlider r, g, b, a, r2, g2, b2, a2;
+	public ColorHelper colorHelper;
+	public int[] color;
 	public int buttonPressed;
 
 	public int manaBar = 1;
@@ -52,13 +53,18 @@ public class GuiEntityProperties extends GuiScreen {
 	//		public int alphaSlider = 11;
 	public int closeGui = 11;
 	public int traitX = 12;
-	public int traitY = 12;
+	public int traitY = 13;
+	public int traitZ = 14;
+	public int traitWidth = 15;
+	public int redSlider2 = 16;
+	public int greenSlider2 = 17;
+	public int blueSlider2 = 18;
 
 	protected boolean flip = false;
 
 	public GuiEntityProperties(EntityPlayer player) {
 		this.player = player;
-		color = new ColorHelper();
+		colorHelper = new ColorHelper();
 		properties = Capabilities.getEntityRace(player);
 	}
 
@@ -86,23 +92,34 @@ public class GuiEntityProperties extends GuiScreen {
 		int bY = (height - (height / 2));
 		bX -= 30;
 		bY -= (height / 4);
+		this.addButton(new GuiPropertiesButton(flipPlayer, (width / 2) - 30, 0, 60, 20, "Flip")); // Flip Player
+
 		colorField = new GuiTextField(colorFieldID, fontRenderer, bX, bY, 100, 20);
 		colorField.setMaxStringLength(8);
 		colorField.setText(properties.getTraitColor());
-		color.setColor(properties.getTraitColor());
-		this.addButton(new GuiPropertiesButton(flipPlayer, (width / 2) - 30, 0, 60, 20, "Flip")); // Flip Player
+		colorHelper.setColor(properties.getTraitColor());
 		// WAS ID 3
 		this.addButton(new GuiPropertiesButton(resetColor, bX + 102, bY - 1, 20, 20, "R")); // Color Reset
 		bY += 24;
-		r = new GuiPropertiesSlider(this, redSlider, bX, bY, 100, 20, "Red", color.getRed(), 1F, 0F);
+		r = new GuiPropertiesSlider(this, redSlider, bX, bY, 100, 20, "Red", colorHelper.getRed(), 1F, 0F);
 		bY += 20;
-		g = new GuiPropertiesSlider(this, greenSlider, bX, bY, 100, 20, "Green", color.getGreen(), 1F, 0F);
+		g = new GuiPropertiesSlider(this, greenSlider, bX, bY, 100, 20, "Green", colorHelper.getGreen(), 1F, 0F);
 		bY += 20;
-		b = new GuiPropertiesSlider(this, blueSlider, bX, bY, 100, 20, "Blue", color.getBlue(), 1F, 0F);
+		b = new GuiPropertiesSlider(this, blueSlider, bX, bY, 100, 20, "Blue", colorHelper.getBlue(), 1F, 0F);
 		bY += 20;
 		this.addButton(r);
 		this.addButton(g);
 		this.addButton(b);
+		//		bY += 4;
+		//		r2 = new GuiPropertiesSlider(this, redSlider2, bX, bY, 100, 20, "Red", 0, 1F, 0F);
+		//		bY += 20;
+		//		g2 = new GuiPropertiesSlider(this, greenSlider2, bX, bY, 100, 20, "Green", 0, 1F, 0F);
+		//		bY += 20;
+		//		b2 = new GuiPropertiesSlider(this, blueSlider2, bX, bY, 100, 20, "Blue", 0, 1F, 0F);
+		//		bY += 20;
+		//		this.addButton(r2);
+		//		this.addButton(g2);
+		//		this.addButton(b2);
 
 		this.addButton(new GuiPropertiesButton(closeGui, width - 16, 2, 14, 20, TextFormatting.RED + "X")); // Change Mana Bar Direction
 	}
@@ -148,7 +165,7 @@ public class GuiEntityProperties extends GuiScreen {
 		}
 		if (button.id == resetColor) {
 			properties.setTraitColor("#ffffff");
-			color.setColor("#ffffff");
+			colorHelper.setColor("#ffffff");
 			colorField.setText(properties.getTraitColor());
 			colorField.setTextColor(16777215);
 			r.sliderValue = 1F;
@@ -203,7 +220,7 @@ public class GuiEntityProperties extends GuiScreen {
 		int exampleY = (height - (height / 2));
 		exampleX -= 30;
 		exampleY -= (height / 4);
-		DrawingHelper.Draw(exampleX + 102, exampleY, 0, 0, 0, 0, 0, 18, 18, 0, 0, color.getRed(), color.getGreen(), color.getBlue(), 1F);
+		DrawingHelper.Draw(exampleX + 102, exampleY, 0, 0, 0, 0, 0, 18, 18, 0, 0, colorHelper.getRed(), colorHelper.getGreen(), colorHelper.getBlue(), 1F);
 		//		GlStateManager.resetColor();
 		GlStateManager.color(1, 1, 1);
 

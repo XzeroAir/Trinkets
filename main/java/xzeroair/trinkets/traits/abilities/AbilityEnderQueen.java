@@ -43,14 +43,17 @@ public class AbilityEnderQueen extends AbilityBase implements ITickableAbility, 
 
 	@Override
 	public void tickAbility(EntityLivingBase entity) {
+		if (entity.world.isRemote) {
+			return;
+		}
 		LycanitesCompat.removeInstability(entity);
 		if (serverConfig.water_hurts) {
-			if ((entity.isInWater() || entity.isWet())) {
-				final TickHandler counter = this.getCounter("water_hurt", 20, true);
-				if (counter.Tick()) {
+			final TickHandler counter = this.getCounter("water_hurt", 20, true);
+			if (counter.Tick()) {
+				if ((entity.isInWater() || entity.isWet())) {
 					final MagicStats magic = Capabilities.getMagicStats(entity);
 					if ((magic != null) && magic.spendMana(5F)) {
-
+						magic.setManaRegenTimeout(TrinketsConfig.SERVER.mana.mana_regen_timeout * 2);
 					} else {
 						if (TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketDragonsEye)) {
 							entity.attackEntityFrom(TrinketsDamageSource.water.setDamageBypassesArmor().setMagicDamage(), 4);
@@ -59,8 +62,8 @@ public class AbilityEnderQueen extends AbilityBase implements ITickableAbility, 
 						}
 					}
 				}
-			} else {
-				this.removeCounter("water_hurt");
+				//			} else {
+				//				this.removeCounter("water_hurt");
 			}
 		}
 	}

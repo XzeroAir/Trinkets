@@ -133,10 +133,16 @@ public class AbilityBlockFinder extends AbilityBase implements ITickableAbility,
 						}
 					} else {
 						if (!TrackingList.isEmpty()) {
-							this.playSound(entity, new BlockPos(targetBlock), 1);
+							double d = entity.getDistance(targetBlock.x, targetBlock.y, targetBlock.z);
+							if (!(d < 1.8)) {
+								this.playSound(entity, new BlockPos(targetBlock), 1);
+							}
 							for (final Vec3d pos : TrackingList) {
-								for (int i = 0; i < 3; i++) {
-									this.SpawnParticle(entity.getEntityWorld(), pos, color);
+								d = entity.getDistance(pos.x, pos.y, pos.z);
+								if (!(d < 1.8)) {
+									for (int i = 0; i < 3; i++) {
+										this.SpawnParticle(entity.getEntityWorld(), pos, color);
+									}
 								}
 							}
 							//						getTargetsList().clear();
@@ -254,6 +260,17 @@ public class AbilityBlockFinder extends AbilityBase implements ITickableAbility,
 			}
 		}
 		return closest;
+	}
+
+	protected boolean isBlockInList(IBlockState state, World world, BlockPos pos) {
+		if ((state == null) || (world == null) || (pos == null)) {
+			return false;
+		}
+		final Block block = state.getBlock();
+		if (block.isAir(state, world, pos)) {
+			return false;
+		}
+		return false;
 	}
 
 	@SideOnly(Side.CLIENT)

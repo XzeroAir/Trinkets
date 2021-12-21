@@ -3,22 +3,18 @@ package xzeroair.trinkets.capabilities.statushandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.CapabilityBase;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.status.StatusEffectPacket;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
-import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class StatusHandler extends CapabilityBase<StatusHandler, EntityLivingBase> {
 
@@ -69,23 +65,23 @@ public class StatusHandler extends CapabilityBase<StatusHandler, EntityLivingBas
 			}
 		}
 		if (effects.containsKey(StatusEffectsEnum.Invigorated.getName())) {
-			final TrinketStatusEffect effect = effects.get(StatusEffectsEnum.Invigorated.getName());
-			final UUID uuid = UUID.fromString("02eaa030-91c2-425e-8b3a-9de6aae4df35");
-			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR).getModifier(uuid) == null) {
-				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ARMOR);
-				armor.addModifier(object, 4, 0);
-			}
-			//			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(uuid) == null) {
-			//				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.MOVEMENT_SPEED);
-			//				armor.addModifier(object, 0.25, 1);
+			//			final TrinketStatusEffect effect = effects.get(StatusEffectsEnum.Invigorated.getName());
+			//			final UUID uuid = UUID.fromString("02eaa030-91c2-425e-8b3a-9de6aae4df35");
+			//			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR).getModifier(uuid) == null) {
+			//				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ARMOR);
+			//				armor.addModifier(object, 4, 0);
 			//			}
-			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).getModifier(uuid) == null) {
-				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ATTACK_DAMAGE);
-				armor.addModifier(object, 0.5, 1);
-			}
-			if (effect.getDuration() <= 1) {
-				AttributeHelper.removeAttributesByUUID(object, uuid);
-			}
+			//			//			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(uuid) == null) {
+			//			//				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.MOVEMENT_SPEED);
+			//			//				armor.addModifier(object, 0.25, 1);
+			//			//			}
+			//			if (object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).getModifier(uuid) == null) {
+			//				final UpdatingAttribute armor = new UpdatingAttribute(uuid, SharedMonsterAttributes.ATTACK_DAMAGE);
+			//				armor.addModifier(object, 0.5, 1);
+			//			}
+			//			if (effect.getDuration() <= 1) {
+			//				AttributeHelper.removeAttributesByUUID(object, uuid);
+			//			}
 		}
 	}
 

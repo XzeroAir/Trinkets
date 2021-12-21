@@ -101,6 +101,28 @@ public class ColorHelper {
 		return hex;
 	}
 
+	private int getDecimalFromHex(String color) {
+		if (!color.isEmpty()) {
+			final boolean CheckforHash = !color.startsWith("#");
+			hexColor = CheckforHash ? ("#" + color) : color.toLowerCase();
+			try {
+				int length = hexColor.length();
+				if (hexColor.length() >= 7) {
+					length = 7;
+				}
+				final int i = Integer.decode(hexColor.substring(0, length));
+				return i;
+				//				decimalColor = i;
+				//				r = ((i & 16711680) >> 16) / 255F;
+				//				g = ((i & 65280) >> 8) / 255F;
+				//				b = ((i & 255) >> 0) / 255F;
+
+			} catch (final NumberFormatException ex) {
+			}
+		}
+		return 0;
+	}
+
 	private void setHexColor(String color) {
 		if (!color.isEmpty()) {
 			final boolean CheckforHash = !color.startsWith("#");

@@ -15,6 +15,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.attributes.JumpAttribute;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.model.ElfEars;
@@ -24,17 +25,19 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.traits.abilities.AbilityChargedShot;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class RaceElf extends EntityRacePropertiesHandler {
 
 	public static final ElfConfig serverConfig = TrinketsConfig.SERVER.races.elf;
 
-	protected UpdatingAttribute bonusSpeed, bonusAtkSpeed;
+	protected UpdatingAttribute bonusSpeed, bonusAtkSpeed, jump;
 
 	public RaceElf(@Nonnull EntityLivingBase e, EntityProperties properties) {
 		super(e, properties, EntityRaces.elf);
 		bonusSpeed = new UpdatingAttribute(UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.MOVEMENT_SPEED);
 		bonusAtkSpeed = new UpdatingAttribute(UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), SharedMonsterAttributes.ATTACK_SPEED);
+		jump = new UpdatingAttribute(UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"), JumpAttribute.Jump);
 	}
 
 	@Override
@@ -46,22 +49,32 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
 	@Override
 	public void whileTransformed() {
-		if (entity.world.getBiome(entity.getPosition()) != null) {
-			final Set<Type> biomeType = BiomeDictionary.getTypes(entity.world.getBiome(entity.getPosition()));
-			if (biomeType.contains(Type.FOREST)) {
-				bonusSpeed.addModifier(entity, 0.2, 2);
-				bonusAtkSpeed.addModifier(entity, 0.5, 2);
-			} else {
-				bonusSpeed.removeModifier();
-				bonusAtkSpeed.removeModifier();
+		if (entity.world.isRemote) {
+			return;
+		}
+		try {
+			if (entity.world.getBiome(entity.getPosition()) != null) {
+				final Set<Type> biomeType = BiomeDictionary.getTypes(entity.world.getBiome(entity.getPosition()));
+				if (biomeType.contains(Type.FOREST)) {
+					bonusSpeed.addModifier(entity, 0.2, 2);
+					bonusAtkSpeed.addModifier(entity, 0.5, 2);
+					jump.addModifier(entity, 0.2, 2);
+				} else {
+					bonusSpeed.removeModifier();
+					bonusAtkSpeed.removeModifier();
+					jump.removeModifier();
+				}
 			}
+		} catch (final Exception e) {
 		}
 	}
 
 	@Override
 	public void endTransformation() {
-		bonusSpeed.removeModifier();
-		bonusAtkSpeed.removeModifier();
+		AttributeHelper.removeAttributes(entity, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"));
+		//		bonusSpeed.removeModifier();
+		//		bonusAtkSpeed.removeModifier();
+		//		jump.removeModifier();
 	}
 
 	private ModelBase ears = new ElfEars();

@@ -65,6 +65,15 @@ public class FaelisConfig {
 			"materialDiamond;0.075",
 	};
 
+	@Config.Comment("Buffs when drinking milk")
+	@Name("10. Milk Buffs")
+	@LangKey(PREFIX + ".milk.buffs.list")
+	public String[] buffs = new String[] {
+			"minecraft:speed:3600:0",
+			"minecraft:strength:3600:0",
+			"minecraft:jump_boost:3600:0"
+	};
+
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")
 	private Compatability compat = new Compatability();

@@ -169,6 +169,8 @@ public class EntityRace {
 		}
 	}
 
+	//TODO Add Can Fly Check?
+
 	/*------------------------------------------Register Races--------------------------------------------*/
 
 //@formatter:off
