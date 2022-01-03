@@ -5,9 +5,9 @@ xat.exampletext.start= 这些信息是示例文本,它们不会在游戏中显�
 xat.exampletext.1= 物品提示最多 10 条
 xat.exampletext.2= item.item.glow_ring.0.tooltip1，item.glow_ring.0.tooltip2，等。
 xat.exampletext.3= 每个物品可以有 3 条联动其他 mod 的文本，比如
-xat.exampletext.4= item.item.glow_ring.0.compat.tan=联动 Tough as Nails
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid=联动 First Aid
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals=联动 EnhancedVisuals
+xat.exampletext.4= item.item.glow_ring.0.compat.tan=与 Tough as Nails 联动
+xat.exampletext.5= item.item.glow_ring.0.compat.firstaid=与 First Aid 联动
+xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals=与 EnhancedVisuals 联动
 xat.exampletext.7= 这些是可以在游戏内使文字变色的颜色代码
 xat.exampletext.8= 颜色代码以标签 # 开头，半角符号 : 结尾，如 #gold:，#darkgreen:，等。
 xat.exampletext.8= 颜色……"black"， "white", "red"，"darkred"，"blue"，"darkblue"，"green"，"darkgreen" "lightpurple"，"darkpurple"，"yellow"，"aqua"，"darkaqua"， "gray"，"darkgray"，"gold"，"reset"。
@@ -25,7 +25,7 @@ xat.tooltip.armor=护甲
 xat.tooltip.toughness=韧性
 xat.tooltip.knockbackresist=击退抗性
 xat.tooltip.movementspeed=移动速度
-xat.tooltip.luck=Luck
+xat.tooltip.luck=幸运
 xat.tooltip.swimspeed=游泳速度
 xat.tooltip.stepheight=上坡高度
 xat.tooltip.jumpheight=跳跃高度
@@ -49,7 +49,7 @@ gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
 
-entity.AlphaWolf.name=Wolf King
+entity.AlphaWolf.name=狼王
 
 ability.block_detection.name=Greedy Eyes
 ability.block_detection.tooltip1=Grants the User the Ability to Find Nearby Treasure
@@ -157,20 +157,15 @@ item.glowing_ingot.name=#yellow:闪耀锭
 item.glowing_ingot.tooltip1=#yellow:2级制造材料
 
 item.glowing_gem.name=#gold:闪耀宝石
-item.glowing_gem.tooltip1=#gold:2级制造材料
+item.glowing_gem.tooltip1=#gold:3级制造材料
 
 item.mana_candy.name=#aqua:魔法糖果
 
 item.mana_crystal.name=#gold:魔法水晶
 item.mana_crystal.tooltip1=#gold:+#aqua:$mpmax:#gold:魔力值上限
 
-item.mana_reagent.name=#gold:Mana Reagent
-item.mana_reagent.tooltip1=#red:Harmful when consumed
-item.mana_reagent.tooltip2=#red:-#aqua:$mpmax:#red:魔力值上限
-
-item.restoration_serum.name=#gold:Restoration Serum
-item.restoration_serum.tooltip1=Reverses Permanent Transformation Effects
-item.restoration_serum.tooltip2=#red:Harmful when consumed
+item.mana_reagent.name=#gold:魔法试剂
+item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red:魔力值上限
 
 ####################################Materials End####################################
 
@@ -193,39 +188,34 @@ item.dwarf_ring.0.staticminer=#darkgreen:平等挖掘 $staticminer:
 item.elf_ring.0.name=#gold:精灵之戒
 item.elf_ring.0.tooltip1=#gold:$rsize:标准体型
 item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=#gold:Gains Movement and Attack Speed in Forests
-item.elf_ring.0.chargeshot=#gold:潜行时增强弓箭伤害
+item.elf_ring.0.tooltip3=
+item.elf_ring.0.chargeshot=#gold:潜行时增加弓箭伤害
 
 item.fairy_ring.0.name=仙女之戒
 item.fairy_ring.0.tooltip1=#gold:体型减小为正常的1/4
 item.fairy_ring.0.tooltip2=@creativeflight:
 item.fairy_ring.0.creativeflight=#gold:创造模式飞行 $creativeflight:
 
-item.faelis_ring.0.name=#gold:猫之戒
+item.faelis_ring.0.name=#gold:猫灵之戒
 item.faelis_ring.0.tooltip1=#gold:$rsize:标准体型
 item.faelis_ring.0.tooltip2=#green:增加空手伤害
-item.faelis_ring.0.tooltip3=#green:Buff when drinking milk
-item.faelis_ring.0.tooltip4=#red:装备重甲时降低移动速度
+item.faelis_ring.0.tooltip3=#red:装备重甲时降低移动速度
 
 item.goblin_ring.0.name=#gold:哥布林之戒
 item.goblin_ring.0.tooltip1=#gold:$rsize:标准体型
 item.goblin_ring.0.tooltip2=#gold:可以骑乘被驯服的狼
 item.goblin_ring.0.tooltip3=#gold:骑乘时获得力量和生命恢复
-item.goblin_ring.0.tooltip4=#green:Minor explosion and fire resistance
-item.goblin_ring.0.tooltip5=#green:Creepers will ignore you
+item.goblin_ring.0.tooltip4=#green:获得弱化火焰保护和弱化爆炸保护
+item.goblin_ring.0.tooltip5=#green:爬行者会忽视你
 
 item.titan_ring.0.name=泰坦之戒
 item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
 item.titan_ring.0.tooltip2=#gold:3x3x3挖掘范围
-item.titan_ring.0.tooltip3=#red:@heavy:
-item.titan_ring.0.tooltip4=#red:Tramples plants
-item.titan_ring.0.heavy=#red:在水中下沉
+item.titan_ring.0.tooltip3=#red:在水中下沉
 
 item.dragon_ring.0.name=#gold:巨龙之戒
 item.dragon_ring.0.tooltip1=#gold:$rsize:标准体型
-item.dragon_ring.0.tooltip2=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
-item.dragon_ring.0.tooltip3=#gold:Grants Fire Resistance
-item.dragon_ring.0.tooltip4=#darkgreen:Grants Night Vision $nightvision:
+item.dragon_ring.0.tooltip1=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
 
 item.teddy_bear.0.name=泰迪熊
 item.teddy_bear.0.tooltip1=#gold:如果在装备时睡眠，提供增益效果
@@ -238,8 +228,8 @@ item.weightless_stone.0.tooltip3=<#yellow:潜行#reset:>+<#yellow:左键#reset:>
 item.weightless_stone.0.tooltip4=#green:持有时获得漂浮
 
 item.inertia_null_stone.0.name=零惯性之石
-item.inertia_null_stone.0.tooltip1=#darkaqua:$inertianullfd:#reset:#gold:降低摔落伤害
-item.inertia_null_stone.0.tooltip2=#darkaqua:$inertianullfd:#reset:#gold: Resistance to kinetic damage
+item.inertia_null_stone.0.tooltip1=#gold:降低#darkaqua:$inertianullfd:#reset:#gold:摔落伤害
+item.inertia_null_stone.0.tooltip2=#gold:降低#darkaqua:$inertianullfd:#reset:#gold:动能伤害
 
 item.greater_inertia_stone.0.name=巨惯性之石
 item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold:降低摔落伤害
@@ -266,11 +256,11 @@ item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
 item.dragons_eye.0.name=巨龙之眼
 item.dragons_eye.0.tooltip1=#gold:获得防火
-item.dragons_eye.0.tooltip2=#darkgreen:获得夜视$nightvision: #reset:<#yellow:*denvkb:#reset:>
+item.dragons_eye.0.tooltip2=#darkgreen:获得夜视 #reset:<#yellow:*denvkb:#reset:>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:获得夜视$nightvision:
 item.dragons_eye.0.treasurefinder=#gold:当前目标：#darkaqua:#underline:$target:#reset: <#yellow:*deofkb:#reset:>
-
+//item.dragons_eye.0.blindness=#gold:免疫失明$blindness:
 item.dragons_eye.0.treasurefinder.on=#gold:我需要更多的#white: $target:#gold: for my Treasury $looking:
 item.dragons_eye.0.treasurefinder.notfound=#gold:我需要更多的#red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
@@ -284,7 +274,7 @@ item.poison_stone.0.tooltip2=#gold:免疫饥饿
 item.poison_stone.0.tooltip3=@poison:
 item.poison_stone.0.tooltip4=@bonusdamage:
 item.poison_stone.0.poison=#darkaqua:$poisonchance:#darkgreen: 几率使敌人中毒
-item.poison_stone.0.bonusdamage=#darkgreen:$damagemultiplier:敌人中毒时伤害
+item.poison_stone.0.bonusdamage=#darkgreen:敌人中毒时伤害 $damagemultiplier:
 
 item.wither_ring.0.name=枯萎之戒
 item.wither_ring.0.tooltip1=#gold:免疫凋零
@@ -295,38 +285,37 @@ item.wither_ring.0.leech=#darkgreen:敌人凋零时治疗#darkaqua:$leechamount:
 
 item.ender_tiara.0.name=末影女皇之冠
 item.ender_tiara.0.tooltip1=#gold:王权
-item.ender_tiara.0.tooltip2=#darkgreen:末影人为你作战@endermenfollow:
+item.ender_tiara.0.tooltip2=#darkgreen:末影人@endermenfollow:为你作战
 item.ender_tiara.0.tooltip3=@damageignored:
 item.ender_tiara.0.tooltip4=@endermenchance:
 item.ender_tiara.0.tooltip5=@waterhurts:
 item.ender_tiara.0.damageignored=#darkaqua:$chance: #gold:几率免疫伤害
-item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:几率刷新一个末影人
-item.ender_tiara.0.endermenfollow=且跟随你
+item.ender_tiara.0.endermenchance=#darkaqua:$chance: #gold:几率生成一个末影人
+item.ender_tiara.0.endermenfollow=跟随你且
 item.ender_tiara.0.waterhurts=#red:弱水
 item.ender_tiara.0.compat.tan=#gold:免疫寒冷
 item.ender_tiara.0.compat.enhancedvisuals=禁用末影人的静电干扰效果
 
 item.damage_shield.0.name=荣耀之盾
-item.damage_shield.0.tooltip1=#gold:Grants $soheffect: while equipped
-item.damage_shield.0.tooltip2=@explosionresist:
-item.damage_shield.0.tooltip3=@damageignored:
-item.damage_shield.0.explosionresist=#gold:降低爆炸伤害#reset #darkaqua:$explosionresistamount:
+item.damage_shield.0.tooltip1=@explosionresist:
+item.damage_shield.0.tooltip2=@damageignored:
+item.damage_shield.0.explosionresist=#gold:降低#reset: #darkaqua:$explosionresistamount: #reset:#gold:爆炸伤害
 item.damage_shield.0.damageignored=#gold:伤害免疫: #darkaqua:$damageignoredhitcount:
 item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率无视爆头
+item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率免疫爆头
 item.damage_shield.0.compat.enhancedvisuals=禁用爆炸模糊
 
 item.arcing_orb.0.name=电弧球
 item.arcing_orb.0.tooltip1=#darkgreen:Grants double tap dodge ability #darkaqua:$dodgecost:MP
 item.arcing_orb.0.tooltip2=@dodgestun:
-item.arcing_orb.0.tooltip3=#gold:按住#reset:<#yellow:*arckb:#reset:>#gold: to cast a bolt attack #darkaqua:$boltcost:MP
-item.arcing_orb.0.tooltip4=#darkaqua:$boltdamage:#gold:伤害基于消耗的 MP
+item.arcing_orb.0.tooltip3=#gold:按住#reset:<#yellow:*arckb:#reset:>#gold:释放一次闪电攻击
+item.arcing_orb.0.tooltip4=每#darkaqua:$boltcost:MP 造成#darkaqua:$boltdamage:#gold:伤害
 item.arcing_orb.0.dodgestun=#gold:Stun nearby enemies on dodge
 
 item.faelis_claw.0.name=猫爪
 item.faelis_claw.0.tooltip1=#gold:攻击敌人使其流血
-item.faelis_claw.0.tooltip2=#green:流血在300 ticks 内每20 ticks 造成1点伤害
-item.faelis_claw.0.tooltip3=#red:当由非猫科动物使用时持续时间减少到1/3
+item.faelis_claw.0.tooltip2=#green:流血会在300 刻内每20 刻造成1点伤害
+item.faelis_claw.0.tooltip3=#red:不由猫灵触发时持续时间减少到1/3
 
 ####################################Trinkets End####################################
 
@@ -372,45 +361,45 @@ item.dragon_gem.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
 
 ####################################Potions####################################
 
-potion.effect.xat.sparkling=Sparkling Potion
-splash_potion.effect.xat.sparkling=Sparkling Splash Potion
-lingering_potion.effect.xat.sparkling=Sparkling Lingering Potion
-tipped_arrow.effect.xat.sparkling=Sparkling Tipped Arrow
-xat.effect.sparkling=Sparkling
-xat.item.potion.sparkling.tooltip1=#gold:Heals 25% Max Health
-xat.item.potion.sparkling.tooltip2=#gold:Restores 25% Mana
+potion.effect.xat.sparkling=闪烁的药水
+splash_potion.effect.xat.sparkling=喷溅型闪烁的药水
+lingering_potion.effect.xat.sparkling=滞留型闪烁的药水
+tipped_arrow.effect.xat.sparkling=闪烁之箭
+xat.effect.sparkling=闪烁
+xat.item.potion.sparkling.tooltip1=#gold:治疗 25% 最大生命值
+xat.item.potion.sparkling.tooltip2=#gold:回复 25% 魔力
 
-potion.effect.xat.glittering=Glittering Potion
-splash_potion.effect.xat.glittering=Glittering Splash Potion
-lingering_potion.effect.xat.glittering=Glittering Lingering Potion
-tipped_arrow.effect.xat.glittering=Glittering Tipped Arrow
-xat.effect.glittering=Glittering
-xat.item.potion.glittering.tooltip1=#gold:Heals 50% Max Health
-xat.item.potion.glittering.tooltip2=#gold:Restores 50% Mana
+potion.effect.xat.glittering=闪光的药水
+splash_potion.effect.xat.glittering=喷溅型闪光的药水
+lingering_potion.effect.xat.glittering=滞留型闪光的药水
+tipped_arrow.effect.xat.glittering=闪光之箭
+xat.effect.glittering=闪光
+xat.item.potion.glittering.tooltip1=#gold:治疗 50% 最大生命值
+xat.item.potion.glittering.tooltip2=#gold:恢复 50% 魔力
 
-potion.effect.xat.glowing=Glowing Potion
-splash_potion.effect.xat.glowing=Glowing Splash Potion
-lingering_potion.effect.xat.glowing=Glowing Lingering Potion
-tipped_arrow.effect.xat.glowing=Glowing Tipped Arrow
-xat.effect.glowing=Glowing
-xat.item.potion.glowing.tooltip1=#gold:Heals 100% Health
-xat.item.potion.glowing.tooltip2=#gold:Restores 100% Mana
+potion.effect.xat.glowing=辉耀药水
+splash_potion.effect.xat.glowing=喷溅型辉耀药水
+lingering_potion.effect.xat.glowing=滞留型辉耀药水
+tipped_arrow.effect.xat.glowing=辉耀之箭
+xat.effect.glowing=辉耀
+xat.item.potion.glowing.tooltip1=#gold:治疗 100% 生命值
+xat.item.potion.glowing.tooltip2=#gold:恢复 100% 魔力
 
 potion.effect.xat.restorative=恢复药水
-splash_potion.effect.xat.restorative=恢复喷溅型药水
-lingering_potion.effect.xat.restorative=恢复滞留型药水
+splash_potion.effect.xat.restorative=喷溅型恢复药水
+lingering_potion.effect.xat.restorative=滞留型恢复药水
 tipped_arrow.effect.xat.restorative=恢复之箭
 xat.effect.restorative=恢复
 xat.item.potion.restorative.tooltip1=#gold:治疗 10 心
 xat.item.potion.restorative.tooltip2=#gold:移除药水效果
 xat.item.potion.restorative.tooltip3=#gold:移除魔法食物的变形效果
 
-potion.effect.xat.human=Potion of Normie Transformation
-splash_potion.effect.xat.human=Splash Potion of Normie Transformation
-lingering_potion.effect.xat.human=Lingering Potion of Normie Transformation
-tipped_arrow.effect.xat.human=Tipped Arrow of Normie Transformation
-xat.effect.human=Human Transformation
-xat.item.potion.human.tooltip1=Become a Human for $humanticks: seconds
+potion.effect.xat.human=人类变形药水
+splash_potion.effect.xat.human=喷溅型人类变形药水
+lingering_potion.effect.xat.human=滞留型人类变形药水
+tipped_arrow.effect.xat.human=人类变形药水
+xat.effect.human=人类
+xat.item.potion.human.tooltip1=变形为人类 $humanticks: 秒
 
 potion.effect.xat.fairy=仙女变形药水
 splash_potion.effect.xat.fairy=喷溅型仙女变形药水
@@ -447,12 +436,12 @@ tipped_arrow.effect.xat.elf=精灵变形之箭
 xat.effect.elf=精灵
 xat.item.potion.elf.tooltip1=变形为精灵$elfticks:秒
 
-potion.effect.xat.faelis=Potion of Faelis Transformation
-splash_potion.effect.xat.faelis=Splash Potion of Faelis Transformation
-lingering_potion.effect.xat.faelis=Lingering Potion of Faelis Transformation
-tipped_arrow.effect.xat.faelis=Tipped Arrow of Faelis Transformation
-xat.effect.faelis=Faelis Transformation
-xat.item.potion.faelis.tooltip1=Become a Faelis for $faelisticks: seconds
+potion.effect.xat.faelis=猫灵变形药水
+splash_potion.effect.xat.faelis=喷溅型猫灵变形药水
+lingering_potion.effect.xat.faelis=滞留型猫灵变形药水
+tipped_arrow.effect.xat.faelis=猫灵变形之箭
+xat.effect.faelis=猫灵
+xat.item.potion.faelis.tooltip1=变形为猫灵 $faelisticks: 秒
 
 potion.effect.xat.dragon=巨龙变形药水
 splash_potion.effect.xat.dragon=喷溅型巨龙变形药水
@@ -467,7 +456,7 @@ xat.item.potion.dragon.tooltip1=变形为巨龙$dragonticks:秒
 
 tile.moon_rose.name=月光玫瑰
 tile.moon_rose.tooltip1=#aqua:被施加了魔法的花朵
-tile.moon_rose.tooltip2=#aqua:<你可以感受到其中散发出强烈的魔法波动>
+tile.moon_rose.tooltip2=#aqua:<你感受到其中散发出强烈的魔法波动>
 tile.moon_rose.tooltip3=
 tile.moon_rose.tooltip4=
 
@@ -584,12 +573,12 @@ xat.config.ender_tiara.waterhurts=水伤害
 xat.config.ender_tiara.waterhurts.tooltip=玩家与水接触（潮湿）时是否受到伤害
 xat.config.ender_tiara.ignoredamage=几率免疫伤害
 xat.config.ender_tiara.ignoredamage.tooltip=受到伤害时是否有几率免疫？
-xat.config.ender_tiara.ignoredamage.spawn=末影人的几率
+xat.config.ender_tiara.ignoredamage.spawn=生成末影人的几率
 xat.config.ender_tiara.ignoredamage.spawn.tooltip=受到伤害时是否有机率生成末影人？
 xat.config.ender_tiara.ignoredamage.spawn.chance=生成末影人的几率
 xat.config.ender_tiara.ignoredamage.spawn.chance.tooltip=x 分之一的几率免疫伤害并生成一个末影人为你作战
-xat.config.ender_tiara.ignoredamage.teleport=Damaged Teleport
-xat.config.ender_tiara.ignoredamage.teleport.tooltip=Should you teleport randomly when Damage is Ignored
+xat.config.ender_tiara.ignoredamage.teleport=受伤传送
+xat.config.ender_tiara.ignoredamage.teleport.tooltip=伤害被免疫时是否随机传送？
 xat.config.ender_tiara.endermen.follow=末影人跟随
 xat.config.ender_tiara.endermen.follow.tooltip=如果启用，附近的末影人会跟随你
 xat.config.ender_tiara.endermen.retaliate=末影人激怒
@@ -610,7 +599,7 @@ xat.config.elf_ring.tooltip=
 xat.config.fairy_ring=仙女之戒设置
 xat.config.fairy_ring.tooltip=
 
-xat.config.faelis_ring=Ring of the Faeles Settings
+xat.config.faelis_ring=猫灵之戒设置
 xat.config.faelis_ring.tooltip=
 
 xat.config.goblin_ring=哥布林之戒设置
@@ -653,7 +642,7 @@ xat.config.inertia_null_stone.falldamage.amount.tooltip=Multiply Fall Damage by 
 xat.config.greater_inertia_stone=巨惯性之石设置
 xat.config.greater_inertia_stone.tooltip=
 xat.config.greater_inertia_stone.falldamage=修改摔落伤害
-xat.config.greater_inertia_stone.falldamage.tooltip=Should the Stone of Greater Inertia Modify Fall Damage?
+xat.config.greater_inertia_stone.falldamage.tooltip=巨惯性之石是否修改摔落伤害？
 xat.config.greater_inertia_stone.falldamage.amount=Modified Fall Damage Amount
 xat.config.greater_inertia_stone.falldamage.amount.tooltip=Multiply Fall Damage by This Amount
 xat.config.greater_inertia_stone.jumpheight=Modify Jump Height
@@ -730,8 +719,8 @@ xat.config.faelis_claw.bleeding=流血
 xat.config.faelis_claw.bleeding.tooltip=当攻击实体时这个物品是否造成流血
 xat.config.faelis_claw.bleeding.duration=流血持续时间
 xat.config.faelis_claw.bleeding.duration.tooltip=流血持续多少刻
-xat.config.faelis_claw.bleeding.chance=Bleed Chance
-xat.config.faelis_claw.bleeding.chance.tooltip=1 in X Chance to cause bleed, setting this value to 0 always causes bleed
+xat.config.faelis_claw.bleeding.chance=流血概率
+xat.config.faelis_claw.bleeding.chance.tooltip=x 分之 1 的几率导致流血，设置为0时必定触发流血
 
 xat.config.magic=魔法设置
 xat.config.magic.tooltip=
@@ -838,7 +827,7 @@ xat.config.races.fairy.mount.whitelist.tooltip=Should the Mount Blacklist be a W
 xat.config.races.fairy.mount.blacklist=Mount Blacklist
 xat.config.races.fairy.mount.blacklist.tooltip=Entities that can not be mounted, or can only be mounted
 
-xat.config.races.goblin=Goblin Race Settings
+xat.config.races.goblin=哥布林设置
 xat.config.races.goblin.tooltip=
 xat.config.races.goblin.rider=Goblin Rider
 xat.config.races.goblin.rider.tooltip=Can Goblins mount tamed wolves
@@ -852,12 +841,12 @@ xat.config.races.titan.heavy=沉重的玩家
 xat.config.races.titan.heavy.tooltip=如果启用玩家更快下沉且更难上浮。
 xat.config.races.titan.trample=践踏耕地
 xat.config.races.titan.trample.tooltip=如果启用玩家破坏身下 3 x 3 的耕地
-xat.config.races.titan.mining.extended=AoE Mining
-xat.config.races.titan.mining.extended.tooltip=If Enabled the Player will be able to Mine in a 3x3x3 area
-xat.config.races.titan.mining.extended.inverted=Inverted Mining
-xat.config.races.titan.mining.extended.inverted.tooltip=If Enabled, The player be required to Sneak to AoE Mine
-xat.config.races.titan.mining.extended.blacklist=AoE Mining Blacklist
-xat.config.races.titan.mining.extended.blacklist.tooltip=Blocks that can not be AoE Mined
+xat.config.races.titan.mining.extended=范围挖掘
+xat.config.races.titan.mining.extended.tooltip=如果启用，玩家能够挖掘3 x 3 x 3 的方块
+xat.config.races.titan.mining.extended.inverted=反转控制
+xat.config.races.titan.mining.extended.inverted.tooltip=如果启用，玩家需要潜行以启用范围挖掘
+xat.config.races.titan.mining.extended.blacklist=范围挖掘黑名单
+xat.config.races.titan.mining.extended.blacklist.tooltip=不能被范围挖掘的方块
 xat.config.races.titan.mount.enabled=Able to Mount Entities
 xat.config.races.titan.mount.enabled.tooltip=If the player is capable of mounting entities. IE Horse, Boat, Minecart.
 xat.config.races.titan.mount.whitelist=Toggle Whitelist
