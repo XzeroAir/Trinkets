@@ -27,7 +27,7 @@ xat.tooltip.knockbackresist=击退抗性
 xat.tooltip.movementspeed=移动速度
 xat.tooltip.luck=幸运
 xat.tooltip.swimspeed=游泳速度
-xat.tooltip.stepheight=上坡高度
+xat.tooltip.stepheight=步行高度
 xat.tooltip.jumpheight=跳跃高度
 xat.tooltip.on=#reset:(#green:打开#reset:)
 xat.tooltip.off=#reset:(#red:关闭#reset:)
@@ -165,7 +165,12 @@ item.mana_crystal.name=#gold:魔法水晶
 item.mana_crystal.tooltip1=#gold:+#aqua:$mpmax:#gold:魔力值上限
 
 item.mana_reagent.name=#gold:魔法试剂
-item.mana_reagent.tooltip1=#red:-#aqua:$mpmax:#red:魔力值上限
+item.mana_reagent.tooltip1=#red:使用时有害
+item.mana_reagent.tooltip2=#red:-#aqua:$mpmax:#red: 魔力值上限
+
+item.restoration_serum.name=#gold:恢复血清
+item.restoration_serum.tooltip1=逆转永久的种族变形效果
+item.restoration_serum.tooltip2=#red:使用时有害
 
 ####################################Materials End####################################
 
@@ -199,7 +204,8 @@ item.fairy_ring.0.creativeflight=#gold:创造模式飞行 $creativeflight:
 item.faelis_ring.0.name=#gold:猫灵之戒
 item.faelis_ring.0.tooltip1=#gold:$rsize:标准体型
 item.faelis_ring.0.tooltip2=#green:增加空手伤害
-item.faelis_ring.0.tooltip3=#red:装备重甲时降低移动速度
+item.faelis_ring.0.tooltip3=#red:饮用牛奶时获得加成
+item.faelis_ring.0.tooltip4=#red:装备重甲时降低移动速度
 
 item.goblin_ring.0.name=#gold:哥布林之戒
 item.goblin_ring.0.tooltip1=#gold:$rsize:标准体型
@@ -211,11 +217,15 @@ item.goblin_ring.0.tooltip5=#green:爬行者会忽视你
 item.titan_ring.0.name=泰坦之戒
 item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
 item.titan_ring.0.tooltip2=#gold:3x3x3挖掘范围
-item.titan_ring.0.tooltip3=#red:在水中下沉
+item.titan_ring.0.tooltip3=#red:@heavy:
+item.titan_ring.0.tooltip4=#red:践踏植物
+item.titan_ring.0.heavy=#red:在水中下沉
 
 item.dragon_ring.0.name=#gold:巨龙之戒
 item.dragon_ring.0.tooltip1=#gold:$rsize:标准体型
-item.dragon_ring.0.tooltip1=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
+item.dragon_ring.0.tooltip2=#gold:按住#reset:<#yellow:*breathkb:#reset:>#gold:喷出火焰
+item.dragon_ring.0.tooltip3=#gold:获得防火
+item.dragon_ring.0.tooltip4=#darkgreen:获得夜视 $nightvision:
 
 item.teddy_bear.0.name=泰迪熊
 item.teddy_bear.0.tooltip1=#gold:如果在装备时睡眠，提供增益效果
@@ -261,7 +271,7 @@ item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:获得夜视$nightvision:
 item.dragons_eye.0.treasurefinder=#gold:当前目标：#darkaqua:#underline:$target:#reset: <#yellow:*deofkb:#reset:>
 //item.dragons_eye.0.blindness=#gold:免疫失明$blindness:
-item.dragons_eye.0.treasurefinder.on=#gold:我需要更多的#white: $target:#gold: for my Treasury $looking:
+item.dragons_eye.0.treasurefinder.on=#gold:我需要更多的#white: $target:#gold: 作为我的财宝 $looking:
 item.dragons_eye.0.treasurefinder.notfound=#gold:我需要更多的#red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
 item.dragons_eye.0.compat.tan=@heatimmune:
@@ -306,18 +316,18 @@ item.damage_shield.0.headshots=#darkaqua:$headshotchance:#gold: 几率免疫爆�
 item.damage_shield.0.compat.enhancedvisuals=禁用爆炸模糊
 
 item.arcing_orb.0.name=电弧球
-item.arcing_orb.0.tooltip1=#darkgreen:Grants double tap dodge ability #darkaqua:$dodgecost:MP
+item.arcing_orb.0.tooltip1=#darkgreen:获得双击闪避的能力 #darkaqua:$dodgecost:MP
 item.arcing_orb.0.tooltip2=@dodgestun:
 item.arcing_orb.0.tooltip3=#gold:按住#reset:<#yellow:*arckb:#reset:>#gold:释放一次闪电攻击
 item.arcing_orb.0.tooltip4=每#darkaqua:$boltcost:MP 造成#darkaqua:$boltdamage:#gold:伤害
-item.arcing_orb.0.dodgestun=#gold:Stun nearby enemies on dodge
+item.arcing_orb.0.dodgestun=#gold:闪避时击晕周围的敌人
 
 item.faelis_claw.0.name=猫爪
 item.faelis_claw.0.tooltip1=#gold:攻击敌人使其流血
 item.faelis_claw.0.tooltip2=#green:流血会在300 刻内每20 刻造成1点伤害
 item.faelis_claw.0.tooltip3=#red:不由猫灵触发时持续时间减少到1/3
 
-####################################Trinkets End####################################
+####################################饰品 End####################################
 
 ####################################Food####################################
 
