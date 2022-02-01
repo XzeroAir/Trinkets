@@ -1,19 +1,19 @@
 {
-    "name": "Goblin",
+    "name": "地精",
     "icon": "xat:goblin_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Goblin race sports a resistance to explosions and the ability to ride wolves. Goblins are half the size of humans.$(br2)Race idea originally by CowSaysBoom"
+            "text": "地精具有抵抗爆炸和骑乘狼的能力。地精的体型只有人类的一半。$(br2)种族灵感源自 CowSaysBoom"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)50% Size$(br)$(4)-50%$() Attack Damage$(br)$(4)-40%$() Health$(br)$(2)+20%$() Movement Speed$(br)$(2)+10%$() Swim Speed$(br)"
+            "text": "$(l)默认属性调整：$()$(br)50%体型$(br)$(4)-50%$()攻击伤害$(br)$(4)-40%$()生命值$(br)$(2)+20%$()移动速度$(br)$(2)+10%$()游泳速度$(br)"
         },
 		{
             "type": "text",
-            "text": "$(l)Ability: Wolf Riding$()$(br)Goblins have the ability to ride any tamed dogs by right clicking them (this costs 60% of the goblin's mana). While mounted, the dog in question temporarily becomes an Alpha Wolf. Both the Alpha Wolf and its rider receive strength and regeneration potion effects, and the Alpha Wolf can damage entities by running into them."
+            "text": "$(l)能力：骑狼$()$(br)地精能够通过右击骑乘任一已驯服的狗（消耗地精60%的魔力值）。骑狗时，这只狗会暂时变成狼王。狼王和它的骑手都会获得力量和生命恢复效果，狼王可以通过撞到实体来伤害它们。"
         },
 		{
             "type": "crafting",

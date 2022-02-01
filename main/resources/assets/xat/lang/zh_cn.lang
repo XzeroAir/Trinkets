@@ -148,7 +148,7 @@ attribute.name.xat.jump=Jump
 attribute.name.xat.stepheight=Step Height
 attribute.name.xat.entityMagic.regen=MP Regen
 
-####################################材料####################################
+####################################Materials####################################
 
 item.glowing_powder.name=闪耀粉
 item.glowing_powder.tooltip1=1级制造材料
@@ -193,10 +193,10 @@ item.dwarf_ring.0.staticminer=#darkgreen:平等挖掘 $staticminer:
 item.elf_ring.0.name=#gold:精灵之戒
 item.elf_ring.0.tooltip1=#gold:$rsize:标准体型
 item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=
+item.elf_ring.0.tooltip3=#gold:在森林生物群系中获得移动速度和攻击速度加成
 item.elf_ring.0.chargeshot=#gold:潜行时增加弓箭伤害
 
-item.fairy_ring.0.name=仙女之戒
+item.fairy_ring.0.name=仙子之戒
 item.fairy_ring.0.tooltip1=#gold:体型减小为正常的1/4
 item.fairy_ring.0.tooltip2=@creativeflight:
 item.fairy_ring.0.creativeflight=#gold:创造模式飞行 $creativeflight:
@@ -207,14 +207,14 @@ item.faelis_ring.0.tooltip2=#green:增加空手伤害
 item.faelis_ring.0.tooltip3=#red:饮用牛奶时获得加成
 item.faelis_ring.0.tooltip4=#red:装备重甲时降低移动速度
 
-item.goblin_ring.0.name=#gold:哥布林之戒
+item.goblin_ring.0.name=#gold:地精之戒
 item.goblin_ring.0.tooltip1=#gold:$rsize:标准体型
 item.goblin_ring.0.tooltip2=#gold:可以骑乘被驯服的狼
 item.goblin_ring.0.tooltip3=#gold:骑乘时获得力量和生命恢复
 item.goblin_ring.0.tooltip4=#green:获得弱化火焰保护和弱化爆炸保护
 item.goblin_ring.0.tooltip5=#green:爬行者会忽视你
 
-item.titan_ring.0.name=泰坦之戒
+item.titan_ring.0.name=巨人之戒
 item.titan_ring.0.tooltip1=#gold:增大玩家的体型为原来的3倍
 item.titan_ring.0.tooltip2=#gold:3x3x3挖掘范围
 item.titan_ring.0.tooltip3=#red:@heavy:
@@ -231,10 +231,10 @@ item.teddy_bear.0.name=泰迪熊
 item.teddy_bear.0.tooltip1=#gold:如果在装备时睡眠，提供增益效果
 item.teddy_bear.0.tooltip2=#gold:如果安装恐怖生物，移除失眠和恐惧
 
-item.weightless_stone.0.name=反重力之石
+item.weightless_stone.0.name=零重力之石
 item.weightless_stone.0.tooltip1=#darkgreen:装备时忽略重力
-item.weightless_stone.0.tooltip2=<#yellow:左键#reset:>以#darkgreen:上升
-item.weightless_stone.0.tooltip3=<#yellow:潜行#reset:>+<#yellow:左键#reset:>以#darkgreen:下降
+item.weightless_stone.0.tooltip2=<#yellow:左击#reset:>以#darkgreen:上升
+item.weightless_stone.0.tooltip3=<#yellow:潜行#reset:>+<#yellow:左击#reset:>以#darkgreen:下降
 item.weightless_stone.0.tooltip4=#green:持有时获得漂浮
 
 item.inertia_null_stone.0.name=零惯性之石
@@ -242,7 +242,7 @@ item.inertia_null_stone.0.tooltip1=#gold:降低#darkaqua:$inertianullfd:#reset:#
 item.inertia_null_stone.0.tooltip2=#gold:降低#darkaqua:$inertianullfd:#reset:#gold:动能伤害
 
 item.greater_inertia_stone.0.name=巨惯性之石
-item.greater_inertia_stone.0.tooltip1=#darkaqua:$greaterinertiafd:#reset:#gold:降低摔落伤害
+item.greater_inertia_stone.0.tooltip1=#gold:降低#reset:#darkaqua:$greaterinertiafd:#reset:#gold:摔落伤害
 
 item.sea_stone.0.name=海洋之石
 item.sea_stone.0.tooltip1=@bubbles:
@@ -255,13 +255,13 @@ item.sea_stone.0.compat.enhancedvisuals=禁用水下模糊
 
 item.polarized_stone.0.name=磁石
 item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset:或#yellow:右键#reset:>
+item.polarized_stone.0.tooltip2=<#yellow:*magnetkb:#reset:或#yellow:右击#reset:>
 item.polarized_stone.0.tooltip3=@repel:
-item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#reset: 或#yellow:潜行#reset:+#yellow:右键#reset:>
+item.polarized_stone.0.tooltip4=<#yellow:*auxkb:#reset: + #yellow:*magnetkb:#reset: 或#yellow:潜行#reset:+#yellow:右击#reset:>
 item.polarized_stone.0.collect=#gold:吸引附近的物品@collectxp:
 item.polarized_stone.0.collectxp=和经验球 $collecttoggle:
 item.polarized_stone.0.repel=#gold:排斥箭矢 $repeltoggle:
-item.polarized_stone.0.magnetmode=收集模式 $collecttoggle:
+item.polarized_stone.0.magnetmode=吸引模式 $collecttoggle:
 item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
 item.dragons_eye.0.name=巨龙之眼
@@ -270,7 +270,7 @@ item.dragons_eye.0.tooltip2=#darkgreen:获得夜视 #reset:<#yellow:*denvkb:#res
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.nightvision=#darkgreen:获得夜视$nightvision:
 item.dragons_eye.0.treasurefinder=#gold:当前目标：#darkaqua:#underline:$target:#reset: <#yellow:*deofkb:#reset:>
-//item.dragons_eye.0.blindness=#gold:免疫失明$blindness:
+
 item.dragons_eye.0.treasurefinder.on=#gold:我需要更多的#white: $target:#gold: 作为我的财宝 $looking:
 item.dragons_eye.0.treasurefinder.notfound=#gold:我需要更多的#red:$target:#gold: to breathe?
 item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
@@ -295,7 +295,7 @@ item.wither_ring.0.leech=#darkgreen:敌人凋零时治疗#darkaqua:$leechamount:
 
 item.ender_tiara.0.name=末影女皇之冠
 item.ender_tiara.0.tooltip1=#gold:王权
-item.ender_tiara.0.tooltip2=#darkgreen:末影人@endermenfollow:为你作战
+item.ender_tiara.0.tooltip2=#darkgreen:末影人@endermenfollow:#darkgreen:为你作战
 item.ender_tiara.0.tooltip3=@damageignored:
 item.ender_tiara.0.tooltip4=@endermenchance:
 item.ender_tiara.0.tooltip5=@waterhurts:
@@ -309,6 +309,7 @@ item.ender_tiara.0.compat.enhancedvisuals=禁用末影人的静电干扰效果
 item.damage_shield.0.name=荣耀之盾
 item.damage_shield.0.tooltip1=@explosionresist:
 item.damage_shield.0.tooltip2=@damageignored:
+item.damage_shield.0.tooltip3=@damageignored:
 item.damage_shield.0.explosionresist=#gold:降低#reset: #darkaqua:$explosionresistamount: #reset:#gold:爆炸伤害
 item.damage_shield.0.damageignored=#gold:伤害免疫: #darkaqua:$damageignoredhitcount:
 item.damage_shield.0.compat.firstaid=@headshots:
@@ -324,74 +325,74 @@ item.arcing_orb.0.dodgestun=#gold:闪避时击晕周围的敌人
 
 item.faelis_claw.0.name=猫爪
 item.faelis_claw.0.tooltip1=#gold:攻击敌人使其流血
-item.faelis_claw.0.tooltip2=#green:流血会在300 刻内每20 刻造成1点伤害
+item.faelis_claw.0.tooltip2=#green:流血会在300刻内每20刻造成1点伤害
 item.faelis_claw.0.tooltip3=#red:不由猫灵触发时持续时间减少到1/3
 
-####################################饰品 End####################################
+####################################Trinkets End####################################
 
 ####################################Food####################################
 
 item.dwarf_stout.name=矮人烈酒
 item.dwarf_stout.tooltip1=#aqua:我也许能通过饮用某种药水
 item.dwarf_stout.tooltip2=#aqua:来移除这种效果
-item.dwarf_stout.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.dwarf_stout.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
 item.fairy_dew.name=仙露
 item.fairy_dew.tooltip1=#aqua:我也许能通过饮用某种药水
 item.fairy_dew.tooltip2=#aqua:来移除这种效果
-item.fairy_dew.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.fairy_dew.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
-item.titan_spirit.name=泰坦之灵
+item.titan_spirit.name=巨人之灵
 item.titan_spirit.tooltip1=#aqua:我也许能通过饮用某种药水
 item.titan_spirit.tooltip2=#aqua:来移除这种效果
-item.titan_spirit.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.titan_spirit.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
 item.elf_sap.name=精灵之息
 item.elf_sap.tooltip1=#aqua:我也许能通过饮用某种药水
 item.elf_sap.tooltip2=#aqua:来移除这种效果
-item.elf_sap.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.elf_sap.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
-item.goblin_soup.name=哥布林之汤
+item.goblin_soup.name=地精之汤
 item.goblin_soup.tooltip1=#aqua:我也许能通过饮用某种药水
 item.goblin_soup.tooltip2=#aqua:来移除这种效果
-item.goblin_soup.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.goblin_soup.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
 item.faelis_food.name=猫薄荷
 item.faelis_food.tooltip1=#aqua:我也许能通过饮用某种药水
 item.faelis_food.tooltip2=#aqua:来移除这种效果
-item.faelis_food.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.faelis_food.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
 item.dragon_gem.name=巨龙宝石
 item.dragon_gem.tooltip1=#aqua:我也许能通过饮用某种药水
 item.dragon_gem.tooltip2=#aqua:来移除这种效果
-item.dragon_gem.tooltip3=<#blue:饮用恢复药水以恢复#reset:>
+item.dragon_gem.tooltip3=<#blue:饮用恢复血清以恢复#reset:>
 
 ####################################Food End####################################
 
 
 ####################################Potions####################################
 
-potion.effect.xat.sparkling=闪烁的药水
-splash_potion.effect.xat.sparkling=喷溅型闪烁的药水
-lingering_potion.effect.xat.sparkling=滞留型闪烁的药水
+potion.effect.xat.sparkling=闪烁药水
+splash_potion.effect.xat.sparkling=喷溅型闪烁药水
+lingering_potion.effect.xat.sparkling=滞留型闪烁药水
 tipped_arrow.effect.xat.sparkling=闪烁之箭
 xat.effect.sparkling=闪烁
 xat.item.potion.sparkling.tooltip1=#gold:治疗 25% 最大生命值
 xat.item.potion.sparkling.tooltip2=#gold:回复 25% 魔力
 
-potion.effect.xat.glittering=闪光的药水
-splash_potion.effect.xat.glittering=喷溅型闪光的药水
-lingering_potion.effect.xat.glittering=滞留型闪光的药水
+potion.effect.xat.glittering=闪光药水
+splash_potion.effect.xat.glittering=喷溅型闪光药水
+lingering_potion.effect.xat.glittering=滞留型闪光药水
 tipped_arrow.effect.xat.glittering=闪光之箭
 xat.effect.glittering=闪光
 xat.item.potion.glittering.tooltip1=#gold:治疗 50% 最大生命值
 xat.item.potion.glittering.tooltip2=#gold:恢复 50% 魔力
 
-potion.effect.xat.glowing=辉耀药水
-splash_potion.effect.xat.glowing=喷溅型辉耀药水
-lingering_potion.effect.xat.glowing=滞留型辉耀药水
-tipped_arrow.effect.xat.glowing=辉耀之箭
-xat.effect.glowing=辉耀
+potion.effect.xat.glowing=辉光药水
+splash_potion.effect.xat.glowing=喷溅型辉光药水
+lingering_potion.effect.xat.glowing=滞留型辉光药水
+tipped_arrow.effect.xat.glowing=辉光之箭
+xat.effect.glowing=辉光
 xat.item.potion.glowing.tooltip1=#gold:治疗 100% 生命值
 xat.item.potion.glowing.tooltip2=#gold:恢复 100% 魔力
 
@@ -411,12 +412,12 @@ tipped_arrow.effect.xat.human=人类变形药水
 xat.effect.human=人类
 xat.item.potion.human.tooltip1=变形为人类 $humanticks: 秒
 
-potion.effect.xat.fairy=仙女变形药水
-splash_potion.effect.xat.fairy=喷溅型仙女变形药水
-lingering_potion.effect.xat.fairy=滞留型仙女变形药水
-tipped_arrow.effect.xat.fairy=仙女变形之箭
-xat.effect.fairy=仙女
-xat.item.potion.fairy.tooltip1=变形为仙女$fairyticks:秒
+potion.effect.xat.fairy=仙子变形药水
+splash_potion.effect.xat.fairy=喷溅型仙子变形药水
+lingering_potion.effect.xat.fairy=滞留型仙子变形药水
+tipped_arrow.effect.xat.fairy=仙子变形之箭
+xat.effect.fairy=仙子
+xat.item.potion.fairy.tooltip1=变形为仙子$fairyticks:秒
 
 potion.effect.xat.dwarf=矮人变形药水
 splash_potion.effect.xat.dwarf=喷溅型矮人变形药水
@@ -425,19 +426,19 @@ tipped_arrow.effect.xat.dwarf=矮人变形之箭
 xat.effect.dwarf=矮人
 xat.item.potion.dwarf.tooltip1=变形为矮人$dwarfticks:秒
 
-potion.effect.xat.titan=泰坦变形药水
-splash_potion.effect.xat.titan=喷溅型泰坦变形药水
-lingering_potion.effect.xat.titan=滞留型泰坦变形药水
-tipped_arrow.effect.xat.titan=泰坦变形之箭
-xat.effect.titan=泰坦
-xat.item.potion.titan.tooltip1=变形为泰坦$titanticks:秒
+potion.effect.xat.titan=巨人变形药水
+splash_potion.effect.xat.titan=喷溅型巨人变形药水
+lingering_potion.effect.xat.titan=滞留型巨人变形药水
+tipped_arrow.effect.xat.titan=巨人变形之箭
+xat.effect.titan=巨人
+xat.item.potion.titan.tooltip1=变形为巨人$titanticks:秒
 
-potion.effect.xat.goblin=哥布林变形药水
-splash_potion.effect.xat.goblin=喷溅型哥布林变形药水
-lingering_potion.effect.xat.goblin=滞留型哥布林变形药水
-tipped_arrow.effect.xat.goblin=哥布林变形之箭
-xat.effect.goblin=哥布林
-xat.item.potion.goblin.tooltip1=变形为哥布林$goblinticks:秒
+potion.effect.xat.goblin=地精变形药水
+splash_potion.effect.xat.goblin=喷溅型地精变形药水
+lingering_potion.effect.xat.goblin=滞留型地精变形药水
+tipped_arrow.effect.xat.goblin=地精变形之箭
+xat.effect.goblin=地精
+xat.item.potion.goblin.tooltip1=变形为地精$goblinticks:秒
 
 potion.effect.xat.elf=精灵变形药水
 splash_potion.effect.xat.elf=喷溅型精灵变形药水
@@ -529,11 +530,11 @@ xat.config.potion.dwarf=矮人变形药水
 xat.config.potion.dwarf.tooltip=
 xat.config.potion.elf=精灵变形药水
 xat.config.potion.elf.tooltip=
-xat.config.potion.fairy=仙女变形药水
+xat.config.potion.fairy=仙子变形药水
 xat.config.potion.fairy.tooltip=
-xat.config.potion.goblin=哥布林变形药水
+xat.config.potion.goblin=地精变形药水
 xat.config.potion.goblin.tooltip=
-xat.config.potion.titan=泰坦变形药水
+xat.config.potion.titan=巨人变形药水
 xat.config.potion.titan.tooltip=
 xat.config.potion.faelis=Faelis Potion
 xat.config.potion.faelis.tooltip=
@@ -549,7 +550,7 @@ xat.config.items.transformation=有变形效果的物品
 xat.config.glow_ring=魔眼之戒设置
 xat.config.glow_ring.tooltip=
 
-xat.config.weightless_stone=反重力之石
+xat.config.weightless_stone=零重力之石
 xat.config.weightless_stone.tooltip=
 
 xat.config.dragons_eye=巨龙之眼设置
@@ -606,16 +607,16 @@ xat.config.dwarf_ring.tooltip=
 xat.config.elf_ring=精灵之戒设置
 xat.config.elf_ring.tooltip=
 
-xat.config.fairy_ring=仙女之戒设置
+xat.config.fairy_ring=仙子之戒设置
 xat.config.fairy_ring.tooltip=
 
 xat.config.faelis_ring=猫灵之戒设置
 xat.config.faelis_ring.tooltip=
 
-xat.config.goblin_ring=哥布林之戒设置
+xat.config.goblin_ring=地精之戒设置
 xat.config.goblin_ring.tooltip=
 
-xat.config.titan_ring=泰坦之戒设置
+xat.config.titan_ring=巨人之戒设置
 xat.config.titan_ring.tooltip=
 
 xat.config.dragon_ring=巨龙之戒设置
@@ -687,12 +688,14 @@ xat.config.polarized_stone.collection.speed=拾取模式力
 xat.config.polarized_stone.collection.speed.tooltip=如果即时拾取已关闭，以多大的力吸引玩家附近的物品
 xat.config.polarized_stone.repel=排斥弹射物
 xat.config.polarized_stone.repel.tooltip=磁石是否排斥弹射物
+xat.config.polarized_stone.repel.range=Polarized Repel Range
+xat.config.polarized_stone.repel.range.tooltip=The Distance from the player to repel entities
 xat.config.polarized_stone.repel.exhaust=排斥耗费饥饿值
 xat.config.polarized_stone.repel.exhaust.tooltip=排斥弹射物是否消耗饥饿值
 xat.config.polarized_stone.repel.exhaust.amount=饥饿值消耗
-xat.config.polarized_stone.repel.exhaust.amount.tooltip=每 Tick 消耗多少饥饿值
-xat.config.polarized_stone.repel.exhaust.speed=每 Tick 消耗饥饿值速率
-xat.config.polarized_stone.repel.exhaust.speed.tooltip=斥力模式启动时每多少 Ticks 消耗一次饥饿值
+xat.config.polarized_stone.repel.exhaust.amount.tooltip=每刻消耗多少饥饿值
+xat.config.polarized_stone.repel.exhaust.speed=每刻消耗饥饿值速率
+xat.config.polarized_stone.repel.exhaust.speed.tooltip=斥力模式启动时每多少刻消耗一次饥饿值
 xat.config.polarized_stone.repel.entity.whitelist=排斥实体
 xat.config.polarized_stone.repel.entity.whitelist.tooltip=磁石可以推开实体的列表
 
@@ -825,7 +828,7 @@ xat.config.races.fairy.climbing.tooltip=玩家是否能在方块上攀爬
 xat.config.races.fairy.climbing.whitelist=Climbing Whitelist
 xat.config.races.fairy.climbing.whitelist.tooltip=Should the Block List be a whitelist
 xat.config.races.fairy.climbing.blocks.list=可攀爬的方块																				 									   
-xat.config.races.fairy.climbing.blocks.list.tooltip=玩家装备仙女之戒时可攀爬的方块
+xat.config.races.fairy.climbing.blocks.list.tooltip=玩家装备仙子之戒时可攀爬的方块
 xat.config.races.fairy.jumpheight=修改跳跃高度
 xat.config.races.fairy.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 xat.config.races.fairy.mount.enabled=Able to Mount Entities
@@ -837,14 +840,14 @@ xat.config.races.fairy.mount.whitelist.tooltip=Should the Mount Blacklist be a W
 xat.config.races.fairy.mount.blacklist=Mount Blacklist
 xat.config.races.fairy.mount.blacklist.tooltip=Entities that can not be mounted, or can only be mounted
 
-xat.config.races.goblin=哥布林设置
+xat.config.races.goblin=地精设置
 xat.config.races.goblin.tooltip=
 xat.config.races.goblin.rider=Goblin Rider
 xat.config.races.goblin.rider.tooltip=Can Goblins mount tamed wolves
 xat.config.races.goblin.natural_resistance=Naturally Resistant
 xat.config.races.goblin.natural_resistance.tooltip=Should Goblins be naturally resistant to Fire and explosions
 
-xat.config.races.titan=泰坦设置
+xat.config.races.titan=巨人设置
 xat.config.races.titan.jumpheight=修改跳跃高度
 xat.config.races.titan.jumpheight.tooltip=修改玩家的跳跃高度和步长以适应体型
 xat.config.races.titan.heavy=沉重的玩家
@@ -903,8 +906,8 @@ xat.config.races.dragon.breath.cost.tooltip=The Mana Cost per tick when using dr
 xat.config.compatability=兼容设置
 xat.config.compatability.tooltip=影响此模组如何与其他模组共同生效的设置
 
-xat.config.toughasnails=Tough as Nails
-xat.config.toughasnails.tooltip=如果已安装 Tough as Nails
+xat.config.toughasnails=意志坚定
+xat.config.toughasnails.tooltip=如果已安装意志坚定
 
 xat.config.firstaid=First Aid 设置
 xat.config.firstaid.tooltip=
@@ -929,7 +932,7 @@ xat.config.attributes.armortoughness.tooltip=启用属性修改
 xat.config.attributes.armortoughness=韧性
 xat.config.attributes.armortoughness.amount.tooltip=属性修改量
 xat.config.attributes.armortoughness.amount=韧性量
-xat.config.attributes.armortoughness.operation.tooltip=决定修改护甲韧性所用的数字
+xat.config.attributes.armortoughness.operation.tooltip=决定修改盔甲韧性所用的数字
 xat.config.attributes.armortoughness.operation=韧性 Operation
 
 xat.config.attributes.attackspeed.tooltip=启用属性修改

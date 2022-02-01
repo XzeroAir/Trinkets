@@ -1,15 +1,15 @@
 {
-    "name": "Stone of Greater Inertia",
+    "name": "巨惯性之石",
     "icon": "xat:greater_inertia_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Stone of Greater Inertia grants increased speed and jump height, however only grants partial knockback and fall damage resistance."
+            "text": "巨惯性之石提高它装备者的速度和跳跃高度，但是只有部分摔落伤害和击退免疫。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+75%$() Fall Damage Resistance$(br)$(2)+40%$() Knockback Resistance$(br)$(2)+150%$() Movement Speed$(br)$(2)+200%$() Jump Height"
+            "text": "$(l)默认属性调整：$()$(br)$(2)+75%$()摔落伤害抵抗$(br)$(2)+40%$()击退抗性$(br)$(2)+150%$()移动速度$(br)$(2)+200%$()跳跃高度"
         },
 		{
             "type": "crafting",

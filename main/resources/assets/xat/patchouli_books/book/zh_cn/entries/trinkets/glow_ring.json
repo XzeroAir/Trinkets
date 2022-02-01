@@ -1,11 +1,11 @@
 {
-    "name": "Ring of Enchanted Eyes",
+    "name": "魔眼之戒",
     "icon": "xat:glow_ring",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Ring of Enchanted Eyes is a wearable ring which grants its wearer night vision and immunity to blindness. This is used to craft the Dragon's Eye."
+            "text": "魔眼之戒是一种可穿戴的戒指，使它的装备者获得夜视并免疫失明。它被用于制作巨龙之眼。"
         },
 		{
             "type": "crafting",

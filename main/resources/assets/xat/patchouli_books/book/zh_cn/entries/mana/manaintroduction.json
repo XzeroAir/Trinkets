@@ -1,15 +1,15 @@
 {
-    "name": "Introduction to Mana",
+    "name": "魔力的介绍",
     "icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
     "category": "mana",
     "pages": [
         {
             "type": "text",
-            "text": "Mana is a feature introduced in version 0.31 which exists to balance out stronger trinkets and race abilities. These trinkets and races can consume from your mana supply, however given time your mana supply will regenerate. You start with 100 mana, however this can be increased or decreased with certain items or by playing as certain races."
+            "text": "魔力是在 0.31 版本引入的特性，用于平衡强大的饰品和种族能力。使用这些饰品和种族能力会消耗你的魔力，魔力会随着时间恢复。你的初始最大魔力值为100，最大魔力值可以通过使用特定的物品或变形为特定的种族来提高或降低。"
         },
 		{
 			"type": "crafting",
-			"text": "For those that need a quick boost in mana, mana candies have you covered. These restore 50 mana each (by default).",
+			"text": "对于那些需要快速恢复魔力的人，魔法糖果足以满足他们的需求。默认情况下，每个魔法糖果可以恢复50魔力值。",
 			"recipe": "xat:mana_candy"
 		}
     ]

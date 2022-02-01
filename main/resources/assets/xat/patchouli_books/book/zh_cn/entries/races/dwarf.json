@@ -1,19 +1,19 @@
 {
-    "name": "Dwarf",
+    "name": "矮人",
     "icon": "xat:dwarf_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Dwarf race is a skilled miner, and even has some proficiency in combat. Use this race if you go mining frequently. They are a bit shorter than the average player, however it isn't enough to make a noticable difference."
+            "text": "矮人们是熟练的矿工，也是富有经验的战士。如果你经常挖矿可以变形为矿工。他们比一般玩家稍矮，但是不足以成为被注意的差别。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)75% Size$(br)$(4)-25%$() Attack Speed$(br)$(2)+25%$() Attack Damage$(br)$(4)-30%$() Health$(br)$(2)+25%$() Armor Toughness$(br)$(4)-25%$() Movement Speed$(br)$(2)+20%$() Knockback Resistance"
+            "text": "$(l)默认属性调整:$()$(br)75%体型$(br)$(4)-25%$()攻击速度$(br)$(2)+25%$()攻击伤害$(br)$(4)-30%$()生命值$(br)$(2)+25%$()盔甲韧性$(br)$(4)-25%$()移动速度$(br)$(2)+20%$()击退抗性"
         },
 		{
             "type": "text",
-            "text": "$(l)Ability: Skilled Miner$()$(br)Dwarves mine all blocks at a fixed speed, gain more experience points for mining ores, apply 3 bonus psuedo-fortune levels to loot drops, and can mine blocks that require one pickaxe tier higher than their currently held pickaxe."
+            "text": "$(l)能力：熟练矿工$()$(br)矮人以固定的速度挖掘所有方块，从挖掘的矿石中获得更多经验值，获得三倍伪运等级的战利品掉落，也可以挖掘需求挖掘等级比当前镐挖掘等级高一级的方块。"
         },
 		{
             "type": "crafting",

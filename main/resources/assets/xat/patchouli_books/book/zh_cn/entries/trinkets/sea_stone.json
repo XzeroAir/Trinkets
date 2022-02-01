@@ -1,15 +1,15 @@
 {
-    "name": "Stone of the Sea",
+    "name": "海洋之石",
     "icon": "xat:sea_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Stone of the Sea grants its wearer the ability to breathe underwater, and changes swimming controls to a method more closely resembling 1.13+ swimming mechanics."
+            "text": "海洋之石使它的佩戴着能够在水下呼吸并改变游泳的控制方式使其更接近1.13+的游泳机制。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+400%$() Swim Speed$(br2)$(l)Mod Compatibility:$()$(br)$(n)Tough as Nails$() / $(n)Simple Difficulty$(): Immunity to thirst status effect$(br)$(n)Enhanced Visuals$(): Removes the blur visual effect for entering water"
+            "text": "$(l)默认属性调整：$()$(br)$(2)+400%$()游泳速度$(br2)$(l)兼容模组：$()$(br)$(n)意志坚定$() / $(n)Simple Difficulty$()：免疫口渴状态效果$(br)$(n)拓展视觉效果$()：移出入水时的模糊视野"
         },
 		{
             "type": "crafting",

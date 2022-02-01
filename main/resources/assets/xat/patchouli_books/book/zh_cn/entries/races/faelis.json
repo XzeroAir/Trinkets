@@ -1,19 +1,19 @@
 {
-    "name": "Faelis",
+    "name": "猫灵",
     "icon": "xat:faelis_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Faelis race is an agile race based on pure speed and fast attacking. The Faelis gains a few extra damage points from attacking with an empty fist, however using other weapons is not completely discouraged. The Faelis also gains a movement speed penalty from wearing armor heavier than leather or an elytra.$(br2)Race idea originally by NyanMinecrafter"
+            "text": "猫灵是基于高移动速度和高攻击速度的灵活种族。猫灵在空手攻击时会造成额外的伤害，但是使用武器时仍会造成少量额外伤害。猫灵在装备比皮革甲或鞘翅更重的装备时获得移动速度惩罚。$(br2)种族灵感源自 NyanMinecrafter"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)85% Size$(br)$(2)+15%$() Attack Speed$(br)$(4)-25%$() Attack Damage$(br)$(4)-25%$() Health$(br)$(4)-15%$() Armor Toughness$(br)$(2)+25%$() Movement Speed$(br)$(2)+50%$() Swim Speed$(br)$(2)+60%$() Jump Height$(br)$(2)+0.6$() Step Height$(br)"
+            "text": "$(l)默认属性调整：$()$(br)85%体型$(br)$(2)+15%$()攻击速度$(br)$(4)-25%$()攻击伤害$(br)$(4)-25%$()生命值$(br)$(4)-15%$()盔甲韧性$(br)$(2)+25%$()移动速度$(br)$(2)+50%$()游泳速度$(br)$(2)+60%$()跳跃高度$(br)$(2)+0.6$()上坡高度$(br)"
         },
 		{
             "type": "text",
-            "text": "$(l)Ability: Consume your Calcium$()$(br)When a Faelis drinks a milk bucket, they gain a boost to physical strength and the ability to wear stronger armors without penalty for 30 seconds."
+            "text": "$(l)能力：消耗钙质$()$(br)当猫灵饮用奶后，他们会增强体质并在30秒内免疫重甲惩罚。"
         },
 		{
             "type": "crafting",

@@ -1,15 +1,15 @@
 {
-    "name": "Teddy Bear",
+    "name": "泰迪熊",
     "icon": "xat:teddy_bear",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Teddy Bear grants its wearer configurable buffs upon sleeping.$(br2)Item idea originally by Rembo"
+            "text": "泰迪熊使它的装备者在睡觉时获得可配置的效果。$(br2)物品灵感源自 Rembo"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Effects:$()$(br)$(d)Regeneration$()$(br)$(2)Luck$()$(br)$(4)Health Boost II$()$(br2)$(l)Mod Compatibility:$()$(br)$(n)Lycanites$(): Prevents Fear and Insomnia status effects"
+            "text": "$(l)默认效果：$()$(br)$(d)生命恢复$()$(br)$(2)幸运$()$(br)$(4)生命提升 II$()$(br2)$(l)兼容模组：$()$(br)$(n)恐怖生物$()：免疫恐惧和失眠效果"
         },
 		{
             "type": "crafting",

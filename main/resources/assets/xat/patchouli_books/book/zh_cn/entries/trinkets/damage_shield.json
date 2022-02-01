@@ -1,15 +1,15 @@
 {
-    "name": "Shield of Honor",
+    "name": "荣耀之盾",
     "icon": "xat:damage_shield",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Shield of Honor grants its wearer the resistance status effect as well as the ability to ignore the damage of every fourth attack."
+            "text": "荣耀之盾使它的装备者获得抗性提升并免疫每第四次攻击。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+75%$() Explosion Damage Resistance$(br2)$(l)Mod Compatibility:$()$(br)$(n)First Aid$(): 1% chance to ignore headshot$(br)$(n)Enhanced Visuals$(): Removes the blur from explosions"
+            "text": "$(l)默认属性调整：$()$(br)$(2)+75%$()爆炸伤害抗性$(br2)$(l)兼容模组：$()$(br)$(n)医疗护理$()：1%几率免疫爆头$(br)$(n)增强效果$()：移除爆炸的模糊效果"
         },
 		{
             "type": "crafting",
