@@ -81,7 +81,7 @@ public class Trinkets {
 		TrinketsConfig.readConfig();
 
 		ConfigHelper.initConfigLists();
-		if (gotVIPs != true) {
+		if (gotVIPs != true && TrinketsConfig.CLIENT.retrieveVIP) {
 			log.info("Trinkets and Baubles: Generating VIP List");
 			//Needs to be on Client only
 			try {

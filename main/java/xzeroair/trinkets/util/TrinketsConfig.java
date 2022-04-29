@@ -139,6 +139,11 @@ public class TrinketsConfig {
 		@LangKey(cfgPrefix + ".client.entity.renderer.replace.fog")
 		public boolean RendererFog = false;
 
+		@Config.Comment("The VIP list may be unaccessible under some circumstance, use this to shorten game launching time.")
+		@Name("VIP")
+		@LangKey(cfgPrefix + ".client.vip")
+		public boolean retrieveVIP = true;
+
 		@Name("Items")
 		public TrinketItems items = new TrinketItems();
 

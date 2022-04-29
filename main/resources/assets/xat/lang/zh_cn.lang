@@ -10,8 +10,8 @@ xat.exampletext.5= item.item.glow_ring.0.compat.firstaid=与 First Aid 联动
 xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals=与 EnhancedVisuals 联动
 xat.exampletext.7= 这些是可以在游戏内使文字变色的颜色代码
 xat.exampletext.8= 颜色代码以标签 # 开头，半角符号 : 结尾，如 #gold:，#darkgreen:，等。
-xat.exampletext.8= 颜色……"black"， "white", "red"，"darkred"，"blue"，"darkblue"，"green"，"darkgreen" "lightpurple"，"darkpurple"，"yellow"，"aqua"，"darkaqua"， "gray"，"darkgray"，"gold"，"reset"。
-xat.exampletext.9= "strikethrough"，"underline"，"italic"，"bold"。也可以使用，如： #strikethrough:，#bold:，等。
+xat.exampletext.9= 颜色……"black"， "white", "red"，"darkred"，"blue"，"darkblue"，"green"，"darkgreen" "lightpurple"，"darkpurple"，"yellow"，"aqua"，"darkaqua"， "gray"，"darkgray"，"gold"，"reset"。
+xat.exampletext.10= "strikethrough"，"underline"，"italic"，"bold"。也可以使用，如： #strikethrough:，#bold:，等。
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<按住 Shift>
@@ -57,7 +57,7 @@ ability.block_detection.tooltip2=Press *deofkb: = Next Target
 ability.block_detection.tooltip3=Press *auxkb:+*deofkb: = Previous Target
 ability.night_vision.name=Night Vision
 ability.night_vision.tooltip1=#darkgreen:Grants Night Vision
-ability.night_vision.tooltip1=Press *denvkb: To toggle Night Vision
+ability.night_vision.tooltip2=Press *denvkb: To toggle Night Vision
 ability.creative_flight.name=Flying
 ability.creative_flight.tooltip1=Grants Creative Flight
 ability.creative_flight.tooltip2=Double tap jump to start flying, double tap jump again to stop
@@ -74,7 +74,7 @@ ability.block_climbing.tooltip1=Can climb some blocks
 ability.wither_immunity.name=Wither Immunity
 ability.wither_immunity.tooltip1=Immune to Wither
 ability.wither_immunity.tooltip2=When Attacking has a 1 in $witherchance: to wither the target
-ability.wither_immunity.tooltip2=Heals when Attacking when the target has wither
+ability.wither_immunity.tooltip3=Heals when Attacking when the target has wither
 ability.weightless.name=Weightless
 ability.weightless.tooltip1=Become Weightless
 ability.weightless.tooltip2=Attack to move up, Sneak + Attack to move down
@@ -124,7 +124,7 @@ ability.lightning_bolt.name=Lightning Affinity
 ability.lightning_bolt.tooltip1=Can Shoot Lightning at the Cost of MP
 ability.dodging.name=Dodging
 ability.dodging.tooltip1=Able to Double Tap Dodge and Stun nearby enemies
-ability.dodging.tooltip1=Uses Elenai Dodging instead if installed
+ability.dodging.tooltip2=Uses Elenai Dodging instead if installed
 ability.large_hands.name=Large Hands
 ability.large_hands.tooltip1=able to mine a 3x3x3 radius
 ability.large_hands.tooltip2=Sneak when mining to disable
@@ -505,6 +505,9 @@ xat.config.client.render.entity.renderer.replace=更换实体渲染器
 xat.config.client.render.entity.renderer.replace.tooltip=使用变形之戒时 Trinkets and Baubles 是否更换实体渲染器以解决某些视角问题？
 xat.config.client.render.entity.renderer.replace.fog=实体渲染器 雾
 xat.config.client.render.entity.renderer.replace.fog.tooltip=Trinket and Baubles Replaces 更换实体渲染器时会破坏某些 Optifine 的设置，尤其是雾，使用这个选项以打开或关闭雾。
+
+xat.config.client.vip=启用 VIP
+xat.config.client.vip.tooltip=如果无法访问 VIP 列表的网址，可以使用此项来减少游戏启动时间。
 
 xat.config.food.registry.enabled=启用食物
 xat.config.food.registry.enabled.tooltip=这个 Trinkets and Baubles 的食物是否在加载时注册
