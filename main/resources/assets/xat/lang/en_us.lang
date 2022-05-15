@@ -335,37 +335,37 @@ item.faelis_claw.0.tooltip3=#red:Duration reduced to 1/3 when used by Non-Faeles
 item.dwarf_stout.name=Dwarf Stout
 item.dwarf_stout.tooltip1=#aqua:I might be able to remove the effects
 item.dwarf_stout.tooltip2=#aqua:by drinking some sort of potion
-item.dwarf_stout.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.dwarf_stout.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.fairy_dew.name=Fairy Dew
 item.fairy_dew.tooltip1=#aqua:I might be able to remove the effects
 item.fairy_dew.tooltip2=#aqua:by drinking some sort of potion
-item.fairy_dew.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.fairy_dew.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.titan_spirit.name=Titan's Spirit
 item.titan_spirit.tooltip1=#aqua:I might be able to remove the effects
 item.titan_spirit.tooltip2=#aqua:by drinking some sort of potion
-item.titan_spirit.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.titan_spirit.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.elf_sap.name=Elf Sap
 item.elf_sap.tooltip1=#aqua:I might be able to remove the effects
 item.elf_sap.tooltip2=#aqua:by drinking some sort of potion
-item.elf_sap.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.elf_sap.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.goblin_soup.name=Goblin Soup
 item.goblin_soup.tooltip1=#aqua:I might be able to remove the effects
 item.goblin_soup.tooltip2=#aqua:by drinking some sort of potion
-item.goblin_soup.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.goblin_soup.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.faelis_food.name=Faelis Nip
 item.faelis_food.tooltip1=#aqua:I might be able to remove the effects
 item.faelis_food.tooltip2=#aqua:by drinking some sort of potion
-item.faelis_food.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.faelis_food.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 item.dragon_gem.name=Dragon Gem
 item.dragon_gem.tooltip1=#aqua:I might be able to remove the effects
 item.dragon_gem.tooltip2=#aqua:by drinking some sort of potion
-item.dragon_gem.tooltip3=<#blue:Use a Potion of Restoration to undo#reset:>
+item.dragon_gem.tooltip3=<#blue:Use a Restoration Serum to undo#reset:>
 
 ####################################Food End####################################
 
