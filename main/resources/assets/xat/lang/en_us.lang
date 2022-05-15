@@ -10,8 +10,8 @@ xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
 xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
 xat.exampletext.7= There are Color Codes that can be used to give the text below colors in game
 xat.exampletext.8= Color Codes Start with Hashtag # and end with a Semi colon :, Example: #gold:, #darkgreen:, etc.
-xat.exampletext.8= Colors... "black", "white", "red", "darkred", "blue", "darkblue", "green", "darkgreen", "lightpurple", "darkpurple", "yellow", "aqua", "darkaqua", "gray", "darkgray", "gold", "reset".
-xat.exampletext.9= "strikethrough", "underline", "italic", "bold". Can also be used, Example: #strikethrough:, #bold:, etc.
+xat.exampletext.9= Colors... "black", "white", "red", "darkred", "blue", "darkblue", "green", "darkgreen", "lightpurple", "darkpurple", "yellow", "aqua", "darkaqua", "gray", "darkgray", "gold", "reset".
+xat.exampletext.10= "strikethrough", "underline", "italic", "bold". Can also be used, Example: #strikethrough:, #bold:, etc.
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Hold Shift>
@@ -57,7 +57,7 @@ ability.block_detection.tooltip2=Press *deofkb: = Next Target
 ability.block_detection.tooltip3=Press *auxkb:+*deofkb: = Previous Target
 ability.night_vision.name=Night Vision
 ability.night_vision.tooltip1=#darkgreen:Grants Night Vision
-ability.night_vision.tooltip1=Press *denvkb: To toggle Night Vision
+ability.night_vision.tooltip2=Press *denvkb: To toggle Night Vision
 ability.creative_flight.name=Flying
 ability.creative_flight.tooltip1=Grants Creative Flight
 ability.creative_flight.tooltip2=Double tap jump to start flying, double tap jump again to stop
@@ -74,7 +74,7 @@ ability.block_climbing.tooltip1=Can climb some blocks
 ability.wither_immunity.name=Wither Immunity
 ability.wither_immunity.tooltip1=Immune to Wither
 ability.wither_immunity.tooltip2=When Attacking has a 1 in $witherchance: to wither the target
-ability.wither_immunity.tooltip2=Heals when Attacking when the target has wither
+ability.wither_immunity.tooltip3=Heals when Attacking when the target has wither
 ability.weightless.name=Weightless
 ability.weightless.tooltip1=Become Weightless
 ability.weightless.tooltip2=Attack to move up, Sneak + Attack to move down
@@ -124,7 +124,7 @@ ability.lightning_bolt.name=Lightning Affinity
 ability.lightning_bolt.tooltip1=Can Shoot Lightning at the Cost of MP
 ability.dodging.name=Dodging
 ability.dodging.tooltip1=Able to Double Tap Dodge and Stun nearby enemies
-ability.dodging.tooltip1=Uses Elenai Dodging instead if installed
+ability.dodging.tooltip2=Uses Elenai Dodging instead if installed
 ability.large_hands.name=Large Hands
 ability.large_hands.tooltip1=able to mine a 3x3x3 radius
 ability.large_hands.tooltip2=Sneak when mining to disable
@@ -505,6 +505,9 @@ xat.config.client.render.entity.renderer.replace=Replace EntityRenderer
 xat.config.client.render.entity.renderer.replace.tooltip=When using the Enchanted Race rings, should Trinkets and Baubles Replace the EntityRenderer to solve some of the camera clipping issues?
 xat.config.client.render.entity.renderer.replace.fog=EntityRenderer Fog
 xat.config.client.render.entity.renderer.replace.fog.tooltip=When the Trinket and Baubles custom EntityRenderer breaks certain settings with Optifine, specifically fog, use this to toggle fog for compatibility.
+
+xat.config.client.vip=VIP Enabled
+xat.config.client.vip.tooltip=The VIP list may be unaccessible under some circumstance, use this to shorten game launching time.
 
 xat.config.food.registry.enabled=Foods Enabled
 xat.config.food.registry.enabled.tooltip=If Trinkets and Baubles Food Items Should be added to the Registry on Load
