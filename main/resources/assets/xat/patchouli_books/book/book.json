@@ -1,8 +1,0 @@
-{
-	"name": "Trinkets Guide",
-	"landing_text": "Welcome! Thank you for installing the Trinkets and Baubles mod. This guide will cover every feature in the current release.",
-	"version": 2,
-	"book_texture": "patchouli:textures/gui/book_purple.png",
-	"show_progress": false,
-	"model": "xat:trinkets_book_placeholder"
-}
