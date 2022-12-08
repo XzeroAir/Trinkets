@@ -1,0 +1,6 @@
+{
+	"name": "魔力",
+	"description": "魔力是用于某些强力饰品和种族效果的一种物质。本章将详细讲述魔力如何运作。",
+	"icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
+	"sortnum": 4
+}

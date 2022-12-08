@@ -1,0 +1,22 @@
+{
+	"xat.araara": {
+		"category": "player",
+		"subtitle": "xat.subtitle.araara",
+		"sounds": [
+			{
+				"name": "xat:araara",
+				"stream": true
+			}
+		]
+	},
+	"xat.uwu": {
+		"category": "player",
+		"subtitle": "xat.subtitle.uwu",
+		"sounds": [
+			{
+				"name": "xat:uwu",
+				"stream": true
+			}
+		]
+	}
+}

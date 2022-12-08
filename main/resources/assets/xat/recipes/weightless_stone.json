@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#S#",
+        "SDS",
+        "#S#"
+    ],
+    "key": {
+        "D": {
+            "item": "minecraft:end_stone"
+        },
+        "S": {
+            "item": "minecraft:compass"
+        },
+        "#": {
+            "item": "xat:glowing_ingot"
+        }
+    },
+    "result": {
+        "item": "xat:weightless_stone"
+    }
+}

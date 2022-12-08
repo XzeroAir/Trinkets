@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SIS",
+        "IDI",
+        "SIS"
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:sugar"
+        },
+        "S": {
+            "item": "minecraft:rabbit_foot"
+        },
+        "D": {
+            "item": "xat:inertia_null_stone"
+        }
+    },
+    "result": {
+        "item": "xat:greater_inertia_stone"
+    }
+}

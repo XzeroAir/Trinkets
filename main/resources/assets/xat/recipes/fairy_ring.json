@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#I ",
+        "ICI",
+        " I "
+    ],
+    "key": {
+        "#": {
+            "item": "xat:mana_crystal"
+        },
+        "I": {
+            "item": "xat:glowing_ingot"
+        },
+        "C": {
+            "item": "xat:fairy_dew"
+        }
+    },
+    "result": {
+        "item": "xat:fairy_ring"
+    }
+}

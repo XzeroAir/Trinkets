@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "##",
+        "##"
+    ],
+    "key": {
+        "#": {
+            "item": "xat:glowing_powder"
+        }
+    },
+    "result": {
+        "item": "xat:glowing_ingot"
+    }
+}

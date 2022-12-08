@@ -1,0 +1,37 @@
+{
+	"type": "xat:dragon_eye_iaf",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "iceandfire"
+		}
+	],
+	"pattern": [
+		"XS#",
+		"SDS",
+		"#S#"
+	],
+	"key": {
+		"D": {
+			"type": "xat:nbt",
+			"item": "iceandfire:dragon_skull",
+			"nbt": {
+				"Stage": 5,
+				"DragonAge": 0
+			},
+			"data": 0
+		},
+		"S": {
+			"item": "minecraft:diamond_sword"
+		},
+		"#": {
+			"item": "xat:glowing_gem"
+		},
+		"X": {
+			"item": "xat:glow_ring"
+		}
+	},
+	"result": {
+		"item": "xat:dragons_eye"
+	}
+}

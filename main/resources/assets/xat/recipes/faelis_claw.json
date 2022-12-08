@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " I#",
+        "I#L",
+        "#LG"
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:iron_ingot"
+        },
+        "L": {
+            "item": "minecraft:leather"
+        },
+        "#": {
+            "item": "xat:glowing_ingot"
+        },
+        "G": {
+            "item": "xat:glowing_gem"
+        }
+    },
+    "result": {
+        "item": "xat:faelis_claw"
+    }
+}
