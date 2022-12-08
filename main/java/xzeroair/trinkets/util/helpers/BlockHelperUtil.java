@@ -404,11 +404,11 @@ public class BlockHelperUtil {
 	 * Be Careful calling on blockBreakEvent
 	 */
 	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent) {
-		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, true, 0, null);
+		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, 0);
 	}
 
 	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel) {
-		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, true, bonusToolLevel, null);
+		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, bonusToolLevel, null);
 	}
 
 	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, Function<Integer, Integer> handleXP) {

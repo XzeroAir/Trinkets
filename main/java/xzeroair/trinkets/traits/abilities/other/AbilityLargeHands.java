@@ -13,7 +13,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EntitySelectors;
@@ -96,17 +95,11 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 				return expToDrop;
 			}
 		}
+
 		final ItemStack heldItemStack = entity instanceof EntityPlayer ? ((EntityPlayer) entity).inventory.getCurrentItem() : entity.getActiveItemStack();
 		final Block block = state.getBlock();
 		final String neededTool = block.getHarvestTool(state);
 		final ItemStack toolUsed = this.getHarvestTool(neededTool, heldItemStack);
-		if (toolUsed.hasTagCompound()) {
-			if (toolUsed.getTagCompound().hasKey("BlockBreakEvent")) {
-				return expToDrop;
-			}
-		} else {
-			toolUsed.setTagCompound(new NBTTagCompound());
-		}
 
 		if (BlockHelperUtil.canToolHarvestBlock(toolUsed, state)) {
 			if (BlockHelperUtil.isToolEffective(toolUsed, state)) {
@@ -120,7 +113,6 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 					}
 					return !skip;
 				});
-				toolUsed.getTagCompound().setBoolean("BlockBreakEvent", true);
 				for (BlockPos ePos : list) {
 					BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, ePos, true);
 				}

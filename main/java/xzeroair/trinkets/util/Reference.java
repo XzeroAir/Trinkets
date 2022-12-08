@@ -1,5 +1,6 @@
 package xzeroair.trinkets.util;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Reference {
@@ -20,6 +21,8 @@ public class Reference {
 	public static final String configPath = filePath + "Trinkets_And_Baubles";
 
 	public static Random random = new Random();
+
+	public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
 
 	private static final int ATTRIBUTE_MODIFIER_OPERATION_ADD = 0;
 	private static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_OLD_AMOUNT = 1;

@@ -1,6 +1,5 @@
 package xzeroair.trinkets.items.base;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -311,8 +310,6 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		return !TrinketHelper.AccessoryCheck(player, this);
 	}
 
-	public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
-
 	@SideOnly(Side.CLIENT)
 	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
@@ -411,18 +408,18 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 									}
 									final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
 									if (flag) {
-										final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+										final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
 										tooltip.add(" " + never.getFormattedText());
 										//I18n.translateToLocalFormatted("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
 									} else if (d0 > 0.0D) {
-										final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+										final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
 										addition.getStyle().setColor(TextFormatting.BLUE);
 										String s = addition.getFormattedText();
 										tooltip.add(" " + s);
 										// I18n.translateToLocalFormatted("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
 									} else if (d0 < 0.0D) {
 										d1 = d1 * -1.0D;
-										final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+										final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
 										subtraction.getStyle().setColor(TextFormatting.RED);
 										String s = subtraction.getFormattedText();
 										tooltip.add(" " + s);

@@ -90,13 +90,12 @@ public class UpdatingAttribute {
 				if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
 					final AttributeModifier modifier = this.createModifier(amount, operation);
 					float oldHealth = entity.getHealth();
-					System.out.println(amount);
 					//					float oldMax = entity.getMaxHealth();
 					AttributeInstance.applyModifier(modifier);
 					//					float newMax = entity.getMaxHealth();
 					//					float newHealth = entity.getHealth();
 					//					float diff = newMax - newHealth;
-					//					entity.setHealth(oldHealth);
+					entity.setHealth(oldHealth);
 					//					//					entity.setHealth((oldHealth + diff) + 1);
 					//					//					System.out.println(diff);
 					//					//					entity.heal(diff);
