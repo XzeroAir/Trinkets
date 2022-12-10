@@ -3,6 +3,7 @@ package xzeroair.trinkets.events;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
@@ -72,7 +73,8 @@ public class BlockBreakEvents extends EventBaseHandler {
 
 	@SubscribeEvent
 	public void breakEvent(BreakEvent event) {
-		Capabilities.getEntityProperties(event.getPlayer(), prop -> {
+		final EntityPlayer player = event.getPlayer();
+		Capabilities.getEntityProperties(player, prop -> {
 			prop.getRaceHandler().blockBroken(event);
 			if (!event.isCanceled()) {
 				final int defaultExp = event.getExpToDrop();
@@ -87,11 +89,15 @@ public class BlockBreakEvents extends EventBaseHandler {
 					try {
 						IAbilityInterface ability = holder.getAbility();
 						if ((ability instanceof IMiningAbility)) {
-							exp = ((IMiningAbility) ability).brokeBlock(event.getPlayer(), event.getWorld(), event.getState(), event.getPos(), exp);
+							final int result = ((IMiningAbility) ability).brokeBlock(player, event.getWorld(), event.getState(), event.getPos(), exp);
+							exp = result;
 						}
 					} catch (Exception e) {
 						Trinkets.log.error("Trinkets had an Error with Ability:" + key);
 						e.printStackTrace();
+					}
+					if (exp < 0) {
+						break;
 					}
 				}
 				if (exp != defaultExp) {

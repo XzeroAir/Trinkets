@@ -95,12 +95,10 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 				return expToDrop;
 			}
 		}
-
 		final ItemStack heldItemStack = entity instanceof EntityPlayer ? ((EntityPlayer) entity).inventory.getCurrentItem() : entity.getActiveItemStack();
 		final Block block = state.getBlock();
 		final String neededTool = block.getHarvestTool(state);
 		final ItemStack toolUsed = this.getHarvestTool(neededTool, heldItemStack);
-
 		if (BlockHelperUtil.canToolHarvestBlock(toolUsed, state)) {
 			if (BlockHelperUtil.isToolEffective(toolUsed, state)) {
 				final ImmutableList<BlockPos> list = BlockHelperUtil.getBlockList(toolUsed, world, (EntityPlayer) entity, pos, 3, 3, 3, checkPos -> {
@@ -117,7 +115,7 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 					BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, ePos, true);
 				}
 				BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false);
-				return -1;
+				return 0;
 			}
 		}
 		return expToDrop;

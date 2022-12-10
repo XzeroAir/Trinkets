@@ -14,6 +14,7 @@ import com.google.common.base.Predicates;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,23 +26,49 @@ import xzeroair.trinkets.Trinkets;
 
 public class RayTraceHelper {
 
+	public static RayTraceResult rayTrace(EntityLivingBase entity, boolean useLiquids) {
+		double distance = 5.0D;
+		if (entity instanceof EntityPlayer) {
+			distance = entity.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+		}
+		return rayTrace(entity.world, entity, distance, useLiquids, !useLiquids);
+	}
+
+	public static RayTraceResult rayTrace(World world, EntityLivingBase entity, boolean useLiquids) {
+		double distance = 5.0D;
+		if (entity instanceof EntityPlayer) {
+			distance = entity.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+		}
+		return rayTrace(world, entity, distance, useLiquids, !useLiquids);
+	}
+
 	public static RayTraceResult rayTrace(EntityLivingBase entity, double distance) {
+		return rayTrace(entity.world, entity, distance, false, true);
+	}
+
+	public static RayTraceResult rayTrace(EntityLivingBase entity, double distance, boolean useLiquids) {
+		return rayTrace(entity.world, entity, distance, useLiquids, !useLiquids);
+	}
+
+	public static RayTraceResult rayTrace(World world, EntityLivingBase entity, double distance, boolean useLiquids) {
+		return rayTrace(world, entity, distance, useLiquids, !useLiquids);
+	}
+
+	public static RayTraceResult rayTrace(World world, EntityLivingBase entity, double distance, boolean useLiquids, boolean ignoreBlockWithoutBoundingBox) {
 		final Vec3d start = entity.getPositionEyes(1F);
 		final Vec3d lookVec = entity.getLookVec();
 		final Vec3d end = start.add(lookVec.x * distance, lookVec.y * distance, lookVec.z * distance);
-		final RayTraceResult result = getRaytraceResult(entity, start, end, distance, null);
+		final RayTraceResult result = getRaytraceResult(world, entity, start, end, distance, useLiquids, ignoreBlockWithoutBoundingBox, null);
 		return result;
-		//		boolean targetHit = result != null;
-		//		Vec3d hitLoc = targetHit ? result.hitVec : end;
 	}
 
-	public static RayTraceResult getRaytraceResult(EntityLivingBase entity, Vec3d start, Vec3d end, double distance, Predicate<Entity> excluding) {
-		RayTraceResult result = entity.world.rayTraceBlocks(start, end, false, true, false);
+	public static RayTraceResult getRaytraceResult(World world, EntityLivingBase entity, Vec3d start, Vec3d end, double distance, boolean useLiquids, boolean ignoreBlockWithoutBoundingBox, Predicate<Entity> excluding) {
+		RayTraceResult result = world.rayTraceBlocks(start, end, useLiquids, ignoreBlockWithoutBoundingBox, false);
 		//		RayTraceResult result = entity.world.rayTraceBlocks(start, end);
 		final Vec3d lookVec = entity.getLookVec();
 		if ((result != null) && (result.typeOfHit == Type.BLOCK)) {
 			final BlockPos pos = result.getBlockPos();
-			if (entity.world.getBlockState(pos).getCollisionBoundingBox(entity.world, pos) != Block.NULL_AABB) {
+			if (world.getBlockState(pos).getCollisionBoundingBox(world, pos) != Block.NULL_AABB) {
 				distance = result.hitVec.distanceTo(start);
 				end = start.add(lookVec.x * distance, lookVec.y * distance, lookVec.z * distance);
 			}

@@ -219,24 +219,6 @@ public class BlockHelperUtil {
 		return (f < 0 ? 0 : f);
 	}
 
-	public static RayTraceResult rayTrace(World world, EntityPlayer player, boolean useLiquids) {
-		float f = player.rotationPitch;
-		float f1 = player.rotationYaw;
-		double d0 = player.posX;
-		double d1 = player.posY + player.getEyeHeight();
-		double d2 = player.posZ;
-		Vec3d vec3d = new Vec3d(d0, d1, d2);
-		float f2 = MathHelper.cos((-f1 * 0.017453292F) - (float) Math.PI);
-		float f3 = MathHelper.sin((-f1 * 0.017453292F) - (float) Math.PI);
-		float f4 = -MathHelper.cos(-f * 0.017453292F);
-		float f5 = MathHelper.sin(-f * 0.017453292F);
-		float f6 = f3 * f4;
-		float f7 = f2 * f4;
-		double d3 = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
-		Vec3d vec3d1 = vec3d.add(f6 * d3, f5 * d3, f7 * d3);
-		return world.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
-	}
-
 	public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth) {
 		return getBlockList(stack, world, player, origin, width, height, depth, -1, null);
 	}
@@ -257,37 +239,36 @@ public class BlockHelperUtil {
 		}
 
 		// raytrace to get the side, but has to result in the same block
-		RayTraceResult mop = rayTrace(world, player, true);
-		if ((mop == null) || !origin.equals(mop.getBlockPos())) {
-			mop = rayTrace(world, player, false);
-			if ((mop == null) || !origin.equals(mop.getBlockPos())) {
+		RayTraceResult targetPoint = RayTraceHelper.rayTrace(world, player, true);
+		if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
+			targetPoint = RayTraceHelper.rayTrace(world, player, false);
+			if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
 				return ImmutableList.of();
 			}
 		}
 
 		int x, y, z;
 		BlockPos start = origin;
-		System.out.println(mop.sideHit);
-		switch (mop.sideHit) {
+		switch (targetPoint.sideHit) {
 		case DOWN:
 		case UP:
 			// x y depends on the angle we look?
 			Vec3i vec = player.getHorizontalFacing().getDirectionVec();
 			x = (vec.getX() * height) + (vec.getZ() * width);
-			y = mop.sideHit.getAxisDirection().getOffset() * -depth;
+			y = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
 			z = (vec.getX() * width) + (vec.getZ() * height);
 			start = start.add(-x / 2, 0, -z / 2);
 			if ((x % 2) == 0) {
-				if ((x > 0) && ((mop.hitVec.x - mop.getBlockPos().getX()) > 0.5d)) {
+				if ((x > 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
 					start = start.add(1, 0, 0);
-				} else if ((x < 0) && ((mop.hitVec.x - mop.getBlockPos().getX()) < 0.5d)) {
+				} else if ((x < 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) < 0.5d)) {
 					start = start.add(-1, 0, 0);
 				}
 			}
 			if ((z % 2) == 0) {
-				if ((z > 0) && ((mop.hitVec.z - mop.getBlockPos().getZ()) > 0.5d)) {
+				if ((z > 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
 					start = start.add(0, 0, 1);
-				} else if ((z < 0) && ((mop.hitVec.z - mop.getBlockPos().getZ()) < 0.5d)) {
+				} else if ((z < 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) < 0.5d)) {
 					start = start.add(0, 0, -1);
 				}
 			}
@@ -296,25 +277,25 @@ public class BlockHelperUtil {
 		case SOUTH:
 			x = width;
 			y = height;
-			z = mop.sideHit.getAxisDirection().getOffset() * -depth;
+			z = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
 			start = start.add(-x / 2, -y / 2, 0);
-			if (((x % 2) == 0) && ((mop.hitVec.x - mop.getBlockPos().getX()) > 0.5d)) {
+			if (((x % 2) == 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
 				start = start.add(1, 0, 0);
 			}
-			if (((y % 2) == 0) && ((mop.hitVec.y - mop.getBlockPos().getY()) > 0.5d)) {
+			if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
 				start = start.add(0, 1, 0);
 			}
 			break;
 		case WEST:
 		case EAST:
-			x = mop.sideHit.getAxisDirection().getOffset() * -depth;
+			x = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
 			y = height;
 			z = width;
 			start = start.add(-0, -y / 2, -z / 2);
-			if (((y % 2) == 0) && ((mop.hitVec.y - mop.getBlockPos().getY()) > 0.5d)) {
+			if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
 				start = start.add(0, 1, 0);
 			}
-			if (((z % 2) == 0) && ((mop.hitVec.z - mop.getBlockPos().getZ()) > 0.5d)) {
+			if (((z % 2) == 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
 				start = start.add(0, 0, 1);
 			}
 			break;
@@ -353,7 +334,7 @@ public class BlockHelperUtil {
 	}
 
 	public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos, int bonusToolLevel) {
-		if (world.isAirBlock(targetPos) || (world.getTileEntity(targetPos) != null)) {
+		if (world.isAirBlock(targetPos)) {
 			return false;
 		}
 
@@ -435,6 +416,7 @@ public class BlockHelperUtil {
 			if (xp == -1) {
 				return;
 			}
+
 			TileEntity tileEntity = world.getTileEntity(targetPos);
 			// ItemInWorldManager.removeBlock
 			if (block.removedByPlayer(state, world, targetPos, entity, true)) { // boolean is if block can be harvested, checked above
@@ -442,7 +424,6 @@ public class BlockHelperUtil {
 				block.harvestBlock(world, entity, targetPos, state, tileEntity, harvestTool);
 				block.dropXpOnBlockBreak(world, targetPos, xp);
 			}
-
 			// always send block update to client
 			NetworkHandler.sendPacket(entity, new SPacketBlockChange(world, targetPos));
 		}

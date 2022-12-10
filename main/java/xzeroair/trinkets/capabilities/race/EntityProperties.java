@@ -154,7 +154,6 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		this.updateRace();
 		abilities.updateAbilityHandler();
 		this.getRaceHandler().onTick();
-		//		System.out.println(this.getRaceHandler().getRace().getName());
 		if (sync == true) {
 			if (!isClient) {
 				this.sendInformationToPlayer(object);
@@ -165,12 +164,6 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		if (!(object instanceof FakePlayer) && (object instanceof EntityPlayer) && object.getName().equals("XzeroAir")) {
 			final EntityPlayer player = (EntityPlayer) object;
 			//			if (isClient) {
-			try {
-				//				System.out.println(this.getTag());
-				//				System.out.println(this.getRaceHandler().getRace().getName());
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 			//			}
 		}
 	}

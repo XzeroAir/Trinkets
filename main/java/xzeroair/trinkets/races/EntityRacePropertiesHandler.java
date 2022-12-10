@@ -178,7 +178,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 				artemis.addModifiers();
 			}
 			this.whileTransformed();
-			System.out.println(entity.getHealth() + "");
 			firstTransformUpdate = false;
 		}
 		if (cooldown > 0) {
