@@ -20,6 +20,7 @@ public class TrinketGlowRing extends AccessoryBase {
 	public TrinketGlowRing(String name) {
 		super(name);
 		this.setUUID("c7100557-afaf-4e69-b538-ef4ed550b470");
+		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override

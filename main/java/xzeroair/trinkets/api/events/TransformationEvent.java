@@ -31,14 +31,14 @@ public abstract class TransformationEvent extends Event {
 	}
 
 	@Cancelable
-	public static class RaceChangedEvent extends TransformationEvent {
+	public static class RaceUpdateEvent extends TransformationEvent {
 
 		protected boolean changed = false;
 		protected EntityRace newRace;
 
-		public RaceChangedEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace next) {
+		public RaceUpdateEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace next) {
 			super(entity, properties, current);
-			this.setChanged(!currentRace.equals(next));
+			this.setChanged(!this.getCurrentRace().equals(next));
 			this.setNewRace(next);
 		}
 
@@ -59,20 +59,20 @@ public abstract class TransformationEvent extends Event {
 		}
 	}
 
-	public static class startTransformationEvent extends TransformationEvent {
+	public static class StartTransformation extends TransformationEvent {
 
-		public startTransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
+		public StartTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
 			super(entity, properties, current);
 		}
 	}
 
-	public static class endTransformationEvent extends TransformationEvent {
+	public static class EndTransformation extends TransformationEvent {
 
 		protected EntityRace prevRace;
 
-		public endTransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace prev) {
+		public EndTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
 			super(entity, properties, current);
-			this.setPreviousRace(prev);
+			this.setPreviousRace(this.getCurrentRace());
 		}
 
 		public EntityRace getPreviousRace() {

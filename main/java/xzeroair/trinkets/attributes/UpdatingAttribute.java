@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.World;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidCompat;
 
 public class UpdatingAttribute {
 
@@ -68,7 +69,7 @@ public class UpdatingAttribute {
 
 	public void addModifier(EntityLivingBase entity, double amount, int operation) {
 		final World world = entity == null ? null : entity.getEntityWorld();
-		if (((entity == null) || (world == null)) || (world.isRemote)) {
+		if ((entity == null) || (world == null)) {
 			return;
 		}
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);
@@ -77,38 +78,30 @@ public class UpdatingAttribute {
 		}
 		if ((AttributeInstance.getModifier(uuid) != null)) {
 			final AttributeModifier m = AttributeInstance.getModifier(uuid);
-			if ((m.getAmount() != amount) || (m.getOperation() != operation)) {
+			if ((amount == 0) || (m.getAmount() != amount) || (m.getOperation() != operation)) {
 				this.removeModifier(entity);
-			}
-			if (entity.isDead) {
-				this.removeModifier(entity);
-				return;
 			}
 		}
-		if ((amount != 0) && !entity.isDead) {
+		if (amount != 0) {
 			if (AttributeInstance.getModifier(uuid) == null) {
 				if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
 					final AttributeModifier modifier = this.createModifier(amount, operation);
-					float oldHealth = entity.getHealth();
+					//					float oldHealth = entity.getHealth();
 					//					float oldMax = entity.getMaxHealth();
 					AttributeInstance.applyModifier(modifier);
 					//					float newMax = entity.getMaxHealth();
 					//					float newHealth = entity.getHealth();
-					//					float diff = newMax - newHealth;
-					entity.setHealth(oldHealth);
-					//					//					entity.setHealth((oldHealth + diff) + 1);
-					//					//					System.out.println(diff);
-					//					//					entity.heal(diff);
-					//					//					System.out.println(oldHealth + "|" + newHealth + " | " + oldMax + "|" + newMax + " | " + beforeSet);
-					//
-					//					final float amountToHeal = newMax - oldMax;
-					//					if (amountToHeal > 0) {
-					//						entity.heal(amountToHeal);
+					//					float diff = newMax - oldMax;
+					FirstAidCompat.rescale(entity);
+					//					if (diff > 0) {
+					//						entity.heal(diff);
+					//					} else {
+
 					//					}
-					//					if (!entity.getEntityWorld().isRemote) {
-					//						if (entity.getEntityWorld() instanceof WorldServer) {
+					//					if (!world.isRemote) {
+					//						if (world instanceof WorldServer) {
 					//							final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-					//							((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
+					//							((WorldServer) world).getEntityTracker().sendToTrackingAndSelf(entity, packet);
 					//						}
 					//					}
 				} else {
@@ -128,19 +121,19 @@ public class UpdatingAttribute {
 		if ((AttributeInstance == null) || (AttributeInstance.getModifier(uuid) == null)) {
 			return;
 		}
-		if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
-			final float health = entity.getHealth();
-			AttributeInstance.removeModifier(uuid);
-			if (health > AttributeInstance.getAttributeValue()) {
-				entity.setHealth(entity.getMaxHealth());
+		//		if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
+		//			final float health = entity.getHealth();
+		//			AttributeInstance.removeModifier(uuid);
+		//			if (health > AttributeInstance.getAttributeValue()) {
+		//				entity.setHealth(entity.getMaxHealth());
+		//			}
+		//		} else {
+		if (AttributeInstance.getAttribute() == JumpAttribute.stepHeight) {
+			if (entity.stepHeight != AttributeInstance.getBaseValue()) {
+				entity.stepHeight = (float) AttributeInstance.getBaseValue();
 			}
-		} else {
-			if (AttributeInstance.getAttribute() == JumpAttribute.stepHeight) {
-				if (entity.stepHeight != AttributeInstance.getBaseValue()) {
-					entity.stepHeight = (float) AttributeInstance.getBaseValue();
-				}
-			}
-			AttributeInstance.removeModifier(uuid);
 		}
+		AttributeInstance.removeModifier(uuid);
+		//		}
 	}
 }

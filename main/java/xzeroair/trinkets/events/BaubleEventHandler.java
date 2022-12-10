@@ -19,6 +19,7 @@ import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -41,8 +42,9 @@ public class BaubleEventHandler {
 	public void clientTickEvent(TickEvent.ClientTickEvent event) {
 		if (event.phase == Phase.END) {
 			final EntityPlayer player = Minecraft.getMinecraft().player;
-			if ((player == null) || !player.isEntityAlive() || (player.world == null))
+			if ((player == null) || !player.isEntityAlive() || (player.world == null)) {
 				return;
+			}
 			BaublesHelper.getBaublesHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {
 					final ItemStack stack = handler.getStackInSlot(i);
@@ -56,11 +58,11 @@ public class BaubleEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void PlayerLoggedInEvent(PlayerLoggedInEvent event) {
-		if ((event.player.world != null)) {
-			final EntityPlayer player = event.player;
-			World world = player.getEntityWorld();
+		final EntityPlayer player = event.player;
+		World world = player.getEntityWorld();
+		if (world != null) {
 			final boolean client = world.isRemote;
 			BaublesHelper.getBaublesHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {
@@ -140,8 +142,9 @@ public class BaubleEventHandler {
 	@SubscribeEvent
 	public void playerUpdate(TickEvent.PlayerTickEvent event) {
 		final EntityPlayer player = event.player;
-		if (!player.isEntityAlive())
+		if (!player.isEntityAlive()) {
 			return;
+		}
 		if ((event.phase == Phase.END)) {
 			BaublesHelper.getBaublesHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {

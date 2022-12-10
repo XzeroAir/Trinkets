@@ -164,44 +164,18 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
 		super.onUpdate(stack, world, entity, itemSlot, isSelected);
-		//		Capabilities.getTrinketProperties(stack, cap -> {
-		//			cap.onUpdate(stack, world, entity, itemSlot, isSelected);
-		//		});
-		Capabilities.getTrinketProperties(stack, TrinketProperties::onUpdate);
+		Capabilities.getTrinketProperties(stack, cap -> {
+			cap.onUpdate(stack, world, entity, itemSlot, isSelected);
+		});
+		//		Capabilities.getTrinketProperties(stack, TrinketProperties::onUpdate);
 	}
 
 	@Override
 	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
 		super.onCreated(stack, world, player);
-		try {
-			if (player == null) {
-				return;
-			}
-			if (this.getTagCompoundSafe(stack).getString("crafter.id").isEmpty()) {
-				if (player.getUniqueID() != null) {
-					this.getTagCompoundSafe(stack).setString("crafter.id", player.getUniqueID().toString());
-				}
-			}
-			if (this.getTagCompoundSafe(stack).getString("crafter.name").isEmpty()) {
-				this.getTagCompoundSafe(stack).setString("crafter.name", player.getDisplayNameString());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public String getCrafter(ItemStack stack) {
-		if (!this.getTagCompoundSafe(stack).getString("crafter.name").isEmpty()) {
-			return this.getTagCompoundSafe(stack).getString("crafter.name");
-		}
-		return "";
-	}
-
-	public String getCrafterID(ItemStack stack) {
-		if (!this.getTagCompoundSafe(stack).getString("crafter.id").isEmpty()) {
-			return this.getTagCompoundSafe(stack).getString("crafter.id");
-		}
-		return "";
+		Capabilities.getTrinketProperties(stack, cap -> {
+			cap.onCrafted(stack, world, player);
+		});
 	}
 
 	/*
@@ -285,10 +259,8 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, tag) -> {
 			if (tag == null) {
 				tag = new NBTTagCompound();
-				stack.setTagCompound(tag);
 			}
-			prop.saveToNBT(tag);
-			return stack.getTagCompound();
+			return prop.saveToNBT(tag);
 		});
 	}
 

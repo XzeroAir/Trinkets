@@ -37,6 +37,8 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 	protected boolean altAbility;
 	protected SlotInformation slotInfo;
 	protected boolean sync;
+	protected String crafter;
+	protected String crafterUUID;
 
 	public TrinketProperties(ItemStack stack) {
 		super(stack);
@@ -45,6 +47,8 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 		mana = 0;
 		mainAbility = false;
 		altAbility = false;
+		crafter = "";
+		crafterUUID = "";
 		slotInfo = new SlotInformation(stack, ItemHandlerType.NONE.getName(), -1);
 	}
 
@@ -72,6 +76,42 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 
 	public void itemUsed() {
 
+	}
+
+	public void onCrafted(ItemStack stack, World world, EntityPlayer player) {
+		if (player == null) {
+			return;
+		}
+		try {
+			if (player.getUniqueID() != null) {
+				this.setCrafterUUID(player.getUniqueID().toString());
+			}
+			this.setCrafter(player.getDisplayNameString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getCrafter() {
+		return crafter;
+	}
+
+	public String getCrafterUUID() {
+		return crafterUUID;
+	}
+
+	public void setCrafter(String crafter) {
+		if (!crafter.isEmpty() && !this.crafter.contentEquals(crafter)) {
+			this.crafter = crafter;
+			this.saveToNBT(this.getTag());
+		}
+	}
+
+	public void setCrafterUUID(String crafterUUID) {
+		if (!crafterUUID.isEmpty() && !this.crafterUUID.contentEquals(crafterUUID)) {
+			this.crafterUUID = crafterUUID;
+			this.saveToNBT(this.getTag());
+		}
 	}
 
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
@@ -411,6 +451,8 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 		tag.setFloat("mana", mana);
 		tag.setBoolean("main.ability", mainAbility);
 		tag.setBoolean("alt.ability", altAbility);
+		tag.setString("crafter.name", crafter);
+		tag.setString("crafter.uuid", crafterUUID);
 		try {
 			tickHandler.saveCountersToNBT(tag);
 		} catch (Exception e) {
@@ -445,6 +487,12 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 			}
 			if (tag.hasKey("alt.ability")) {
 				altAbility = tag.getBoolean("alt.ability");
+			}
+			if (tag.hasKey("crafter.name")) {
+				crafter = (tag.getString("crafter.name"));
+			}
+			if (tag.hasKey("crafter.uuid")) {
+				crafterUUID = (tag.getString("crafter.uuid"));
 			}
 			try {
 				tickHandler.loadCountersFromNBT(tag);

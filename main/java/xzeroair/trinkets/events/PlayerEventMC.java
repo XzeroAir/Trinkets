@@ -42,9 +42,9 @@ public class PlayerEventMC {
 		final EntityPlayer player = event.player;
 		final boolean client = player.world.isRemote;
 		if (!client && player.isEntityAlive()) {
-			Capabilities.getEntityProperties(player, cap -> {
-				cap.sendInformationToPlayer(player);
-			});
+			//			Capabilities.getEntityProperties(player, cap -> {
+			//				cap.sendInformationToPlayer(player);
+			//			});
 			Capabilities.getMagicStats(player, cap -> {
 				cap.sendManaToPlayer(player);
 			});

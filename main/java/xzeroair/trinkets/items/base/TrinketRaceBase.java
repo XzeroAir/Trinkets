@@ -1,6 +1,9 @@
 package xzeroair.trinkets.items.base;
 
+import java.util.List;
+
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import xzeroair.trinkets.Trinkets;
@@ -12,6 +15,7 @@ import xzeroair.trinkets.races.dwarf.config.DwarfConfig;
 import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.races.titan.config.TitanConfig;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.shared.TransformationRingConfig;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
@@ -29,9 +33,19 @@ public class TrinketRaceBase extends AccessoryBase implements IRaceProvider {
 	public TrinketRaceBase(String name, EntityRace race, TransformationRingConfig config) {
 		super(name);
 		this.race = race;
-		this.setUUID(race.getUUID().toString());
+		this.setUUID("892cfd1f-25c5-44a0-9154-f3b630538c82");
 		serverConfig = config;
 		this.setAttributeConfig(race.getRaceAttributes().getAttributes());
+	}
+
+	@Override
+	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
+
+	}
+
+	@Override
+	protected void initAttributes(String[] attributeConfig, EntityLivingBase entity) {
+
 	}
 
 	@Override

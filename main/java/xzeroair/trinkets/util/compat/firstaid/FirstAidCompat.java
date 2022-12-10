@@ -1,7 +1,22 @@
 package xzeroair.trinkets.util.compat.firstaid;
 
+import ichttt.mods.firstaid.api.CapabilityExtendedHealthSystem;
+import ichttt.mods.firstaid.api.damagesystem.AbstractPlayerDamageModel;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import xzeroair.trinkets.Trinkets;
+
 public class FirstAidCompat {
 
+	public static void rescale(EntityLivingBase entity) {
+		if (Trinkets.FirstAid && (entity instanceof EntityPlayer)) {
+			try {
+				AbstractPlayerDamageModel cap = entity.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
+				cap.runScaleLogic((EntityPlayer) entity);
+			} catch (Exception e) {
+			}
+		}
+	}
 	//	public static void resetHP(EntityLivingBase entity) {
 	//		if (entity instanceof EntityPlayer) {
 	//			if (!entity.hasCapability(CapabilityExtendedHealthSystem.INSTANCE, null)) {

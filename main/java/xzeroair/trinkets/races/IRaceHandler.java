@@ -140,7 +140,8 @@ public interface IRaceHandler {
 		return healAmount;
 	}
 
-	default void savedNBTData(NBTTagCompound compound) {
+	default NBTTagCompound savedNBTData(NBTTagCompound compound) {
+		return compound;
 	}
 
 	default void loadNBTData(NBTTagCompound compound) {

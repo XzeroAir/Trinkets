@@ -267,6 +267,7 @@ public class BlockHelperUtil {
 
 		int x, y, z;
 		BlockPos start = origin;
+		System.out.println(mop.sideHit);
 		switch (mop.sideHit) {
 		case DOWN:
 		case UP:

@@ -26,6 +26,7 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -50,8 +51,9 @@ public class TrinketEventHandler {
 	public void clientTickEvent(TickEvent.ClientTickEvent event) {
 		if (event.phase == Phase.END) {
 			final EntityPlayer player = Minecraft.getMinecraft().player;
-			if ((player == null) || !player.isEntityAlive() || (player.world == null))
+			if ((player == null) || !player.isEntityAlive() || (player.world == null)) {
 				return;
+			}
 			TrinketHelper.getTrinketHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {
 					final ItemStack stack = handler.getStackInSlot(i);
@@ -65,13 +67,12 @@ public class TrinketEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void PlayerLoggedInEvent(PlayerLoggedInEvent event) {
-		if ((event.player.world != null)) {
-			final EntityPlayer player = event.player;
-			final World world = player.getEntityWorld();
+		final EntityPlayer player = event.player;
+		World world = player.getEntityWorld();
+		if (world != null) {
 			final boolean client = world.isRemote;
-
 			// sync Trinkets
 			TrinketHelper.getTrinketHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {
@@ -171,8 +172,9 @@ public class TrinketEventHandler {
 	@SubscribeEvent
 	public void playerUpdate(TickEvent.PlayerTickEvent event) {
 		final EntityPlayer player = event.player;
-		if (!player.isEntityAlive())
+		if (!player.isEntityAlive()) {
 			return;
+		}
 		if ((event.phase == Phase.END)) {
 			TrinketHelper.getTrinketHandler(player, handler -> {
 				for (int i = 0; i < handler.getSlots(); i++) {

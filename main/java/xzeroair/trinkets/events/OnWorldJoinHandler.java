@@ -51,9 +51,9 @@ public class OnWorldJoinHandler {
 			final Map<String, String> configMap = TrinketsConfig.writeConfigMap();
 			NetworkHandler.sendTo(new PacketConfigSync(configMap), playerMP);
 
-			//			Capabilities.getEntityProperties(
-			//					playerMP, EntityProperties::onLogin
-			//			);
+			Capabilities.getEntityProperties(
+					playerMP, EntityProperties::onLogin
+			);
 
 			Capabilities.getMagicStats(
 					playerMP,
@@ -82,9 +82,7 @@ public class OnWorldJoinHandler {
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
 		final Entity entity = event.getEntity();
 		if (!(entity instanceof EntityPlayer)) {
-			Capabilities.getEntityProperties(entity, prop -> {
-				prop.setLogin(true);
-			});
+			Capabilities.getEntityProperties(entity, prop -> prop.setLogin(true));
 		}
 	}
 
@@ -95,14 +93,12 @@ public class OnWorldJoinHandler {
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
 		if ((event.player != null) && (event.player.getEntityWorld() != null)) {
 			final EntityPlayer player = event.player;
-			if (player.isEntityAlive()) {
-				Capabilities.getEntityProperties(player, cap -> {
-					cap.sendInformationToPlayer(player);
-				});
-				Capabilities.getMagicStats(player, cap -> {
-					cap.sendManaToPlayer(player);
-				});
-			}
+			Capabilities.getEntityProperties(player, cap -> {
+				cap.sendInformationToPlayer(player);
+			});
+			Capabilities.getMagicStats(player, cap -> {
+				cap.sendManaToPlayer(player);
+			});
 		}
 	}
 

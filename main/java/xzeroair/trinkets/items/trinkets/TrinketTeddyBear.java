@@ -23,6 +23,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.blocks.tileentities.TileEntityTeddyBear;
+import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.ModBlocks;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityWellRested;
@@ -49,11 +50,17 @@ public class TrinketTeddyBear extends AccessoryBase {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
-		String crafter = this.getCrafter(stack);
-		if (!crafter.isEmpty()) {
-			return crafter + "'s " + super.getItemStackDisplayName(stack);
-		}
-		return super.getItemStackDisplayName(stack);
+		//		String crafter = this.getCrafter(stack);
+		//		if (!crafter.isEmpty()) {
+		//			return crafter + "'s " + super.getItemStackDisplayName(stack);
+		//		}
+		return Capabilities.getTrinketProperties(stack, super.getItemStackDisplayName(stack), (prop, name) -> {
+			final String crafter = prop.getCrafter();
+			if (!crafter.isEmpty()) {
+				return crafter;
+			}
+			return name;
+		});
 	}
 
 	public int getTeddyVariant(ItemStack stack) {
@@ -61,10 +68,17 @@ public class TrinketTeddyBear extends AccessoryBase {
 			//			Item item = stack.getItem();
 			final String name = stack.getDisplayName().toLowerCase();
 
-			String crafter = this.getCrafterID(stack);
-			if (crafter.equalsIgnoreCase("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") || name.contains("shivaxi")) {
+			String crafterID = Capabilities.getTrinketProperties(stack, "", (prop, UUID) -> {
+				final String ID = prop.getCrafterUUID();
+				if (!ID.isEmpty()) {
+					return ID;
+				}
+				return UUID;
+			});
+
+			if (crafterID.equalsIgnoreCase("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") || name.contains("shivaxi")) {
 				return 3;
-			} else if (crafter.equalsIgnoreCase("6b5d5e9b-1fe8-4c61-a043-1d84ce95765d") ||
+			} else if (crafterID.equalsIgnoreCase("6b5d5e9b-1fe8-4c61-a043-1d84ce95765d") ||
 					name.contains("rembo") ||
 					name.contains("cool") ||
 					name.contains("badass")) {

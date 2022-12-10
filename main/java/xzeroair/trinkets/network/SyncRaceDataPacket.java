@@ -43,7 +43,7 @@ public class SyncRaceDataPacket extends ThreadSafePacket {
 		final Entity entity = world.getEntityByID(entityID);
 		Capabilities.getEntityProperties(
 				entity, prop -> {
-					prop.updateRace();
+					prop.getTag().merge(tag);
 					prop.loadFromNBT(tag);
 				}
 		);
