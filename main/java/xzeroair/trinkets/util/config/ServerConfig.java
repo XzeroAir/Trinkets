@@ -84,8 +84,8 @@ public class ServerConfig {
 
 	public class Potions {
 		private final String potion = serverCfgPrefix + ".potion";
-		@Config.RequiresMcRestart
 
+		@Config.RequiresMcRestart
 		@Config.Comment("Should T&B Register any potions")
 		@Config.Name("00. Potions Enabled")
 		@LangKey(potion + ".registry.enabled")
@@ -129,7 +129,6 @@ public class ServerConfig {
 		@LangKey(potion + ".dragon")
 		public PotionConfig dragon = new PotionConfig("minecraft:dragon_breath", 1200);
 
-		@Config.RequiresMcRestart
 		@Config.Comment("Should T&B Transformation Potions work only on players")
 		@Config.Name("09. Work on players only")
 		@LangKey(potion + ".playersonly")

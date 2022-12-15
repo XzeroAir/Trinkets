@@ -20,10 +20,18 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 	protected boolean speedModified = false;
 	protected float speed = 0F;
 	protected float cost = 0F;
+	//	protected boolean canFly = true;
 
 	public AbilityFlying() {
 		super(Abilities.creativeFlight);
 	}
+
+	//	public AbilityFlying setCanFly(boolean canFly) {
+	//		if(this.canfly != canFly) {
+	//			this.canFly = canFly;
+	//		}
+	//		return this;
+	//	}
 
 	public AbilityFlying setFlightEnabled(boolean enabled) {
 		flightEnabled = enabled;
@@ -99,7 +107,7 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 	}
 
 	protected void addFlyingAbility(EntityLivingBase entity) {
-		if ((entity != null) && (entity instanceof EntityPlayer)) {
+		if ((entity instanceof EntityPlayer)) {
 			final EntityPlayer player = (EntityPlayer) entity;
 			if (!this.isCreativePlayer(player)) {
 				final MagicStats magic = Capabilities.getMagicStats(entity);
@@ -116,8 +124,9 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 						}
 					}
 					if (player.capabilities.isFlying) {
+						player.fallDistance = 0F;
 						final Counter counter = tickHandler.getCounter("fly_timer", 20, true, true, true, true);
-						if (counter != null) {
+						if ((counter != null) && !player.isRiding()) {
 							if (counter.Tick()) {
 								if (magic.spendMana(cost)) {
 									//									magic.setManaRegenTimeout(TrinketsConfig.SERVER.mana.mana_regen_timeout * 3);
@@ -131,9 +140,13 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 					if ((player.capabilities.allowFlying != true)) {
 						player.capabilities.allowFlying = true;
 					}
+					if (player.capabilities.isFlying) {
+						player.fallDistance = 0F;
+					}
 				}
 			}
 		}
+
 	}
 
 	protected void removeFlyingAbility(EntityLivingBase entity) {

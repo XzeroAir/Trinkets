@@ -31,13 +31,12 @@ public class AbilityIceImmunity extends Ability implements ITickableAbility, IPo
 
 	@Override
 	public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-		//		cold_fire
-		if (source.damageType.contentEquals("ooze") || source.damageType.contentEquals("dragon_ice")) {
+		if (source.damageType.contentEquals("ooze") ||
+				source.damageType.contentEquals("dragon_ice") ||
+				source.damageType.contentEquals("cold_fire")) {
 			return true;
 		}
-		//		ooze
 		//icefireball
 		return cancel;
 	}
-
 }

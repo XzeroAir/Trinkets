@@ -7,6 +7,8 @@ import net.minecraft.util.math.MathHelper;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.StringUtils;
+import xzeroair.trinkets.util.helpers.TrinketReflectionHelper;
 
 public class SizeHandler {
 
@@ -14,11 +16,15 @@ public class SizeHandler {
 		if (Trinkets.ArtemisLib && TrinketsConfig.compat.artemislib) {
 			return;
 		}
+		if (entity.isChild()) {
+			return;
+		}
 
 		//		boolean moving = ((entity.getHorizontalFacing().getDirectionVec().getX() * entity.motionX) > 0) || ((entity.getHorizontalFacing().getDirectionVec().getZ() * entity.motionZ) > 0);
 		//		final AxisAlignedBB aabb = entity.getEntityBoundingBox();
 		//		final float f = entity.width;
 		//		final BlockPos pos = entity.getPosition();
+		boolean ground = entity.onGround;
 		float width = entity.width;
 		float height = entity.height;
 
@@ -56,18 +62,32 @@ public class SizeHandler {
 			Wclamp = 0.3f;
 			Hclamp = 0.45f;
 		}
-		width = MathHelper.clamp(width, Wclamp, 5.4F);
-		height = MathHelper.clamp(height, Hclamp, 5.4F); // for some reason 5.000000099999F any higher then this and it breaks
-		entity.width = width;
-		entity.height = height;
+		width = (float) MathHelper.clamp(StringUtils.getAccurateDouble(width, width), Wclamp, 5.4F);
+		height = (float) MathHelper.clamp(StringUtils.getAccurateDouble(height, height), Hclamp, 5.4F); // for some reason 5.000000099999F any higher then this and it breaks
 
-		//		try {
-		//			TrinketReflectionHelper.ENTITY_SETSIZE.invoke(entity, width, height);
-		//		} catch (Exception e) {
+		//		if (!(entity instanceof EntityPlayer)) {
+		if ((width != entity.width) || (height != entity.height)) {
+			entity.width = width;
+			entity.height = height;
+
+			try {
+				TrinketReflectionHelper.ENTITY_SETSIZE.invoke(entity, width, height);
+			} catch (Exception e) {
+			}
+		}
+
+		//		} else {
+		//			entity.width = width;
+		//			entity.height = height;
+		final double d0 = StringUtils.getAccurateDouble(entity.width / 2.0D, width);
+		double x1 = StringUtils.getAccurateDouble(entity.posX - d0, entity.posX - width);
+		double z1 = StringUtils.getAccurateDouble(entity.posZ - d0, entity.posZ - width);
+		double x2 = StringUtils.getAccurateDouble(entity.posX + d0, entity.posX + width);
+		double z2 = StringUtils.getAccurateDouble(entity.posZ + d0, entity.posZ + width);
+		double y = StringUtils.getAccurateDouble(entity.posY + entity.height, entity.posY + entity.height);
+		entity.setEntityBoundingBox(new AxisAlignedBB(x1, entity.posY, z1, x2, y, z2));
 		//		}
-		final double d0 = entity.width / 2.0D;
-		entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - d0, entity.posY, entity.posZ - d0, entity.posX + d0, entity.posY + entity.height, entity.posZ + d0));
-
+		entity.onGround = ground;
 		// TODO Entities Still Slide in some cases
 
 	}
@@ -76,102 +96,14 @@ public class SizeHandler {
 		if (Trinkets.ArtemisLib && TrinketsConfig.compat.artemislib) {
 			return;
 		}
+		float height = properties.getRaceHandler().getHeight();
+		float width = properties.getRaceHandler().getWidth();
 		//		if (properties.getSize() < 100) {
 		if (entity.isChild()) {
 			return;
 		}
 		//		}
 
-		setSize(entity, properties.getRaceHandler().getHeight(), properties.getRaceHandler().getWidth());
+		setSize(entity, height, width);
 	}
-
-	//	public static void updateSize(EntityLivingBase entity) {
-	//		Capabilities.getEntityRace(entity, (properties) -> {
-	//
-	//			float width;
-	//			float height;
-	//
-	//			final float TLHeight = (float) (properties.getDefaultHeight() * (properties.getRaceHandler().getHeightValue() * 0.01));
-	//			final float TLWidth = (float) (properties.getDefaultWidth() * (properties.getRaceHandler().getWidthValue() * 0.01));
-	//
-	//			if (entity.isSneaking()) {
-	//				width = TLWidth;
-	//				height = TLHeight * 0.92F;
-	//			} else if (entity.isElytraFlying()) {
-	//				width = TLWidth;
-	//				height = TLHeight * 0.2F;
-	//			} else if (entity.isPlayerSleeping()) {
-	//				width = 0.2F;
-	//				height = 0.2F;
-	//			} else if (entity.isRiding()) {
-	//				//				width = properties.getDefaultWidth();//TLWidth;
-	//				width = TLWidth;
-	//				//				height = properties.getDefaultHeight();//TLHeight;
-	//				height = TLHeight;
-	//				//		} else if (moving && (entity.isInWater() || entity.isInLava())) {
-	//				//			width = TLWidth;
-	//				//			height = TLHeight * 0.33F;
-	//			} else {
-	//				width = TLWidth;
-	//				height = TLHeight;
-	//			}
-	//			float Wclamp = 0.252F;
-	//			float Hclamp = 0.45F;
-	//			if (entity instanceof EntityPlayer) {
-	//				Wclamp = 0.3f;
-	//				Hclamp = 0.45f;
-	//			} else {
-	//				Wclamp = 0.3f;
-	//				Hclamp = 0.45f;
-	//			}
-	//			width = MathHelper.clamp(width, Wclamp, 5.4F);
-	//			height = MathHelper.clamp(height, Hclamp, 5.4F);
-	//			//		if (entity.isElytraFlying()) {
-	//			//			width = 0.6F;
-	//			//			height = 0.6F;
-	//			//		} else if (entity.isPlayerSleeping()) {
-	//			//			width = 0.2F;
-	//			//			height = 0.2F;
-	//			//		} else if (entity.isSneaking()) {
-	//			//			width = 0.6F;
-	//			//			height = 1.65F;
-	//			//		} else {
-	//			//			width = 0.6F;
-	//			//			height = 1.8F;
-	//			//		}
-	//
-	//			if ((width != entity.width) || (height != entity.height)) {
-	//				final double d0 = entity.width / 2.0D;
-	//
-	//				AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox();
-	//				//				axisalignedbb = new AxisAlignedBB(entity.posX - d0, entity.posY, entity.posZ - d0, entity.posX + d0, entity.posY + entity.height, entity.posZ + d0);
-	//				axisalignedbb = new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + width, axisalignedbb.minY + height, axisalignedbb.minZ + width);
-	//
-	//				if (!entity.world.collidesWithAnyBlock(axisalignedbb)) {
-	//					setSizeVanilla(entity, width, height);
-	//				}
-	//			}
-	//		});
-	//	}
-
-	//	public static void setSizeVanilla(EntityLivingBase entity, float width, float height) {
-	//		if ((width != entity.width) || (height != entity.height)) {
-	//			final float f = entity.width;
-	//			entity.width = width;
-	//			entity.height = height;
-	//
-	//			if (entity.width < f) {
-	//				final double d0 = width / 2.0D;
-	//				entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - d0, entity.posY, entity.posZ - d0, entity.posX + d0, entity.posY + entity.height, entity.posZ + d0));
-	//				return;
-	//			}
-	//
-	//			final AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox();
-	//			entity.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + entity.width, axisalignedbb.minY + entity.height, axisalignedbb.minZ + entity.width));
-	//
-	//			if ((entity.width > f) && !entity.world.isRemote) {
-	//				entity.move(MoverType.SELF, f - entity.width, 0.0D, f - entity.width);
-	//			}
-	//		}
-	//	}
 }

@@ -56,7 +56,7 @@ public class VipStatus extends CapabilityBase<VipStatus, EntityPlayer> {
 
 	@Override
 	public void onUpdate() {
-		if ((player.world == null) || player.isDead) {
+		if ((player.world == null)) {
 			return;
 		}
 		if ((checkStatus != true)) {

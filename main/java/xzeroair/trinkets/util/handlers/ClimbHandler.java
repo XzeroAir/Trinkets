@@ -50,7 +50,7 @@ public class ClimbHandler {
 	}
 
 	public boolean canClimb() {
-		if (!entity.isDead && !((entity instanceof EntityPlayer) && ((EntityPlayer) entity).capabilities.isFlying)) {
+		if (!entity.isEntityAlive() && !((entity instanceof EntityPlayer) && ((EntityPlayer) entity).capabilities.isFlying)) {
 			loc = entity.getPositionVector();
 			entityPos = new BlockPos(loc);
 			facing = entity.getAdjustedHorizontalFacing();
@@ -60,8 +60,9 @@ public class ClimbHandler {
 			frontBody = world.getBlockState(frontBodyPos);
 			for (String s : climbList) {
 				ConfigObject object = new ConfigObject(s);
-				if (object.doesBlockMatchEntry(body) || object.doesBlockMatchEntry(frontBody))
+				if (object.doesBlockMatchEntry(body) || object.doesBlockMatchEntry(frontBody)) {
 					return true;
+				}
 			}
 			//			boolean flag1 = BlockHelper.isBlockInList(world, body, bodyPos, climbList);
 			//			boolean flag2 = BlockHelper.isBlockInList(world, frontBody, frontBodyPos, climbList);
@@ -230,8 +231,9 @@ public class ClimbHandler {
 	//	}
 	//
 	public boolean movingForward(EnumFacing facing) {
-		if (((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0))
+		if (((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0)) {
 			return true;
+		}
 		// return ((facing.getDirectionVec().getX() * player.motionX) +
 		// (facing.getDirectionVec().getZ() * player.motionZ)) > 0;
 		return false;

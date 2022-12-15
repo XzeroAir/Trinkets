@@ -128,9 +128,6 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 				entity.motionY += 0.02D;
 			} else {
 				entity.motionY += 0.015D;
-				//				if (isDiving) {
-				//					player.motionY += 0.005D;
-				//				}
 			}
 		} else {
 			GameSettings settings = (Minecraft.getMinecraft()).gameSettings;
@@ -194,9 +191,6 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 							up = 0.0D;
 						}
 					}
-					//					if (ItemSeaglide.canUseSeaglide(player) && !inputForward) {
-					//						speed *= 0.4D;
-					//					}
 					move3DRespectDepthStrider(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
 				}
 			} else {
@@ -228,8 +222,6 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 	}
 
 	public double getSwimSpeedFromPlayer(EntityLivingBase entity) {
-		//		if (ItemSeaglide.canUseSeaglide(player))
-		//			return (BetterDivingConfig.getInstance()).divingValues.seaglideSpeed;
 		IAttributeInstance movement = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 		double movementSpeed = movement != null ? movement.getBaseValue() : 0.1D;
 		double swimSpeedBase = movementSpeed;
@@ -250,8 +242,8 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 		if (!entity.isInsideOfMaterial(Material.WATER)) {
 			swimSpeedBase *= 1.3D;
 		}
-		double min = swimSpeedBase * 0.01D;//(BetterDivingConfig.getInstance()).divingValues.swimSpeedLimitLower;
-		double max = swimSpeedBase * 1D;//(BetterDivingConfig.getInstance()).divingValues.swimSpeedLimitUpper;
+		double min = swimSpeedBase * 0.01D;
+		double max = swimSpeedBase * 1D;
 		double speed = MathHelper.clamp(swimSpeedBase * (1.0D + swimSpeedBonus), min, max);
 		int depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
 		if (depthStriderLevel > 0) {

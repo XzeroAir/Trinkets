@@ -21,6 +21,7 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IJumpAbility;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class MovementHandler extends EventBaseHandler {
 
@@ -154,6 +155,12 @@ public class MovementHandler extends EventBaseHandler {
 		}
 		//				entity.motionY = 0.368129F;
 		Capabilities.getEntityProperties(entity, prop -> {
+			if (TrinketsConfig.SERVER.misc.movement) {
+				if (prop.getRaceHandler().isTransforming()) {
+					entity.motionY = 0;
+					return;
+				}
+			}
 			prop.getRaceHandler().jump();
 			Map<String, AbilityHolder> abilities = prop.getAbilityHandler().getActiveAbilities();
 			for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {

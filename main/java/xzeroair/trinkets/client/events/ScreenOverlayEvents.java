@@ -2,7 +2,6 @@ package xzeroair.trinkets.client.events;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,7 +24,6 @@ public class ScreenOverlayEvents {
 
 	private float manaCost = 0;
 
-	private final int costResetCounter = 0;
 	private int updateCounter = 0;
 
 	public void SyncMana(float mana, int bonusMana, float maxMana) {
@@ -56,62 +54,74 @@ public class ScreenOverlayEvents {
 	@SubscribeEvent
 	public void renderGameOverlayPostEvent(RenderGameOverlayEvent.Post event) {
 		//TODO Make sure this works properly
-		if (event.isCanceled() || !(event.getType() == RenderGameOverlayEvent.ElementType.ALL) || !TrinketsConfig.CLIENT.MPBar.shown || !TrinketsConfig.SERVER.mana.mana_enabled)
+		if (event.isCanceled() || !(event.getType() == RenderGameOverlayEvent.ElementType.ALL) || !TrinketsConfig.CLIENT.MPBar.shown || !TrinketsConfig.SERVER.mana.mana_enabled) {
 			return;
-		final EntityPlayer player = Minecraft.getMinecraft().player;
-		final MagicStats stats = Capabilities.getMagicStats(player);
+		}
+		final MagicStats stats = Capabilities.getMagicStats(Minecraft.getMinecraft().player);
 		if (stats != null) {
 			this.setMana(stats.getMana());
 			this.setBonusMana(stats.getBonusMana());
 			this.setMaxMana(stats.getMaxMana());
 		}
-		//		if ((event.getType() == ElementType.AIR) && TrinketsConfig.CLIENT.MPBar.shown && TrinketsConfig.SERVER.mana.mana_enabled) {
-		//			return;
 		if (!this.needMana() && (this.getCost() <= 0)) {
-			if (updateCounter < 60) {
-				++updateCounter;
-			}
-			if (updateCounter >= 60) {
+			if (this.updateCounter()) {
 				if (!(Minecraft.getMinecraft().currentScreen instanceof ManaHud)) {
-					if (!TrinketsConfig.CLIENT.MPBar.always_shown)
+					if (!TrinketsConfig.CLIENT.MPBar.always_shown) {
 						return;
+					}
 				}
 			}
 		} else {
-			updateCounter = 0;
+			this.resetCounter();
 		}
 		final int h = event.getResolution().getScaledHeight();
 		final int w = event.getResolution().getScaledWidth();
-		//		final int l = (event.getResolution().getScaledWidth() / 2) - 91;
-		//		final int i1 = (event.getResolution().getScaledWidth() / 2);
-		//		final int j1 = event.getResolution().getScaledHeight() / 2;
 		final double x = (TrinketsConfig.CLIENT.MPBar.translatedX);
 		final double y = (TrinketsConfig.CLIENT.MPBar.translatedY);
-		//			int scaleF = event.getResolution().getScaleFactor();
 		final int xPos = (int) Math.round(w * x);
 		final int yPos = (int) Math.round(h * y);
-		//			int left = (w / 2) + 92; //Same x offset as the hunger bar
-		//			int top = h - GuiIngameForge.right_height;
 		GlStateManager.pushMatrix();
-		//		GlStateManager.color(1, 1, 1, 1);
-		//			manaGui.renderManaGui(left, top, updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
 		manaGui.renderManaGui(event, MathHelper.clamp(xPos, 0, w), MathHelper.clamp(yPos, 0, h), updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
-		//		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.popMatrix();
-		//		Minecraft.getMinecraft().profiler.endSection();
-		//		}
+	}
+
+	private boolean updateCounter() {
+		if (updateCounter < 80) {
+			++updateCounter;
+		}
+		if (updateCounter >= 80) {
+			return true;
+		}
+		return false;
+	}
+
+	public int getUpdateCounter() {
+		return updateCounter;
+	}
+
+	private void resetCounter() {
+		updateCounter = 0;
 	}
 
 	private void setMana(float mana) {
-		this.mana = mana;
+		if (this.mana != mana) {
+			this.mana = mana;
+			this.resetCounter();
+		}
 	}
 
 	private void setBonusMana(int bonusMana) {
-		this.bonusMana = bonusMana;
+		if (this.bonusMana != bonusMana) {
+			this.bonusMana = bonusMana;
+			this.resetCounter();
+		}
 	}
 
 	private void setMaxMana(float maxMana) {
-		this.maxMana = maxMana;
+		if (this.maxMana != maxMana) {
+			this.maxMana = maxMana;
+			this.resetCounter();
+		}
 	}
 
 	private boolean needMana() {

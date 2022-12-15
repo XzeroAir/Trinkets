@@ -2,6 +2,7 @@ package xzeroair.trinkets.init;
 
 import java.util.HashMap;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -10,9 +11,11 @@ import net.minecraft.potion.PotionType;
 import net.minecraftforge.oredict.OreDictionary;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.items.base.BasePotion;
+import xzeroair.trinkets.items.potions.IceResistance;
 import xzeroair.trinkets.items.potions.PotionObject;
 import xzeroair.trinkets.items.potions.TransformationPotion;
 import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
@@ -22,101 +25,192 @@ public class ModPotionTypes {
 	public static final String enhancedGlittering = "glittering";
 	public static final String advancedGlowing = "glowing";
 	public static final String restore = "restorative";
+	public static final String iceResist = "ice_resistance";
 
 	public static HashMap<String, Potion> TrinketPotions = new HashMap();//new ArrayList<>();
 	public static HashMap<String, PotionType> TrinketPotionTypes = new HashMap();//new ArrayList<>();
 	public static HashMap<String, PotionObject> TrinketPotionObjects = new HashMap();//new ArrayList<>();
 
-	public static PotionObject createBasePotion(String name, int color, int duration, Ingredient ingredient) {
-		final Potion potion = new BasePotion(name, duration, color, false);
-		final PotionObject potObj = new PotionObject(potion, name, color, duration, ingredient);
-		TrinketPotionObjects.put(potObj.getName(), potObj);
-		return potObj;
+	/*
+	 * Base Potions
+	 */
+
+	protected static PotionObject createBasePotion(String potionName, int color, int duration, Ingredient craftingIngredient) {
+		return createBasePotion(potionName, color, duration, false, craftingIngredient);
 	}
 
-	public static PotionObject createPotion(String name, int color, int duration, PotionType base, Ingredient ingredient, Potion potion) {
-		final PotionObject potObj = new PotionObject(potion, base, name, color, duration, ingredient);
-		TrinketPotionObjects.put(potObj.getName(), potObj);
-		return potObj;
+	protected static PotionObject createBasePotion(String potionName, int color, int duration, boolean isBadEffect, Ingredient craftingIngredient) {
+		return createBasePotion(potionName, color, duration, duration * 3, isBadEffect, craftingIngredient);
 	}
 
-	public static PotionObject createPotion(String name, int color, int duration, PotionType base, Ingredient ingredient) {
-		final Potion potion = new BasePotion(name, duration, color, false);
-		return createPotion(name, color, duration, base, ingredient, potion);
+	protected static PotionObject createBasePotion(String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		return createBasePotion(potionName, color, duration, extendedDuration, false, craftingIngredient);
 	}
 
-	public static PotionObject createRacePotion(EntityRace race, int duration, PotionType base, Ingredient ingredient) {
-		final Potion potion = new TransformationPotion(race.getName().toLowerCase(), duration, race.getPrimaryColor(), race.getUUID().toString(), false);
-		final PotionObject potObj = new PotionObject(potion, base, race.getName().toLowerCase(), race.getPrimaryColor(), duration, ingredient);
-		TrinketPotionObjects.put(potObj.getName(), potObj);
-		return potObj;
+	protected static PotionObject createBasePotion(String potionName, int color, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
+		return createBasePotion(Reference.MODID, potionName, color, duration, extendedDuration, isBadEffect, craftingIngredient);
+	}
+
+	public static PotionObject createBasePotion(String modid, String potionName, int color, int duration, boolean isBadEffect, Ingredient craftingIngredient) {
+		final Potion potion = new BasePotion(potionName, color, duration, isBadEffect);
+		return getBasePotionObject(potion, modid, potionName, color, duration, craftingIngredient);
+	}
+
+	public static PotionObject createBasePotion(String modid, String potionName, int color, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
+		final Potion potion = new BasePotion(potionName, color, duration, isBadEffect);
+		return getBasePotionObject(potion, modid, potionName, color, duration, extendedDuration, craftingIngredient);
+	}
+
+	public static PotionObject getBasePotionObject(Potion potionProduct, String modid, String potionName, int color, int duration, Ingredient craftingIngredient) {
+		return getBasePotionObject(potionProduct, modid, potionName, color, duration, duration * 3, craftingIngredient);
+	}
+
+	public static PotionObject getBasePotionObject(Potion potionProduct, String modid, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		final PotionObject obj = new PotionObject(potionProduct, modid, potionName, color, duration, extendedDuration, craftingIngredient);
+		final boolean isInternal = modid.contentEquals(Reference.MODID);
+		if (isInternal) {
+			TrinketPotionObjects.put(obj.getName(), obj);
+		}
+		return obj;
+	}
+
+	/*
+	 *
+	 */
+	protected static PotionObject createCompoundPotion(PotionType craftingBase, String potionName, int color, int duration, Ingredient craftingIngredient) {
+		final Potion potion = new BasePotion(potionName, color, duration, false);
+		return createCompoundPotion(potion, craftingBase, Reference.MODID, potionName, color, duration, duration * 3, craftingIngredient);
+	}
+
+	protected static PotionObject createCompoundPotion(PotionType craftingBase, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		final Potion potion = new BasePotion(potionName, color, duration, false);
+		return createCompoundPotion(potion, craftingBase, Reference.MODID, potionName, color, duration, extendedDuration, craftingIngredient);
+	}
+
+	protected static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String potionName, int color, int duration, Ingredient craftingIngredient) {
+		return createCompoundPotion(potionProduct, craftingBase, Reference.MODID, potionName, color, duration, duration * 3, craftingIngredient);
+	}
+
+	protected static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		return createCompoundPotion(potionProduct, craftingBase, Reference.MODID, potionName, color, duration, extendedDuration, craftingIngredient);
+	}
+
+	public static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String modid, String potionName, int color, int duration, Ingredient craftingIngredient) {
+		return createCompoundPotion(potionProduct, craftingBase, modid, potionName, color, duration, duration * 3, craftingIngredient);
+	}
+
+	public static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String modid, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		final PotionObject obj = new PotionObject(potionProduct, craftingBase, modid, potionName, color, duration, extendedDuration, craftingIngredient);
+		final boolean isInternal = modid.contentEquals(Reference.MODID);
+		if (isInternal) {
+			TrinketPotionObjects.put(obj.getName(), obj);
+		}
+		return obj;
+	}
+
+	/*
+	 *
+	 */
+	public static PotionObject createRacePotion(EntityRace race, PotionType craftingBase, int duration, Ingredient craftingIngredient) {
+		return createRacePotion(race, craftingBase, duration, duration * 3, craftingIngredient);
+	}
+
+	public static PotionObject createRacePotion(EntityRace race, PotionType craftingBase, int duration, int extendedDuration, Ingredient craftingIngredient) {
+		return createRacePotion(race, craftingBase, duration, extendedDuration, false, craftingIngredient);
+	}
+
+	public static PotionObject createRacePotion(EntityRace race, PotionType craftingBase, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
+		final String modid = race.getRegistryName().getNamespace().toString().toLowerCase();
+		final String name = race.getRegistryName().getPath().toString().toLowerCase();
+		final int color = race.getPrimaryColor();
+		final Potion potion = new TransformationPotion(modid, name, color, duration, race.getUUID().toString(), false);
+		return createCompoundPotion(potion, craftingBase, modid, name, color, duration, extendedDuration, craftingIngredient);
 	}
 
 	public static void registerPotionTypes() {
 
 		Trinkets.log.info("Generating Potions");
-		PotionObject pot = createBasePotion(baseSparkling, 16777160, 0, Ingredient.fromItem(ModItems.crafting.glowing_powder)).registerPotion();
-		pot = createPotion(enhancedGlittering, 16777120, 0, TrinketPotionObjects.get(baseSparkling).getPotionType(), Ingredient.fromItem(ModItems.crafting.glowing_ingot)).registerPotion();
-		pot = createPotion(advancedGlowing, 16777080, 0, TrinketPotionObjects.get(enhancedGlittering).getPotionType(), Ingredient.fromItem(ModItems.crafting.glowing_gem)).registerPotion();
-		//		pot = createPotion(restore, 16777215, 0, 0, 0, TrinketPotionObjects.get(baseSparkling).getPotionType(), Item.getByNameOrId(TrinketsConfig.SERVER.Potion.restoreCatalyst)).registerPotion();
 
-		pot = createRacePotion(
+		createBasePotion(
+				baseSparkling,
+				16777160,
+				0,
+				Ingredient.fromItem(ModItems.crafting.glowing_powder)
+		).registerWithPotion();
+		createCompoundPotion(
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				enhancedGlittering,
+				16777120,
+				0,
+				Ingredient.fromItem(ModItems.crafting.glowing_ingot)
+		).registerWithPotion();
+		createCompoundPotion(
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
+				advancedGlowing,
+				16777080,
+				0,
+				Ingredient.fromItem(ModItems.crafting.glowing_gem)
+		).registerWithPotion();
+		createCompoundPotion(
+				new IceResistance(iceResist, 3600, 15132390, false),
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				iceResist,
+				15132390,
+				3600,
+				Ingredient.fromItem(Item.getItemFromBlock(Blocks.SNOW))
+		).registerWithPotion();
+
+		/*
+		 * Create Race Potions
+		 */
+		createRacePotion(
 				EntityRaces.human,
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
 				TrinketsConfig.SERVER.Potion.human.Duration,
-				TrinketPotionObjects.get(baseSparkling).getPotionType(),
 				getCatalyst(TrinketsConfig.SERVER.Potion.human.catalyst)
-		)
-				.registerPotion();
-
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.fairy,
+				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
 				TrinketsConfig.SERVER.Potion.fairy.Duration,
-				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
 				getCatalyst(TrinketsConfig.SERVER.Potion.fairy.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.dwarf,
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
 				TrinketsConfig.SERVER.Potion.dwarf.Duration,
-				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
 				getCatalyst(TrinketsConfig.SERVER.Potion.dwarf.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.titan,
+				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
 				TrinketsConfig.SERVER.Potion.titan.Duration,
-				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
 				getCatalyst(TrinketsConfig.SERVER.Potion.titan.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.goblin,
-				TrinketsConfig.SERVER.Potion.goblin.Duration,
 				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				TrinketsConfig.SERVER.Potion.goblin.Duration,
 				getCatalyst(TrinketsConfig.SERVER.Potion.goblin.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.elf,
+				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
 				TrinketsConfig.SERVER.Potion.elf.Duration,
-				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
 				getCatalyst(TrinketsConfig.SERVER.Potion.elf.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.faelis,
-				TrinketsConfig.SERVER.Potion.faelis.Duration,
 				TrinketPotionObjects.get(enhancedGlittering).getPotionType(),
+				TrinketsConfig.SERVER.Potion.faelis.Duration,
 				getCatalyst(TrinketsConfig.SERVER.Potion.faelis.catalyst)
-		)
-				.registerPotion();
-		pot = createRacePotion(
+		).registerWithPotion();
+		createRacePotion(
 				EntityRaces.dragon,
-				TrinketsConfig.SERVER.Potion.dragon.Duration,
 				TrinketPotionObjects.get(advancedGlowing).getPotionType(),
+				TrinketsConfig.SERVER.Potion.dragon.Duration,
 				getCatalyst(TrinketsConfig.SERVER.Potion.dragon.catalyst)
-		)
-				.registerPotion();
+		).registerWithPotion();
 
 		Trinkets.log.info("Finished Generating Potions");
 	}

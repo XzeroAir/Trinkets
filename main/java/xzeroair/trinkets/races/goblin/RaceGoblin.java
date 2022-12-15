@@ -17,7 +17,6 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -98,24 +97,52 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 		return dmg;
 	}
 
-	public void MountWolf(EntityWolf wolf) {
+	public boolean MountWolf(EntityWolf wolf) {
 		final World world = entity.getEntityWorld();
-		if (!world.isRemote) {
-			if (wolf.isTamed() && wolf.isOwner(entity)) {
-				final AlphaWolf newWolf = new AlphaWolf(world);
-				final NBTTagCompound tag = new NBTTagCompound();
-				wolf.writeToNBT(tag);
-				tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
-				newWolf.storeOldWolf(tag);
-				newWolf.setCustomNameTag(wolf.getCustomNameTag());
-				newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
-				newWolf.setTamedBy(entity);
-				newWolf.setHealth(wolf.getHealth());
-				world.spawnEntity(newWolf);
-				entity.startRiding(newWolf);
-				wolf.setDead();
+		final boolean canRide = serverConfig.rider;
+		final boolean isOwner = (wolf.isTamed() && wolf.isOwner(entity));
+		if (!canRide || !isOwner || wolf.isChild()) {
+			return false;
+		}
+		final ItemStack mainStack = entity.getHeldItemMainhand();
+		final ItemStack offStack = entity.getHeldItemOffhand();
+		if (mainStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon") ||
+				offStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon")) {
+			return false;
+		}
+		boolean flag = mainStack.isEmpty();
+		if (entity instanceof EntityPlayer) {
+			if (mainStack.getItem().onLeftClickEntity(mainStack, (EntityPlayer) entity, wolf)) {
+				flag = false;
 			}
 		}
+		if (flag) {
+			if (!world.isRemote) {
+				if (!entity.isRiding()) {
+					final AlphaWolf newWolf = new AlphaWolf(world);
+					final NBTTagCompound tag = new NBTTagCompound();
+					wolf.writeToNBT(tag);
+					tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
+					newWolf.storeOldWolf(tag);
+					newWolf.setCustomNameTag(wolf.getCustomNameTag());
+					newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
+					newWolf.setTamedBy(entity);
+					newWolf.setHealth(wolf.getHealth());
+					world.spawnEntity(newWolf);
+					entity.startRiding(newWolf);
+					wolf.setDead();
+					return true;
+				} else {
+					//					int mountID = entity.getRidingEntity().getEntityId();
+					//					int attackedID = wolf.getEntityId();
+					//					System.out.println(mountID + "|" + attackedID);
+					//					if (mountID == attackedID) {
+					//						return true;
+					//					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -141,29 +168,20 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 
 	@Override
 	public void interactWithEntity(PlayerInteractEvent.EntityInteract event) {
-		final boolean canRide = serverConfig.rider;
-		if (!canRide || event.getSide().isClient()) {
-			return;
-		}
-		final Entity target = event.getTarget();
-		if ((event.getHand() == EnumHand.OFF_HAND) && (target instanceof EntityWolf)) {
-			final EntityWolf wolf = (EntityWolf) target;
-			if (wolf.isChild()) {
-				return;
-			}
-			final ItemStack mainStack = entity.getHeldItemMainhand();
-			final ItemStack offStack = entity.getHeldItemOffhand();
+	}
 
-			final boolean flag = !mainStack.isEmpty() && !(mainStack.getItem() instanceof ItemFood);
-			final boolean flag1 = !offStack.isEmpty();
-			final boolean hasBone = flag || flag1;
-			if (mainStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon") || offStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon")) {
-				return;
-			}
-			if (wolf.isTamed() && wolf.isOwner(entity) && hasBone) {
-				this.MountWolf(wolf);
+	@Override
+	public boolean attackedEntity(EntityLivingBase target, DamageSource source, float dmg) {
+		if (target instanceof EntityWolf) {
+			final EntityWolf wolf = (EntityWolf) target;
+			if (this.MountWolf(wolf)) {
+				// TODO Hurts Wolf before spawn for some weird reason
+				//				System.out.println("Mounted");
+				return false;
 			}
 		}
+		//		System.out.println(dmg + "");
+		return super.attackedEntity(target, source, dmg);
 	}
 
 	private final ModelBase ears = new GoblinEars();

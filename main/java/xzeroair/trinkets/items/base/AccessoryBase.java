@@ -1,5 +1,6 @@
 package xzeroair.trinkets.items.base;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -295,6 +296,14 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		if (world == null) {
 			return;
 		}
+		EntityPlayer player = null;
+		try {
+			player = Minecraft.getMinecraft().player;
+		} catch (Exception e) {
+		}
+		if (player == null) {
+			return;
+		}
 		if (TrinketsConfig.CLIENT.debug.showID) {
 			final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
 			if (prop != null) {
@@ -359,49 +368,56 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		try {
 			final TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
 			if ((attributeConfig != null) && (attributeConfig.length > 0)) {
-				tooltip.add(helper.reset + "" + helper.dGray + shift.getFormattedText());
-				if (GuiScreen.isShiftKeyDown()) {
-					for (String entry : attributeConfig) {
-						AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-						if (attributeShell != null) {
-							EntityPlayer player = Minecraft.getMinecraft().player;
-							final String name = attributeShell.getAttribute();
-							final double amount = attributeShell.getAmount();
-							final int operation = attributeShell.getOperation();
-							if ((player != null)) {
-								if ((player.getAttributeMap().getAttributeInstanceByName(name) != null)) {
-									double d0 = amount;
-									double d1;
-									boolean flag = false;
-									if ((operation != 1) && (operation != 2)) {
-										d1 = d0;
-									} else {
-										d1 = d0 * 100.0D;
-									}
-									final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
-									if (flag) {
-										final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-										tooltip.add(" " + never.getFormattedText());
-										//I18n.translateToLocalFormatted("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-									} else if (d0 > 0.0D) {
-										final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-										addition.getStyle().setColor(TextFormatting.BLUE);
-										String s = addition.getFormattedText();
-										tooltip.add(" " + s);
-										// I18n.translateToLocalFormatted("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-									} else if (d0 < 0.0D) {
-										d1 = d1 * -1.0D;
-										final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-										subtraction.getStyle().setColor(TextFormatting.RED);
-										String s = subtraction.getFormattedText();
-										tooltip.add(" " + s);
-										//I18n.translateToLocalFormatted("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-									}
+				List<AttributeEntry> attributes = new ArrayList<>();
+				for (String entry : attributeConfig) {
+					AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+					if ((attributeShell != null)) {
+						final double amount = attributeShell.getAmount();
+						if (amount != 0) {
+							attributes.add(attributeShell);
+						}
+					}
+				}
+				if (!attributes.isEmpty()) {
+					tooltip.add(helper.reset + "" + helper.dGray + shift.getFormattedText());
+					if (GuiScreen.isShiftKeyDown()) {
+						for (AttributeEntry entry : attributes) {
+							final String name = entry.getAttribute();
+							final double amount = entry.getAmount();
+							final int operation = entry.getOperation();
+							if ((player.getAttributeMap().getAttributeInstanceByName(name) != null)) {
+								double d0 = amount;
+								double d1;
+								boolean flag = false;
+								if ((operation != 1) && (operation != 2)) {
+									d1 = d0;
+								} else {
+									d1 = d0 * 100.0D;
+								}
+								final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
+								if (flag) {
+									final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+									tooltip.add(" " + never.getFormattedText());
+									//I18n.translateToLocalFormatted("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
+								} else if (d0 > 0.0D) {
+									final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+									addition.getStyle().setColor(TextFormatting.BLUE);
+									String s = addition.getFormattedText();
+									tooltip.add(" " + s);
+									// I18n.translateToLocalFormatted("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
+								} else if (d0 < 0.0D) {
+									d1 = d1 * -1.0D;
+									final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+									subtraction.getStyle().setColor(TextFormatting.RED);
+									String s = subtraction.getFormattedText();
+									tooltip.add(" " + s);
+									//I18n.translateToLocalFormatted("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
 								}
 							}
 						}
 					}
 				}
+
 			}
 		} catch (Exception e) {
 		}

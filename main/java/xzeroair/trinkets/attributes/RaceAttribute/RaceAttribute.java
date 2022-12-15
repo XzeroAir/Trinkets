@@ -19,8 +19,9 @@ public class RaceAttribute {
 
 	public static void removeModifier(EntityLivingBase entity, UUID uuid) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
-		if (AttributeInstance == null)
+		if (AttributeInstance == null) {
 			return;
+		}
 		if (AttributeInstance.getModifier(uuid) != null) {
 			AttributeInstance.removeModifier(uuid);
 		}
@@ -32,8 +33,9 @@ public class RaceAttribute {
 
 	public static void removeAllModifiersExcluding(EntityLivingBase entity, UUID uuid) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
-		if (AttributeInstance == null)
+		if (AttributeInstance == null) {
 			return;
+		}
 		if (!AttributeInstance.getModifiers().isEmpty()) {
 			for (AttributeModifier modifier : AttributeInstance.getModifiers()) {
 				if (modifier.getID().compareTo(uuid) != 0) {
@@ -49,8 +51,9 @@ public class RaceAttribute {
 
 	public static void removeAllModifiers(EntityLivingBase entity) {
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstance(RaceAttribute.ENTITY_RACE);
-		if (AttributeInstance == null)
+		if (AttributeInstance == null) {
 			return;
+		}
 		AttributeInstance.removeAllModifiers();
 	}
 

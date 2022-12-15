@@ -156,7 +156,7 @@ public class BlockHelperUtil {
 				return true;
 			}
 		}
-		return false;
+		return state.getBlock().getHarvestTool(state) == null;
 	}
 
 	/*

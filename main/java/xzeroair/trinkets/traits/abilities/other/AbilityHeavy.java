@@ -3,6 +3,7 @@ package xzeroair.trinkets.traits.abilities.other;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockDeadBush;
 import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
@@ -11,6 +12,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.world.World;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
@@ -31,6 +35,7 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
 	public void tickAbility(EntityLivingBase entity) {
 		final boolean flag = this.isCreativePlayer(entity);// (entity instanceof EntityPlayer) && (((EntityPlayer) entity).isCreative() || ((EntityPlayer) entity).isSpectator());
 		if (!flag) {
+			final World world = entity.getEntityWorld();
 			this.trample(entity);
 			if (serverConfig.sink && !TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketSea)) {
 				if (entity.isRiding()) {
@@ -38,11 +43,16 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
 						final EntityBoat boat = (EntityBoat) entity.getRidingEntity();
 						boat.motionY -= 0.02F;
 					}
-				} else if (entity.isInWater()) {
-					if (entity instanceof EntityPlayer) {
-						entity.motionY -= 0.2f;
-					} else {
-						entity.motionY -= 0.1f;
+				} else //if (entity.isInWater()) {
+				if (entity.isInWater()) {
+					RayTraceResult result = world.rayTraceBlocks(entity.getPositionVector(), entity.getPositionVector().add(0, -3, 0), false, true, false);
+					boolean nearSurface = (result != null) && (result.typeOfHit == Type.BLOCK);
+					if (entity.isInsideOfMaterial(Material.WATER) || !nearSurface) {
+						if (entity instanceof EntityPlayer) {
+							entity.motionY -= 0.2f;
+						} else {
+							entity.motionY -= 0.1f;
+						}
 					}
 				}
 			}

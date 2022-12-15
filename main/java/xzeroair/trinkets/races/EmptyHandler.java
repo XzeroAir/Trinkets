@@ -23,13 +23,12 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
 	@Override
 	public void startTransformation() {
-		progress = 1D;
+		//		progress = 1D;
 	}
 
 	@Override
 	public void endTransformation() {
-		final EntityRace previous = properties.getPreviousRace();
-		AttributeHelper.removeAttributesByUUID(entity, previous.getUUID());
+
 	}
 
 	@Override
@@ -57,24 +56,40 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
 	@Override
 	public void onTick() {
-		final EntityRace previous = properties.getPreviousRace();
-		if (this.isTransforming()) {
-			SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
-			this.updateSize();
-			this.initAttributes();
-			this.eyeHeightHandler();
-		} else {
-			if (firstTransformUpdate) {
-				AttributeHelper.removeAttributesByUUID(entity, previous.getUUID());
-				if (entity instanceof EntityPlayer) {
+		if (entity instanceof EntityPlayer) {
+			if (this.isTransforming()) {
+				SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
+				this.updateSize();
+				this.initAttributes();
+				this.eyeHeightHandler();
+			} else {
+				if (firstTransformUpdate) {
+					final EntityRace previous = properties.getPreviousRace();
+					AttributeHelper.removeAttributesByUUID(entity, previous.getUUID());
 					((EntityPlayer) entity).eyeHeight = ((EntityPlayer) entity).getDefaultEyeHeight();
-				} else {
-					if (!properties.isNormalSize()) {
-						entity.height = properties.getDefaultHeight();
-						entity.width = properties.getDefaultWidth();
-					}
+					firstTransformUpdate = false;
 				}
-				firstTransformUpdate = false;
+			}
+		} else {
+			if (this.isTransforming()) {
+				this.updateSize();
+				this.eyeHeightHandler();
+			} else {
+				if (firstTransformUpdate) {
+					float height = properties.getDefaultHeight();
+					float width = properties.getDefaultWidth();
+					//					if (entity instanceof EntityAgeable) {
+					//						if (entity.isChild()) {
+					//							height *= 2;
+					//							width *= 2;
+					//						}
+					//						SizeHandler.setSize(entity, height, width);
+					//						((EntityAgeable) entity).setScaleForAge(entity.isChild());
+					//					} else {
+					SizeHandler.setSize(entity, height, width);
+					//					}
+					firstTransformUpdate = false;
+				}
 			}
 		}
 	}

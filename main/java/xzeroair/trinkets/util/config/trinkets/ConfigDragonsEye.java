@@ -122,6 +122,11 @@ public class ConfigDragonsEye {
 			@Name("01. Ice Variant")
 			@LangKey(PREFIX + ".iceandfire.ice.variant")
 			public boolean ICE_VARIANT = true;
+
+			@Config.Comment("Should the Ice Variant have Frost Walker")
+			@Name("02. Frost Walker")
+			@LangKey(PREFIX + ".iceandfire.ice.frostwalker")
+			public boolean FROST_WALKER = true;
 		}
 
 		@Name("Baubles Compatability")

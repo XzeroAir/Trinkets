@@ -264,6 +264,7 @@ item.dragons_eye.0.ice.name=Ice Dragon's Eye
 item.dragons_eye.0.tooltip1=§6Grants $variantresist:
 item.dragons_eye.0.tooltip2=§2Grants Night Vision §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
+item.dragons_eye.0.tooltip4=@frostwalker:
 item.dragons_eye.0.treasurefinder=§6Current Target: §3#underline:$target:§r <§e*deofkb:§r>
 
 item.dragons_eye.0.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
@@ -272,7 +273,8 @@ item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $
 item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6Immunity to hyperthermia
 item.dragons_eye.0.coldimmune=§6Immunity to hypothermia
-item.dragons_eye.0.compat.enhancedvisuals=Disables fire splat effect
+item.dragons_eye.0.compat.enhancedvisuals=
+item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Grants §3Frost Walker
 
 item.poison_stone.0.name=Poison Stone
 item.poison_stone.0.tooltip1=§6Immunity To Poison
@@ -393,6 +395,12 @@ tipped_arrow.effect.xat.glowing=Glowing Tipped Arrow
 xat.effect.glowing=Glowing
 xat.item.potion.glowing.tooltip1=§6Heals 100% Health
 xat.item.potion.glowing.tooltip2=§6Restores 100% Mana
+
+potion.effect.xat.ice_resistance=Ice Resistance
+splash_potion.effect.xat.ice_resistance=Splash Potion of Ice Resistance
+lingering_potion.effect.xat.ice_resistance=Lingering Potion of Ice Resistance
+tipped_arrow.effect.xat.ice_resistance=Arrow of Ice Resistance
+xat.effect.ice_resistance=Ice Resistance
 
 potion.effect.xat.restorative=Potion of Restoration
 splash_potion.effect.xat.restorative=Splash Potion of Restoration
@@ -592,6 +600,8 @@ xat.config.server.dragons_eye.iceandfire.recipe.stage=Skull Stage
 xat.config.server.dragons_eye.iceandfire.recipe.stage.tooltip=If Ice and Fire is Installed, Should the Dragon's Eye Require a Specific Stage of Skull for the recipe. Set to 0 for any stage
 xat.config.server.dragons_eye.iceandfire.ice.variant=Ice Variant
 xat.config.server.dragons_eye.iceandfire.ice.variant.tooltip=Should there be an Ice Variant of the Dragons eye
+xat.config.server.dragons_eye.iceandfire.ice.frostwalker=Frost Walker
+xat.config.server.dragons_eye.iceandfire.ice.frostwalker.tooltip=Should the Ice Variant have Frost Walker
 
 xat.config.client.dragons_eye.growl.enabled=Dragon's Growl
 xat.config.client.dragons_eye.growl.enabled.tooltip=When The Treasure Finder is Enabled, Should There be a Growl the Treasure Finder Pings Treasure

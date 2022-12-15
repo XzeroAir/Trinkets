@@ -1,11 +1,14 @@
 package xzeroair.trinkets.util.helpers;
 
+import java.math.BigDecimal;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
+import xzeroair.trinkets.util.Reference;
 
 public class StringUtils {
 
@@ -26,10 +29,11 @@ public class StringUtils {
 	}
 
 	public static String getStringFromArray(String[] array, int index) {
-		if ((array != null) && (index >= 0) && (index < array.length))
+		if ((array != null) && (index >= 0) && (index < array.length)) {
 			return array[index];
-		else
+		} else {
 			return "";
+		}
 	}
 
 	public static String getCmdSubstring(String command, String cmdRegex) {
@@ -56,8 +60,9 @@ public class StringUtils {
 						finalString += "[" + character + "]";
 					}
 				}
-				if (!finalString.isEmpty())
+				if (!finalString.isEmpty()) {
 					return "(" + finalString + ")";
+				}
 			}
 			return "";
 		};
@@ -68,12 +73,14 @@ public class StringUtils {
 		if (!regex.isEmpty()) {
 			final String[] array = string.split(regex, 2);
 			if ((array.length > 1)) {
-				if (array[0].replace(" ", "").isEmpty())
+				if (array[0].replace(" ", "").isEmpty()) {
 					return array[1];
+				}
 			}
 			return "";
-		} else
+		} else {
 			return "";
+		}
 	}
 
 	public static StringCommand getStringVariables(String string, String regex) {
@@ -182,6 +189,14 @@ public class StringUtils {
 			}
 		}
 		return false;
+	}
+
+	public static double getAccurateDouble(double value) {
+		return MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(value)), value);
+	}
+
+	public static double getAccurateDouble(double value, double defaultValue) {
+		return MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(value)), defaultValue);
 	}
 
 	public static void sendMessageToPlayer(Entity entity, String msg, boolean onScreen) {

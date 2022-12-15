@@ -126,7 +126,7 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
 								return xp + droppedExp;
 							}
 					);
-					return -1;
+					return 0;
 				}
 			}
 			return expToDrop + droppedExp;

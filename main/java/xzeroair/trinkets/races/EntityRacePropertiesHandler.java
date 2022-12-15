@@ -1,6 +1,5 @@
 package xzeroair.trinkets.races;
 
-import java.math.BigDecimal;
 import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
@@ -43,6 +42,7 @@ import xzeroair.trinkets.util.helpers.AttributeHelper;
 import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.EyeHeightHandler;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
+import xzeroair.trinkets.util.helpers.StringUtils;
 
 public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
@@ -62,6 +62,9 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	protected String traitColorAlt;
 
 	protected EntityProperties properties;
+
+	protected float healthBeforeTransformation; // TODO Store the Health before, then calculate the health afterwards
+	protected float maxHealthBeforeTranformation; // Don't forget to check leaf breaking
 
 	public EntityRacePropertiesHandler(EntityLivingBase e, EntityRace race) {
 		entity = e;
@@ -136,6 +139,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	 */
 	public void onTransform() {
 		firstTransformUpdate = true;
+		healthBeforeTransformation = entity.getHealth();
+		maxHealthBeforeTranformation = entity.getMaxHealth();
 		if (properties == null) {
 			properties = Capabilities.getEntityProperties(entity);
 		}
@@ -144,6 +149,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		AttributeHelper.removeAttributesByUUID(entity, properties.getPreviousRace().getUUID());
 		this.startTransformation();
 	}
 
@@ -231,12 +237,16 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	protected double progress = 0D;
 
 	public double TransformationProgress() {
+		if (!this.isTransformed() && !this.isTransforming()) {
+			return 1D;
+		}
 		return progress;
 	}
 
 	// TODO HERE
 	protected void updateSize() {
-		if (this.isTransforming()) {
+		//		if (this.isTransforming()) {
+		if ((!this.isTransformed() && this.isTransforming()) || (this.TransformationProgress() < 1D)) {
 			final int height = properties.getHeightValue();
 			final int width = properties.getWidthValue();
 			final BiFunction<Integer, Integer, Integer> increment = (x, y) -> {
@@ -257,25 +267,35 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 			int previousRaceTargetWidth = properties.getPreviousRace().getRaceWidth();
 			double heightProgress = this.transformProgress(previousRaceTargetHeight, this.getTargetHeight(), height);
 			double widthProgress = this.transformProgress(previousRaceTargetWidth, this.getTargetWidth(), width);
-			double finalValue = MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(heightProgress * widthProgress)), 0D);//(heightProgress * widthProgress);
+			double finalValue = this.isTransformed() ? 1D : StringUtils.getAccurateDouble(heightProgress * widthProgress);
+			//MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(heightProgress * widthProgress)), 0D);//(heightProgress * widthProgress);
+			//			System.out.println(height + "|" + width + "| " + heightProgress + " | " + widthProgress + " | " + finalValue);
 			if ((finalValue >= 0D) && (finalValue <= 1D) && (progress != finalValue)) {
 				progress = finalValue;
 				this.savedNBTData(properties.getTag());
 			}
-			//			System.out.println(finalValue + "|" + heightProgress + "|" + widthProgress + "|" + progress);
-		} else {
-			if (progress != 1D) {
-				progress = 1D;
-				this.savedNBTData(properties.getTag());
+			if (this.TransformationProgress() >= 1D) {
+				float heal = (float) StringUtils.getAccurateDouble(((entity.getMaxHealth() - maxHealthBeforeTranformation) - (maxHealthBeforeTranformation - healthBeforeTransformation)));
+				if (heal > 0) {
+					//					System.out.println(heal);
+					entity.heal(heal);
+				}
+				//			FirstAidCompat.rescale(entity);
 			}
 		}
+		//			System.out.println(finalValue + "|" + heightProgress + "|" + widthProgress + "|" + progress);
+		//		}
 	}
 
 	protected double transformProgress(int previousTarget, int currentTarget, int currentValue) {
-		if (currentTarget == currentValue) {
+		double rtn = (MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D));
+		if (rtn < 0.01) {
+			return 0D;
+		}
+		if (rtn > 1D) {
 			return 1D;
 		}
-		return (MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D));
+		return rtn;
 	}
 
 	protected void eyeHeightHandler() {
@@ -308,12 +328,12 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
 	public float getHeight() {
 		final float TLHeight = (float) (properties.getDefaultHeight() * (properties.getHeightValue() * 0.01));
-		return TLHeight;
+		return TLHeight;//(float) StringUtils.getAccurateDouble(TLHeight, properties.getDefaultHeight());
 	}
 
 	public float getWidth() {
 		final float TLWidth = (float) (properties.getDefaultWidth() * (properties.getWidthValue() * 0.01));
-		return TLWidth;
+		return TLWidth;//(float) StringUtils.getAccurateDouble(TLWidth, properties.getDefaultWidth());
 	}
 
 	private SizeAttribute getArtemisAttributeSize() {
@@ -481,6 +501,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	@Override
 	public <T extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
 		if ((this.isTransforming() || this.isTransformed()) && !properties.isNormalSize()) {
+			GlStateManager.pushMatrix();
 			final double hScale = properties.getHeightValue() * 0.01D;
 			final double wScale = properties.getWidthValue() * 0.01D;
 			final double xLoc = (x / wScale) - x;
@@ -494,6 +515,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 			//			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
 			//						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
 			final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
+			//			GlStateManager.translate(-xLoc, -yLoc, -zLoc);
 			if (entity.isRiding()) {
 				GlStateManager.translate(0, mountedOffset, 0);
 				GlStateManager.translate(0, -yOffset, 0);
@@ -506,6 +528,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 				GlStateManager.translate(0, -mountedOffset, 0);
 			}
 			GlStateManager.translate(xLoc, yLoc, zLoc);
+			//			System.out.println(hScale + "|" + wScale + "| X:" + xLoc + "| Y:" + yLoc + "| Z:" + zLoc);
 		}
 	}
 
@@ -514,6 +537,9 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	 */
 	@Override
 	public <T extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+		if ((this.isTransforming() || this.isTransformed()) && !properties.isNormalSize()) {
+			GlStateManager.popMatrix();
+		}
 	}
 
 	//	@Override

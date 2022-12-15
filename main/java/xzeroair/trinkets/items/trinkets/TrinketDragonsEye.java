@@ -23,6 +23,7 @@ import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityBlockFinder;
 import xzeroair.trinkets.traits.abilities.AbilityFireImmunity;
+import xzeroair.trinkets.traits.abilities.AbilityFrostWalker;
 import xzeroair.trinkets.traits.abilities.AbilityIceImmunity;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
@@ -83,10 +84,9 @@ public class TrinketDragonsEye extends AccessoryBase {
 				}
 			}
 		} catch (Exception e) {
-			//			e.printStackTrace();
 			oreTarget = "ERROR";
 		}
-		final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget);
+		final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget.trim());
 		final KeyEntry keybind1 = new KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
 		final KeyEntry keybind2 = new KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
 		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
@@ -95,7 +95,9 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(variant == 1 ? TANCold.option() : TANHot.option()).getFormattedText());
-		return helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3).replace("#underline:", "");
+		final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", (variant == 1) && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
+
+		return helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker).replace("#underline:", "");
 	}
 
 	@Override
@@ -112,6 +114,9 @@ public class TrinketDragonsEye extends AccessoryBase {
 		}
 		if (serverConfig.compat.iaf.ICE_VARIANT && (variant == 1)) {
 			abilities.add(new AbilityIceImmunity());
+			if (serverConfig.compat.iaf.FROST_WALKER) {
+				abilities.add(new AbilityFrostWalker());
+			}
 			if (tan && serverConfig.compat.tan.immuneToCold) {
 				abilities.add(new AbilityColdImmunity());
 			}
@@ -126,8 +131,6 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final int variant = Capabilities.getTrinketProperties(stack, 0, (prop, ret) -> prop.getVariant());
 		final String displayName = variant == 1 ? new TextComponentTranslation(this.getTranslationKey(stack) + ".ice.name").getFormattedText() : super.getItemStackDisplayName(stack);
 		return displayName.trim();
-		//I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name").trim();
-		//		return ;//super.getItemStackDisplayName(stack);
 	}
 
 	@Override

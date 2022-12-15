@@ -30,7 +30,11 @@ public class CapabilitiesHandler {
 		final Entity entity = event.getObject();
 		final boolean isLiving = event.getObject() instanceof EntityLivingBase;
 		if (isLiving) {
-			if (!entity.isNonBoss()) {
+			try {
+				if (!entity.isNonBoss()) {
+					return;
+				}
+			} catch (Exception e) {
 				return;
 			}
 			final boolean isPlayer = event.getObject() instanceof EntityPlayer;

@@ -34,6 +34,7 @@ public class Abilities {
 	public static final String dodging						="dodging";
 	public static final String largeHands					="large_hands";
 	public static final String heavy						="heavy";
+	public static final String frostWalker					="frost_walker";
 
 	// External Mods
 	public static final String survivalHeatImmunity			="heat_immunity";

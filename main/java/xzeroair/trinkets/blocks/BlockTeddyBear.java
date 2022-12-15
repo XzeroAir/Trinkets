@@ -3,12 +3,10 @@ package xzeroair.trinkets.blocks;
 import java.util.List;
 import java.util.Random;
 
-import org.jetbrains.annotations.Nullable;
-
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
@@ -39,6 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.blocks.materials.TrinketBlockMaterial;
 import xzeroair.trinkets.blocks.tileentities.TileEntityTeddyBear;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.util.Reference;
@@ -54,7 +53,7 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	public static final PropertyEnum<EnumTeddyType> VARIANT = PropertyEnum.<EnumTeddyType>create("variant", EnumTeddyType.class);
 
 	public BlockTeddyBear() {
-		super(Material.CLOTH);
+		super(TrinketBlockMaterial.ClothTeddyBear);
 		this.setRegistryName(Reference.MODID, "teddy_bear");
 		this.setTranslationKey(this.getRegistryName().toString());
 		this.setLightLevel(0);

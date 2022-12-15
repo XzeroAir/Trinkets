@@ -42,8 +42,9 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
 	}
 
 	protected boolean movingForward(EntityLivingBase entity, EnumFacing facing) {
-		if (((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0))
+		if (((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0)) {
 			return true;
+		}
 		// return ((facing.getDirectionVec().getX() * player.motionX) +
 		// (facing.getDirectionVec().getZ() * player.motionZ)) > 0;
 		return false;
@@ -61,8 +62,9 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
 		final boolean whitelist = TrinketsConfig.SERVER.races.fairy.whitelistClimbables;
 		for (String s : climbList) {
 			ConfigObject object = new ConfigObject(s);
-			if (object.doesBlockMatchEntry(body) || object.doesBlockMatchEntry(frontBody))
+			if (object.doesBlockMatchEntry(body) || object.doesBlockMatchEntry(frontBody)) {
 				return whitelist ? true : false;
+			}
 		}
 		//		if (flag1 || flag2)
 		return whitelist ? false : true;

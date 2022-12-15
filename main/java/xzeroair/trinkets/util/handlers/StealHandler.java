@@ -65,13 +65,13 @@ public class StealHandler {
 			}
 		}
 		if (success == true) {
-			System.out.println("Success!");
+			//			System.out.println("Success!");
 		} else {
 			if (player instanceof EntityPlayer) {
 				ITextComponent message = new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.DARK_RED + "I Failed!");
 				((EntityPlayer) player).sendStatusMessage(message, true);
 			}
-			System.out.println("Failed!");
+			//			System.out.println("Failed!");
 		}
 	}
 

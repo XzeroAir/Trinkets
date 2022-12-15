@@ -20,35 +20,45 @@ import xzeroair.trinkets.util.helpers.MagicHelper;
 
 public class BasePotion extends Potion {
 
-	protected ResourceLocation ICON;
+	protected final ResourceLocation ICON;
 
 	protected String name;
 	protected int maxDuration;
 	protected int indexX;
 	protected int indexY;
 
-	public BasePotion(String name, int duration, int color, boolean isBadEffect) {
-		this(Reference.MODID, name, duration, color, isBadEffect, -1, -1, new ResourceLocation(Reference.MODID, "textures/potions/" + name + ".png"));
+	public BasePotion(String name, int color, int duration, boolean isBadEffect) {
+		this(Reference.MODID, name, color, duration, isBadEffect);
 	}
 
-	public BasePotion(String MODID, String name, int duration, int color, boolean isBadEffect, int IconX, int IconY, ResourceLocation texture) {
+	public BasePotion(String modid, String name, int color, int duration, boolean isBadEffect) {
+		this(modid, name, color, duration, isBadEffect, -1, -1, new ResourceLocation(modid, "textures/potions/" + name + ".png"));
+	}
+
+	public BasePotion(String modid, String name, int color, int duration, boolean isBadEffect, int IconX, int IconY, ResourceLocation texture) {
 		super(isBadEffect, color);
 		indexX = IconX;
 		indexY = IconY;
 		this.name = name;
 		ICON = texture;
 		maxDuration = duration;
-		this.setPotionName(MODID + ".effect." + name);
-		this.setRegistryName(new ResourceLocation(MODID, name));
+		this.setPotionName(modid + ".effect." + name);
+		this.setRegistryName(new ResourceLocation(modid, name));
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void renderInventoryEffect(PotionEffect effect, Gui gui, int x, int y, float z) {
-		if (ICON == null)
+		this.renderInventoryEffect(x, y, effect, Minecraft.getMinecraft());
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
+		if (this.getTexture() == null) {
 			return;
-		Minecraft mc = Minecraft.getMinecraft();
-		mc.getTextureManager().bindTexture(ICON);
+		}
+		mc.getTextureManager().bindTexture(this.getTexture());
 		if ((indexX >= 0) && (indexY >= 0)) {
 			//		int i1 = this.getStatusIconIndex();
 			int i1 = (indexX + indexY) * 8;//this.getStatusIconIndex();
@@ -61,10 +71,16 @@ public class BasePotion extends Potion {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void renderHUDEffect(PotionEffect effect, Gui gui, int x, int y, float z, float alpha) {
-		if (ICON == null)
+		this.renderHUDEffect(x, y, effect, Minecraft.getMinecraft(), alpha);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
+		if (this.getTexture() == null) {
 			return;
-		Minecraft mc = Minecraft.getMinecraft();
-		mc.getTextureManager().bindTexture(ICON);
+		}
+		mc.getTextureManager().bindTexture(this.getTexture());
 		if ((indexX >= 0) && (indexY >= 0)) {
 			//		int i1 = this.getStatusIconIndex();
 			int i1 = (indexX + indexY) * 8;//this.getStatusIconIndex();
@@ -128,8 +144,27 @@ public class BasePotion extends Potion {
 		}
 	}
 
+	public ResourceLocation getTexture() {
+		return ICON;
+	}
+
 	@Override
 	public boolean hasStatusIcon() {
 		return ICON != null;
+	}
+
+	@Override
+	public boolean shouldRenderHUD(PotionEffect effect) {
+		return this.hasStatusIcon();
+	}
+
+	@Override
+	public boolean shouldRender(PotionEffect effect) {
+		return this.hasStatusIcon();
+	}
+
+	@Override
+	public boolean shouldRenderInvText(PotionEffect effect) {
+		return this.hasStatusIcon();
 	}
 }

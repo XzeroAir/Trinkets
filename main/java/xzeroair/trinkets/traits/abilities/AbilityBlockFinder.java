@@ -271,7 +271,7 @@ public class AbilityBlockFinder extends Ability implements ITickableAbility, ITo
 						final TreasureEntry entry = this.getTreasure();
 						final String target = this.parseTargetName(
 								entry
-						);
+						).trim();
 						final String entryRegName = entry == null ? "NULL" : entry.getObjectRegistryName();
 						final String NotFound = helper.formatAddVariables(
 								new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.notfound").getFormattedText(),
@@ -341,34 +341,14 @@ public class AbilityBlockFinder extends Ability implements ITickableAbility, ITo
 				final boolean isWildSpace = namespace.contentEquals("*");
 				final boolean isWildPath = pathID.contentEquals("*");
 				final int meta = treasure.getMeta();
-				//				if (true) {
-				//					return new TextComponentTranslation("commands.generic.parameter.invalid", target).getFormattedText();
-				//				}
 				if (isWildSpace) {
 					if (isWildPath) {
-						//						return new TextComponentTranslation("commands.generic.parameter.invalid", target).getFormattedText();
 						return "";
 					} else {
 						return pathID;
 					}
 				} else {
 					if (isWildPath) {
-						//						entity.Item.name=
-						//						stat.blocksButton
-						//						stat.itemsButton
-						//						itemGroup.buildingBlocks=Building Blocks
-						//								itemGroup.decorations=Decoration Blocks
-						//								itemGroup.redstone=Redstone
-						//								itemGroup.transportation=Transportation
-						//								itemGroup.misc=Miscellaneous
-						//								itemGroup.search=Search Items
-						//								itemGroup.food=Foodstuffs
-						//								itemGroup.tools=Tools
-						//								itemGroup.combat=Combat
-						//								itemGroup.brewing=Brewing
-						//								itemGroup.materials=Materials
-						//								itemGroup.inventory=Survival Inventory
-						//								itemGroup.hotbar=Saved Toolbars
 						return namespace + " " + new TextComponentTranslation("stat.blocksButton").getFormattedText();
 					} else {
 						final Item itemTarget = Item.getByNameOrId(target);
@@ -393,11 +373,19 @@ public class AbilityBlockFinder extends Ability implements ITickableAbility, ITo
 					}
 				}
 				if (target.equalsIgnoreCase("[air]")) {
-					//					return new TextComponentTranslation("commands.generic.parameter.invalid", treasure.getObjectRegistryName()).getFormattedText();
 					return "";
 				}
 				return target
-						.replaceAll("(([ ]?[oO][rR][eE])|([\\[\\]])|([tT][iI][lL][eE][\\.]))", "");
+						.replaceAll(
+								"("
+										+ "([ ]?[oO][rR][eE])"
+										+ "|"
+										+ "([\\[\\]])"
+										+ "|"
+										+ "([tT][iI][lL][eE][\\.])"
+										+ ")",
+								""
+						);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -4,7 +4,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.client.events.ChangeViewRenderEvent;
 import xzeroair.trinkets.client.events.EventHandlerClient;
 import xzeroair.trinkets.client.events.GuiScreenEvents;
 import xzeroair.trinkets.client.events.PlayerCameraSetupEvents;
@@ -76,7 +75,6 @@ public class EventRegistry {
 		MinecraftForge.EVENT_BUS.register(new GuiScreenEvents());
 		MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
 		MinecraftForge.EVENT_BUS.register(new RenderEntitiesEvent());
-		MinecraftForge.EVENT_BUS.register(new ChangeViewRenderEvent());
 		MinecraftForge.EVENT_BUS.register(new PlayerCameraSetupEvents());
 
 		if (Loader.isModLoaded("enhancedvisuals")) {

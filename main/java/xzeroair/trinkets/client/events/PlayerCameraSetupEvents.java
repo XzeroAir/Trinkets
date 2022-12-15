@@ -21,6 +21,7 @@ import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
 import xzeroair.trinkets.items.trinkets.TrinketSeaStone;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.StringUtils;
 
 public class PlayerCameraSetupEvents {
 
@@ -145,20 +146,18 @@ public class PlayerCameraSetupEvents {
 			Capabilities.getEntityProperties(player, prop -> {
 				final EntityRacePropertiesHandler handler = prop.getRaceHandler();
 				if (!prop.isNormalSize() || handler.isTransforming()) {
-					final int t = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-					if ((t == 1) || (t == 2)) {
+					final int perspective = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+					if ((perspective == 1) || (perspective == 2)) {
 						final float defaultHeight = prop.getDefaultHeight();
 						final float height = handler.getHeight();
 						double distance = 4D;
-						//						final double h1 = handler.getTargetHeight() * 0.01D;
-						final double h2 = height / defaultHeight;
-						//						distance *= h1;
+						final double h2 = StringUtils.getAccurateDouble(height / defaultHeight, height / defaultHeight);
 						distance *= h2;
 						final double d3 = distance + ((distance - distance) * event.getRenderPartialTicks());
 						final double offset = this.updatedOffset(d3, event.getRenderPartialTicks(), player);
 						final double v = this.updatedOffset(4D, event.getRenderPartialTicks(), player);
-						GlStateManager.translate(0, 0, t == 2 ? -v : v);
-						GlStateManager.translate(0, 0, t == 2 ? offset : -offset);
+						GlStateManager.translate(0, 0, perspective == 2 ? -v : v);
+						GlStateManager.translate(0, 0, perspective == 2 ? offset : -offset);
 					}
 				}
 			});
@@ -169,7 +168,7 @@ public class PlayerCameraSetupEvents {
 	//	public void FOVUpdate(FOVUpdateEvent event) {
 	//	}
 
-	@SubscribeEvent(priority = EventPriority.LOWEST)
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void renderFogDensityEvent(FogDensity event) {
 		final EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player.isInWater()) {

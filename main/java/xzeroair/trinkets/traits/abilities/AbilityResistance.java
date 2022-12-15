@@ -11,6 +11,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.init.Abilities;
@@ -44,6 +45,10 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 
 	@Override
 	public void tickAbility(EntityLivingBase entity) {
+		final World world = entity.getEntityWorld();
+		if (world.isRemote) {
+			return;
+		}
 		final int duration = 30;
 		Potion resistance = Potion.getPotionFromResourceLocation(serverConfig.potionEffect);
 		if (resistance == null) {
@@ -153,23 +158,30 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 			final int newDur = newEffect.getDuration();
 
 			if (!has) {
+				//				System.out.println("We Don't Have it, Just apply");
 				return cancel;
 			} else {
 				final PotionEffect oldEffect = entity.getActivePotionEffect(resistance);
 				final int oldAmp = oldEffect.getAmplifier();
 				final int oldDur = oldEffect.getDuration();
 
-				//				final boolean oldIsBetter = oldAmp > newAmp;
-				//				final boolean oldIsLonger = oldDur > newDur;
+				//				if ((newDur > oldDur) && (newAmp <= oldAmp)) {
+				//					System.out.println("Probably not?");
+				//					return cancel;
+				//				}
 
 				int amp = newAmp + 1;
 				int duration = newDur;
 
 				if ((oldAmp > amp) || (amp > serverConfig.resistance_stacks_max)) {
+					//					System.out.println("Don't Allow");
 					return true;
 				}
 
+				//				System.out.println("Upgrading: " + oldAmp + "|" + newAmp + "|" + amp);
+				//				System.out.println("Upgrading: " + oldDur + "|" + newDur + "|" + duration);
 				entity.removePotionEffect(resistance);
+				//				System.out.println("Removing, Adding");
 				entity.addPotionEffect(
 						new PotionEffect(
 								resistance,
@@ -179,8 +191,9 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 								false
 						)
 				);
+				//				System.out.println("Applied");
+				return true;
 			}
-			return true;
 		}
 		return cancel;
 	}
@@ -192,8 +205,8 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 			resistance = MobEffects.RESISTANCE;
 		}
 		if (entity.isPotionActive(resistance)) {
-			entity.removeActivePotionEffect(resistance);
-			entity.addPotionEffect(new PotionEffect(resistance, 10, serverConfig.resistance_level, false, false));
+			entity.removePotionEffect(resistance);
+			entity.addPotionEffect(new PotionEffect(resistance, 30, serverConfig.resistance_level, false, false));
 		}
 	}
 

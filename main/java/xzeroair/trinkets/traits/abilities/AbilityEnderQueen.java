@@ -16,7 +16,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -129,18 +128,18 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 							StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string, false);
 						}
 					}
-				}
-			}
-			if (serverConfig.tponhurt && (source instanceof EntityDamageSourceIndirect)) {
-				final boolean isBoss = (source.getTrueSource() != null) && !source.getTrueSource().isNonBoss() ? true : false;
-				final MagicStats magic = Capabilities.getMagicStats(attacked);
-				if (!isBoss) {
-					if ((magic != null) && (magic.getMana() >= (magic.getMaxMana() * 0.5F))) {
-						for (int i = 0; i < 32; ++i) {
-							if (this.teleportRandomly(attacked)) {
-								if (magic.spendMana(magic.getMaxMana() * 0.5F)) {
+					if (serverConfig.tponhurt) {
+						final boolean isBoss = (source.getTrueSource() != null) && !source.getTrueSource().isNonBoss() ? true : false;
+						final MagicStats magic = Capabilities.getMagicStats(attacked);
+						if (!isBoss) {
+							if ((magic != null) && (magic.getMana() >= (magic.getMaxMana() * 0.5F))) {
+								for (int i = 0; i < 32; ++i) {
+									if (this.teleportRandomly(attacked)) {
+										if (magic.spendMana(magic.getMaxMana() * 0.5F)) {
+										}
+										break;
+									}
 								}
-								break;
 							}
 						}
 					}
