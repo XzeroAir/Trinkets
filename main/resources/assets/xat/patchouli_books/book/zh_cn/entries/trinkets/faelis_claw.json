@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 {
     "name": "Faelis Claw",
     "icon": "xat:faelis_claw",
@@ -14,21 +13,4 @@
 			"recipe": "xat:faelis_claw"
         }
     ]
-=======
-{
-    "name": "Faelis Claw",
-    "icon": "xat:faelis_claw",
-    "category": "trinkets",
-    "pages": [
-        {
-            "type": "text",
-            "text": "The Faelis Claw allows its wearer to inflict bleeding with their attacks, as well as granting a very small damage bonus. The duration of the bleeding effect is three times as long if the wearer is a Faelis.$(br2)Item idea originally by NyanMinecrafter"
-        },
-		{
-            "type": "crafting",
-            "text": "$(o)owo uwu owo",
-			"recipe": "xat:faelis_claw"
-        }
-    ]
->>>>>>> Stashed changes
 }

@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 {
     "variants": {
         "normal": { "model": "xat:moon_rose"},
@@ -7,14 +6,4 @@
         "facing=west": {"model": "xat:moon_rose", "y": 270},
         "facing=east": {"model": "xat:moon_rose", "y": 90}
     }
-=======
-{
-    "variants": {
-        "normal": { "model": "xat:moon_rose"},
-        "facing=north": {"model": "xat:moon_rose"},
-        "facing=south": {"model": "xat:moon_rose", "y": 180},
-        "facing=west": {"model": "xat:moon_rose", "y": 270},
-        "facing=east": {"model": "xat:moon_rose", "y": 90}
-    }
->>>>>>> Stashed changes
 }
