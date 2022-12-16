@@ -1,0 +1,10 @@
+rootProject.name = 'Trinkets'
+
+include 'Forge 1.12'
+project(':Forge 1.12').projectDir = new File('1.12.2/Forge 1.12')
+include ':Baubles API'
+project(':Baubles API').projectDir = new File('1.12.2/Baubles')
+include ':ArtemisLib'
+project(':ArtemisLib').projectDir = new File('1.12.2/ArtemisLib')
+include ':SimpleDifficulty'
+project(':SimpleDifficulty').projectDir = new File('1.12.2/SimpleDifficulty')

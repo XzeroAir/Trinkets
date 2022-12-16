@@ -1,19 +1,20 @@
 buildscript {
     repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+		maven { url = "https://repo.spongepowered.org/repository/maven-public" }
+		maven { url = "http://repo.spongepowered.org/maven" }
+        maven { url = "https://plugins.gradle.org/m2/" }
         mavenCentral()
-        maven {
-            name = "forge"
-            //url = "http://files.minecraftforge.net/maven"
-			url = 'https://maven.minecraftforge.net'
-        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
     }
 }
-
 apply plugin: 'net.minecraftforge.gradle.forge'
-
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
+apply plugin: 'eclipse'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -24,9 +25,9 @@ compileJava {
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
 
-version = "${config.version}.${config.build_number}"
-group = "mod.group" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = config.mod_name
+version = "${mod_version}"
+group = "dev.xzeroair.${mod_id}"
+archivesBaseName = "${mod_name}"
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.4' 
@@ -36,6 +37,11 @@ minecraft {
     version = "${config.mc_version}-${config.forge_version}"
     runDir = "eclipse/assets"
 
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = config.mc_mappings
     replace 'GRADLE:BUILD', config.build_number
     replace 'GRADLE:VERSION', config.version
@@ -43,7 +49,44 @@ minecraft {
     // Scala: not even once
     replace 'scala.actors.threadpool.Arrays', 'java.util.Arrays'
 
-    makeObfSourceJar = false
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+	//useDepAts = true
+
+    if (project.hasProperty('coreplugin')) {
+        clientJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
+        serverJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
+    }
+
+    if (project.hasProperty('mc_username')) {
+        clientRunArgs += ['--username', project.mc_username]
+        if (project.hasProperty('mc_password')) {
+            clientRunArgs += ['--password', project.mc_password]
+        }
+    }
+    if (project.hasProperty('mc_uuid')) {
+        clientRunArgs += ['--uuid', project.mc_uuid]
+    }
+
+    // disable server gui
+    serverRunArgs += 'nogui'
+
+    // skip the screen to confirm that you want to load a world with missing registry entries
+    serverJvmArgs += '-Dfml.doNotBackup=true'
+    clientJvmArgs += '-Dfml.doNotBackup=true'
+
+    // skip having to confirm on server
+    serverJvmArgs += '-Dfml.queryResult=confirm'
+
+    //skip jansi warnings in the log
+    serverJvmArgs += '-Dlog4j.skipJansi=true'
+    clientJvmArgs += '-Dlog4j.skipJansi=true'
+
+    if (project.hasProperty('client_args')) {
+        clientJvmArgs += project.client_args
+    }
+    if (project.hasProperty('server_args')) {
+        serverJvmArgs += project.server_args
+    }
 }
 
 sourceSets {
@@ -67,7 +110,7 @@ jar {
 
 dependencies {
 
-	deobfProvided "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
+	//deobfProvided "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
 	// at runtime, use the full JEI jar
 
 	//deobfCompile "com.github.azanor:Baubles:7035b13"
@@ -78,20 +121,27 @@ dependencies {
 	//deobfProvided project(':Baubles API')
 	//deobfProvided project(':ArtemisLib')
 	
-	//compile project(':Baubles API')
-	//compile project(':ArtemisLib')
+	//compile (project(':Baubles API')) {
+	//	transitive = false
+	//}
+	//compile (project(':ArtemisLib')) {
+	//	transitive = false
+	//}
+	//compile (project(':SimpleDifficulty')) {
+	//	transitive = false
+	//}
 	
-	compile fileTree(dir: 'lib', include: '*.jar')
+	compile fileTree(dir: 'libs', include: '*.jar')
 	
 	// compile against the JEI API but do not include it at runtime
-	runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+	//runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
 	
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    //inputs.property "version", project.version
-    //inputs.property "mcversion", project.minecraft.version
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
@@ -105,14 +155,22 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info', '**/psd/**'
     }
+	//move access transformers into META-INF
+	rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
 	maven { //MinecraftForge
 		name "MinecraftForge Maven"
 		url = 'https://maven.minecraftforge.net'
 		//url "http://files.minecraftforge.net/maven/"
 	}
+    maven {
+        url = 'https://repo.spongepowered.org/maven'
+    }
     maven {
         name 'Chisel'
         url "http://maven.tterrag.com/"
