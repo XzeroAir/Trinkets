@@ -517,7 +517,7 @@ xat.config.client.race.properties.gui.settings=Race Properties Gui
 xat.config.client.race.properties.gui.shown=Race Properties Button
 
 #####################################[Food Configs]#####################################
- 
+
 xat.config.server.food.settings=Magic Food Settings
 xat.config.server.food.settings.tooltip=Settings regarding the transformation foods.
 
