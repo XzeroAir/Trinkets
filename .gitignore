@@ -29,3 +29,6 @@ replay_pid*
 /build/
 /.settings/
 /bin/
+.vscode/launch.json
+.vscode/settings.json
+main/resources/assets/xat/lang/zh_cn_backup.lang
