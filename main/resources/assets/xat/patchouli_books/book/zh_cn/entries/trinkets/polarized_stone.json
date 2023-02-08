@@ -1,15 +1,15 @@
 {
-    "name": "Polarized Stone",
+    "name": "磁石",
     "icon": "xat:polarized_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "Has two modes, Magnet and Repel mode, and works from the hotbar, offhand, or trinket slots."
+            "text": "拥有两种模式，吸引模式和排斥模式，能在快捷栏、副手、饰品栏中生效。"
         },
 		{
             "type": "text",
-            "text": "Magnet mode will pull in items when enabled (toggled with either the magnet mode keybind or when right clicked in hand).$(br2)Repel mode will repel away projectiles at the cost of mana (toggled with either the aux key plus the magnet mode keybind or by shift+right clicked in hand)."
+            "text": "吸引模式在启用时能吸引物品（按下吸引模式绑定键或在手中右击）。$(br2)排斥模式会消耗魔力排斥弹射物（按下辅助键和吸引模式绑定键或在手中潜行并右击）"
         },
 		{
             "type": "crafting",

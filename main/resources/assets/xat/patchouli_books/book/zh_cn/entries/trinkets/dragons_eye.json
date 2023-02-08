@@ -1,15 +1,15 @@
 {
-    "name": "Dragon's Eye",
+    "name": "巨龙之眼",
     "icon": "xat:dragons_eye",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Dragon's Eye grants its wearer night vision as well as the ability to see ores through walls. The targeted ore can be changed through the Dragon's Eye: Cycle key."
+            "text": "巨龙之眼使它的装备者获得夜视并能够穿墙看见矿石。可以通过“巨龙之眼：切换”键改变目标矿石。"
         },
 		{
             "type": "text",
-            "text": "$(l)Mod Compatibility:$()$(br)$(n)Tough as Nails$() / $(n)Simple Difficulty$(): Immunity to hyperthermia$(br)$(n)Enhanced Visuals$(): Removes the fire splat effect"
+            "text": "$(l)兼容模组：$()$(br)$(n)意志坚定$() / $(n)Simple Difficulty$()：免疫伤寒$(br)$(n)拓展视觉效果$()：移除火焰效果"
         },
 		{
             "type": "crafting",

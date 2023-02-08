@@ -1,6 +1,7 @@
 package xzeroair.trinkets.client.events;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,96 +22,130 @@ import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
 import xzeroair.trinkets.items.trinkets.TrinketSeaStone;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.StringUtils;
 
 public class PlayerCameraSetupEvents {
 
 	private static Minecraft mc = Minecraft.getMinecraft();
 
-	private double getVanillaTranslation(double partialTicks, EntityPlayer player) {
+	private CameraTranslation getVanillaTranslation(EntityRenderer renderer, double partialTicks) {
+		final Entity entity = mc.getRenderViewEntity();
+		float f = entity.getEyeHeight();
+		final double d0 = entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks);
+		final double d1 = entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks) + (f);
+		final double d2 = entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks);
+		final int perspective = mc.gameSettings.thirdPersonView;
+		float x = 0;
+		float y = 0;
+		float z = 0;
 
-		final float f = player.getEyeHeight();
-		final double d0 = player.prevPosX + ((player.posX - player.prevPosX) * partialTicks);
-		final double d1 = player.prevPosY + ((player.posY - player.prevPosY) * partialTicks) + (f);
-		final double d2 = player.prevPosZ + ((player.posZ - player.prevPosZ) * partialTicks);
+		if (perspective > 0) {
+			double d3 = 4F + ((4F - 4F) * partialTicks);
 
-		double d3 = 4F + ((4F - 4F) * partialTicks);
+			final float f1 = entity.rotationYaw;
+			float f2 = entity.rotationPitch;
 
-		final float f1 = player.rotationYaw;
-		float f2 = player.rotationPitch;
-
-		if (mc.gameSettings.thirdPersonView == 2) {
-			f2 += 180.0F;
-		}
-		final float sq = 0.017453292F;
-		final double d4 = -MathHelper.sin(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
-		final double d5 = MathHelper.cos(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
-		final double d6 = (-MathHelper.sin(f2 * sq)) * d3;
-		for (int i = 0; i < 8; ++i) {
-			float f3 = ((i & 1) * 2) - 1;
-			float f4 = (((i >> 1) & 1) * 2) - 1;
-			float f5 = (((i >> 2) & 1) * 2) - 1;
-			f3 = f3 * 0.1F;
-			f4 = f4 * 0.1F;
-			f5 = f5 * 0.1F;
-			final double startX = d0 + f3;
-			final double startY = (d1 + f4);
-			final double startZ = d2 + f5;
-			final Vec3d start = new Vec3d(startX, startY, startZ);
-			final double endX = ((d0 - d4) + f3 + f5);
-			final double endY = ((d1 - d6) + f4);
-			final double endZ = ((d2 - d5) + f5);
-			final Vec3d end = new Vec3d(endX, endY, endZ);
-			final RayTraceResult raytraceresult = mc.world.rayTraceBlocks(start, end);
-			if (raytraceresult != null) {
-				final double d7 = raytraceresult.hitVec.distanceTo(new Vec3d(d0, d1, d2));
-				if (d7 < d3) {
-					d3 = d7;
+			if (perspective == 2) {
+				f2 += 180.0F;
+			}
+			final float sq = 0.017453292F;
+			final double d4 = -MathHelper.sin(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
+			final double d5 = MathHelper.cos(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
+			final double d6 = -MathHelper.sin(f2 * sq) * d3;
+			for (int i = 0; i < 8; ++i) {
+				float f3 = ((i & 1) * 2) - 1;
+				float f4 = (((i >> 1) & 1) * 2) - 1;
+				float f5 = (((i >> 2) & 1) * 2) - 1;
+				f3 = f3 * 0.1F;
+				f4 = f4 * 0.1F;
+				f5 = f5 * 0.1F;
+				final double startX = d0 + f3;
+				final double startY = d1 + f4;
+				final double startZ = d2 + f5;
+				final Vec3d start = new Vec3d(startX, startY, startZ);
+				final double endX = ((d0 - d4) + f3 + f5);
+				final double endY = ((d1 - d6) + f4);
+				final double endZ = ((d2 - d5) + f5);
+				final Vec3d end = new Vec3d(endX, endY, endZ);
+				final RayTraceResult raytraceresult = mc.world.rayTraceBlocks(start, end);
+				if (raytraceresult != null) {
+					final double d7 = raytraceresult.hitVec.distanceTo(new Vec3d(d0, d1, d2));
+					if (d7 < d3) {
+						d3 = d7;
+					}
 				}
 			}
+			z = ((float) d3);
+		} else {
+			z = 0.05F;
 		}
-		return d3;
+		return new CameraTranslation(x, y, perspective == 2 ? -z : z);
 	}
 
-	public double updatedOffset(double distance, double partialTicks, EntityPlayer player) {
+	public CameraTranslation updatedOffset(EntityRenderer renderer, double multiplier, double partialTicks) {
 		final Entity entity = mc.getRenderViewEntity();
-		final float f = entity.getEyeHeight();
+		float f = entity.getEyeHeight();
 		final double d0 = entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks);
 		final double d1 = entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks) + f;
 		final double d2 = entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks);
-		double d3 = distance;//(double)(this.thirdPersonDistancePrev + (4.0F - this.thirdPersonDistancePrev) * partialTicks);
-		final float f1 = entity.rotationYaw;
-		float f2 = entity.rotationPitch;
+		final int perspective = mc.gameSettings.thirdPersonView;
+		double d = 4F * multiplier;
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		if (perspective > 0) {
+			//			double d3 = multiplier >= 1 ?
+			double d3 = d + ((d - d) * partialTicks);
+			//					: (4F + ((4F - 4F) * partialTicks));
+			//			double d3 = (4F + ((4F - 4F) * partialTicks));
 
-		if (mc.gameSettings.thirdPersonView == 2) {
-			f2 += 180.0F;
-		}
+			final float f1 = entity.rotationYaw;
+			float f2 = entity.rotationPitch;
 
-		final double d4 = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * d3;
-		final double d5 = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * d3;
-		final double d6 = (-MathHelper.sin(f2 * 0.017453292F)) * d3;
-
-		for (int i = 0; i < 8; ++i) {
-			float f3 = ((i & 1) * 2) - 1;
-			float f4 = (((i >> 1) & 1) * 2) - 1;
-			float f5 = (((i >> 2) & 1) * 2) - 1;
-			f3 = f3 * 0.1F;
-			f4 = f4 * 0.1F;
-			f5 = f5 * 0.1F;
-			final RayTraceResult raytraceresult = mc.world.rayTraceBlocks(
-					new Vec3d(d0 + f3, d1 + f4, d2 + f5),
-					new Vec3d((d0 - d4) + f3 + f5, (d1 - d6) + f4, (d2 - d5) + f5)
-			);
-
-			if (raytraceresult != null) {
-				final double d7 = raytraceresult.hitVec.distanceTo(new Vec3d(d0, d1, d2));
-
-				if (d7 < d3) {
-					d3 = d7;
+			if (perspective == 2) {
+				f2 += 180.0F;
+			}
+			final float sq = 0.017453292F;
+			final double d4 = -MathHelper.sin(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
+			final double d5 = MathHelper.cos(f1 * sq) * MathHelper.cos(f2 * sq) * d3;
+			final double d6 = -MathHelper.sin(f2 * sq) * d3;
+			for (int i = 0; i < 8; ++i) {
+				float f3 = ((i & 1) * 2) - 1;
+				float f4 = (((i >> 1) & 1) * 2) - 1;
+				float f5 = (((i >> 2) & 1) * 2) - 1;
+				f3 = f3 * 0.1F;
+				f4 = f4 * 0.1F;
+				f5 = f5 * 0.1F;
+				final double startX = d0 + f3;
+				final double startY = d1 + f4;
+				final double startZ = d2 + f5;
+				final Vec3d start = new Vec3d(startX, startY, startZ);
+				final double endX = ((d0 - d4) + f3 + f5);
+				final double endY = ((d1 - d6) + f4);
+				final double endZ = ((d2 - d5) + f5);
+				final Vec3d end = new Vec3d(endX, endY, endZ);
+				final RayTraceResult raytraceresult = mc.world.rayTraceBlocks(start, end);
+				if (raytraceresult != null) {
+					final double d7 = raytraceresult.hitVec.distanceTo(new Vec3d(d0, d1, d2));
+					if (d7 < d3) {
+						if (multiplier <= 1) {
+							d3 = d7 * multiplier;
+						} else {
+							d3 = d7;
+						}
+						//								* multiplier;
+						// Works when Fairy, Doesn't Work when Titan
+					}
+					//						d3 *= multiplier;
 				}
 			}
+			if (perspective == 2) {
+			}
+
+			z = (float) (d3);
+		} else {
+			z = 0.05F;
 		}
-		return d3;
+		return new CameraTranslation(x, y, perspective == 2 ? z : -z);
 	}
 
 	private void applyBobbing(float partialTicks) {
@@ -146,18 +181,14 @@ public class PlayerCameraSetupEvents {
 			Capabilities.getEntityProperties(player, prop -> {
 				final EntityRacePropertiesHandler handler = prop.getRaceHandler();
 				if (!prop.isNormalSize() || handler.isTransforming()) {
-					final int perspective = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-					if ((perspective == 1) || (perspective == 2)) {
-						final float defaultHeight = prop.getDefaultHeight();
-						final float height = handler.getHeight();
-						double distance = 4D;
-						final double h2 = StringUtils.getAccurateDouble(height / defaultHeight, height / defaultHeight);
-						distance *= h2;
-						final double d3 = distance + ((distance - distance) * event.getRenderPartialTicks());
-						final double offset = this.updatedOffset(d3, event.getRenderPartialTicks(), player);
-						final double v = this.updatedOffset(4D, event.getRenderPartialTicks(), player);
-						GlStateManager.translate(0, 0, perspective == 2 ? -v : v);
-						GlStateManager.translate(0, 0, perspective == 2 ? offset : -offset);
+					final float defaultHeight = prop.getDefaultHeight();
+					final float height = handler.getHeight();
+					final int perspective = mc.gameSettings.thirdPersonView;
+					if (perspective > 0) {
+						final CameraTranslation vanilla = this.getVanillaTranslation(event.getRenderer(), event.getRenderPartialTicks());
+						GlStateManager.translate(0.0F, 0.0F, vanilla.getZ());
+						final CameraTranslation offset = this.updatedOffset(event.getRenderer(), (height / defaultHeight), event.getRenderPartialTicks());
+						GlStateManager.translate(0.0F, 0.0, offset.getZ());
 					}
 				}
 			});
@@ -209,6 +240,30 @@ public class PlayerCameraSetupEvents {
 					event.setCanceled(true);
 				}
 			}
+		}
+	}
+
+	private static class CameraTranslation {
+		private float x;
+		private float y;
+		private float z;
+
+		public CameraTranslation(float x, float y, float z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		public final float getX() {
+			return x;
+		}
+
+		public final float getY() {
+			return y;
+		}
+
+		public final float getZ() {
+			return z;
 		}
 	}
 }

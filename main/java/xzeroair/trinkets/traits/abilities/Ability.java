@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.handlers.TickHandler;
@@ -26,6 +27,7 @@ public class Ability implements IAbilityInterface {
 	protected TickHandler tickHandler;
 	protected boolean enabled;
 	protected int value;
+	protected AbilityHolder abilityHolder;
 
 	public Ability() {
 		tickHandler = new TickHandler();
@@ -144,6 +146,17 @@ public class Ability implements IAbilityInterface {
 	public Ability scheduleRemoval() {
 		removeAbility = true;
 		return this;
+	}
+
+	public Ability cacheAbilityHolder(AbilityHolder holder) {
+		if (abilityHolder == null) {
+			abilityHolder = holder;
+		}
+		return this;
+	}
+
+	public AbilityHolder getAbilityHolder() {
+		return abilityHolder;
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //

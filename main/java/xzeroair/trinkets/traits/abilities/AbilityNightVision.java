@@ -52,7 +52,9 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
 
 	@Override
 	public AbilityNightVision toggleAbility(boolean enabled) {
-		this.enabled = enabled;
+		if (this.enabled != enabled) {
+			this.enabled = enabled;
+		}
 		return this;
 	}
 
@@ -85,14 +87,16 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
 	}
 
 	@Override
-	public void saveStorage(NBTTagCompound nbt) {
-		nbt.setBoolean("enabled", enabled);
+	public NBTTagCompound saveStorage(NBTTagCompound compound) {
+		compound.setBoolean("enabled", enabled);
+		return compound;
 	}
 
 	@Override
-	public void loadStorage(NBTTagCompound nbt) {
-		if (nbt.hasKey("enabled")) {
-			this.toggleAbility(nbt.getBoolean("enabled"));
+	public void loadStorage(NBTTagCompound compound) {
+		if (compound.hasKey("enabled")) {
+			enabled = compound.getBoolean("enabled");
+
 		}
 	}
 

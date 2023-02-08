@@ -2,16 +2,13 @@ package xzeroair.trinkets.capabilities.Vip;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Session;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.Side;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.CapabilityBase;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.vip.VipStatusPacket;
@@ -38,46 +35,36 @@ public class VipStatus extends CapabilityBase<VipStatus, EntityPlayer> {
 
 	@Override
 	public NBTTagCompound getTag() {
-		final NBTTagCompound forgeData = object.getEntityData();
-		if ((forgeData != null)) {
-			if (!forgeData.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
-				forgeData.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+		NBTTagCompound tag = object.getEntityData();
+		if (tag != null) {
+			if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+				tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
 			}
-
-			final NBTTagCompound persistentData = forgeData.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+			final NBTTagCompound persistentData = tag.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 			final String capTag = Reference.MODID + ".VIP";
 			if (!persistentData.hasKey(capTag)) {
 				persistentData.setTag(capTag, new NBTTagCompound());
 			}
-			tag = persistentData.getCompoundTag(capTag);
+			return persistentData.getCompoundTag(capTag);
 		}
 		return super.getTag();
 	}
 
 	@Override
 	public void onUpdate() {
-		if ((player.world == null)) {
+		final World world = player.world;
+		if (world == null) {
 			return;
 		}
 		if ((checkStatus != true)) {
-			if (Trinkets.proxy.getSide() == Side.CLIENT) {
+			if (!world.isRemote) {
 				try {
-					if (Minecraft.getMinecraft().getSession() != null) {
-						final Session session = Minecraft.getMinecraft().getSession();
-						final boolean hasPlayer = VIPHandler.Vips.containsKey(session.getPlayerID().toString().replaceAll("-", ""));
-						if (hasPlayer) {
-							this.confirmedStatus();
-							this.sendStatusToServer(player);
-						}
-						//							if (session.getProfile() != null) {
-						//								final GameProfile profile = session.getProfile();
-						//							System.out.println(hasPlayer + " | Player Exists in VIP List");
-						//							System.out.println(session.getUsername() + " with ID:" + session.getPlayerID());
-						//							System.out.println(profile.getName() + " with ID:" + profile.getId());
-						//							}
+					final TreeMap<String, VipUser> list = VIPHandler.Vips;
+					if (list != null) {
+						this.confirmedStatus();
+						this.sendStatusToPlayer(player);
 					}
-				} catch (final Exception e) {
-
+				} catch (Exception e) {
 				}
 			}
 			checkStatus = true;
@@ -165,6 +152,9 @@ public class VipStatus extends CapabilityBase<VipStatus, EntityPlayer> {
 
 	@Override
 	public void copyFrom(VipStatus source, boolean wasDeath, boolean keepInv) {
+		first_login = source.first_login;
+		login = source.login;
+		status = source.status;
 	}
 
 	@Override

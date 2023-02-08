@@ -1,19 +1,19 @@
 {
-    "name": "Titan",
+    "name": "巨人",
     "icon": "xat:titan_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Titan race has incredible melee strength at a cost of poor mobility. They also have a larger mining radius, being 3x3x3 instead of 1x1x1. They are three times as large as a normal player. Due to this, they can easily trample farmland and instantly sink in water."
+            "text": "巨人有难以置信的近战能力但是行动不便。他们也有更大的挖掘范围，3x3x3的范围而不是1x1x1。他们是普通玩家体型的三倍大。因此，他们能轻易践踏耕地并立即在水中沉没。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)300% Size$(br)$(4)-50%$() Attack Speed$(br)$(2)+50%$() Attack Damage$(br)$(2)+100%$() Health$(br)$(2)+30%$() Knockback Resistance$(br)$(4)-25%$() Movement Speed$(br)$(2)+75%$() Jump Height$(br)$(2)+1.4$() Step Height"
+            "text": "$(l)默认属性调整：$()$(br)300%体型$(br)$(4)-50%$()攻击速度$(br)$(2)+50%$()攻击伤害$(br)$(2)+100%$()生命值$(br)$(2)+30%$()击退抗性$(br)$(4)-25%$()移动速度$(br)$(2)+75%$()跳跃高度$(br)$(2)+1.4$()步行高度"
         },
 		{
             "type": "text",
-            "text": "$(l)Ability: Wide Mining Radius$()$(br)Titans are capable of mining 3x3x3 holes at a time, making them perfect for digging huge holes (especially if you want to mine entire chunks). You can bypass this by sneaking while mining."
+            "text": "$(l)能力：更大挖掘范围$()$(br)巨人能一次挖掘3x3x3的洞，这使他们非常适合挖大洞（尤其是当你想挖掘整个区块）。你可以在挖掘时潜行以禁用这一能力。"
         },
 		{
             "type": "crafting",

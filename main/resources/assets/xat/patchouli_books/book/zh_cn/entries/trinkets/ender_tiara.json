@@ -1,15 +1,15 @@
 {
-    "name": "Ender Queen's Crown",
+    "name": "末影女皇之冠",
     "icon": "xat:ender_tiara",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Ender Queen's Crown causes endermen to view the wearer as royalty, causing them to follow and fight for the wearer. The wearer also has a small chance upon taking damage to ignore the damage taken and summon an enderman.$(br2)Item idea originally by MigMolRod"
+            "text": "末影女皇之冠使末影人将佩戴者视为王族，使它们跟随佩戴者并为其战斗。佩戴者在受到伤害时也有很小的几率免疫所受到的伤害并召唤一个末影人。$(br2)物品灵感源自 MigMolRod"
         },
 		{
             "type": "text",
-            "text": "$(l)Mod Compatibility:$()$(br)$(n)Tough as Nails$() / $(n)Simple Difficulty$(): Immunity to hypothermia$(br)$(n)Enhanced Visuals$(): Removes the static effect from endermen"
+            "text": "$(l)兼容模组：$()$(br)$(n)意志坚定$() / $(n)Simple Difficulty$()：免疫伤寒$(br)$(n)拓展视觉效果$()：移除末影人造成的静电效果"
         },
 		{
             "type": "crafting",

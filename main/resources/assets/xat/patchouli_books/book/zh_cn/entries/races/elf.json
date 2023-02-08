@@ -1,19 +1,19 @@
 {
-    "name": "Elf",
+    "name": "精灵",
     "icon": "xat:elf_ring",
     "category": "races",
     "pages": [
         {
             "type": "text",
-            "text": "The Elf race is proficient in ranged combat, being capable of charging bow shots to make them deal more damage. They also have affinity with the forest, gaining a speed bonus while in one. Due to having no downsides, it is recommended to pick this race if you want to experience a unique race without any negative consequences."
+            "text": "精灵是远距离战斗的专家，可以用弓造成更多伤害。他们亲近森林，在森林生态群系中获得速度加成。因为没有弱点，如果你想要体验没有负面特点的独特种族，推荐你变形成精灵。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)100% Size$(br)$(2)+10%$() Attack Speed$(br)$(2)+10%$() Movement Speed$(br)$(l)In Forest:$()$(br)$(2)+50%$() Attack Speed$(br)$(2)+50%$() Movement Speed$(br)"
+            "text": "$(l)默认属性调整：$()$(br)100%体型$(br)$(2)+10%$()攻击速度$(br)$(2)+10%$()移动速度$(br)$(l)在森林中：$()$(br)$(2)+50%$()攻击速度$(br)$(2)+50%$()移动速度$(br)"
         },
 		{
             "type": "text",
-            "text": "$(l)Ability: Charged Bow Shot$()$(br)Sneaking while drawing a bow activates a power shot, strengthening the damage at the cost of 20 mana."
+            "text": "$(l)能力：充能设计$()$(br)潜行时拉弓将激活一次更加强力的射击，消耗20点魔力造成更高的伤害。"
         },
 		{
             "type": "crafting",

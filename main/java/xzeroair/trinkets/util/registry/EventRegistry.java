@@ -108,15 +108,16 @@ public class EventRegistry {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void modCompatPostInit() {
-		if (Trinkets.ElenaiDodge1 && TrinketsConfig.compat.elenaiDodge) {
+		if ((Trinkets.ElenaiDodge1 || Loader.isModLoaded("elenaidodge")) && TrinketsConfig.compat.elenaiDodge) {
 			try {
 				MinecraftForge.EVENT_BUS.register(new ElenaiDodgeCompat());
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void modCompatPostInit() {
+
 	}
 }

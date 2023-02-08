@@ -1,7 +1,6 @@
 package xzeroair.trinkets.races.dragon;
 
 import javax.annotation.Nonnull;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -79,6 +78,8 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Client~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings.png");
+	public static final ResourceLocation TEXTURE_ARMS = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_arms.png");
+	public static final ResourceLocation TEXTURE_LEATHER = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_leather.png");
 
 	protected int tick, lastTick = 0;
 	protected float armSwing = 0;
@@ -92,7 +93,6 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		}
 		GlStateManager.pushMatrix();
 		//			float flap = MathHelper.cos((limbSwing * 0.6662F) + (float) Math.PI);
-		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 		if (entity.isSneaking()) {
 			GlStateManager.translate(0F, 0.2F, 0F);
 		}
@@ -107,6 +107,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 			GlStateManager.translate(-0.4F, -1F, 0F);
 		}
 
+		final int solidVariant = 2;
 		final int base = entity.onGround ? 40 : 50;
 		final int wing = 20;
 		final int tip = -20;
@@ -154,33 +155,64 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		GlStateManager.pushMatrix();
-		final float[] rgb = ColorHelper.getRGBColor(this.getTraitColor());
+		final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
+		final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getTraitColor() : this.getAltTraitColor());
 		final float alpha = 1F;
 		GlStateManager.scale(0.9, 0.9, 0.9);
 		GlStateManager.rotate((float) frames[angleTick][0], 0, 1, 0);
-		DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.translate(x, y, z);
 		GlStateManager.rotate((float) frames[angleTick][1], 0, 1, 0);
 		GlStateManager.translate(-x, -y, -z);
-		DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.translate(x - innerWidth, y, z);
 		GlStateManager.rotate((float) (frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
 		GlStateManager.translate(-(x - innerWidth), -y, -z);
-		DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.popMatrix();
 
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(0.9, 0.9, 0.9);
 		GlStateManager.rotate((float) -frames[angleTick][0], 0, 1, 0);
-		DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.translate(x, y, z);
 		GlStateManager.rotate((float) -frames[angleTick][1], 0, 1, 0);
 		GlStateManager.translate(-x, -y, -z);
-		DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.translate(x - innerWidth, y, z);
 		GlStateManager.rotate((float) -(frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
 		GlStateManager.translate(-(x - innerWidth), -y, -z);
-		DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+		} else {
+			DrawingHelper.Draw(TEXTURE_ARMS, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb[0], rgb[1], rgb[2], alpha);
+			DrawingHelper.Draw(TEXTURE_LEATHER, (x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight, rgb2[0], rgb2[1], rgb2[2], alpha);
+		}
 		GlStateManager.popMatrix();
 
 		GlStateManager.enableLighting();

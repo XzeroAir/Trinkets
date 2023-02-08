@@ -129,6 +129,15 @@ public class PlayerEventMC {
 		final boolean wasDeath = event.isWasDeath();
 		final boolean keepInv = event.getOriginal().getEntityWorld().getGameRules().getBoolean("keepInventory");
 		try {
+			Capabilities.getVipStatus(oldPlayer, oldVIP -> {
+				Capabilities.getVipStatus(newPlayer, newVIP -> {
+					newVIP.copyFrom(oldVIP, wasDeath, keepInv);
+				});
+			});
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		try {
 			Capabilities.getEntityProperties(oldPlayer, oldProp -> {
 				Capabilities.getEntityProperties(newPlayer, newProp -> {
 					newProp.copyFrom(oldProp, wasDeath, keepInv);

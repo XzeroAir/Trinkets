@@ -3,7 +3,6 @@ package xzeroair.trinkets.races.fairy;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -134,7 +133,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 		}
 		if (this.showTraits()) {
 			GlStateManager.pushMatrix();
-			if (isFake) {
+			if (isFake || (this.getTraitVariant() == 2)) {
 				GlStateManager.pushMatrix();
 				if (renderer instanceof RenderPlayer) {
 					final RenderPlayer r = (RenderPlayer) renderer;
@@ -160,7 +159,6 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 					tick = 0;
 				}
 
-				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 				if (entity.isSneaking()) {
 					GlStateManager.translate(0F, 0.2F, 0F);
 				}
@@ -193,19 +191,15 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 				GlStateManager.pushMatrix();
 				GlStateManager.rotate(angle - tick, 0, 1, 0);
 				GlStateManager.translate(-1, 0, 0);
-				final float[] rgb = ColorHelper.getRGBColor(this.getTraitColor());
-				GlStateManager.color(
-						rgb[0],
-						rgb[1],
-						rgb[2]
-				);
-				DrawingHelper.Draw(-x, y, z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
+				final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
+				//				final float[] rgb2 = ColorHelper.getRGBColor(this.getAltTraitColor());
+				DrawingHelper.Draw(TEXTURE, -x, y, z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight, rgb[0], rgb[1], rgb[2], 1F);
 				GlStateManager.popMatrix();
 
 				GlStateManager.pushMatrix();
 				GlStateManager.rotate(-angle + tick, 0, 1, 0);
 				GlStateManager.translate(-1, 0, 0);
-				DrawingHelper.Draw(-x, y, -z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight);
+				DrawingHelper.Draw(TEXTURE, -x, y, -z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight, rgb[0], rgb[1], rgb[2], 1F);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 				GlStateManager.enableCull();

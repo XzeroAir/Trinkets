@@ -62,7 +62,12 @@ public class ConfigEnderCrown {
 	@Config.Comment("Teleport when damaged by indirect attacks")
 	@Name("10. teleport on hurt")
 	@LangKey(PREFIX + ".ignoredamage.teleport")
-	public boolean tponhurt = true;
+	public boolean teleportOnHurt= true;
+
+	@Config.Comment("1 in 'num' chance to teleport when taking indirect damage")
+	@Name("11. Teleport Chance")
+	@LangKey(PREFIX + ".ignoredamage.teleport.chance")
+	public int teleportChance = 1;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")

@@ -81,7 +81,20 @@ public class OnWorldJoinHandler {
 	@SubscribeEvent
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
 		final Entity entity = event.getEntity();
-		if (!(entity instanceof EntityPlayer)) {
+		if (entity instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entity;
+			if (TrinketsConfig.SERVER.misc.retrieveVIP) {
+				Capabilities.getVipStatus(player, cap -> {
+					cap.sendStatusToPlayer(player);
+				});
+			}
+			Capabilities.getEntityProperties(player, cap -> {
+				cap.sendInformationToPlayer(player);
+			});
+			Capabilities.getMagicStats(player, cap -> {
+				cap.sendManaToPlayer(player);
+			});
+		} else {
 			Capabilities.getEntityProperties(entity, prop -> prop.setLogin(true));
 		}
 	}
@@ -91,15 +104,8 @@ public class OnWorldJoinHandler {
 	 */
 	@SubscribeEvent
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
-		if ((event.player != null) && (event.player.getEntityWorld() != null)) {
-			final EntityPlayer player = event.player;
-			Capabilities.getEntityProperties(player, cap -> {
-				cap.sendInformationToPlayer(player);
-			});
-			Capabilities.getMagicStats(player, cap -> {
-				cap.sendManaToPlayer(player);
-			});
-		}
+		//		final EntityPlayer player = event.player;
+
 	}
 
 }

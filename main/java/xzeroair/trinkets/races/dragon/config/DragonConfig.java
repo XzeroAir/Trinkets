@@ -61,6 +61,15 @@ public class DragonConfig {
 			public boolean immuneToHeat = true;
 		}
 
+		@Name("Fire Resistance Tiers")
+		@LangKey(Reference.MODID + ".config.fire_resistance_tiers")
+		public FireResistanceTiers FRTiers = new FireResistanceTiers();
+
+		public class FireResistanceTiers {
+
+			public int amplifier = 0;
+		}
+
 	}
 
 	@Config.Comment({ "For More Information on Attributes", "https://minecraft.gamepedia.com/Attribute" })

@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
 import xzeroair.trinkets.init.Abilities;
@@ -127,7 +126,6 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
 			final World w = entity.getEntityWorld();
 			if (w instanceof WorldServer) {
 				final WorldServer world = (WorldServer) w;
-				//			NetworkHandler.sendToServer(
 				NetworkHandler.sendToClients(
 						world, entity.getPosition(),
 						new EffectsRenderPacket(entity, entity.posX, entity.posY + (entity.height * 0.5F), entity.posZ, entity.posX, entity.posY, entity.posZ, 2515356, 2, 1, 1)
@@ -158,16 +156,8 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
 			if (Trinkets.ElenaiDodge1 && TrinketsConfig.compat.elenaiDodge) {
 				return false;
 			}
-			boolean trig = true;
-			if (trig) {
-				final MagicStats magic = Capabilities.getMagicStats(entity);
-				final float cost = serverConfig.dodgeCost;
-				if ((magic != null) && magic.spendMana(cost)) {
-				} else {
-					trig = false;
-				}
-			}
-			return trig;
+			final float cost = serverConfig.dodgeCost;
+			return Capabilities.getMagicStats(entity, true, (magic, rtn) -> magic.spendMana(cost));
 		} else {
 			return false;
 		}

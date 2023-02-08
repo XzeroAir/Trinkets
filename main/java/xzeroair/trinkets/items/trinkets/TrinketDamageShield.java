@@ -103,7 +103,9 @@ public class TrinketDamageShield extends AccessoryBase {
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		super.eventPlayerTick(stack, player);
 		if (TrinketsConfig.SERVER.misc.retrieveVIP) {
-			Capabilities.getVipStatus(player, status -> Capabilities.getTrinketProperties(stack, prop -> prop.setVariant(status.getStatus())));
+			Capabilities.getVipStatus(player, status -> {
+				Capabilities.getTrinketProperties(stack, prop -> prop.setVariant(status.getStatus()));
+			});
 		}
 	}
 

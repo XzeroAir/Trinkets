@@ -5,11 +5,11 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Arcing Orb allows its wearer to dodge at the cost of 30 mana by pressing a movement key twice. By holding the Arcing Orb: Attack key, you can charge up an attack which deals more damage the longer you charge it. Charging the Arcing Orb for longer durations costs more mana."
+            "text": "电弧球使它的装备者通过双击移动键并消耗30魔力进行闪避。按住“电弧球：攻击”键，你可以充能一次攻击，充能时间越长伤害越高。充能电弧球时间越长，消耗魔力越多。"
         },
 		{
             "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+10%$() Movement Speed$(br2)$(l)Mod Compatibility:$()$(br)$(n)Lycanites$(): Immunity to the stunned potion effect"
+            "text": "$(l)默认属性调整：$()$(br)$(2)+10%$()移动速度$(br2)$(l)兼容模组：$()$(br)$(n)恐怖生物$()：免疫击晕效果"
         },
 		{
             "type": "crafting",

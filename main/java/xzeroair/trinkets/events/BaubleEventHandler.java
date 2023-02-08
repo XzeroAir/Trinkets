@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -58,7 +59,7 @@ public class BaubleEventHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void PlayerLoggedInEvent(PlayerLoggedInEvent event) {
 		final EntityPlayer player = event.player;
 		World world = player.getEntityWorld();
@@ -86,9 +87,10 @@ public class BaubleEventHandler {
 		}
 	}
 
-	//	@SubscribeEvent
-	//	public void EntityJoinWorld(EntityJoinWorldEvent event) {
-	//	}
+	@SubscribeEvent
+	public void EntityJoinWorld(EntityJoinWorldEvent event) {
+		// Baubles Handles syncing from here, I can't think of any reaons I need it though
+	}
 
 	@SubscribeEvent
 	public void PlayerLoggedOutEvent(PlayerLoggedOutEvent event) {

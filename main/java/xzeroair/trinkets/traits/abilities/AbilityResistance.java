@@ -49,7 +49,7 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 		if (world.isRemote) {
 			return;
 		}
-		final int duration = 30;
+		final int duration = 200;
 		Potion resistance = Potion.getPotionFromResourceLocation(serverConfig.potionEffect);
 		if (resistance == null) {
 			resistance = MobEffects.RESISTANCE;
@@ -164,35 +164,27 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 				final PotionEffect oldEffect = entity.getActivePotionEffect(resistance);
 				final int oldAmp = oldEffect.getAmplifier();
 				final int oldDur = oldEffect.getDuration();
-
-				//				if ((newDur > oldDur) && (newAmp <= oldAmp)) {
-				//					System.out.println("Probably not?");
-				//					return cancel;
-				//				}
-
 				int amp = newAmp + 1;
 				int duration = newDur;
 
-				if ((oldAmp > amp) || (amp > serverConfig.resistance_stacks_max)) {
+				if ((oldAmp > amp)) {
 					//					System.out.println("Don't Allow");
-					return true;
+					return true; // true because we're canceling it
 				}
-
-				//				System.out.println("Upgrading: " + oldAmp + "|" + newAmp + "|" + amp);
-				//				System.out.println("Upgrading: " + oldDur + "|" + newDur + "|" + duration);
-				entity.removePotionEffect(resistance);
-				//				System.out.println("Removing, Adding");
-				entity.addPotionEffect(
-						new PotionEffect(
+				if ((amp <= serverConfig.resistance_stacks_max)) {
+					try {
+						PotionEffect e = new PotionEffect(
 								resistance,
 								duration, // just give effect duration
 								amp, // just give effect amp  + 1
 								false,
 								false
-						)
-				);
-				//				System.out.println("Applied");
-				return true;
+						);
+						effect.combine(e);
+					} catch (Exception e) {
+					}
+				}
+				return false; // false because we're not canceling it
 			}
 		}
 		return cancel;
@@ -213,15 +205,16 @@ public class AbilityResistance extends Ability implements ITickableAbility, IAtt
 	}
 
 	@Override
-	public void loadStorage(NBTTagCompound nbt) {
-		if (nbt.hasKey("hitCount")) {
-			hitCount = nbt.getInteger("hitCount");
+	public void loadStorage(NBTTagCompound compound) {
+		if (compound.hasKey("hitCount")) {
+			hitCount = compound.getInteger("hitCount");
 		}
 	}
 
 	@Override
-	public void saveStorage(NBTTagCompound nbt) {
-		nbt.setInteger("hitCount", hitCount);
+	public NBTTagCompound saveStorage(NBTTagCompound compound) {
+		compound.setInteger("hitCount", hitCount);
+		return compound;
 	}
 
 }

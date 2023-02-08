@@ -37,10 +37,14 @@ public class TickHandler {
 	}
 
 	public Counter getCounter(String key, int length, boolean isCountdown, boolean shouldTick, boolean create, boolean saveNBT) {
+		return this.getCounter(key, length, isCountdown, shouldTick, true, create, saveNBT);
+	}
+
+	public Counter getCounter(String key, int length, boolean isCountdown, boolean shouldTick, boolean autoReset, boolean create, boolean saveNBT) {
 		if (!Counters.isEmpty() && Counters.containsKey(key)) {
 			return Counters.get(key);//.setLength(length).setCountdown(isCountdown);
 		} else if (create) {
-			final Counter value = new Counter(key, length, isCountdown, shouldTick, saveNBT);
+			final Counter value = new Counter(key, length, isCountdown, shouldTick, autoReset, saveNBT);
 			Counters.put(key, value);
 			return value;
 		} else {

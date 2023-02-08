@@ -3,7 +3,6 @@ package xzeroair.trinkets.items.potions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,7 +13,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.items.base.BasePotion;
-import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.util.Reference;
 
 public class TransformationPotion extends BasePotion {
@@ -41,21 +39,6 @@ public class TransformationPotion extends BasePotion {
 
 	@Override
 	public void applyAttributesModifiersToEntity(EntityLivingBase entity, AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.applyAttributesModifiersToEntity(entity, attributeMapIn, amplifier);
-	}
-
-	@Override
-	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
-	}
-
-	@Override
-	public void performEffect(EntityLivingBase entity, int amplifier) {
-		List<EntityRace> negate = new ArrayList<>();
-		for (EntityRace race : EntityRace.Registry) {
-			if (race.getUUID().compareTo(UUID.fromString(this.getRaceUUID())) != 0) {
-				negate.add(race);
-			}
-		}
 		List<Potion> removal = new ArrayList<>();
 		for (Entry<Potion, PotionEffect> effect : entity.getActivePotionMap().entrySet()) {
 			if (effect.getKey() instanceof TransformationPotion) {
@@ -68,7 +51,16 @@ public class TransformationPotion extends BasePotion {
 		for (Potion pot : removal) {
 			entity.removePotionEffect(pot);
 		}
-		RaceAttribute.removeAllModifiersExcluding(entity, UUID.fromString(this.getRaceUUID()));
+		RaceAttribute.removeAllModifiers(entity);
+		super.applyAttributesModifiersToEntity(entity, attributeMapIn, amplifier);
+	}
+
+	@Override
+	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
+	}
+
+	@Override
+	public void performEffect(EntityLivingBase entity, int amplifier) {
 	}
 
 	@Override

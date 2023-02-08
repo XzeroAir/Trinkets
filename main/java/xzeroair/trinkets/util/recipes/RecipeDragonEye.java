@@ -17,6 +17,7 @@ import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class RecipeDragonEye extends ShapedOreRecipe {
@@ -50,7 +51,8 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 				if (!stack.isEmpty() && (stack.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull"))) {
 					int meta = stack.getMetadata();
 					Capabilities.getTrinketProperties(
-							output, prop -> prop.setVariant(meta)
+							output, prop -> prop.getElementAttributes().setPrimaryElement(meta == 1 ? Elements.ICE : Elements.FIRE)
+							//							output, prop -> prop.getElementAttributes().setPrimaryElement(meta == 1 ? Elements.ICE : Elements.NEUTRAL)
 					);
 					break;
 				}
@@ -75,11 +77,19 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 									output.setTagCompound(tagCompound);
 								}
 								if (stack.getItemDamage() == 0) {
-
+									//									Capabilities.getTrinketProperties(
+									//											output, prop -> {
+									//												prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
+									//												prop.setVariant(Elements.FIRE.getID());
+									//											}
+									//									);
 								} else {
 									if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.ICE_VARIANT) {
 										Capabilities.getTrinketProperties(
-												output, prop -> prop.setVariant(1)
+												output, prop -> {
+													prop.setVariant(Elements.ICE.getID());
+													prop.getElementAttributes().setPrimaryElement(Elements.ICE);
+												}
 										);
 									}
 								}

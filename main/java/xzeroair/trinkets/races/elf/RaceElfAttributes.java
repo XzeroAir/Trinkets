@@ -12,8 +12,8 @@ public class RaceElfAttributes extends RaceAttributesWrapper {
 		size = 100;
 		width = size;
 		height = size;
-		color1 = 40960;
-		color2 = 962222;
+		color1 = 16374701;
+		color2 = 11107684;
 		color3 = color1;
 		opacity = 1f;
 		trait_opacity = 1F;

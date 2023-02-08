@@ -164,7 +164,7 @@ public class ModItems {
 //			registerItem(Bow);
 //			registerItem(BowArrow);
 //			registerItem(RibbonBow);
-			registerItem(ViewerItem);
+//			registerItem(ViewerItem);
 //			registerItem(GlitterBow);
 		}
 

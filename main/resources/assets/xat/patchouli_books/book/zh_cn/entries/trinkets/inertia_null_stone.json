@@ -1,11 +1,11 @@
 {
-    "name": "Stone of Inertia Null",
+    "name": "零惯性之石",
     "icon": "xat:inertia_null_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Stone of Inertia Null grants its wearer fall damage and knockback immunity. This is used to craft the Stone of Greater Inertia."
+            "text": "零惯性之石使它的装备者获得摔落伤害和击退免疫。它被用于制作巨惯性之石。"
         },
 		{
             "type": "crafting",

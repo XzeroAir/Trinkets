@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 
 public interface IAbilityInterface {
 
@@ -43,10 +44,19 @@ public interface IAbilityInterface {
 		return this;
 	}
 
-	default void loadStorage(NBTTagCompound nbt) {
+	default AbilityHolder getAbilityHolder() {
+		return null;
 	}
 
-	default void saveStorage(NBTTagCompound nbt) {
+	default IAbilityInterface cacheAbilityHolder(AbilityHolder holder) {
+		return this;
+	}
+
+	default void loadStorage(NBTTagCompound compound) {
+	}
+
+	default NBTTagCompound saveStorage(NBTTagCompound compound) {
+		return compound;
 	}
 
 }

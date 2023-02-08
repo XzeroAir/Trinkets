@@ -53,6 +53,7 @@ public class SyncRaceDataPacket extends ThreadSafePacket {
 		final Entity entity = server.player.getEntityWorld().getEntityByID(entityID);
 		Capabilities.getEntityProperties(entity, prop -> {
 			prop.loadFromNBT(tag);
+			prop.scheduleResync();
 		});
 	}
 

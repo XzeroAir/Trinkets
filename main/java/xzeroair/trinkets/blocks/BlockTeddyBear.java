@@ -6,16 +6,14 @@ import java.util.Random;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,13 +23,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -50,14 +46,24 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.2D, 0.0D, 0.15D, 0.8D, 0.8D, 0.85D);
 	protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.15D, 0.0D, 0.2D, 0.85D, 0.8D, 0.8D);
 	protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.15D, 0.0D, 0.2D, 0.85D, 0.8D, 0.8D);
-	public static final PropertyEnum<EnumTeddyType> VARIANT = PropertyEnum.<EnumTeddyType>create("variant", EnumTeddyType.class);
 
 	public BlockTeddyBear() {
 		super(TrinketBlockMaterial.ClothTeddyBear);
+		this.setSoundType(SoundType.CLOTH);
 		this.setRegistryName(Reference.MODID, "teddy_bear");
 		this.setTranslationKey(this.getRegistryName().toString());
 		this.setLightLevel(0);
-		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, EnumTeddyType.TEDDY));
+		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+	}
+
+	public BlockTeddyBear(String name) {
+		super(TrinketBlockMaterial.ClothTeddyBear);
+		this.setSoundType(SoundType.CLOTH);
+		this.setRegistryName(Reference.MODID, "teddy_bear_" + name);
+		this.setTranslationKey(this.getRegistryName().toString());
+		this.setLightLevel(0);
+		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 	}
 
@@ -79,14 +85,6 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	@Override
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		IBlockState blockBelow = world.getBlockState(pos.down());
-		//		System.out.println(
-		//				blockBelow.isBlockNormalCube() + " | " +
-		//						blockBelow.isFullBlock() + " | " +
-		//						blockBelow.isFullCube() + " | " +
-		//						blockBelow.isNormalCube() + " | " +
-		//						blockBelow.isTranslucent() + " | " +
-		//						blockBelow.getBlock().getLocalizedName()
-		//		);
 		if (blockBelow.isSideSolid(world, pos.down(), EnumFacing.UP)) {
 			return super.canPlaceBlockAt(world, pos);
 		}
@@ -126,12 +124,6 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 		return true;//this.canSustainBush(worldIn.getBlockState(pos.down()));
 	}
 
-	@Deprecated
-	@Override
-	public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-		return state.getValue(VARIANT).getMapColor();
-	}
-
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 		if (willHarvest) {
@@ -145,7 +137,6 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 		super.harvestBlock(world, player, pos, state, te, stack);
 		//		world.removeTileEntity(pos);
 		world.setBlockToAir(pos);
-		//		System.out.println("Broke Block " + te);
 	}
 
 	@Override
@@ -163,10 +154,7 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 		if (TileEntity instanceof TileEntityTeddyBear) {
 			ItemStack stack = ((TileEntityTeddyBear) TileEntity).getTeddyBear();
 			if ((stack != null) && !stack.isEmpty()) {
-				//				System.out.println("Stacks not Null, Did it drop? " + stack + " | " + stack.getItem());
 				drops.add(stack);
-			} else {
-				//				System.out.println("Stack is Null");
 			}
 		} else {
 			System.out.println("Something went wrong, Please Report this with the circumstances prior to it happening");
@@ -182,7 +170,8 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(VARIANT, EnumTeddyType.byMetadata(meta));
+		return this.getDefaultState()
+				.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	/**
@@ -191,8 +180,7 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		IBlockState state = this.getDefaultState()
-				.withProperty(FACING, EnumFacing.byHorizontalIndex(meta))
-				.withProperty(VARIANT, EnumTeddyType.byMetadata((meta & 15) >> 2));
+				.withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
 		return state;
 	}
 
@@ -203,17 +191,7 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	public int getMetaFromState(IBlockState state) {
 		int i = 0;
 		i |= state.getValue(FACING).getHorizontalIndex();
-		i |= state.getValue(VARIANT).getMetadata() << 2;
 		return i;
-	}
-
-	@Override
-	public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity) {
-		//		if (!world.isRemote && (entity instanceof EntityLivingBase)) {
-		//			if (!((EntityLivingBase) entity).isPotionActive(MobEffects.NIGHT_VISION)) {
-		//				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, true));
-		//			}
-		//		}
 	}
 
 	private static final AxisAlignedBB HITBOX = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D);
@@ -233,7 +211,6 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 		case EAST:
 			return EAST_AABB;
 		}
-		//		return HITBOX;
 	}
 
 	@Nullable
@@ -252,26 +229,12 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 		return false;
 	}
 
-	/**
-	 * Returns the blockstate with the given rotation from the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 *
-	 * @deprecated call via {@link IBlockState#withRotation(Rotation)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
 	@Deprecated
 	@Override
 	public IBlockState withRotation(IBlockState state, Rotation rot) {
 		return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	/**
-	 * Returns the blockstate with the given mirror of the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 *
-	 * @deprecated call via {@link IBlockState#withMirror(Mirror)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
 	@Deprecated
 	@Override
 	public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
@@ -281,11 +244,6 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 	@Override
 	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
 		return BlockFaceShape.UNDEFINED;
-	}
-
-	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return super.getLightValue(state, world, pos);
 	}
 
 	@Override
@@ -301,86 +259,12 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { FACING, VARIANT });
-	}
-
-	public enum EnumTeddyType implements IStringSerializable {
-		TEDDY(0, MapColor.BROWN, "teddy"),
-		REMBO(1, MapColor.RED, "rembo"),
-		SCARY(2, MapColor.GRAY, "scary"),
-		SHIVAXI(3, MapColor.LIGHT_BLUE, "shivaxi");
-
-		/** Array of the Block's BlockStates */
-		private static final EnumTeddyType[] META_LOOKUP = new EnumTeddyType[values().length];
-		/** The BlockState's metadata. */
-		private final int meta;
-		/** The EnumType's name. */
-		private final String name;
-		private final String translationKey;
-		private final MapColor mapColor;
-
-		private EnumTeddyType(int meta, MapColor color, String name) {
-			this(meta, color, name, name);
-		}
-
-		private EnumTeddyType(int meta, MapColor mapColor, String name, String translationKey) {
-			this.meta = meta;
-			this.name = name;
-			this.translationKey = translationKey;
-			this.mapColor = mapColor;
-		}
-
-		/**
-		 * Returns the EnumType's metadata value.
-		 */
-		public int getMetadata() {
-			return meta;
-		}
-
-		public MapColor getMapColor() {
-			return mapColor;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		/**
-		 * Returns an EnumType for the BlockState from a metadata value.
-		 */
-		public static EnumTeddyType byMetadata(int meta) {
-			//			 return VALUES[MathHelper.abs(index % VALUES.length)];
-			if ((meta < 0) || (meta >= META_LOOKUP.length)) {
-				meta = 0;
-			}
-
-			return META_LOOKUP[MathHelper.abs(meta % META_LOOKUP.length)];
-			//			return META_LOOKUP[meta];
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		public String getTranslationKey() {
-			return translationKey;
-		}
-
-		static {
-			for (EnumTeddyType teddytype : values()) {
-				META_LOOKUP[teddytype.getMetadata()] = teddytype;
-			}
-		}
+		return new BlockStateContainer(this, new IProperty[] { FACING });
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().build());
-		//		Trinkets.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-		//		Trinkets.proxy.registerItemRenderer(Item.getItemFromBlock(this), 1, "inventory");
-		//		Trinkets.proxy.registerItemRenderer(Item.getItemFromBlock(this), 2, "inventory");
 	}
 }

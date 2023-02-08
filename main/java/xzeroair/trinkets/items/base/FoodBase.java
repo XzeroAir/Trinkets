@@ -131,6 +131,11 @@ public class FoodBase extends ItemFood implements IsModelLoaded {
 		return super.onItemUseFinish(stack, worldIn, entityLiving);
 	}
 
+	@Override
+	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
+		super.onCreated(stack, world, player);
+	}
+
 	public int getCooldown() {
 		return cooldown;
 	}

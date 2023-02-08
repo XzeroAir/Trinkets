@@ -5,10 +5,14 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 
 public class AbilityFireImmunity extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility {
@@ -19,15 +23,28 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
 
 	@Override
 	public void tickAbility(EntityLivingBase entity) {
-		final PotionEffect fireResist = new PotionEffect(MobEffects.FIRE_RESISTANCE, 150, 0, false, false);
+		if (entity.isBurning()) {
+			entity.extinguish();
+		}
+		int amp = 0;
+		if (Trinkets.FireResistanceTiers) {
+			AbilityHolder holder = this.getAbilityHolder();
+			if (holder != null) {
+				if (holder.getSourceID().equalsIgnoreCase("xat:" + ModItems.DragonsEye)) {
+					amp = TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.FRTiers.amplifier;
+				} else if (holder.getSourceID().equalsIgnoreCase("xat:dragon")) {
+					amp = TrinketsConfig.SERVER.races.dragon.compat.FRTiers.amplifier;
+				} else {
+
+				}
+			}
+		}
+		final PotionEffect fireResist = new PotionEffect(MobEffects.FIRE_RESISTANCE, 3600, amp, false, false);
 		entity.addPotionEffect(fireResist);
 		if (entity.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
 			if (entity.world.isRemote) {
 				entity.getActivePotionEffect(MobEffects.FIRE_RESISTANCE).setPotionDurationMax(true);
 			}
-		}
-		if (entity.isBurning()) {
-			entity.extinguish();
 		}
 	}
 
@@ -58,6 +75,9 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
 
 	@Override
 	public float damaged(EntityLivingBase attacked, DamageSource source, float dmg) {
+		if (Trinkets.FireResistanceTiers) {
+			return dmg;
+		}
 		if (source.isFireDamage()) {
 			return 0;
 		}

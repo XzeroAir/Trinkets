@@ -22,6 +22,7 @@ public class Abilities {
 	public static final String waterAffinity				="water_affinity";
 	public static final String fallResistance				="fall_resistance";
 	public static final String nullKinetic					="nullify_kinetic";
+	public static final String reduceKinetic				="reduce_kinetic";
 	public static final String safeGuard					="safe_guard";
 	public static final String enderQueen					="ender_queen";
 	public static final String viciousStrike				="vicious_strike";
@@ -32,9 +33,11 @@ public class Abilities {
 	public static final String chargedShot					="charged_shot";
 	public static final String lightningBolt				="lightning_bolt";
 	public static final String dodging						="dodging";
+	public static final String frostWalker					="frost_walker";
+
 	public static final String largeHands					="large_hands";
 	public static final String heavy						="heavy";
-	public static final String frostWalker					="frost_walker";
+	public static final String mountEnhancement				="mount_enhancement";
 
 	// External Mods
 	public static final String survivalHeatImmunity			="heat_immunity";

@@ -1,6 +1,5 @@
 package xzeroair.trinkets.entity;
 
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
@@ -15,7 +14,6 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
@@ -45,11 +43,6 @@ public class AlphaWolf extends EntityWolf {
 	}
 
 	@Override
-	public String getName() {
-		return super.getName();
-	}
-
-	@Override
 	public void onUpdate() {
 		super.onUpdate();
 		final boolean canRide = TrinketsConfig.SERVER.races.goblin.rider;
@@ -63,14 +56,26 @@ public class AlphaWolf extends EntityWolf {
 			final Entity rider = this.getControllingPassenger();
 			if (rider instanceof EntityLivingBase) {
 				final EntityLivingBase driver = (EntityLivingBase) rider;
+				if (!driver.isPotionActive(MobEffects.STRENGTH)) {
+					driver.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
+				}
+				if (!driver.isPotionActive(MobEffects.REGENERATION)) {
+					driver.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));
+				}
 				if (!this.isPotionActive(MobEffects.REGENERATION)) {
 					this.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 1, false, false));
 				}
-				for (Entry<Potion, PotionEffect> effect : driver.getActivePotionMap().entrySet()) {
-					final Potion key = effect.getKey();
-					if (!key.isBadEffect() && !this.isPotionActive(key)) {
-						this.addPotionEffect(effect.getValue());
-					}
+				if (driver.isPotionActive(MobEffects.WATER_BREATHING)) {
+					this.addPotionEffect(driver.getActivePotionEffect(MobEffects.WATER_BREATHING));
+				}
+				if (driver.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
+					this.addPotionEffect(driver.getActivePotionEffect(MobEffects.FIRE_RESISTANCE));
+				}
+				if (driver.isPotionActive(MobEffects.INVISIBILITY)) {
+					this.addPotionEffect(driver.getActivePotionEffect(MobEffects.INVISIBILITY));
+				}
+				if (this.isInWater() && (this.getAir() < driver.getAir())) {
+					this.setAir(driver.getAir());
 				}
 			}
 		}
@@ -190,24 +195,6 @@ public class AlphaWolf extends EntityWolf {
 		}
 	}
 
-	@Override
-	protected void jump() {
-		super.jump();
-		//		motionY = this.getJumpUpwardsMotion();//(float) this.getEntityAttribute(JumpAttribute.Jump).getAttributeValue();
-		//		//
-		//		if (this.isPotionActive(MobEffects.JUMP_BOOST)) {
-		//			motionY += (this.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1) * 0.1F;
-		//		}
-		//
-		//		if (this.isSprinting()) {
-		//			final float f = rotationYaw * 0.017453292F;
-		//			motionX -= MathHelper.sin(f) * 0.2D;
-		//			motionZ += MathHelper.cos(f) * 0.2D;
-		//		}
-		//
-		//		isAirBorne = true;
-	}
-
 	//TODO make this work without a target under the crosshair
 	// Maybe Make this a ground dash instead of a jumping dash
 	public void MountedAttack(EntityPlayer player, double maxDist) {
@@ -231,22 +218,6 @@ public class AlphaWolf extends EntityWolf {
 			motionZ += f2;//((d1 / f) * 0.5D * 0.800000011920929D) + (motionZ * 0.20000000298023224D);
 		}
 		motionY = 0.42;
-
-		//		final RayTraceResult result = RayTraceHelper.getRaytraceResult(player, pos1, targetLoc, maxDist, (ent) -> {
-		//			return !((ent == null) || (ent == this.getControllingPassenger()) || (ent == this));
-		//		});
-		//
-		//		if ((result != null)) {
-		//			if ((result.typeOfHit == Type.BLOCK)) {
-		//				final BlockPos pos = result.getBlockPos();
-		//				if (player.world.getBlockState(pos).getCollisionBoundingBox(player.world, pos) != Block.NULL_AABB) {
-		//					maxDist = result.hitVec.distanceTo(pos1);
-		//					targetLoc = pos1.add(lookVec.x * maxDist, lookVec.y * maxDist, lookVec.z * maxDist);
-		//				}
-		//			} else if ((result.typeOfHit == Type.ENTITY)) {
-		//				this.attackEntityAsMob(result.entityHit);
-		//			}
-		//		}
 		this.swingArm(EnumHand.MAIN_HAND);
 
 		final RayTraceHelper.Beam beam = new RayTraceHelper.Beam(player.world, player, maxDist, 1D, true);
@@ -302,36 +273,6 @@ public class AlphaWolf extends EntityWolf {
 	}
 
 	@Override
-	public void fall(float distance, float damageMultiplier) {
-		super.fall(distance, damageMultiplier);
-		// TODO Modify This to work naturally with Jump Height and bypass the jump event I currently use
-
-		//        float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, distance, damageMultiplier);
-		//        if (ret == null) return;
-		//        distance = ret[0]; damageMultiplier = ret[1];
-		//        super.fall(distance, damageMultiplier);
-		//        PotionEffect potioneffect = this.getActivePotionEffect(MobEffects.JUMP_BOOST);
-		//        float f = potioneffect == null ? 0.0F : (float)(potioneffect.getAmplifier() + 1);
-		//        int i = MathHelper.ceil((distance - 3.0F - f) * damageMultiplier);
-		//
-		//        if (i > 0)
-		//        {
-		//            this.playSound(this.getFallSound(i), 1.0F, 1.0F);
-		//            this.attackEntityFrom(DamageSource.FALL, (float)i);
-		//            int j = MathHelper.floor(this.posX);
-		//            int k = MathHelper.floor(this.posY - 0.20000000298023224D);
-		//            int l = MathHelper.floor(this.posZ);
-		//            IBlockState iblockstate = this.world.getBlockState(new BlockPos(j, k, l));
-		//
-		//            if (iblockstate.getMaterial() != Material.AIR)
-		//            {
-		//                SoundType soundtype = iblockstate.getBlock().getSoundType(iblockstate, world, new BlockPos(j, k, l), this);
-		//                this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
-		//            }
-		//        }
-	}
-
-	@Override
 	public boolean canBeSteered() {
 		return this.getControllingPassenger() instanceof EntityLivingBase;
 	}
@@ -343,7 +284,6 @@ public class AlphaWolf extends EntityWolf {
 
 	@Override
 	public void updatePassenger(Entity passenger) {
-		// TODO Maybe do something here?
 		super.updatePassenger(passenger);
 	}
 

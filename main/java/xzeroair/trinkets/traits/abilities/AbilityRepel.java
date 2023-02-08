@@ -171,14 +171,15 @@ public class AbilityRepel extends Ability implements ITickableAbility, IHeldAbil
 	}
 
 	@Override
-	public void saveStorage(NBTTagCompound nbt) {
-		nbt.setBoolean("enabled", enabled);
+	public NBTTagCompound saveStorage(NBTTagCompound compound) {
+		compound.setBoolean("enabled", enabled);
+		return compound;
 	}
 
 	@Override
-	public void loadStorage(NBTTagCompound nbt) {
-		if (nbt.hasKey("enabled")) {
-			enabled = nbt.getBoolean("enabled");
+	public void loadStorage(NBTTagCompound compound) {
+		if (compound.hasKey("enabled")) {
+			enabled = compound.getBoolean("enabled");
 		}
 	}
 

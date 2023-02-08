@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -36,7 +37,6 @@ import xzeroair.trinkets.traits.abilities.interfaces.ITickableInventoryAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
-import xzeroair.trinkets.util.handlers.ItemEffectHandler;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
@@ -106,7 +106,7 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 	private void handleLoot(Entity entity, Entity drop) {
 		if (!serverConfig.instant_pickup) {
 			if ((drop instanceof EntityItem) || (serverConfig.collectXP && (drop instanceof EntityXPOrb))) {
-				ItemEffectHandler.pull(drop, entity.posX, entity.posY, entity.posZ);
+				this.pull(drop, entity.posX, entity.posY, entity.posZ);
 			}
 		} else {
 			if ((entity instanceof EntityPlayer)) {
@@ -121,7 +121,7 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 					}
 				}
 			} else {
-				ItemEffectHandler.pull(drop, entity.posX, entity.posY, entity.posZ);
+				this.pull(drop, entity.posX, entity.posY, entity.posZ);
 			}
 		}
 	}
@@ -173,9 +173,41 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 		}
 	}
 
-	private int roundAverage(float value) {
+	protected int roundAverage(float value) {
 		final double floor = Math.floor(value);
 		return (int) floor + (Math.random() < (value - floor) ? 1 : 0);
+	}
+
+	protected void pull(Entity ent, double x, double y, double z) {
+		final double spd = TrinketsConfig.SERVER.Items.POLARIZED_STONE.Polarized_Stone_Speed;
+		final double dX = (x - 0.5) - ent.getPosition().getX();
+		final double dY = y - ent.getPosition().getY();
+		final double dZ = (z - 0.5) - ent.getPosition().getZ();
+		final double dist = Math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
+
+		double vel = 1.0 - (dist / 15.0);
+		if ((vel > 0.0D) && (vel < 0.95D)) {
+			vel *= vel;
+			ent.motionX += (dX / dist) * vel * (spd * MathHelper.clamp(dist - 0.5, 0, 1));
+			ent.motionY += (dY / dist) * vel * ((spd * 1.25) * MathHelper.clamp(dist - 0.5, 0, 1));
+			ent.motionZ += (dZ / dist) * vel * (spd * MathHelper.clamp(dist - 0.5, 0, 1));
+		}
+	}
+
+	protected void push(Entity ent, double x, double y, double z) {
+		final double spd = TrinketsConfig.SERVER.Items.POLARIZED_STONE.Polarized_Stone_Speed;
+		final double dX = x - ent.posX;
+		final double dY = y - ent.posY;
+		final double dZ = z - ent.posZ;
+		final double dist = Math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
+
+		double vel = 1.0 - (dist / 15.0);
+		if (vel > 0.0D) {
+			vel *= vel;
+			ent.motionX -= (dX / dist) * vel * spd;
+			ent.motionY -= (dY / dist) * vel * spd;
+			ent.motionZ -= (dZ / dist) * vel * spd;
+		}
 	}
 
 	@Override
@@ -242,14 +274,15 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 	}
 
 	@Override
-	public void saveStorage(NBTTagCompound nbt) {
-		nbt.setBoolean("enabled", enabled);
+	public NBTTagCompound saveStorage(NBTTagCompound compound) {
+		compound.setBoolean("enabled", enabled);
+		return compound;
 	}
 
 	@Override
-	public void loadStorage(NBTTagCompound nbt) {
-		if (nbt.hasKey("enabled")) {
-			enabled = nbt.getBoolean("enabled");
+	public void loadStorage(NBTTagCompound compound) {
+		if (compound.hasKey("enabled")) {
+			enabled = compound.getBoolean("enabled");
 		}
 	}
 

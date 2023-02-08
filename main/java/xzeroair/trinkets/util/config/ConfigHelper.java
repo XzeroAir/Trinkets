@@ -38,15 +38,16 @@ public class ConfigHelper {
 
 	public static String cleanConfigEntry(String config) {
 		final String configEntry = config
-				.replaceAll("([\\[\\]\\|,] ?)|(  )", " ").trim().replace(" ", ";");
+				.replaceAll("([\\[\\]\\|,;] ?)|(  )", " ").trim().replace(" ", ";");
 		return configEntry;
 	}
 
 	public static AttributeEntry getAttributeEntry(String string) {
-		String configEntry = cleanConfigEntry(string)
-				.replaceFirst("[nN][aA][mM][eE][:]", "")
-				.replaceFirst("[aA][mM][oO][uU][nN][tT][:]", "")
-				.replaceFirst("[oO][pP][eE][rR][aA][tT][iI][oO][nN][:]", "");
+		String configEntry = cleanConfigEntry(
+				string.replaceFirst("[nN][aA][mM][eE][:]", "")
+						.replaceFirst("[aA][mM][oO][uU][nN][tT][:]", "")
+						.replaceFirst("[oO][pP][eE][rR][aA][tT][iI][oO][nN][:]", "")
+		);
 		String[] vars = configEntry.split(";");
 		String arg1 = StringUtils.getStringFromArray(vars, 0); // Attribute Name
 		String arg2 = StringUtils.getStringFromArray(vars, 1); // Amount
@@ -171,7 +172,8 @@ public class ConfigHelper {
 			String Color = StringUtils.getStringFromArray(args, 0);
 			if (!Color.isEmpty()) {
 				try {
-					color = Integer.parseInt(Color);
+					// TODO this causing a parsing Error for Entity Entries
+					color = Integer.parseInt(Color.replace("*", OreDictionaryCompat.wildcard + ""));
 				} catch (Exception e) {
 					Trinkets.log.error("Invalid format for entry: " + this.getOriginalEntry());
 					e.printStackTrace();

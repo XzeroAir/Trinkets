@@ -40,10 +40,8 @@ public class CapabilitiesHandler {
 			final boolean isPlayer = event.getObject() instanceof EntityPlayer;
 			if (isPlayer) {
 				event.addCapability(new ResourceLocation(Reference.MODID, "container"), new TrinketContainerProvider(new TrinketContainerHandler()));
-				if (TrinketsConfig.SERVER.misc.retrieveVIP) {
-					if (!entity.hasCapability(Capabilities.VIP_STATUS, null)) {
-						event.addCapability(new ResourceLocation(Reference.MODID, "VIP"), new CapabilityProviderBase<>(Capabilities.VIP_STATUS, new VipStatus((EntityPlayer) entity)));
-					}
+				if (!entity.hasCapability(Capabilities.VIP_STATUS, null)) {
+					event.addCapability(new ResourceLocation(Reference.MODID, "VIP"), new CapabilityProviderBase<>(Capabilities.VIP_STATUS, new VipStatus((EntityPlayer) entity)));
 				}
 			}
 			if (!entity.hasCapability(Capabilities.STATUS_HANDLER, null)) {

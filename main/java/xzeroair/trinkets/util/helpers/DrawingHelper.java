@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -26,7 +27,7 @@ public class DrawingHelper {
 		final BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
 		bufferbuilder.pos(x, y + height, z).tex(u * f, (v + vHeight) * f1).endVertex();
-		bufferbuilder.pos(x + width, y + height, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
+		bufferbuilder.pos(x + width, y + height, z).tex((u + uWidth) * f, (v + vHeight) * f1).endVertex();
 		bufferbuilder.pos(x + width, y, z).tex((u + uWidth) * f, v * f1).endVertex();
 		bufferbuilder.pos(x, y, z).tex(u * f, v * f1).endVertex();
 		tessellator.draw();
@@ -34,21 +35,31 @@ public class DrawingHelper {
 
 	@SideOnly(Side.CLIENT)
 	public static void Draw(double x, double y, double z, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight, float r, float g, float b, float a) {
+		Draw(null, x, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, r, g, b, a);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void Draw(ResourceLocation texture, double x, double y, double z, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight, float r, float g, float b, float a) {
+		if (texture != null) {
+			Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		}
 		if (a < 1) {
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
 			//			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 		}
+		//		GlStateManager.enableAlpha();
 		final float f = 1.0F / tileWidth;
 		final float f1 = 1.0F / tileHeight;
 		final Tessellator tessellator = Tessellator.getInstance();
 		final BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		bufferbuilder.pos(x, y + height, z).tex(u * f, (v + vHeight) * f1).color(r, g, b, a).endVertex();
-		bufferbuilder.pos(x + width, y + height, 0.0D).tex((u + uWidth) * f, (v + vHeight) * f1).color(r, g, b, a).endVertex();
+		bufferbuilder.pos(x + width, y + height, z).tex((u + uWidth) * f, (v + vHeight) * f1).color(r, g, b, a).endVertex();
 		bufferbuilder.pos(x + width, y, z).tex((u + uWidth) * f, v * f1).color(r, g, b, a).endVertex();
 		bufferbuilder.pos(x, y, z).tex(u * f, v * f1).color(r, g, b, a).endVertex();
 		tessellator.draw();
+		//		GlStateManager.disableAlpha();
 		if (a < 1) {
 			GlStateManager.disableBlend();
 		}

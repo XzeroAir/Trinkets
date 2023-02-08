@@ -129,6 +129,15 @@ public class ConfigDragonsEye {
 			public boolean FROST_WALKER = true;
 		}
 
+		@Name("Fire Resistance Tiers")
+		@LangKey(Reference.MODID + ".config.fire_resistance_tiers")
+		public FireResistanceTiers FRTiers = new FireResistanceTiers();
+
+		public class FireResistanceTiers {
+
+			public int amplifier = 0;
+		}
+
 		@Name("Baubles Compatability")
 		@Config.Comment({
 				"If the mod Baubles is installed what bauble slot should it use",

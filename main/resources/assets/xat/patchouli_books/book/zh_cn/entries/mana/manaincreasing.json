@@ -1,18 +1,18 @@
 {
-    "name": "Altering Maximum Mana",
+    "name": "改变最大魔力值",
     "icon": "xat:mana_crystal",
     "category": "mana",
     "pages": [
         {
             "type": "text",
-            "text": "Mana can be increased in a few ways. The first is simply by playing as a different race. Some races increase (or decrease) your maximum mana. There are also dedicated items for increasing and decreasing your maximum mana."
+            "text": "魔力值可以通过多种方式增加。第一种方法是变形未不同的种族。某些种族增加（或减少）你的最大魔力值。也有特定的物品可以提高或降低你的最大魔力值。"
         },
 		{
 			"type": "empty"
 		},
 		{
 			"type": "text",
-			"text": "The Mana Crystal and Mana Reagent are capable of increasing and decreasing the player's maximum mana by 10 respectively when consumed. This is the simplest way of permanently increasing maximum mana."
+			"text": "消耗魔法水晶和魔法试剂可以分别提高和降低玩家10点最大魔力值。这是永久提高最大魔力值最简单的方法。"
 		},
 		{
 			"type": "crafting",
@@ -21,7 +21,7 @@
 		},
 		{
 			"type": "text",
-			"text": "The Moon Rose increases the player's maximum mana by 10 after sneaking near it for long enough. This can be done a total of 10 times. This is much more effective than a Mana Crystal, however takes longer to do. If multiple moon roses are near each other, they will not function."
+			"text": "在月光玫瑰附近潜行足够时间可以提高玩家10点最大魔力值。这种提升可以重复总计10次。这比使用魔法水晶更加有效，但是也会消耗更多时间。如果又复数个月光玫瑰相邻，它们不会生效。"
 		},
 		{
 			"type": "crafting",

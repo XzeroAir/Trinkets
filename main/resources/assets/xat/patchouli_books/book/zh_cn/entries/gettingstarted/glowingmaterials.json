@@ -1,25 +1,25 @@
 {
-    "name": "Glowing Materials",
+    "name": "闪耀的材料",
     "icon": "xat:glowing_gem",
     "category": "gettingstarted",
     "pages": [
         {
             "type": "text",
-            "text": "There are three tiers of glowing materials, which are all used for the majority of items in the mod."
+            "text": "模组包含三个等级的材料，它们是制作模组大多数物品的材料。"
         },
 		{
             "type": "crafting",
-            "text": "Crafting the Glowing Powder",
+            "text": "制作闪耀粉",
 			"recipe": "xat:glowing_powder"
         },
 		{
             "type": "crafting",
-            "text": "Crafting the Glowing Ingot",
+            "text": "制作闪耀锭",
 			"recipe": "xat:glowing_ingot"
         },
 		{
             "type": "crafting",
-            "text": "Crafting the Glowing Gem",
+            "text": "制作闪耀宝石",
 			"recipe": "xat:glowing_gem"
         }
     ]

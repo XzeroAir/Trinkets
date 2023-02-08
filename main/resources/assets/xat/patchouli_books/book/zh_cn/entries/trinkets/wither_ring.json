@@ -1,11 +1,11 @@
 {
-    "name": "Wither Ring",
+    "name": "枯萎之戒",
     "icon": "xat:wither_ring",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "The Wither Ring grants its wearer immunity to the wither status effect. Additionally, the wearer has a chance of inflicting wither damage with their attacks, and can steal health from withered entities.$(br2)Item idea originally by BlockBreaker1361"
+            "text": "枯萎之戒使它的佩戴者免疫凋零效果。另外，佩戴者有概率使受到他们攻击的敌人承受凋零效果，并且可以从凋零的实体偷取生命值。$(br2)物品灵感源自 BlockBreaker1361"
         },
 		{
             "type": "crafting",

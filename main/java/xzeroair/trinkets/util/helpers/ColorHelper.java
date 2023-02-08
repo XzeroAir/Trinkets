@@ -49,7 +49,7 @@ public class ColorHelper {
 	public static float[] getRGBColor(String hex) {
 		try {
 			final String hexColor = hex.toLowerCase().replaceAll("[^#0-9a-f]", "");
-			if (!hexColor.isEmpty()) { //(0x)?[0-9a-f]
+			if (!hexColor.replace("#", "").isEmpty()) { //(0x)?[0-9a-f]
 				final int i = Integer.decode(hexColor);
 				final float r = ((i & 16711680) >> 16) / 255F;
 				final float g = ((i & 65280) >> 8) / 255F;

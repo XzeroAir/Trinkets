@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.AbilitySturdy;
+import xzeroair.trinkets.traits.abilities.AbilityReduceKinetic;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigGreaterInertia;
@@ -39,7 +39,7 @@ public class TrinketGreaterInertia extends AccessoryBase {
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		final float fallMultiplier = serverConfig.fall_damage ? serverConfig.falldamage_amount : 0;
-		abilities.add(new AbilitySturdy().setFallMultiplier(fallMultiplier));
+		abilities.add(new AbilityReduceKinetic().setFallMultiplier(fallMultiplier));
 	}
 
 	@Override

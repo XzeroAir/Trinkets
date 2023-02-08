@@ -30,6 +30,7 @@ public class ModPotionTypes {
 	public static HashMap<String, Potion> TrinketPotions = new HashMap();//new ArrayList<>();
 	public static HashMap<String, PotionType> TrinketPotionTypes = new HashMap();//new ArrayList<>();
 	public static HashMap<String, PotionObject> TrinketPotionObjects = new HashMap();//new ArrayList<>();
+	public static HashMap<String, PotionObject> TrinketRacePotionObjects = new HashMap();//new ArrayList<>();
 
 	/*
 	 * Base Potions
@@ -124,7 +125,9 @@ public class ModPotionTypes {
 		final String name = race.getRegistryName().getPath().toString().toLowerCase();
 		final int color = race.getPrimaryColor();
 		final Potion potion = new TransformationPotion(modid, name, color, duration, race.getUUID().toString(), false);
-		return createCompoundPotion(potion, craftingBase, modid, name, color, duration, extendedDuration, craftingIngredient);
+		final PotionObject obj = createCompoundPotion(potion, craftingBase, modid, name, color, duration, extendedDuration, craftingIngredient);
+		TrinketRacePotionObjects.put(obj.getName(), obj);
+		return obj;
 	}
 
 	public static void registerPotionTypes() {
@@ -157,6 +160,7 @@ public class ModPotionTypes {
 				iceResist,
 				15132390,
 				3600,
+				9600,
 				Ingredient.fromItem(Item.getItemFromBlock(Blocks.SNOW))
 		).registerWithPotion();
 

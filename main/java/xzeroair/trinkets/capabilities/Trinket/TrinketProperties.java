@@ -19,6 +19,8 @@ import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilityBase;
+import xzeroair.trinkets.capabilities.race.ElementalAttributes;
+import xzeroair.trinkets.items.trinkets.TrinketTeddyBear;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.SyncItemDataPacket;
 import xzeroair.trinkets.traits.abilities.base.ItemAbilityProvider;
@@ -39,6 +41,7 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 	protected boolean sync;
 	protected String crafter;
 	protected String crafterUUID;
+	protected ElementalAttributes elements;
 
 	public TrinketProperties(ItemStack stack) {
 		super(stack);
@@ -49,7 +52,12 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 		altAbility = false;
 		crafter = "";
 		crafterUUID = "";
+		elements = new ElementalAttributes();
 		slotInfo = new SlotInformation(stack, ItemHandlerType.NONE.getName(), -1);
+	}
+
+	public ElementalAttributes getElementAttributes() {
+		return elements;
 	}
 
 	@Override
@@ -87,6 +95,7 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 				this.setCrafterUUID(player.getUniqueID().toString());
 			}
 			this.setCrafter(player.getDisplayNameString());
+			//			stack.setStackDisplayName(this.getCrafter() + "'s " + stack.getDisplayName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -115,6 +124,9 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 	}
 
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+		if (stack.getItem() instanceof TrinketTeddyBear) {
+			//			System.out.println(stack.hasDisplayName() + " | " + stack.getDisplayName());
+		}
 		if (entity instanceof EntityLivingBase) {
 			//TODO Recheck this, It's showing slot index 9 as Inventory instead of hotbar
 			final boolean onHotBar = !isSelected && (entity instanceof EntityPlayer) && InventoryPlayer.isHotbar(itemSlot);
@@ -353,18 +365,21 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 			this.saveToNBT(tag);
 			final int slot = slotInfo.getSlot();
 			final int handler = slotInfo.getHandlerType().getId();
-			NetworkHandler.sendToClients(
-					w, e.getPosition(),
-					new SyncItemDataPacket(
-							e,
-							object,
-							tag,
-							slot,
-							handler,
-							handler == ItemHandlerType.BAUBLES.getId(),
-							this.isEquipped()
-					)
+			final SyncItemDataPacket packet = new SyncItemDataPacket(
+					e,
+					object,
+					tag,
+					slot,
+					handler,
+					(handler == ItemHandlerType.BAUBLES.getId()),
+					this.isEquipped()
 			);
+			//			NetworkHandler.sendTo(packet, (EntityPlayerMP) e);
+			NetworkHandler.sendToTracking(packet, e);
+			//			NetworkHandler.sendToClients(
+			//					w, e.getPosition(),
+			//					packet
+			//			);
 		}
 	}
 
@@ -458,6 +473,11 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		try {
+			elements.saveToNBT(tag);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		compound.setTag(capTag, tag);
 		return compound;
 	}
@@ -496,6 +516,11 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 			}
 			try {
 				tickHandler.loadCountersFromNBT(tag);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				elements.loadFromNBT(tag);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

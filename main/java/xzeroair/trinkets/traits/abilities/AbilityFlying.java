@@ -4,6 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -20,6 +21,7 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 	protected boolean speedModified = false;
 	protected float speed = 0F;
 	protected float cost = 0F;
+	//	protected float oldSpeed = 0.5F;
 	//	protected boolean canFly = true;
 
 	public AbilityFlying() {
@@ -59,11 +61,6 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 		final boolean flag = Capabilities.getEntityProperties(entity, true, (prop, canFly) -> prop.getRaceHandler().canFly());
 		if (flightEnabled && flag) {
 			this.addFlyingAbility(entity);
-			if (speedModified) {
-				if ((speed != 0) && (speed != Float.NaN)) {
-					this.setFlyingSpeed(entity, speed);
-				}
-			}
 		} else {
 			this.removeFlyingAbility(entity);
 		}
@@ -92,22 +89,28 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 	}
 
 	protected void setFlyingSpeed(EntityLivingBase entity, float flightSpeed) {
-		if ((entity != null) && (entity instanceof EntityPlayer)) {
+		if (entity instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) entity;
 			if (!this.isCreativePlayer(player)) {
-				if (player.world.isRemote && (flightSpeed > 0F)) {
-					player.capabilities.setFlySpeed(flightSpeed);
+				if (speedModified && player.world.isRemote) {
+					if (player.capabilities.getFlySpeed() != flightSpeed) {
+						if ((flightSpeed > 0) && (flightSpeed != Float.NaN)) {
+							player.capabilities.setFlySpeed(flightSpeed);
+							player.sendPlayerAbilities();
+						}
+					}
 				}
 			} else {
-				if (player.capabilities.getFlySpeed() == flightSpeed) {
+				if (player.world.isRemote && (player.capabilities.getFlySpeed() == flightSpeed)) {
 					player.capabilities.setFlySpeed(0.05F);
+					player.sendPlayerAbilities();
 				}
 			}
 		}
 	}
 
 	protected void addFlyingAbility(EntityLivingBase entity) {
-		if ((entity instanceof EntityPlayer)) {
+		if (entity instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) entity;
 			if (!this.isCreativePlayer(player)) {
 				final MagicStats magic = Capabilities.getMagicStats(entity);
@@ -117,6 +120,10 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 					if (mp >= cost) {
 						if ((player.capabilities.allowFlying != true)) {
 							player.capabilities.allowFlying = true;
+							this.setFlyingSpeed(entity, speed);
+							if (player instanceof EntityPlayerMP) {
+								player.sendPlayerAbilities();
+							}
 						}
 					} else {
 						if (flying) {
@@ -124,6 +131,7 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 						}
 					}
 					if (player.capabilities.isFlying) {
+						this.setFlyingSpeed(entity, speed);
 						player.fallDistance = 0F;
 						final Counter counter = tickHandler.getCounter("fly_timer", 20, true, true, true, true);
 						if ((counter != null) && !player.isRiding()) {
@@ -139,6 +147,9 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 				} else {
 					if ((player.capabilities.allowFlying != true)) {
 						player.capabilities.allowFlying = true;
+						if (player instanceof EntityPlayerMP) {
+							player.sendPlayerAbilities();
+						}
 					}
 					if (player.capabilities.isFlying) {
 						player.fallDistance = 0F;
@@ -150,17 +161,22 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 	}
 
 	protected void removeFlyingAbility(EntityLivingBase entity) {
-		if ((entity != null) && (entity instanceof EntityPlayer)) {
+		if (entity instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) entity;
 			if (!this.isCreativePlayer(player)) {
 				if ((player.capabilities.allowFlying == true)) {
-					player.capabilities.isFlying = false;
 					player.capabilities.allowFlying = false;
+					player.capabilities.isFlying = false;
+					if (player instanceof EntityPlayerMP) {
+						player.sendPlayerAbilities();
+					}
 					if (player.world.isRemote) {
 						if (player.capabilities.getFlySpeed() != 0.05F) {
 							player.capabilities.setFlySpeed(0.05f);
+							player.sendPlayerAbilities();
 						}
 					}
+					player.fallDistance = 0F;
 				}
 			}
 		}

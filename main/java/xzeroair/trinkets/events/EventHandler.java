@@ -29,6 +29,7 @@ import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
@@ -56,6 +57,21 @@ public class EventHandler extends EventBaseHandler {
 	//	@SubscribeEvent
 	//	public void EndTransformation(endTransformationEvent event) {
 	//		//		System.out.println(event.getPreviousRace().getName());
+	//	}
+
+	//	@SubscribeEvent
+	//	public void worldTickEvent(WorldTickEvent event) {
+	//		//		try {
+	//		//			//			String cfgpath = Loader.instance().getConfigDir().toPath().toString();
+	//		//			File cfgFolder = Trinkets.config.getConfigFile().getParentFile();
+	//		//			File f = Utils.getFileLocation(cfgFolder.getPath(), "test.txt");
+	//		//			if (f != null) {
+	//		//				String cfgpath = f.toPath().toString();
+	//		//				System.out.println(cfgpath);
+	//		//			}
+	//		//		} catch (Exception e) {
+	//		//			e.printStackTrace();
+	//		//		}
 	//	}
 
 	@SubscribeEvent
@@ -91,6 +107,7 @@ public class EventHandler extends EventBaseHandler {
 			this.raceHandlerTick(entity);
 			this.effectHandlerTick(entity);
 			// TODO ADD MAGIC TO ENTITIES?
+			this.magicHandlerTick(entity);
 		}
 	}
 
@@ -316,19 +333,11 @@ public class EventHandler extends EventBaseHandler {
 		if (event.getEntityMounting() instanceof EntityLivingBase) {
 			final EntityLivingBase entity = (EntityLivingBase) event.getEntityMounting();
 			Capabilities.getEntityProperties(entity, prop -> {
+				final EntityRacePropertiesHandler handler = prop.getRaceHandler();
 				try {
-					if (event.isMounting()) {
-						final boolean bool = !prop.getRaceHandler().mountEntity(event.getEntityBeingMounted());
-						if (event.isCancelable() && !event.isCanceled() && bool) {
-							event.setCanceled(bool);
-						}
-					} else if (event.isDismounting()) {
-						final boolean bool = !prop.getRaceHandler().dismountedEntity(event.getEntityBeingMounted());
-						if (event.isCancelable() && !event.isCanceled() && bool) {
-							event.setCanceled(bool);
-						}
-					} else {
-
+					final boolean bool = event.isMounting() ? !handler.mountEntity(event.getEntityBeingMounted()) : !handler.dismountedEntity(event.getEntityBeingMounted());
+					if (bool) {
+						this.cancelEvent(event);
 					}
 				} catch (final Exception e) {
 					e.printStackTrace();

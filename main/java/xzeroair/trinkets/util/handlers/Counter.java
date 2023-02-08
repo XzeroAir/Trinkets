@@ -7,6 +7,7 @@ public class Counter {
 	protected int tick;
 	protected boolean countdown;
 	protected boolean shouldTick;
+	protected boolean autoReset;
 	protected boolean saveNBT;
 
 	public Counter(String name, int length) {
@@ -22,6 +23,10 @@ public class Counter {
 	}
 
 	public Counter(String name, int length, boolean countdown, boolean shouldTick, boolean saveNBT) {
+		this(name, length, countdown, shouldTick, true, saveNBT);
+	}
+
+	public Counter(String name, int length, boolean countdown, boolean shouldTick, boolean autoReset, boolean saveNBT) {
 		this.name = name;
 		if (countdown) {
 			tick = length;
@@ -31,6 +36,7 @@ public class Counter {
 		this.length = length;
 		this.countdown = countdown;
 		this.shouldTick = shouldTick;
+		this.autoReset = autoReset;
 		this.saveNBT = saveNBT;
 	}
 
@@ -42,7 +48,7 @@ public class Counter {
 				}
 				return false;
 			} else {
-				if (this.shouldTick()) {
+				if (this.shouldTick() && this.shouldAutoReset()) {
 					this.resetTick();
 				}
 				return true;
@@ -54,7 +60,7 @@ public class Counter {
 				}
 				return false;
 			} else {
-				if (this.shouldTick()) {
+				if (this.shouldTick() && this.shouldAutoReset()) {
 					this.resetTick();
 				}
 				return true;
@@ -101,6 +107,10 @@ public class Counter {
 
 	public boolean shouldTick() {
 		return shouldTick;
+	}
+
+	public boolean shouldAutoReset() {
+		return autoReset;
 	}
 
 	public final boolean saveToNBT() {

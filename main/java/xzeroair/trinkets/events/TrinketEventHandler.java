@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -67,7 +68,7 @@ public class TrinketEventHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void PlayerLoggedInEvent(PlayerLoggedInEvent event) {
 		final EntityPlayer player = event.player;
 		World world = player.getEntityWorld();
@@ -85,11 +86,11 @@ public class TrinketEventHandler {
 							});
 						}
 						final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
-						NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
-						//							NetworkHandler.sendToClients(
-						//									(WorldServer) world, player.getPosition(),
-						//									packet
-						//							);
+						//						NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+						NetworkHandler.sendToClients(
+								(WorldServer) world, player.getPosition(),
+								packet
+						);
 					}
 					if (!empty && (stack.getItem() instanceof IAccessoryInterface)) {
 						final IAccessoryInterface item = (IAccessoryInterface) stack.getItem();
@@ -100,24 +101,45 @@ public class TrinketEventHandler {
 		}
 	}
 
-	//	@SubscribeEvent
-	//	public void EntityJoinWorld(EntityJoinWorldEvent event) {
-	//		if (event.getEntity() instanceof EntityPlayer) {
-	//			final EntityPlayer player = (EntityPlayer) event.getEntity();
-	//			TrinketHelper.getTrinketHandlerWithConsumer(player, (trinkets) -> {
-	//				for (int i = 0; i < trinkets.getSlots(); i++) {
-	//					final ItemStack stack = trinkets.getStackInSlot(i);
-	//					final boolean empty = stack.isEmpty();
-	//					if (!empty) {
-	//						if (stack.getItem() instanceof IAccessoryInterface) {
-	//							final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
-	//							trinket.eventEntityJoinWorld(stack, player);
-	//						}
-	//					}
-	//				}
-	//			});
-	//		}
-	//	}
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public void EntityJoinWorld(EntityJoinWorldEvent event) {
+		// TODO I Need to sync the Trinkets Container here, so it works on Dimension changes
+
+		//		if (event.getEntity() instanceof EntityPlayer) {
+		//			final EntityPlayer player = (EntityPlayer) event.getEntity();
+		//			TrinketHelper.getTrinketHandlerWithConsumer(player, (trinkets) -> {
+		//				for (int i = 0; i < trinkets.getSlots(); i++) {
+		//					final ItemStack stack = trinkets.getStackInSlot(i);
+		//					final boolean empty = stack.isEmpty();
+		//					if (!empty) {
+		//						if (stack.getItem() instanceof IAccessoryInterface) {
+		//							final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+		//							trinket.eventEntityJoinWorld(stack, player);
+		//						}
+		//					}
+		//				}
+		//			});
+		//		}
+		final Entity entity = event.getEntity();
+		if (entity instanceof EntityPlayerMP) {
+			final EntityPlayerMP player = (EntityPlayerMP) entity;
+			World world = event.getWorld();
+			if (world != null) {
+				final boolean client = world.isRemote;
+				// sync Trinkets
+				TrinketHelper.getTrinketHandler(player, handler -> {
+					for (int i = 0; i < handler.getSlots(); i++) {
+						final ItemStack stack = handler.getStackInSlot(i);
+						final boolean empty = stack.isEmpty();
+						if (!client && (world instanceof WorldServer)) {
+							final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
+							NetworkHandler.sendTo(packet, player);
+						}
+					}
+				});
+			}
+		}
+	}
 
 	@SubscribeEvent
 	public void PlayerLoggedOutEvent(PlayerLoggedOutEvent event) {
@@ -160,8 +182,7 @@ public class TrinketEventHandler {
 		TrinketHelper.getTrinketHandler(player, handler -> {
 			for (int i = 0; i < handler.getSlots(); i++) {
 				final ItemStack stack = handler.getStackInSlot(i);
-				boolean empty = stack.isEmpty();
-				if (!empty && (stack.getItem() instanceof IAccessoryInterface)) {
+				if (stack.getItem() instanceof IAccessoryInterface) {
 					final IAccessoryInterface item = (IAccessoryInterface) stack.getItem();
 					item.eventPlayerChangedDimension(stack, player, event.fromDim, event.toDim);
 				}

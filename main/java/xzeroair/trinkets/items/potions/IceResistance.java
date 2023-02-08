@@ -30,7 +30,7 @@ public class IceResistance extends BasePotion {
 	 */
 	@Override
 	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
-		//		System.out.println("You Drank me, Do something");
+
 	}
 
 	/*
@@ -38,12 +38,11 @@ public class IceResistance extends BasePotion {
 	 */
 	@Override
 	public void performEffect(EntityLivingBase entity, int amplifier) {
-		//		System.out.println("You Drank me");
 		try {
 			Capabilities.getEntityProperties(entity, prop -> {
 				final AbilityHandler handler = prop.getAbilityHandler();
 				final AbilityIceImmunity ability = new AbilityIceImmunity();
-				handler.registerAbility(this.getName(), new SlotInformation(ItemHandlerType.POTION), ability);
+				handler.registerAbility(this.getRegistryName().toString(), new SlotInformation(ItemHandlerType.POTION), ability);
 			});
 		} catch (Exception e) {
 		}

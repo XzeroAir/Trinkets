@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -16,12 +17,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.blocks.BlockTeddyBear;
 import xzeroair.trinkets.blocks.tileentities.TileEntityTeddyBear;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.ModBlocks;
@@ -50,14 +53,10 @@ public class TrinketTeddyBear extends AccessoryBase {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
-		//		String crafter = this.getCrafter(stack);
-		//		if (!crafter.isEmpty()) {
-		//			return crafter + "'s " + super.getItemStackDisplayName(stack);
-		//		}
 		return Capabilities.getTrinketProperties(stack, super.getItemStackDisplayName(stack), (prop, name) -> {
 			final String crafter = prop.getCrafter();
-			if (!crafter.isEmpty()) {
-				return crafter;
+			if (!crafter.isEmpty() && !stack.hasDisplayName()) {
+				return crafter + "'s " + name;
 			}
 			return name;
 		});
@@ -67,7 +66,6 @@ public class TrinketTeddyBear extends AccessoryBase {
 		if ((stack != null) && !stack.isEmpty()) {
 			//			Item item = stack.getItem();
 			final String name = stack.getDisplayName().toLowerCase();
-
 			String crafterID = Capabilities.getTrinketProperties(stack, "", (prop, UUID) -> {
 				final String ID = prop.getCrafterUUID();
 				if (!ID.isEmpty()) {
@@ -75,10 +73,31 @@ public class TrinketTeddyBear extends AccessoryBase {
 				}
 				return UUID;
 			});
-
-			if (crafterID.equalsIgnoreCase("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") || name.contains("shivaxi")) {
+			//			String xzeroair = "f5f28614-4e8b-4788-ae78-b020493dc5cb";
+			final boolean hasDisplayName = stack.hasDisplayName();
+			if (name.contains("ken")) {
+				return 9;
+			} else if (name.contains("ryu")) {
+				return 8;
+			} else if ((crafterID.equalsIgnoreCase("b2b629a6-454e-4047-a143-4f357171d639") && !hasDisplayName) ||
+					name.contains("twilight")) {
+				return 7;
+			} else if ((crafterID.equalsIgnoreCase("14bba455-affa-46d0-9cf0-806cc0f3d454") && !hasDisplayName) ||
+					name.contains("artsy")) {
+				return 6;
+			} else if ((crafterID.equalsIgnoreCase("5a215d65-e57d-47c6-a322-9ede12a4a100") && !hasDisplayName) ||
+					name.contains("potastic") ||
+					name.contains("potasticP") ||
+					name.contains("panda")) {
+				return 5;
+			} else if ((crafterID.equalsIgnoreCase("7d50a302-a01c-4e6a-8ea4-03f98662df28") && !hasDisplayName) ||
+					name.contains("stingin") ||
+					name.contains("bee") ||
+					name.contains("bzzz")) {
+				return 4;
+			} else if ((crafterID.equalsIgnoreCase("cdfccefb-1a2e-4fb8-a3b5-041da27fde61") && !hasDisplayName) || name.contains("shivaxi")) {
 				return 3;
-			} else if (crafterID.equalsIgnoreCase("6b5d5e9b-1fe8-4c61-a043-1d84ce95765d") ||
+			} else if ((crafterID.equalsIgnoreCase("6b5d5e9b-1fe8-4c61-a043-1d84ce95765d") && !hasDisplayName) ||
 					name.contains("rembo") ||
 					name.contains("cool") ||
 					name.contains("badass")) {
@@ -110,19 +129,16 @@ public class TrinketTeddyBear extends AccessoryBase {
 				if (!world.getBlockState(pos).getMaterial().isSolid() && !world.isSideSolid(pos, facing, true)) {
 					return EnumActionResult.FAIL;
 				}
-
 				pos = pos.offset(facing);
 			}
 
 			ItemStack itemstack = player.getHeldItem(hand);
-			Block TeddyBlock = ModBlocks.Placeables.TEDDYBEAR;
+			BlockTeddyBear TeddyBlock = ModBlocks.Placeables.getTeddy(this.getTeddyVariant(itemstack));
 			if (player.canPlayerEdit(pos, facing, itemstack) && TeddyBlock.canPlaceBlockAt(world, pos)) {
 				if (world.isRemote) {
 					return EnumActionResult.SUCCESS;
 				} else {
-					int meta = this.getMetadata(itemstack.getMetadata());
-					meta = this.getTeddyVariant(itemstack);
-					IBlockState iblockstate1 = TeddyBlock.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, player, hand);
+					IBlockState iblockstate1 = TeddyBlock.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, 0, player, hand);
 					if (this.placeBlockAt(itemstack, player, world, pos, facing, hitX, hitY, hitZ, iblockstate1)) {
 						int i = 0;
 						if (facing == EnumFacing.UP) {
@@ -133,7 +149,13 @@ public class TrinketTeddyBear extends AccessoryBase {
 							TileEntityTeddyBear teddy = (TileEntityTeddyBear) tileentity;
 							teddy.setRotation(i);
 						}
+						iblockstate1 = world.getBlockState(pos);
+						SoundType soundtype = iblockstate1.getBlock().getSoundType(iblockstate1, world, pos, player);
+						world.playSound((EntityPlayer) null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 						itemstack.shrink(1);
+						if (player instanceof EntityPlayerMP) {
+							CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, itemstack);
+						}
 					}
 					return EnumActionResult.SUCCESS;
 				}
@@ -159,7 +181,7 @@ public class TrinketTeddyBear extends AccessoryBase {
 		}
 
 		IBlockState state = world.getBlockState(pos);
-		Block myBlock = ModBlocks.Placeables.TEDDYBEAR;
+		BlockTeddyBear myBlock = ModBlocks.Placeables.getTeddy(this.getTeddyVariant(stack));//ModBlocks.Placeables.TEDDYBEAR;
 		if (state.getBlock() == myBlock) {
 			ItemBlock.setTileEntityNBT(world, player, pos, stack);
 			myBlock.onBlockPlacedBy(world, pos, state, player, stack);
@@ -184,10 +206,28 @@ public class TrinketTeddyBear extends AccessoryBase {
 		final ModelResourceLocation rembo = new ModelResourceLocation(this.getRegistryName().toString() + "_rembos", "inventory");
 		final ModelResourceLocation scary = new ModelResourceLocation(this.getRegistryName().toString() + "_scary", "inventory");
 		final ModelResourceLocation shivaxi = new ModelResourceLocation(this.getRegistryName().toString() + "_shivaxi", "inventory");
-		ModelBakery.registerItemVariants(this, normal, scary, rembo, shivaxi);
+		final ModelResourceLocation bee = new ModelResourceLocation(this.getRegistryName().toString() + "_bee", "inventory");
+		final ModelResourceLocation panda = new ModelResourceLocation(this.getRegistryName().toString() + "_panda", "inventory");
+		final ModelResourceLocation artsy = new ModelResourceLocation(this.getRegistryName().toString() + "_artsy", "inventory");
+		final ModelResourceLocation twilight = new ModelResourceLocation(this.getRegistryName().toString() + "_twilight", "inventory");
+		final ModelResourceLocation ryu = new ModelResourceLocation(this.getRegistryName().toString() + "_ryu", "inventory");
+		final ModelResourceLocation ken = new ModelResourceLocation(this.getRegistryName().toString() + "_ken", "inventory");
+		ModelBakery.registerItemVariants(this, normal, scary, rembo, shivaxi, bee, panda, artsy, twilight, ryu, ken);
 		ModelLoader.setCustomMeshDefinition(this, stack -> {
 			int type = this.getTeddyVariant(stack);
-			if (type == 3) {
+			if (type == 9) {
+				return ken;
+			} else if (type == 8) {
+				return ryu;
+			} else if (type == 7) {
+				return twilight;
+			} else if (type == 6) {
+				return artsy;
+			} else if (type == 5) {
+				return panda;
+			} else if (type == 4) {
+				return bee;
+			} else if (type == 3) {
 				return shivaxi;
 			} else if (type == 2) {
 				return scary;

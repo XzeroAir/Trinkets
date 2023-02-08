@@ -2,6 +2,7 @@ package xzeroair.trinkets.vip;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -20,17 +21,33 @@ public class VIPHandler {
 	public static TreeMap<String, VipUser> Vips;
 
 	public static void popVIPList() {
+		//		long startTime = System.nanoTime();
 		loadJsonFromUrl(VIPV2);
+		//		long endTime = System.nanoTime() - startTime;
+		//				Trinkets.log.info();
+		//		System.out.println("Time:" + (endTime / 1000000L));
 	}
 
 	private static void loadJsonFromUrl(String url) {
 		try {
 			final URL link = new URL(url);
-			BufferedReader reader2 = new BufferedReader(new InputStreamReader(link.openStream()));
-			Type mapType = new TypeToken<TreeMap<String, VipUser>>() {
-			}.getType();
-			Vips = gson.fromJson(reader2, mapType);
-			reader2.close();
+			final InputStream stream = link.openStream();
+			final InputStreamReader input = new InputStreamReader(stream);
+			final BufferedReader reader = new BufferedReader(input);
+			try {
+				final Type mapType = new TypeToken<TreeMap<String, VipUser>>() {
+				}.getType();
+				Vips = gson.fromJson(reader, mapType);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					reader.close();
+					input.close();
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

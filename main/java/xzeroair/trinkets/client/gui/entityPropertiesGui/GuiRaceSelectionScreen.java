@@ -31,12 +31,12 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.client.GuiScrollingList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.ForgeRegistry;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.registry.TrinketRegistry;
 
 @SideOnly(Side.CLIENT)
 public class GuiRaceSelectionScreen extends GuiScreen {
@@ -67,8 +67,9 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 	private int buttonMargin = 1;
 
 	public void selectAbilityIndex(int index) {
-		if (index == selected)
+		if (index == selected) {
 			return;
+		}
 		selected = index;
 		//		selectedMod = ((index >= 0) && (index <= abilities.size())) ? abilities.get(selected) : null;
 
@@ -94,7 +95,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 		//		abilities = Lists.newArrayList(properties.getAbilityHandler().getAbilitiesList());
 		final int slotHeight = 20;
 
-		final TrinketRegistry<ResourceLocation, EntityRace> registryList = EntityRace.Registry;
+		final ForgeRegistry<EntityRace> registryList = EntityRace.Registry;
 		int ID = 3;
 		int xPos = 40;
 		int yPos = 40;
@@ -231,8 +232,9 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 		//		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 
-		if (properties == null)
+		if (properties == null) {
 			return;
+		}
 
 		if (raceSelection != null) {
 			raceSelection.drawScreen(mouseX, mouseY, partialTicks);
@@ -465,12 +467,14 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 			if (logoPath != null) {
 				offset -= logoDims.height + 10;
 			}
-			if (offset <= 0)
+			if (offset <= 0) {
 				return;
+			}
 
 			final int lineIdx = offset / 10;
-			if (lineIdx >= lines.size())
+			if (lineIdx >= lines.size()) {
 				return;
+			}
 
 			final ITextComponent line = lines.get(lineIdx);
 			if (line != null) {

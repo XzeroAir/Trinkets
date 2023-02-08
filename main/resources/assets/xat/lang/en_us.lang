@@ -61,7 +61,7 @@ ability.creative_flight.tooltip2=Double tap jump to start flying, double tap jum
 ability.creative_flight.tooltip3=Makes you Immune to fall damage
 ability.fire_immunity.name=§cFire Immunity
 ability.fire_immunity.tooltip1=§6Immune to Fire and Lava
-ability.fire_immunity.tooltip2=§Cannot be set on Fire
+ability.fire_immunity.tooltip2=§6Cannot be set on Fire
 ability.fire_immunity.tooltip3=§6Cannot be Harmed by Fire based attacks
 ability.fire_breathing.name=§cFire Breathing
 ability.fire_breathing.tooltip1=Grants Fire Breathing
@@ -317,11 +317,12 @@ item.damage_shield.0.headshots=§3$headshotchance:§6 Chance to ignore headshot
 item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
 
 item.arcing_orb.0.name=Arcing Orb
-item.arcing_orb.0.tooltip1=§2Grants double tap dodge ability §3$dodgecost:MP
-item.arcing_orb.0.tooltip2=@dodgestun:
+item.arcing_orb.0.tooltip1=@dodge:
+item.arcing_orb.0.tooltip2=@dodge.stun:
 item.arcing_orb.0.tooltip3=§6Hold §r<§e*arckb:§r>§6 to cast a bolt attack §3$boltcost:MP
 item.arcing_orb.0.tooltip4=§3$boltdamage:§6 damage based on MP spent
-item.arcing_orb.0.dodgestun=§6Stun nearby enemies on dodge
+item.arcing_orb.0.dodge=§2Grants double tap dodge ability
+item.arcing_orb.0.dodge.stun=§6Stun nearby enemies on dodge §3$dodgecost:MP
 
 item.faelis_claw.0.name=Faelis Claw
 item.faelis_claw.0.tooltip1=§6Attacking enemies causes them to bleed
@@ -625,6 +626,8 @@ xat.config.server.ender_tiara.ignoredamage.spawn.chance=Enderman Spawn Chance
 xat.config.server.ender_tiara.ignoredamage.spawn.chance.tooltip=1 in X chance to to ignore damage and spawn an Enderman to fight for you
 xat.config.server.ender_tiara.ignoredamage.teleport=Damaged Teleport
 xat.config.server.ender_tiara.ignoredamage.teleport.tooltip=Should you teleport randomly when Damage is Ignored
+xat.config.server.ender_tiara.ignoredamage.teleport.chance=Teleport Chance
+xat.config.server.ender_tiara.ignoredamage.teleport.chance.tooltip=1 in X chance to teleport when taking indirect damage
 xat.config.server.ender_tiara.endermen.follow=Endermen Follow
 xat.config.server.ender_tiara.endermen.follow.tooltip=Nearby Endermen Follow you if enabled
 xat.config.server.ender_tiara.endermen.retaliate=Endermen Retaliate
@@ -898,6 +901,10 @@ xat.config.races.goblin=Goblin Race Settings
 xat.config.races.goblin.tooltip=
 xat.config.races.goblin.rider=Goblin Rider
 xat.config.races.goblin.rider.tooltip=Can Goblins mount tamed wolves
+xat.config.races.goblin.creeper=Friendly Creepers
+xat.config.races.goblin.creeper.tooltip=Do Creepers Ignore Goblins
+xat.config.races.goblin.creeper.explode=Creepers Explode
+xat.config.races.goblin.creeper.explode.tooltip=Do Creepers explode when attacked
 xat.config.races.goblin.natural_resistance=Naturally Resistant
 xat.config.races.goblin.natural_resistance.tooltip=Should Goblins be naturally resistant to Fire and explosions
 
@@ -998,6 +1005,9 @@ xat.config.iceandfire.tooltip=
 
 xat.config.firstaid=First Aid Settings
 xat.config.firstaid.tooltip=
+
+xat.config.fire_resistance_tiers=Fire Resistance Tiers
+xat.config.fire_resistance_tiers.tooltip=
 
 xat.config.baubles=Baubles
 xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm

@@ -157,7 +157,7 @@ public class TranslationHelper {
 
 	public String langKeyReplace(String string, boolean enabled, String key, String replacementKey) {
 		if (enabled) {
-			final String translatedKey = new TextComponentTranslation(replacementKey).getFormattedText();
+			final String translatedKey = new TextComponentTranslation(replacementKey).getFormattedText().trim();
 			return string.replace(key, translatedKey);
 		} else {
 			return string.replace(key, "");

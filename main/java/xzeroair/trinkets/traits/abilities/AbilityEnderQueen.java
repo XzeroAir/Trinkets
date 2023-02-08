@@ -13,23 +13,29 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
+import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.init.TrinketsDamageSource;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
+import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.Reference;
@@ -39,7 +45,7 @@ import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
-public class AbilityEnderQueen extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility {
+public class AbilityEnderQueen extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility, IKeyBindInterface {
 
 	public AbilityEnderQueen() {
 		super(Abilities.enderQueen);
@@ -89,54 +95,61 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 		if ((attacker instanceof EntityLivingBase) && (attacker != attacked) && (dmg > 0)) {
 			if ((serverConfig.dmgChance || serverConfig.spawnChance)) {
 				final int chanceNum = serverConfig.chance;
-				final int chance = random.nextInt(chanceNum - 1) + 1;
-				if ((chance == 1)) {
-					String string = "The void protects me!";
-					final String string2 = "Go, my loyal subject!";
-					if (TrinketsConfig.SERVER.misc.retrieveVIP) {
-						final VipStatus vip = Capabilities.getVipStatus(attacked);
-						if (vip != null) {
-							final String quote = vip.getRandomQuote();
-							if (!quote.isEmpty()) {
-								string = quote;
+				if (chanceNum > 0) {
+					final int chance = random.nextInt(chanceNum);
+					if ((chance == 0)) {
+						String string = "The void protects me!";
+						final String string2 = "Go, my loyal subject!";
+						if (TrinketsConfig.SERVER.misc.retrieveVIP) {
+							final VipStatus vip = Capabilities.getVipStatus(attacked);
+							if (vip != null) {
+								final String quote = vip.getRandomQuote();
+								if (!quote.isEmpty()) {
+									string = quote;
+								}
+							}
+						}
+						if (serverConfig.spawnChance) {
+							if (client) {
+								StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string2, false);
+							}
+							if (!client) {
+								try {
+									final EntityEnderman knight = new EntityEnderman(attacked.getEntityWorld());
+									final double x = attacked.getPosition().getX();
+									final double y = attacked.getPosition().getY();
+									final double z = attacked.getPosition().getZ();
+									knight.setPosition(x, y, z);
+									knight.getEntityData().setBoolean("xat:summoned", true);
+									knight.setCanPickUpLoot(false);
+									attacked.getEntityWorld().spawnEntity(knight);
+									knight.setAttackTarget((EntityLivingBase) attacker);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+						if (serverConfig.dmgChance) {
+							cancel = true;
+							if (client) {
+								StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string, false);
 							}
 						}
 					}
-					if (serverConfig.spawnChance) {
-						if (client) {
-							StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string2, false);
-						}
-						if (!client) {
-							try {
-								final EntityEnderman knight = new EntityEnderman(attacked.getEntityWorld());
-								final double x = attacked.getPosition().getX();
-								final double y = attacked.getPosition().getY();
-								final double z = attacked.getPosition().getZ();
-								knight.setPosition(x, y, z);
-								knight.getEntityData().setBoolean("xat:summoned", true);
-								knight.setCanPickUpLoot(false);
-								attacked.getEntityWorld().spawnEntity(knight);
-								knight.setAttackTarget((EntityLivingBase) attacker);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					if (serverConfig.dmgChance) {
-						cancel = true;
-						if (client) {
-							StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string, false);
-						}
-					}
-					if (serverConfig.tponhurt) {
+				}
+			}
+			if (serverConfig.teleportOnHurt && (source instanceof EntityDamageSourceIndirect)) {
+				final int chanceNum = serverConfig.teleportChance; // Check the chance to make sure it properly works and doesn't crash if someone stupid decides to set the value to 0
+				if (chanceNum > 0) {
+					final int chance = random.nextInt(chanceNum);
+					if ((chance == 0)) {
 						final boolean isBoss = (source.getTrueSource() != null) && !source.getTrueSource().isNonBoss() ? true : false;
 						final MagicStats magic = Capabilities.getMagicStats(attacked);
-						if (!isBoss) {
+						if (!isBoss && !attacked.isActiveItemStackBlocking()) {
 							if ((magic != null) && (magic.getMana() >= (magic.getMaxMana() * 0.5F))) {
 								for (int i = 0; i < 32; ++i) {
-									if (this.teleportRandomly(attacked)) {
-										if (magic.spendMana(magic.getMaxMana() * 0.5F)) {
-										}
+									if (this.teleportRandomly(attacked) && magic.spendMana(magic.getMaxMana() * 0.5F)) {
+										cancel = true;
 										break;
 									}
 								}
@@ -178,9 +191,22 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 		}
 	}
 
+	@Override
+	public float damageEntity(EntityLivingBase target, DamageSource source, float dmg) {
+		if ((target instanceof EntityEnderman) && (dmg > 0)) {
+			try {
+				final EntityEnderman enderman = (EntityEnderman) target;
+				NBTTagCompound data = enderman.getEntityData();
+				data.setBoolean("xat:summoned", true);
+			} catch (Exception e) {
+			}
+		}
+		return dmg;
+	}
+
 	protected boolean teleportRandomly(EntityLivingBase entity) {
 		final double d0 = entity.posX + ((Reference.random.nextDouble() - 0.5D) * 32.0D);
-		final double d1 = entity.posY + (Reference.random.nextInt(32) - 16);
+		final double d1 = entity.posY + (Reference.random.nextInt(16) - 8);
 		final double d2 = entity.posZ + ((Reference.random.nextDouble() - 0.5D) * 32.0D);
 		final boolean teleport = this.teleportTo(entity, d0, d1, d2);
 		return teleport;
@@ -296,26 +322,42 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 		}
 	}
 
-	//	@Override
-	//	@SideOnly(Side.CLIENT)
-	//	public String getKey() {
-	//		return ModKeyBindings.RACE_ABILITY.getDisplayName();
-	//	}
-	//
-	//	@Override
-	//	@SideOnly(Side.CLIENT)
-	//	public String getAuxKey() {
-	//		return ModKeyBindings.AUX_KEY.getDisplayName();
-	//	}
-	//
-	//	@Override
-	//	public boolean onKeyPress(boolean Aux) {
-	//		if (this.getEntity() != null) {
-	//			System.out.println("Trigger?");
-	//			for (int i = 0; i < 64; ++i) {
-	//				this.teleportRandomly(this.getEntity());
-	//			}
-	//		}
-	//		return true;
-	//	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getKey() {
+		return ModKeyBindings.RACE_ABILITY.getDisplayName();
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getAuxKey() {
+		return ModKeyBindings.AUX_KEY.getDisplayName();
+	}
+
+	@Override
+	public boolean onKeyPress(Entity entity, boolean Aux) {
+		final World world = entity.getEntityWorld();
+		//		return Capabilities.getMagicStats(entity, true, (magic, allow) -> {
+		//			boolean test = TrinketsConfig.SERVER.Items.ENDER_CROWN.attackBack;
+		//			final float cost = (float) StringUtils.getAccurateDouble((magic.getMaxMana() * 0.1));
+		//			if ((magic.getMana() >= cost)) {
+		//				for (int i = 0; i < 64; ++i) {
+		//					if (this.teleportRandomly((EntityLivingBase) entity)) {
+		//						if (magic.spendMana(cost)) {
+		//						}
+		//						break;
+		//					}
+		//				}
+		//			}
+		//			return allow;
+		//		});
+		//		if ((entity instanceof EntityPlayer) && !world.isRemote) {
+		//			EntityPlayer player = (EntityPlayer) entity;
+		//			InventoryEnderChest inventoryenderchest = player.getInventoryEnderChest();
+		//			player.displayGUIChest(inventoryenderchest);
+		//			player.addStat(StatList.ENDERCHEST_OPENED);
+		//
+		//		}
+		return true;
+	}
 }

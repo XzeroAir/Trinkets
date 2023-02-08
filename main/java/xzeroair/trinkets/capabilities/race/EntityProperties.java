@@ -5,7 +5,9 @@ import java.util.List;
 import com.google.common.base.Objects;
 
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,17 +29,20 @@ import xzeroair.trinkets.api.events.TransformationEvent.EndTransformation;
 import xzeroair.trinkets.api.events.TransformationEvent.RaceUpdateEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.StartTransformation;
 import xzeroair.trinkets.attributes.JumpAttribute;
+import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.capabilities.CapabilityBase;
+import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.SyncRaceDataPacket;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.races.EntityRace;
-import xzeroair.trinkets.races.EntityRaceHelper;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
+import xzeroair.trinkets.races.IRaceProvider;
 import xzeroair.trinkets.traits.AbilityHandler;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.AttributeHelper;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class EntityProperties extends CapabilityBase<EntityProperties, EntityLivingBase> {
@@ -81,29 +86,30 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		previous = EntityRaces.none;
 		imbued = EntityRaces.none;
 		current = EntityRaces.none;
-		abilities = new AbilityHandler(e, this);
+		abilities = new AbilityHandler(object);
 		properties = current.getRaceHandler(object).setEntityProperties(this);
 	}
 
 	@Override
 	public NBTTagCompound getTag() {
-		if (tag == null) {
-			tag = object.getEntityData();
-		}
-		if (object instanceof EntityPlayer) {
-			if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
-				tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+		NBTTagCompound tag = object.getEntityData();
+		if (tag != null) {
+			final NBTTagCompound persistentData;
+			if (object instanceof EntityPlayer) {
+				if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+					tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+				}
+				persistentData = tag.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+			} else {
+				persistentData = tag;
 			}
-			tag = tag.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-		} else {
-
+			final String capTag = Reference.MODID + ".race";
+			if (!persistentData.hasKey(capTag)) {
+				persistentData.setTag(capTag, new NBTTagCompound());
+			}
+			return persistentData.getCompoundTag(capTag);
 		}
-		final String capTag = Reference.MODID + ".race";
-		if (!tag.hasKey(capTag)) {
-			tag.setTag(capTag, this.saveToNBT(new NBTTagCompound()));
-		}
-		tag = tag.getCompoundTag(capTag);
-		return tag;
+		return super.getTag();
 	}
 
 	// ABILITIES
@@ -115,13 +121,14 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
 	@SideOnly(Side.CLIENT)
 	public void onRender(RenderLivingBase renderer, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		this.getRaceHandler().doRenderLayer(renderer, isFake, isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+		this.getRaceHandler().doRenderLayer(renderer, this.isFake(), isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
 	}
 
 	public void onUpdatePre() {
 		final World world = object.getEntityWorld();
 		final boolean isClient = world.isRemote;
 		if (!(object instanceof FakePlayer) && (object instanceof EntityPlayer)) {
+			//			object.setPositionAndUpdate(object.posX, object.posY, object.posZ);
 			onGround = object.onGround;
 		}
 	}
@@ -137,8 +144,6 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		} else {
 			this.onEntityUpdate(world, object);
 		}
-
-		abilities.updateAbilityHandler();
 
 		if (sync == true) {
 			this.sendInformationToTracking();
@@ -158,31 +163,16 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
 	public void onPlayerUpdate(World world, EntityPlayer player) {
 		final boolean isClient = world.isRemote;
-		if (player.getName().equals("XzeroAir")) {
-			try {
-				//				PotionType test = ModPotionTypes.TrinketPotionTypes.get("elf");
-				//				if (test != null) {
-				//					for (PotionEffect effect : test.getEffects()) {
-				//						PotionType test2 = ModPotionTypes.TrinketPotionTypes.get("dwarf");
-				//						if (test2 != null) {
-				//							effect.addCurativeItem(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), test2));
-				//						}
-				//						//						System.out.println(effect.isCurativeItem(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), test2)) + "");
-				//						//						System.out.println(effect.getCurativeItems() + "|" + effect.getPotion().getRegistryName() + "|" + effect.getPotion().getCurativeItems());
-				//
-				//					}
-				//				}
-			} catch (Exception e) {
-				// TODO: handle exception
+		if (!isClient) {
+			if (!this.getCurrentRace().isNone()) {
+				player.onGround = onGround;
 			}
-			//			System.out.println("Handler:" + this.getRaceHandler().getRace().getName() + "|Race:" + this.getCurrentRace().getName());
 		}
-
 		if (this.isLogin()) {
 			this.getRaceHandler().setFirstUpdate(true);
 		}
-
 		this.updateRace();
+		abilities.updateAbilityHandler();
 		this.getRaceHandler().onTick();
 
 		// TODO Come back to this, Check
@@ -191,22 +181,15 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 				this.sendInformationToPlayer(player);
 			}
 		}
-		//		if (player.getName().equals("XzeroAir")) {
-		//			IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-		//			System.out.println(attribute.getModifiers());
-		//			//			System.out.println("Handler:" + this.getRaceHandler().getRace().getName() + "|Race:" + this.getCurrentRace().getName());
-		//		}
 	}
 
 	public void onEntityUpdate(World world, EntityLivingBase entity) {
-		final boolean isClient = world.isRemote;
-		//		if(isChild()) {
-		//			TODO Fix Child Transformations
-		//		}
 		if (object.isChild()) {
+			//			TODO Fix Child Transformations
 			//				this.onChildUpdate(world, object);
 			return;
 		}
+		final boolean isClient = world.isRemote;
 		final ResourceLocation regName = EntityRegistry.getEntry(entity.getClass()).getRegistryName();
 		final String modID = regName.getNamespace();
 		final String name = regName.getPath();
@@ -304,12 +287,12 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 					return;
 				}
 				oldProperties.onTransformEnd();
+				AttributeHelper.removeAttributesByUUID(object, this.getPreviousRace().getUUID(), oldProperties.getRace().getUUID());
 				this.setPreviousRace(oldProperties.getRace());
-
-				//				final Entity mount = object.getRidingEntity();
-				//				if (mount instanceof AlphaWolf) {
-				//					object.dismountRidingEntity();
-				//				}
+				final Entity mount = object.getRidingEntity();
+				if (mount instanceof AlphaWolf) {
+					object.dismountRidingEntity();
+				}
 				final IAttributeInstance attribute = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
 				if ((attribute != null)) {
 					if (object.stepHeight != attribute.getBaseValue()) {
@@ -342,15 +325,15 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 	}
 
 	private EntityRace getEntityRace() {
-		final EntityRace potionRace = EntityRaceHelper.getAttributeRace(object);
-		if ((potionRace != null) && !potionRace.equals(EntityRaces.none)) {
+		final EntityRace potionRace = this.getPotionRace();
+		if ((potionRace != null) && !potionRace.isNone()) {
 			this.setFake(true);
 			return potionRace;
 		}
-		final EntityRace TrinketRace = EntityRaceHelper.getTrinketRace(object);
-		if ((TrinketRace != null) && !TrinketRace.equals(EntityRaces.none)) {
+		ItemStack raceProvider = this.getRaceProvider();
+		if (!raceProvider.isEmpty()) {
 			this.setFake(true);
-			return TrinketRace;
+			return ((IRaceProvider) raceProvider.getItem()).getRace();
 		}
 		final EntityRace imbued = this.getImbuedRace();
 		if ((imbued != null) && !imbued.equals(EntityRaces.none)) {
@@ -359,6 +342,29 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		} else {
 			this.setFake(false);
 			return this.getOriginalRace();
+		}
+	}
+
+	protected EntityRace getPotionRace() {
+		IAttributeInstance race = object.getEntityAttribute(RaceAttribute.ENTITY_RACE);
+		if (race != null) {
+			if (!race.getModifiers().isEmpty()) {
+				for (final AttributeModifier modifier : race.getModifiers()) {
+					return EntityRace.getByUUID(modifier.getID());
+				}
+			}
+		}
+		return null;
+	}
+
+	protected ItemStack getRaceProvider() {
+		final int count = TrinketHelper.countAccessories(
+				object, stack -> stack.getItem() instanceof IRaceProvider
+		);
+		if ((count > 1) || (count < 1)) {
+			return ItemStack.EMPTY;
+		} else {
+			return TrinketHelper.getAccessory(object, stack -> stack.getItem() instanceof IRaceProvider);
 		}
 	}
 
@@ -405,7 +411,11 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 	}
 
 	public void onLogoff() {
-
+		if (this.getCurrentRace().equals(EntityRaces.goblin)) {
+			if (object.getRidingEntity() instanceof AlphaWolf) {
+				object.dismountRidingEntity();
+			}
+		}
 	}
 
 	/**
@@ -587,6 +597,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 	public void setFake(boolean isFake) {
 		if (this.isFake != isFake) {
 			this.isFake = isFake;
+			this.scheduleResync();
 		}
 	}
 
@@ -614,27 +625,19 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		imbued = source.imbued;
 		isChild = source.isChild;
 
-		if (wasDeath) {
-			if (keepInv) {
-				current = source.current;
-				previous = source.previous;
-				heightValue = source.heightValue;
-				widthValue = source.widthValue;
-				properties = source.properties.setEntityProperties(this);
-			} else {
-				previous = source.current;
-				current = imbued.isNone() ? original : imbued;
-				heightValue = current.getRaceHeight();
-				widthValue = current.getRaceWidth();
-				properties = current.getRaceHandler(object).setEntityProperties(this);
-				properties.onTransform();
-			}
+		if (wasDeath && !keepInv) {
+			previous = source.current;
+			current = imbued.isNone() ? original : imbued;
+			heightValue = current.getRaceHeight();
+			widthValue = current.getRaceWidth();
 		} else {
-			previous = source.previous;
 			current = source.current;
-			abilities = source.abilities;
-			properties = source.properties;
+			previous = source.previous;
+			heightValue = source.heightValue;
+			widthValue = source.widthValue;
 		}
+		properties = current.getRaceHandler(object).setEntityProperties(this);
+		properties.onTransform();
 
 		try {
 			this.getRaceHandler().copyFrom(source.getRaceHandler(), wasDeath, keepInv);
@@ -732,6 +735,26 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 		}
 		this.getRaceHandler().loadNBTData(compound);
 		this.getAbilityHandler().loadAbilitiesFromNBT(compound);
+	}
+
+	private static class TempCache<A, B> {
+
+		private final A first;
+		private final B second;
+
+		public TempCache(A first, B second) {
+			this.first = first;
+			this.second = second;
+		}
+
+		public A getFirst() {
+			return first;
+		}
+
+		public B getSecond() {
+			return second;
+		}
+
 	}
 
 }

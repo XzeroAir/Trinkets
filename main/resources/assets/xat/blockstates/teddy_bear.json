@@ -1,20 +1,9 @@
 {
     "variants": {
-        "facing=north,variant=teddy": {"model": "xat:teddy_bear"},
-        "facing=south,variant=teddy": {"model": "xat:teddy_bear", "y": 180},
-        "facing=west,variant=teddy": {"model": "xat:teddy_bear", "y": 270},
-        "facing=east,variant=teddy": {"model": "xat:teddy_bear", "y": 90},
-        "facing=north,variant=rembo": {"model": "xat:teddy_bear_rembo"},
-        "facing=south,variant=rembo": {"model": "xat:teddy_bear_rembo", "y": 180},
-        "facing=west,variant=rembo": {"model": "xat:teddy_bear_rembo", "y": 270},
-		"facing=east,variant=rembo": {"model": "xat:teddy_bear_rembo", "y": 90},
-        "facing=north,variant=scary": {"model": "xat:teddy_bear_scary"},
-        "facing=south,variant=scary": {"model": "xat:teddy_bear_scary", "y": 180},
-        "facing=west,variant=scary": {"model": "xat:teddy_bear_scary", "y": 270},
-        "facing=east,variant=scary": {"model": "xat:teddy_bear_scary", "y": 90},
-        "facing=north,variant=shivaxi": {"model": "xat:teddy_bear_shivaxi"},
-        "facing=south,variant=shivaxi": {"model": "xat:teddy_bear_shivaxi", "y": 180},
-        "facing=west,variant=shivaxi": {"model": "xat:teddy_bear_shivaxi", "y": 270},
-        "facing=east,variant=shivaxi": {"model": "xat:teddy_bear_shivaxi", "y": 90}
+        "normal": { "model": "xat:teddy_bear"},
+        "facing=north": {"model": "xat:teddy_bear"},
+        "facing=south": {"model": "xat:teddy_bear", "y": 180},
+        "facing=west": {"model": "xat:teddy_bear", "y": 270},
+        "facing=east": {"model": "xat:teddy_bear", "y": 90}
     }
 }

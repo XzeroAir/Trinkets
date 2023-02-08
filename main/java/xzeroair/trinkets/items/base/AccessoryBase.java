@@ -32,8 +32,11 @@ import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.traits.abilities.base.ItemAbilityProvider;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
+import xzeroair.trinkets.traits.elements.IElementProvider;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
@@ -43,7 +46,7 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
-public abstract class AccessoryBase extends Item implements IsModelLoaded, IAccessoryInterface, ItemAbilityProvider {
+public abstract class AccessoryBase extends Item implements IsModelLoaded, IAccessoryInterface, ItemAbilityProvider, IElementProvider {
 
 	protected UUID uuid;
 
@@ -287,6 +290,22 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
 		return helper.formatAddVariables(translation);
+	}
+
+	@Override
+	public Element getPrimaryElement(ItemStack stack) {
+		return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> {
+			Element e = Element.getByNameOrId(prop.getVariant() + "");
+			if (prop.getVariant() == 1) {
+				prop.getElementAttributes().setPrimaryElement(Elements.ICE);
+			}
+			Element primary = prop.getElementAttributes().getPrimaryElement();
+			if (primary != Elements.NEUTRAL) {
+				return primary;
+			} else {
+				return element;
+			}
+		});
 	}
 
 	@Override

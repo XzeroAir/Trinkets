@@ -33,10 +33,11 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 		if (breathStage == 0) {
 			final MagicStats magic = Capabilities.getMagicStats(entity);
 			if (magic != null) {
-				if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.breath_cost))
+				if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.breath_cost)) {
 					return false;
+				}
 			}
-			int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> ColorHelper.convertHexadecimalToDecimal(prop.getRaceHandler().getTraitColor()));
+			int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> ColorHelper.convertHexadecimalToDecimal(prop.getRaceHandler().getAltTraitColor()));
 			final World world = entity.getEntityWorld();
 			final float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
 			final float headPosZ = (float) (entity.posZ + (1.8F * 1 * 0.3F * Math.sin(((entity.rotationYaw + 90) * Math.PI) / 180)));
@@ -84,17 +85,19 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 	@Override
 	public boolean onKeyPress(Entity entity, boolean Aux) {
 		final MagicStats magic = Capabilities.getMagicStats(entity);
-		if (magic != null)
+		if (magic != null) {
 			return magic.getMana() >= TrinketsConfig.SERVER.races.dragon.breath_cost;
+		}
 		return true;
 	}
 
 	@Override
 	public boolean onKeyDown(Entity entity, boolean Aux) {
-		if (this.DragonBreath(entity))
+		if (this.DragonBreath(entity)) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override

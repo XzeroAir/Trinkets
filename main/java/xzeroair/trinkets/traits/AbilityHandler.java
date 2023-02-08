@@ -16,7 +16,8 @@ import net.minecraft.util.NonNullList;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IContainerAbility;
@@ -30,12 +31,10 @@ public class AbilityHandler {
 	protected Map<String, AbilityHolder> active;
 	protected boolean hasChanged = false;
 	protected EntityLivingBase entity;
-	protected EntityProperties properties;
 
-	public AbilityHandler(EntityLivingBase entity, EntityProperties entityProperties) {
+	public AbilityHandler(EntityLivingBase entity) {
 		active = new TreeMap<>();
 		this.entity = entity;
-		properties = entityProperties;
 	}
 
 	public Map<String, AbilityHolder> getActiveAbilities() {
@@ -139,29 +138,26 @@ public class AbilityHandler {
 			String key = entry.getKey();
 			AbilityHolder cache = entry.getValue();
 			String source = cache.getSourceID();
-			//			System.out.println(key + "|" + source + "|" + cache.getInfo().getHandler());
 			SlotInformation sourceInfo = cache.getInfo();
-			//			System.out.println(sourceInfo.getHandler() + "|" + sourceInfo.getSlot());
 			IAbilityInterface ability = cache.getAbility();
 			boolean remove = this.shouldRemove(sourceInfo, source, entity);
 			if (hasChanged) {
-				NBTTagCompound data = properties.getTag();
+				NBTTagCompound data = Capabilities.getEntityProperties(entity, new NBTTagCompound(), (prop, rtn) -> prop.getTag());
 				if (data.hasKey("Abilities")) {
 					NBTTagCompound tag = data.getCompoundTag("Abilities");
 					this.loadAbilityFromNBT(ability, tag);
 				}
 			}
-			if (!remove) {
-				this.processAbility(ability, entity);
-			}
+			this.processAbility(ability, entity);
 			if (remove || ability.shouldRemove()) {
 				ability.scheduleRemoval();
 				ability.onAbilityRemoved(entity);
-				final NBTTagCompound abilityNBT = new NBTTagCompound();
-				this.saveAbilityToNBT(ability, abilityNBT);
-				if (!abilityNBT.isEmpty()) {
-					properties.getTag().setTag("Abilities", abilityNBT);
+				NBTTagCompound entityTag = Capabilities.getEntityProperties(entity, new NBTTagCompound(), (prop, rtn) -> prop.getTag());
+				if (!entityTag.hasKey("Abilities")) {
+					entityTag.setTag("Abilities", new NBTTagCompound());
 				}
+				NBTTagCompound abilitiesTag = entityTag.getCompoundTag("Abilities");
+				this.saveAbilityToNBT(ability, abilitiesTag);
 			}
 		}
 		if (hasChanged) {
@@ -230,7 +226,7 @@ public class AbilityHandler {
 		case OTHER:
 			return false;
 		case RACE:
-			EntityRace race = properties.getCurrentRace();
+			EntityRace race = Capabilities.getEntityProperties(entity, EntityRaces.none, (prop, rtn) -> prop.getCurrentRace());
 			if (!race.isNone() && race.getRegistryName().toString().contentEquals(source)) {
 				return false;
 			}
@@ -280,28 +276,29 @@ public class AbilityHandler {
 		} else {
 			active = source.active;
 		}
-
 	}
 
-	public void saveAbilityToNBT(IAbilityInterface ability, NBTTagCompound compound) {
+	public NBTTagCompound saveAbilityToNBT(IAbilityInterface ability, NBTTagCompound compound) {
 		String key = ability.getRegistryName().toString();
-		NBTTagCompound tag = new NBTTagCompound();
-		ability.saveStorage(tag);
-		if (!tag.isEmpty()) {
-			compound.setTag(key, tag);
+		if (!compound.hasKey(key)) {
+			compound.setTag(key, new NBTTagCompound());
 		}
+		ability.saveStorage(compound.getCompoundTag(key));
+		return compound;
 	}
 
 	public void loadAbilityFromNBT(IAbilityInterface ability, NBTTagCompound compound) {
 		String key = ability.getRegistryName().toString();
 		if (compound.hasKey(key)) {
-			NBTTagCompound tag = compound.getCompoundTag(key);
-			ability.loadStorage(tag);
+			ability.loadStorage(compound.getCompoundTag(key));
 		}
 	}
 
-	public void saveAbilitiesToNBT(NBTTagCompound compound) {
-		final NBTTagCompound abilityNBT = new NBTTagCompound();
+	public NBTTagCompound saveAbilitiesToNBT(NBTTagCompound compound) {
+		if (!compound.hasKey("Abilities")) {
+			compound.setTag("Abilities", new NBTTagCompound());
+		}
+		NBTTagCompound abilityNBT = compound.getCompoundTag("Abilities");
 		for (Entry<String, AbilityHolder> entry : active.entrySet()) {
 			String key = entry.getKey();
 			AbilityHolder value = entry.getValue();
@@ -312,7 +309,7 @@ public class AbilityHandler {
 				e.printStackTrace();
 			}
 		}
-		compound.setTag("Abilities", abilityNBT);
+		return compound;
 	}
 
 	public void loadAbilitiesFromNBT(NBTTagCompound compound) {
@@ -341,7 +338,7 @@ public class AbilityHandler {
 		public AbilityHolder(String source, SlotInformation info, IAbilityInterface ability) {
 			this.source = source;
 			this.info = info;
-			this.ability = ability;
+			this.ability = ability.cacheAbilityHolder(this);
 		}
 
 		public final String getSourceID() {

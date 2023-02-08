@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,9 +23,11 @@ import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.traits.abilities.AbilityChargedShot;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
 import xzeroair.trinkets.util.helpers.ColorHelper;
+import xzeroair.trinkets.util.helpers.DrawingHelper;
 
 public class RaceElf extends EntityRacePropertiesHandler {
 
@@ -48,8 +51,9 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
 	@Override
 	public void whileTransformed() {
-		if (entity.world.isRemote)
+		if (entity.world.isRemote) {
 			return;
+		}
 		try {
 			if (entity.world.getBiome(entity.getPosition()) != null) {
 				final Set<Type> biomeType = BiomeDictionary.getTypes(entity.world.getBiome(entity.getPosition()));
@@ -76,12 +80,16 @@ public class RaceElf extends EntityRacePropertiesHandler {
 	}
 
 	private ModelBase ears = new ElfEars();
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/ears.png");
+	public static final ResourceLocation TEXTURE_INNER = new ResourceLocation(Reference.MODID + ":" + "textures/inner_ears.png");
+	public static final ResourceLocation TEXTURE_OUTER = new ResourceLocation(Reference.MODID + ":" + "textures/outer_ears.png");
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || !this.showTraits())
+		if (!TrinketsConfig.CLIENT.rendering || !this.showTraits()) {
 			return;
+		}
 		ears = new ElfEars();
 		GlStateManager.pushMatrix();
 		if (entity.isSneaking()) {
@@ -95,17 +103,47 @@ public class RaceElf extends EntityRacePropertiesHandler {
 			GlStateManager.translate(0.0F, -0.02F, -0.045F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 		}
-		final float[] rgb = ColorHelper.getRGBColor(this.getTraitColor());
-		GlStateManager.color(
-				rgb[0],
-				rgb[1],
-				rgb[2]
-		);
+		final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
+		final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getTraitColor() : this.getAltTraitColor());
+		final float fscale = 0.30F;
+		GlStateManager.scale(fscale, fscale, fscale);
+		final double x = 0.0;
+		final double y = -1.5;
+		final double height = 1;
+		final double width = 1;
+		final double z = -0.4;
+		final float u = 16;
+		final float v = 0;
+		final int uWidth = 16;
+		final int vHeight = 16;
+		final float tileWidth = 64;
+		final float tileHeight = 32;
+		final double xR = 0.72;
+		final double xL = -xR;
+		float rot = 26F;
+		final int solidVariant = 2;
 		GlStateManager.disableLighting();
 		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		ears.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1F);
+		GlStateManager.rotate(-rot, 0, 1, 0);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			DrawingHelper.Draw(TEXTURE, x + xR, y, z + 0.0001, u, v + 16, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+		} else {
+			DrawingHelper.Draw(TEXTURE_INNER, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			DrawingHelper.Draw(TEXTURE_OUTER, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+			DrawingHelper.Draw(TEXTURE_OUTER, x + xR, y, z + 0.0001, u, v + 16, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+		}
+		GlStateManager.rotate(rot * 2, 0, 1, 0);
+		if (this.getTraitVariant() == solidVariant) {
+			DrawingHelper.Draw(TEXTURE, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			DrawingHelper.Draw(TEXTURE, x + xL, y, z + 0.0001, u, v + 16, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+		} else {
+			DrawingHelper.Draw(TEXTURE_INNER, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			DrawingHelper.Draw(TEXTURE_OUTER, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+			DrawingHelper.Draw(TEXTURE_OUTER, x + xL, y, z + 0.0001, u, v + 16, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+		}
 		GlStateManager.enableLighting();
 		GlStateManager.enableCull();
 		GlStateManager.disableBlend();

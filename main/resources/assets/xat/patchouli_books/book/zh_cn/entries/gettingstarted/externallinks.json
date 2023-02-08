@@ -1,11 +1,11 @@
 {
-    "name": "External Links",
+    "name": "外部链接",
     "icon": "minecraft:filled_map",
     "category": "gettingstarted",
     "pages": [
         {
             "type": "text",
-            "text": "$(l:https://discord.gg/es2AEVs)Trinkets Discord server$(/l) (come chat with us if you'd like)$(br)$(l:https://github.com/XzeroAir/Trinkets/issues)Trinkets Github Issues Page$(/l) (you can report bugs and give suggestions here)"
+            "text": "$(l:https://discord.gg/es2AEVs)Trinkets Discord server$(/l) （欢迎与我们联系）$(br)$(l:https://github.com/XzeroAir/Trinkets/issues)Trinkets Github Issues Page$(/l) （你可以在这里反馈 bug 或提建议）"
         }
     ]
 }

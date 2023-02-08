@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.traits.elements.IElementInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.registry.TrinketRegistry;
 
 public class TrinketsRegistryEvent<V> extends Event {
@@ -45,7 +45,7 @@ public class TrinketsRegistryEvent<V> extends Event {
 		}
 	}
 
-	public static class RegisterElementsEvent extends TrinketsRegistryEvent<IElementInterface> {
+	public static class RegisterElementsEvent extends TrinketsRegistryEvent<Element> {
 		public RegisterElementsEvent(TrinketRegistry registry) {
 			super(registry);
 		}

@@ -36,10 +36,10 @@ public class TrinketArcingOrb extends AccessoryBase {
 	@SideOnly(Side.CLIENT)
 	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "dodge", serverConfig.dodgeAbility);
-		final KeyEntry key1 = new OptionEntry("dodgecost", serverConfig.dodgeAbility, serverConfig.dodgeCost);
-		final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "dodgestun", serverConfig.dodgeStuns);
-		final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "boltattack", serverConfig.attackAbility);
+		final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "dodge", serverConfig.dodgeAbility && !(TrinketsConfig.compat.elenaiDodge));
+		final KeyEntry key1 = new LangEntry(this.getTranslationKey(stack), "dodge.stun", serverConfig.dodgeStuns);
+		final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "boltattack", serverConfig.attackAbility);
+		final KeyEntry key3 = new OptionEntry("dodgecost", serverConfig.dodgeAbility, serverConfig.dodgeCost);
 		final KeyEntry key4 = new OptionEntry("boltcost", serverConfig.attackAbility, serverConfig.attackCost);
 		final KeyEntry key5 = new OptionEntry("boltdamage", serverConfig.attackAbility, serverConfig.attackDmg);
 		final KeyEntry key6 = new KeyBindEntry("arckb", serverConfig.attackAbility, ModKeyBindings.ARCING_ORB_ABILITY.getDisplayName());

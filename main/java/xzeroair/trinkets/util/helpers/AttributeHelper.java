@@ -23,8 +23,23 @@ public class AttributeHelper {
 	public static void removeAttributesByUUID(EntityLivingBase entity, UUID uuid) {
 		final Collection<IAttributeInstance> attributes = entity.getAttributeMap().getAllAttributes();
 		for (final IAttributeInstance attribute : attributes) {
-			if (attribute.getModifier(uuid) != null) {
-				attribute.removeModifier(uuid);
+			if (!attribute.getAttribute().equals(RaceAttribute.ENTITY_RACE)) {
+				if (attribute.getModifier(uuid) != null) {
+					attribute.removeModifier(uuid);
+				}
+			}
+		}
+	}
+
+	public static void removeAttributesByUUID(EntityLivingBase entity, UUID... uuids) {
+		final Collection<IAttributeInstance> attributes = entity.getAttributeMap().getAllAttributes();
+		for (final IAttributeInstance attribute : attributes) {
+			if (!attribute.getAttribute().equals(RaceAttribute.ENTITY_RACE)) {
+				for (UUID uuid : uuids) {
+					if (attribute.getModifier(uuid) != null) {
+						attribute.removeModifier(uuid);
+					}
+				}
 			}
 		}
 	}

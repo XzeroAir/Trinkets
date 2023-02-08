@@ -17,9 +17,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,8 +38,14 @@ public class EnderQueenHandler {
 	public void soundEvent(PlaySoundEvent event) {
 		final EntityPlayerSP player = Minecraft.getMinecraft().player;
 		if ((player != null) && (player.world != null)) {
-			if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)
-					|| TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player)) {
+			if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) ||
+					(TrinketHelper.getSlotInfoForArmor(
+							player,
+							stack -> !stack.isEmpty() &&
+									stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
+					) != null)
+					||
+					TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player)) {
 				if (event.getSound().getSoundLocation().toString().contentEquals("minecraft:entity.endermen.stare")) {
 					event.setResultSound(null);
 				}
@@ -97,8 +100,14 @@ public class EnderQueenHandler {
 					EntityPlayer.class, bBox,
 					Predicates.and(
 							EntitySelectors.NOT_SPECTATING,
-							player -> ((player != null) && TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara))
-									|| TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player)
+							player -> (((player != null) &&
+									TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) ||
+									(TrinketHelper.getSlotInfoForArmor(
+											player,
+											stack -> !stack.isEmpty() &&
+													stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
+									) != null) ||
+									TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player))
 					)
 			);
 			if (!entLivList.isEmpty() && !entLivList.contains(entity)) {
@@ -107,18 +116,6 @@ public class EnderQueenHandler {
 				}
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public void TargetEvent(LivingSetAttackTargetEvent event) {
-	}
-
-	@SubscribeEvent
-	public void experienceDropEvent(LivingExperienceDropEvent event) {
-	}
-
-	@SubscribeEvent
-	public void ItemDropEvent(LivingDropsEvent event) {
 	}
 
 }

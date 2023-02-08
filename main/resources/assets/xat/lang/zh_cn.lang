@@ -625,6 +625,8 @@ xat.config.server.ender_tiara.ignoredamage.spawn.chance=Enderman Spawn Chance
 xat.config.server.ender_tiara.ignoredamage.spawn.chance.tooltip=1 in X chance to to ignore damage and spawn an Enderman to fight for you
 xat.config.server.ender_tiara.ignoredamage.teleport=Damaged Teleport
 xat.config.server.ender_tiara.ignoredamage.teleport.tooltip=Should you teleport randomly when Damage is Ignored
+xat.config.server.ender_tiara.ignoredamage.teleport.chance=Teleport Chance
+xat.config.server.ender_tiara.ignoredamage.teleport.chance.tooltip=1 in X chance to teleport when taking indirect damage
 xat.config.server.ender_tiara.endermen.follow=Endermen Follow
 xat.config.server.ender_tiara.endermen.follow.tooltip=Nearby Endermen Follow you if enabled
 xat.config.server.ender_tiara.endermen.retaliate=Endermen Retaliate
@@ -898,6 +900,10 @@ xat.config.races.goblin=Goblin Race Settings
 xat.config.races.goblin.tooltip=
 xat.config.races.goblin.rider=Goblin Rider
 xat.config.races.goblin.rider.tooltip=Can Goblins mount tamed wolves
+xat.config.races.goblin.creeper=Friendly Creepers
+xat.config.races.goblin.creeper.tooltip=Do Creepers Ignore Goblins
+xat.config.races.goblin.creeper.explode=Creepers Explode
+xat.config.races.goblin.creeper.explode.tooltip=Do Creepers explode when attacked
 xat.config.races.goblin.natural_resistance=Naturally Resistant
 xat.config.races.goblin.natural_resistance.tooltip=Should Goblins be naturally resistant to Fire and explosions
 
@@ -998,6 +1004,9 @@ xat.config.iceandfire.tooltip=
 
 xat.config.firstaid=First Aid Settings
 xat.config.firstaid.tooltip=
+
+xat.config.fire_resistance_tiers=Fire Resistance Tiers
+xat.config.fire_resistance_tiers.tooltip=
 
 xat.config.baubles=Baubles
 xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm

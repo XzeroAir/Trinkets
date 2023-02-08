@@ -37,13 +37,17 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 
 	@Override
 	public NBTTagCompound getTag() {
-		final NBTTagCompound forgeData = object.getEntityData();
-		if ((forgeData != null) && (object instanceof EntityPlayer)) {
-			if (!forgeData.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
-				forgeData.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+		NBTTagCompound tag = object.getEntityData();
+		if (tag != null) {
+			final NBTTagCompound persistentData;
+			if (object instanceof EntityPlayer) {
+				if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+					tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+				}
+				persistentData = tag.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+			} else {
+				persistentData = tag;
 			}
-
-			final NBTTagCompound persistentData = forgeData.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 			final String capTag = Reference.MODID + ".magicstats";
 			if (!persistentData.hasKey(capTag)) {
 				persistentData.setTag(capTag, new NBTTagCompound());
@@ -91,12 +95,9 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 		}
 		if (sync) {
 			sync = false;
-			this.refillMana();
+			this.refillMana(); // this only triggers when changing dimension from the end to the overworld, or when the player dies
 			//			this.sendManaToPlayer(object);
 		}
-		//		if (Trinkets.proxy.getSide() == Side.CLIENT) {
-		//			ScreenOverlayEvents.instance.SyncMana(this.getMana(), this.getBonusMana(), this.getMaxMana());
-		//		}
 	}
 
 	public void refillMana() {
@@ -114,6 +115,7 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 	}
 
 	public void setMana(float mana) {
+		//		System.out.println(this.mana + "|" + mana);
 		if (!object.world.isRemote) {
 			if (mana > this.getMaxMana()) {
 				this.mana = this.getMaxMana();
@@ -135,6 +137,8 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 		final boolean isCreative = (object instanceof EntityPlayer) && (((EntityPlayer) object).isCreative() || ((EntityPlayer) object).isSpectator());
 		boolean spend = true;
 		if (isCreative || !TrinketsConfig.SERVER.mana.mana_enabled) {
+			return true;
+		} else if (cost <= 0) {
 			return true;
 		} else if (cost <= this.getMana()) {
 			spend = true;

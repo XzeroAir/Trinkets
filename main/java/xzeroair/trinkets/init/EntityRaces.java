@@ -24,7 +24,7 @@ public class EntityRaces {
 	//	public static final EntityRaceMixed mixed;
 
 	private static EntityRace getRegisteredRace(String name) {
-		EntityRace race = EntityRace.Registry.getObject(new ResourceLocation(Reference.MODID, name));
+		EntityRace race = EntityRace.Registry.getValue(new ResourceLocation(Reference.MODID, name));
 
 		if (race == null) {
 			throw new IllegalStateException("Invalid Race requested: " + name);

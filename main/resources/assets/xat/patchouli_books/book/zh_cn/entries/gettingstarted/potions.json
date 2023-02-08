@@ -1,33 +1,33 @@
 {
-    "name": "Mod Potions",
+    "name": "模组中的药水",
     "icon": "minecraft:potion",
     "category": "gettingstarted",
     "pages": [
 		{
             "type": "spotlight",
 			"item": "minecraft:potion{Potion:'xat:sparkling'}",
-            "text": "Restores 25% of your maximum mana."
+            "text": "恢复你 25% 最大魔力值"
         },
 		{
             "type": "spotlight",
 			"item": "minecraft:potion{Potion:'xat:glittering'}",
-            "text": "Restores 50% of your maximum mana."
+            "text": "恢复你 50% 最大魔力值"
         },
 		{
             "type": "spotlight",
 			"item": "minecraft:potion{Potion:'xat:glowing'}",
-            "text": "Restores 100% of your maximum mana."
+            "text": "恢复你 100% 的最大魔力值"
         },
 		{
             "type": "spotlight",
 			"item": "minecraft:potion{Potion:'xat:restorative'}",
-            "text": "Permanently reverts you to a human if you were any other race. Also restores health."
+            "text": "如果你已变形为其他种族，永久将你还原为人类。同时恢复生命值。"
         },
 		{
             "type": "spotlight",
 			"item": "minecraft:potion{Potion:'xat:human'}",
-			"title": "All Race Potions",
-            "text": "Temporarily turns you into the respective race."
+			"title": "全种族药水",
+            "text": "暂时将你变形成对应的种族。"
         }
     ]
 }

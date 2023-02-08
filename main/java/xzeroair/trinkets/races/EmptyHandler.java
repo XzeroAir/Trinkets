@@ -23,12 +23,10 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
 	@Override
 	public void startTransformation() {
-		//		progress = 1D;
 	}
 
 	@Override
 	public void endTransformation() {
-
 	}
 
 	@Override
@@ -45,7 +43,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 						double amount = attributeShell.getAmount();
 						int operation = attributeShell.getOperation();
 						boolean isSaved = attributeShell.isSaved();
-						UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(true);
+						UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(false);
 						//					attribute.addModifier(entity, (amount), operation);
 						attribute.addModifier(entity, (amount * d), operation);
 					}

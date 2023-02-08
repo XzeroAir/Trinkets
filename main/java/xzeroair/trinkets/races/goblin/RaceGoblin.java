@@ -9,22 +9,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
@@ -37,13 +28,16 @@ import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.goblin.config.GoblinConfig;
 import xzeroair.trinkets.traits.abilities.AbilityClimbing;
+import xzeroair.trinkets.traits.abilities.other.AbilityWolfMount;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.ColorHelper;
+import xzeroair.trinkets.util.helpers.DrawingHelper;
 
 public class RaceGoblin extends EntityRacePropertiesHandler {
 
 	public static final GoblinConfig serverConfig = TrinketsConfig.SERVER.races.goblin;
-	private int cooldown = 0;
+	//	private int cooldown = 0;
 
 	public RaceGoblin(@Nonnull EntityLivingBase e) {
 		super(e, EntityRaces.goblin);
@@ -52,28 +46,19 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 	@Override
 	public void startTransformation() {
 		this.addAbility(new AbilityClimbing());
+		this.addAbility(new AbilityWolfMount());
 	}
 
 	@Override
 	public void whileTransformed() {
-		if (entity.getRidingEntity() instanceof AlphaWolf) {
-			if (!entity.isPotionActive(MobEffects.STRENGTH)) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
-			}
-			if (!entity.isPotionActive(MobEffects.REGENERATION)) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));
-			}
-		}
-		if (cooldown > 0) {
-			cooldown--;
-		}
 	}
 
 	@Override
 	public void targetedByEnemy(EntityLivingBase enemy) {
-		if (enemy instanceof EntityCreeper) {
-			((EntityCreeper) enemy).setAttackTarget(null);
-			((EntityCreeper) enemy).setCreeperState(-1);
+		if (serverConfig.friendly_creepers) {
+			if (enemy instanceof EntityCreeper) {
+				((EntityCreeper) enemy).setAttackTarget(null);
+			}
 		}
 	}
 
@@ -97,94 +82,28 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 		return dmg;
 	}
 
-	public boolean MountWolf(EntityWolf wolf) {
-		final World world = entity.getEntityWorld();
-		final boolean canRide = serverConfig.rider;
-		final boolean isOwner = (wolf.isTamed() && wolf.isOwner(entity));
-		if (!canRide || !isOwner || wolf.isChild()) {
-			return false;
-		}
-		final ItemStack mainStack = entity.getHeldItemMainhand();
-		final ItemStack offStack = entity.getHeldItemOffhand();
-		if (mainStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon") ||
-				offStack.getItem().getRegistryName().getNamespace().equalsIgnoreCase("carryon")) {
-			return false;
-		}
-		boolean flag = mainStack.isEmpty();
-		if (entity instanceof EntityPlayer) {
-			if (mainStack.getItem().onLeftClickEntity(mainStack, (EntityPlayer) entity, wolf)) {
-				flag = false;
-			}
-		}
-		if (flag) {
-			if (!world.isRemote) {
-				if (!entity.isRiding()) {
-					final AlphaWolf newWolf = new AlphaWolf(world);
-					final NBTTagCompound tag = new NBTTagCompound();
-					wolf.writeToNBT(tag);
-					tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
-					newWolf.storeOldWolf(tag);
-					newWolf.setCustomNameTag(wolf.getCustomNameTag());
-					newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
-					newWolf.setTamedBy(entity);
-					newWolf.setHealth(wolf.getHealth());
-					world.spawnEntity(newWolf);
-					entity.startRiding(newWolf);
-					wolf.setDead();
-					return true;
-				} else {
-					//					int mountID = entity.getRidingEntity().getEntityId();
-					//					int attackedID = wolf.getEntityId();
-					//					System.out.println(mountID + "|" + attackedID);
-					//					if (mountID == attackedID) {
-					//						return true;
-					//					}
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public void interact(PlayerInteractEvent event) {
-		final boolean canRide = serverConfig.rider;
-		if (!canRide) {
-			return;
-		}
-		if (entity.isRiding() && (entity.getRidingEntity() instanceof AlphaWolf)) {
-			if ((cooldown == 0) && (event.getHand() == EnumHand.OFF_HAND)) {
-				double reachDistance = 5;
-				final IAttributeInstance reachAttribe = entity.getEntityAttribute(EntityPlayer.REACH_DISTANCE);
-				if (reachAttribe != null) {
-					reachDistance = reachAttribe.getAttributeValue();
-				}
-
-				final AlphaWolf wolf = (AlphaWolf) entity.getRidingEntity();
-				wolf.MountedAttack(event.getEntityPlayer(), reachDistance);
-				cooldown = 30;
-			}
-		}
-	}
-
-	@Override
-	public void interactWithEntity(PlayerInteractEvent.EntityInteract event) {
-	}
-
 	@Override
 	public boolean attackedEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		if (target instanceof EntityWolf) {
-			final EntityWolf wolf = (EntityWolf) target;
-			if (this.MountWolf(wolf)) {
-				// TODO Hurts Wolf before spawn for some weird reason
-				//				System.out.println("Mounted");
-				return false;
+		boolean attack = super.attackedEntity(target, source, dmg);
+		if (serverConfig.creepers_explode) {
+			if (attack) {
+				if (target instanceof EntityCreeper) {
+					if (!((EntityCreeper) target).hasIgnited()) {
+						((EntityCreeper) target).ignite();
+					}
+					if (((EntityCreeper) target).getCreeperState() == -1) {
+						((EntityCreeper) target).setCreeperState(1);
+					}
+				}
 			}
 		}
-		//		System.out.println(dmg + "");
-		return super.attackedEntity(target, source, dmg);
+		return attack;
 	}
 
 	private final ModelBase ears = new GoblinEars();
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/ears.png");
+	public static final ResourceLocation TEXTURE_INNER = new ResourceLocation(Reference.MODID + ":" + "textures/inner_ears.png");
+	public static final ResourceLocation TEXTURE_OUTER = new ResourceLocation(Reference.MODID + ":" + "textures/outer_ears.png");
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -205,17 +124,58 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
 				GlStateManager.translate(0.0F, -0.02F, -0.045F);
 				GlStateManager.scale(1.1F, 1.1F, 1.1F);
 			}
-			final float[] rgb = ColorHelper.getRGBColor(this.getTraitColor());
-			GlStateManager.color(
-					rgb[0],
-					rgb[1],
-					rgb[2]
-			);
+			final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
+			final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getTraitColor() : this.getAltTraitColor());
+			final float fscale = 0.34F;
+			GlStateManager.scale(fscale, fscale, fscale);
+			final double x = 0.0;
+			final double y = -1.2;
+			final double z = -0.6;
+			final double height = 1;
+			final double width = 1;
+			final float u = 0;
+			final float v = 0;
+			final int uWidth = 16;
+			final int vHeight = 16;
+			final float tileWidth = 64;
+			final float tileHeight = 32;
+			final double xR = 0.50;
+			final double xL = -xR;
+			float rot = 30F;
+			final int solidVariant = 2;
 			GlStateManager.disableLighting();
 			GlStateManager.disableCull();
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-			ears.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1F);
+
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(-rot, 0, 1, 0);
+			GlStateManager.rotate(-10, 1, 0, 0);
+			//			GlStateManager.rotate(20, 0, 0, 1);
+			if (this.getTraitVariant() == solidVariant) {
+				DrawingHelper.Draw(TEXTURE, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+				DrawingHelper.Draw(TEXTURE, x + xR, y, z + 0.0001, u, v + 16, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			} else {
+				DrawingHelper.Draw(TEXTURE_INNER, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+				DrawingHelper.Draw(TEXTURE_OUTER, x + xR, y, z, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+				DrawingHelper.Draw(TEXTURE_OUTER, x + xR, y, z + 0.0001, u, v + 16, uWidth, vHeight, width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+			}
+			GlStateManager.popMatrix();
+
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(rot, 0, 1, 0);
+			GlStateManager.rotate(-10, 1, 0, 0);
+			//			GlStateManager.rotate(-20, 0, 0, 1);
+			if (this.getTraitVariant() == solidVariant) {
+				DrawingHelper.Draw(TEXTURE, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+				DrawingHelper.Draw(TEXTURE, x + xL, y, z + 0.0001, u, v + 16, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+			} else {
+				DrawingHelper.Draw(TEXTURE_INNER, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb[0], rgb[1], rgb[2], 1F);
+				DrawingHelper.Draw(TEXTURE_OUTER, x + xL, y, z, u, v, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+				DrawingHelper.Draw(TEXTURE_OUTER, x + xL, y, z + 0.0001, u, v + 16, uWidth, vHeight, -width, height, tileWidth, tileHeight, rgb2[0], rgb2[1], rgb2[2], 1F);
+			}
+			GlStateManager.popMatrix();
+
 			GlStateManager.enableLighting();
 			GlStateManager.enableCull();
 			GlStateManager.disableBlend();

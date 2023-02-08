@@ -38,9 +38,7 @@ import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.handlers.SizeHandler;
-import xzeroair.trinkets.util.helpers.AttributeHelper;
 import xzeroair.trinkets.util.helpers.ColorHelper;
-import xzeroair.trinkets.util.helpers.EyeHeightHandler;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
@@ -50,7 +48,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	protected boolean firstTransformUpdate;
 
 	protected EntityLivingBase entity;
-	//	protected ElementalAttributes element;
+	//	protected ElementalAttributes elements;
 
 	protected int targetWidth = 100;
 	protected int targetHeight = 100;
@@ -60,11 +58,14 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	protected boolean showTraits;
 	protected String traitColor;
 	protected String traitColorAlt;
+	protected int traitVariant;
 
 	protected EntityProperties properties;
 
 	protected float healthBeforeTransformation; // TODO Store the Health before, then calculate the health afterwards
-	protected float maxHealthBeforeTranformation; // Don't forget to check leaf breaking
+	protected float maxHealthBeforeTranformation;
+
+	protected double progress = 0D;
 
 	public EntityRacePropertiesHandler(EntityLivingBase e, EntityRace race) {
 		entity = e;
@@ -72,8 +73,10 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		firstTransformUpdate = true;
 		showTraits = true;
 		this.race = race;
+		//		elements = new ElementalAttributes();
 		traitColor = ColorHelper.convertDecimalColorToHexadecimal(race.getPrimaryColor());
 		traitColorAlt = ColorHelper.convertDecimalColorToHexadecimal(race.getSecondaryColor());
+		traitVariant = 0;
 		this.setTargetHeight(race.getRaceHeight());
 		this.setTargetWidth(race.getRaceWidth());
 	}
@@ -110,9 +113,18 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		return this;
 	}
 
+	//	public EntityRacePropertiesHandler setElements(ElementalAttributes elements) {
+	//		this.elements = elements;
+	//		return this;
+	//	}
+
 	public EntityRace getRace() {
 		return race;
 	}
+
+	//	public ElementalAttributes getElements() {
+	//		return elements;
+	//	}
 
 	public void addAbility(IAbilityInterface ability) {
 		if (properties != null) {
@@ -144,13 +156,12 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		if (properties == null) {
 			properties = Capabilities.getEntityProperties(entity);
 		}
+		this.startTransformation();
 		try {
 			this.loadNBTData(properties.getTag());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		AttributeHelper.removeAttributesByUUID(entity, properties.getPreviousRace().getUUID());
-		this.startTransformation();
 	}
 
 	/**
@@ -158,13 +169,10 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	 */
 	public void onTransformEnd() {
 		this.endTransformation();
-		AttributeHelper.removeAttributesByUUID(entity, race.getUUID());
-
 		SizeAttribute artemis = this.getArtemisAttributeSize();
 		if (artemis != null) {
 			artemis.removeModifiers();
 		}
-
 		try {
 			this.savedNBTData(properties.getTag());
 		} catch (Exception e) {
@@ -173,9 +181,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	}
 
 	public void onTick() {
-
-		SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
 		this.updateSize();
+		SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
 		this.initAttributes();
 		this.eyeHeightHandler();
 		if (this.isTransformed()) {
@@ -234,8 +241,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 		return (properties.getHeightValue() == this.getTargetHeight()) && (properties.getWidthValue() == this.getTargetWidth());
 	}
 
-	protected double progress = 0D;
-
 	public double TransformationProgress() {
 		if (!this.isTransformed() && !this.isTransforming()) {
 			return 1D;
@@ -272,12 +277,11 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 			//			System.out.println(height + "|" + width + "| " + heightProgress + " | " + widthProgress + " | " + finalValue);
 			if ((finalValue >= 0D) && (finalValue <= 1D) && (progress != finalValue)) {
 				progress = finalValue;
-				this.savedNBTData(properties.getTag());
+				//				this.savedNBTData(properties.getTag());
 			}
 			if (this.TransformationProgress() >= 1D) {
 				float heal = (float) StringUtils.getAccurateDouble(((entity.getMaxHealth() - maxHealthBeforeTranformation) - (maxHealthBeforeTranformation - healthBeforeTransformation)));
 				if (heal > 0) {
-					//					System.out.println(heal);
 					entity.heal(heal);
 				}
 				//			FirstAidCompat.rescale(entity);
@@ -300,13 +304,56 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
 	protected void eyeHeightHandler() {
 		if (entity instanceof EntityPlayer) {
-			EyeHeightHandler.eyeHeightHandler(
-					(EntityPlayer) entity,
-					this.isTransformed(),
-					this.isTransforming(),
-					0,
-					this.getHeight()
-			);
+			if (!TrinketsConfig.CLIENT.cameraHeight) {
+				return;
+			}
+			final EntityPlayer player = (EntityPlayer) entity;
+			final float defaultEyeHeight = player.getDefaultEyeHeight();
+			if (this.isTransforming() || this.isTransformed()) {
+				// 165 when sneaking
+				// 162 eyeheight, sneaking is -0.8
+				float f = (float) StringUtils.getAccurateDouble(((this.getHeight() * 0.85F)));
+
+				if (player.isPlayerSleeping()) {
+					f = 0.2F;
+				} else if (!player.isSneaking()) {
+					if (player.isElytraFlying()) {
+						f *= 0.2F;//0.4F;
+					}
+				} else {
+					f -= f / 20;//0.08F;
+				}
+				//			f -= 0.05F;
+
+				//			if (player.isPlayerSleeping()) {
+				//				f = 0.2F;
+				//			} else if (!player.isSneaking() && (player.height != f)) {
+				//				if (player.isElytraFlying() || (player.height == 0.6F)) {
+				//					f = 0.4F;
+				//				}
+				//			} else {
+				//				f -= 0.08F;
+				//			}
+				if (player.isRiding()) {
+					final Entity mount = player.getRidingEntity();
+					if (mount != null) {
+						final float mountHeight = mount.height;
+						final double mountOffset = mount.getMountedYOffset();
+						final double t = mountHeight - mountOffset;
+						//				if (f < mountHeight) {
+						//					f = mountHeight;
+						//				}
+						//					f += t;
+						f = MathHelper.clamp(f, mountHeight, f);
+					}
+				}
+				//			System.out.println(f + "");
+				player.eyeHeight = f;
+			} else {
+				if (player.eyeHeight != defaultEyeHeight) {
+					player.eyeHeight = defaultEyeHeight;
+				}
+			}
 		}
 	}
 
@@ -361,6 +408,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 			showTraits = source.showTraits;
 			traitColor = source.traitColor;
 			traitColorAlt = source.traitColorAlt;
+			traitVariant = source.traitVariant;
 			targetHeight = source.targetHeight;
 			targetWidth = source.targetWidth;
 		}
@@ -380,11 +428,17 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	@Override
 	public NBTTagCompound savedNBTData(NBTTagCompound compound) {
 		if ((race != null) && !race.isNone()) {
-			final NBTTagCompound rTag = new NBTTagCompound();
+			final String key = race.getRegistryName().toString();
+			if (!compound.hasKey(key)) {
+				compound.setTag(key, new NBTTagCompound());
+			}
+			NBTTagCompound rTag = compound.getCompoundTag(key);
 			rTag.setBoolean("trait_shown", showTraits);
 			rTag.setString("trait_color", traitColor);
+			rTag.setString("trait_color_alt", traitColorAlt);
+			rTag.setInteger("trait_variant", traitVariant);
 			rTag.setDouble("transformation_progress", progress);
-			compound.setTag(race.getName(), rTag);
+			//			elements.saveToNBT(rTag);
 		}
 		return compound;
 	}
@@ -392,18 +446,28 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		if ((race != null) && !race.isNone()) {
-			final String rName = race.getName();
-			if (compound.hasKey(rName)) {
-				final NBTTagCompound rTag = compound.getCompoundTag(race.getName());
+			final String key = race.getRegistryName().toString();
+			if (compound.hasKey(key)) {
+				final NBTTagCompound rTag = compound.getCompoundTag(key);
 				if (rTag.hasKey("trait_shown")) {
 					showTraits = rTag.getBoolean("trait_shown");
 				}
 				if (rTag.hasKey("trait_color")) {
 					traitColor = rTag.getString("trait_color");
 				}
+				if (rTag.hasKey("trait_color_alt")) {
+					traitColorAlt = rTag.getString("trait_color_alt");
+				}
+				if (rTag.hasKey("trait_variant")) {
+					traitVariant = rTag.getInteger("trait_variant");
+				}
 				if (rTag.hasKey("transformation_progress")) {
 					progress = rTag.getDouble("transformation_progress");
 				}
+				//				if (rTag.hasKey("element")) {
+				//					element = rTag.getString("element");
+				//				}
+				//				elements.loadFromNBT(rTag);
 			}
 		}
 	}
@@ -422,6 +486,22 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
 	public void setTraitColor(String color) {
 		traitColor = color;
+	}
+
+	public String getAltTraitColor() {
+		return traitColorAlt;
+	}
+
+	public void setAltTraitColor(String color) {
+		traitColorAlt = color;
+	}
+
+	public int getTraitVariant() {
+		return traitVariant;
+	}
+
+	public void setTraitVariant(int variant) {
+		traitVariant = variant;
 	}
 
 	/*

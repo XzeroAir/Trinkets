@@ -3,12 +3,15 @@ package xzeroair.trinkets.network.vip;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
@@ -40,7 +43,33 @@ public class VipStatusPacket extends ThreadSafePacket {
 
 	@Override
 	public void handleClientSafe(NetHandlerPlayClient client) {
-
+		final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
+		final World world = clientPlayer.getEntityWorld();
+		final Entity entity = world.getEntityByID(entityID);
+		Capabilities.getVipStatus(entity, vip -> {
+			if (TrinketsConfig.SERVER.misc.retrieveVIP) {
+				vip.confirmedStatus();
+			}
+			vip.loadFromNBT(tag);
+		});
+		//			if (tag == null) {
+		//				return;
+		//			} else {
+		//				if (!tag.hasKey("uuid")) {
+		//					return;
+		//				}
+		//			}
+		//			final String id = tag.getString("uuid");
+		//			if (VIPHandler.Vips.containsKey(id.replaceAll("-", ""))) {
+		//				final Entity entity = serverPlayer.getServerWorld().getEntityFromUuid(UUID.fromString(id));
+		//				if ((entity != null) && (entity instanceof EntityPlayerMP)) {
+		//					final EntityPlayerMP vip = (EntityPlayerMP) entity;
+		//					final VipStatus status = Capabilities.getVipStatus(vip);
+		//					if (status != null) {
+		//						status.confirmedStatus();
+		//					}
+		//				}
+		//			}
 	}
 
 	@Override

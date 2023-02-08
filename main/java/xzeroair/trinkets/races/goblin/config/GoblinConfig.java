@@ -18,6 +18,14 @@ public class GoblinConfig {
 	@Name("02. Goblin Rider")
 	@LangKey(PREFIX + ".rider")
 	public boolean rider = true;
+	@Config.Comment("Should Creepers Ignore Goblin Players")
+	@Name("03. Friendly Creepers")
+	@LangKey(PREFIX + ".creeper")
+	public boolean friendly_creepers = true;
+	@Config.Comment("Should Creepers Explode when Attacked by Goblin Players")
+	@Name("03. Creepers Explode")
+	@LangKey(PREFIX + ".creeper.explode")
+	public boolean creepers_explode = true;
 
 	@Name("Compatability Settings")
 	@LangKey(Reference.MODID + ".config.compatability")

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilitiesHandler;
@@ -25,11 +26,11 @@ import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.proxy.CommonProxy;
 import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.TrinketsConfigEvent;
-import xzeroair.trinkets.util.registry.TrinketRegistry;
 import xzeroair.trinkets.vip.VIPHandler;
 
 // @formatter:off
@@ -46,7 +47,16 @@ import xzeroair.trinkets.vip.VIPHandler;
 // @formatter:on
 public class Trinkets {
 
-	public static final CreativeTabs trinketstab = new TrinketsTab("trinketstab");
+	public static final CreativeTabs trinketstab = new CreativeTabs("trinketstab") {
+		@Override
+		public ItemStack createIcon() {
+			if (Loader.isModLoaded("baubles")) {
+				return new ItemStack(ModItems.baubles.BaubleGlowRing);
+			} else {
+				return new ItemStack(ModItems.trinkets.TrinketGlowRing);
+			}
+		}
+	};
 
 	public static Configuration config;
 
@@ -64,10 +74,6 @@ public class Trinkets {
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
 
-	public static final TrinketRegistry<ResourceLocation, EntityRace> RaceRegistry = new TrinketRegistry<>();
-	//	public static final TrinketRegistry<ResourceLocation, IElementInterface> elementRegistry = new TrinketRegistry<>();
-	//	public static final TrinketRegistry<ResourceLocation, IAbilityInterface> abilityRegistry = new TrinketRegistry<>();
-
 	public static boolean Baubles = false;
 	public static boolean ArtemisLib = false;
 	public static boolean ToughAsNails = false;
@@ -77,6 +83,7 @@ public class Trinkets {
 	public static boolean ElenaiDodge2 = false;
 	public static boolean EnhancedVisuals = false;
 	public static boolean IceAndFire = false;
+	public static boolean FireResistanceTiers = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -90,7 +97,10 @@ public class Trinkets {
 			// TODO Remove this from the Loading Phase and do a Server Side Check, send info to the Client?
 			log.info("Trinkets and Baubles: Generating VIP List");
 			try {
+				long startTime = System.nanoTime();
 				VIPHandler.popVIPList();
+				long endTime = System.nanoTime() - startTime;
+				log.info("Trinkets and Baubles: Finished Gathering VIP List, Took " + (endTime / 1000000L) + "ms");
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
@@ -105,8 +115,9 @@ public class Trinkets {
 		ElenaiDodge2 = Loader.isModLoaded("elenaidodge2");
 		EnhancedVisuals = Loader.isModLoaded("enhancedvisuals");
 		IceAndFire = Loader.isModLoaded("iceandfire");
+		FireResistanceTiers = Loader.isModLoaded("fireresistancetiers");
 
-		//		Ability.init();
+		Element.registerElements();
 		log.info("Setting Up Races");
 		EntityRace.registerRaces();
 		log.info("Setting Up Blocks");
@@ -118,7 +129,6 @@ public class Trinkets {
 		Capabilities.init();
 
 		//Network
-		//		NetworkHandler.init();
 		log.info("Setting Up Networking");
 		NetworkHandler.INSTANCE.init();
 
@@ -152,10 +162,10 @@ public class Trinkets {
 		}
 	}
 
-	//	@EventHandler
-	//	public void serverStarting(FMLServerStartingEvent event) {
-	//		event.registerServerCommand(new CommandMana());
-	//	}
+	@EventHandler
+	public void serverStarting(FMLServerStartingEvent event) {
+		//		event.registerServerCommand(new CommandMain());
+	}
 
 	//	static {
 	//		FluidRegistry.enableUniversalBucket();

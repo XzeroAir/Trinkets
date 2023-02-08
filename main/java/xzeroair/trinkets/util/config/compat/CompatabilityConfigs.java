@@ -23,7 +23,7 @@ public class CompatabilityConfigs {
 	@Config.Name("ArtemisLib")
 	public boolean artemislib = false;
 
-	@Config.RequiresWorldRestart
+	@Config.RequiresMcRestart
 	@Config.Name("ElenaiDodge")
 	public boolean elenaiDodge = true;
 

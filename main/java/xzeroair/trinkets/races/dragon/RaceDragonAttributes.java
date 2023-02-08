@@ -12,8 +12,8 @@ public class RaceDragonAttributes extends RaceAttributesWrapper {
 		size = 120;
 		width = size;
 		height = size;
-		color1 = 0;
-		color2 = 0;
+		color1 = 3289650;
+		color2 = 9509561;
 		color3 = color1;
 		opacity = 1f;
 		trait_opacity = 1F;
