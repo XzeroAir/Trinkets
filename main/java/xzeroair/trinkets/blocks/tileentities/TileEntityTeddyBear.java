@@ -25,52 +25,6 @@ public class TileEntityTeddyBear extends TileEntity implements ITickable {
 
 	@Override
 	public void update() {
-		//		try {
-		//			final BlockTeddyBear block = (BlockTeddyBear) this.getBlockType();
-		//			EnumFacing defaultFacing = EnumFacing.NORTH;//EnumFacing.byIndex(i & facingOffset);
-		//			EnumTeddyType defaultType = EnumTeddyType.REMBO;//byMetadata(i & teddyOffset);
-		//			//						IBlockState defaultState = block.getDefaultState().withProperty(BlockTeddyBear.FACING, defaultFacing).withProperty(BlockTeddyBear.VARIANT, defaultType);
-		//			IBlockState defaultState = this.getWorld().getBlockState(this.getPos());
-		//			final int meta = block.getMetaFromState(defaultState);
-		//			//			final int meta = this.getBlockMetadata();
-		//
-		//			//			for (int o = 0; o < 8; o++) {
-		//			//				//				EnumFacing face = EnumFacing.byIndex(o & 7);
-		//			//				EnumFacing face = EnumFacing.byHorizontalIndex(o & 7);
-		//			//				EnumTeddyType type = EnumTeddyType.byMetadata(o & 3);
-		//			//				System.out.println(o + "|" + face + "|" + type);
-		//			//			}
-		//
-		//			int i = meta;
-		//			EnumFacing face = EnumFacing.byHorizontalIndex(i);
-		//			//			EnumFacing face = EnumFacing.byIndex(i & 7);
-		//			EnumTeddyType type = EnumTeddyType.byMetadata((i & 15) >> 2);
-		//			//			System.out.println(type);
-		//			int T = 0;
-		//			T |= EnumFacing.WEST.getHorizontalIndex(); // 4 West
-		//			T |= EnumTeddyType.TEDDY.getMetadata() << 2; // Rembo is 1
-		//
-		//			//			EnumFacing facing = EnumFacing.byIndex(T & 7);
-		//			EnumFacing facing = EnumFacing.byHorizontalIndex(T);
-		//			// 0 = down;
-		//			// 1 = up;
-		//			// 2 = north;
-		//			// 3 = south;
-		//			// 4 = west;
-		//			// 5 = east;
-		//			EnumTeddyType typing = EnumTeddyType.byMetadata((T & 15) >> 2);
-		//			// 0 = teddy
-		//			// 1 = rembo
-		//			// 2 = scary
-		//
-		//			//			System.out.println((i & 15) >> 2);
-		//			//			System.out.println((i & 3));
-		//			//			System.out.println(BlockTeddyBear.EnumTeddyType.values().length);
-		//			//			System.out.println(meta + "|" + T + "|" + face + "|" + facing + "|" + type + "|" + typing);
-		//			// Facing Should be South, and a Teddy
-		//		} catch (Exception e) {
-		//			e.printStackTrace();
-		//		}
 	}
 
 	public void setTeddyBear(ItemStack stack) {

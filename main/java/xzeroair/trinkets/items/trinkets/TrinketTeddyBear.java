@@ -75,7 +75,9 @@ public class TrinketTeddyBear extends AccessoryBase {
 			});
 			//			String xzeroair = "f5f28614-4e8b-4788-ae78-b020493dc5cb";
 			final boolean hasDisplayName = stack.hasDisplayName();
-			if (name.contains("ken")) {
+			if ((crafterID.equalsIgnoreCase("854adc0b-ae55-48d6-b7ba-e641a1eebf42") && !hasDisplayName) || name.contains("nyan")) {
+				return 10;
+			} else if (name.contains("ken")) {
 				return 9;
 			} else if (name.contains("ryu")) {
 				return 8;
@@ -212,10 +214,13 @@ public class TrinketTeddyBear extends AccessoryBase {
 		final ModelResourceLocation twilight = new ModelResourceLocation(this.getRegistryName().toString() + "_twilight", "inventory");
 		final ModelResourceLocation ryu = new ModelResourceLocation(this.getRegistryName().toString() + "_ryu", "inventory");
 		final ModelResourceLocation ken = new ModelResourceLocation(this.getRegistryName().toString() + "_ken", "inventory");
-		ModelBakery.registerItemVariants(this, normal, scary, rembo, shivaxi, bee, panda, artsy, twilight, ryu, ken);
+		final ModelResourceLocation nyan = new ModelResourceLocation(this.getRegistryName().toString() + "_nyan", "inventory");
+		ModelBakery.registerItemVariants(this, normal, scary, rembo, shivaxi, bee, panda, artsy, twilight, ryu, ken, nyan);
 		ModelLoader.setCustomMeshDefinition(this, stack -> {
 			int type = this.getTeddyVariant(stack);
-			if (type == 9) {
+			if (type == 10) {
+				return nyan;
+			} else if (type == 9) {
 				return ken;
 			} else if (type == 8) {
 				return ryu;

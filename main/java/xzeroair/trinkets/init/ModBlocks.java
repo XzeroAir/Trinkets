@@ -53,7 +53,7 @@ public class ModBlocks {
 		public static final BlockTeddyBear TWILIGHT = new BlockTeddyBear("twilight");
 		public static final BlockTeddyBear RYU = new BlockTeddyBear("ryu");
 		public static final BlockTeddyBear KEN = new BlockTeddyBear("ken");
-		//		public static final BlockTeddyBear NYAN = new BlockTeddyBear("nyan");
+		public static final BlockTeddyBear NYAN = new BlockTeddyBear("nyan");
 
 		protected static void registerTileEntityBlock(Class<? extends TileEntity> clss, ResourceLocation key) {
 			GameRegistry.registerTileEntity(clss, key);
@@ -75,7 +75,7 @@ public class ModBlocks {
 			registerBlock(TWILIGHT);
 			registerBlock(RYU);
 			registerBlock(KEN);
-			//			registerBlock(NYAN);
+			registerBlock(NYAN);
 		}
 
 		private static void registerBlock(Block block) {
@@ -105,6 +105,8 @@ public class ModBlocks {
 				return RYU;
 			case 9:
 				return KEN;
+			case 10:
+				return NYAN;
 			default:
 				return TEDDYBEAR;
 			}
