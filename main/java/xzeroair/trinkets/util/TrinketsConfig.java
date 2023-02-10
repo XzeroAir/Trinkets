@@ -57,6 +57,7 @@ public class TrinketsConfig {
 		configMap.put("compatLycanites", "" + TrinketsConfig.compat.lycanites);
 		configMap.put("compatDefiledLands", "" + TrinketsConfig.compat.defiledlands);
 		configMap.put("miscDepthStacking", "" + TrinketsConfig.SERVER.misc.depthStacks);
+		configMap.put("miscSMEStriderStacking", "" + TrinketsConfig.SERVER.misc.underwaterStriderStacks);
 		configMap.put("miscBlockMovement", "" + TrinketsConfig.SERVER.misc.movement);
 		configMap.put("raceBlacklist", StringUtils.combineStringArray(TrinketsConfig.SERVER.races.selectionBlacklist));
 		return configMap;
@@ -135,6 +136,9 @@ public class TrinketsConfig {
 					}
 					if (config.getKey().contentEquals("miscDepthStacking")) {
 						TrinketsConfig.SERVER.misc.depthStacks = Boolean.parseBoolean(config.getValue());
+					}
+					if (config.getKey().contentEquals("miscSMEStriderStacking")) {
+						TrinketsConfig.SERVER.misc.underwaterStriderStacks = Boolean.parseBoolean(config.getValue());
 					}
 					if (config.getKey().contentEquals("miscBlockMovement")) {
 						TrinketsConfig.SERVER.misc.movement = Boolean.parseBoolean(config.getValue());

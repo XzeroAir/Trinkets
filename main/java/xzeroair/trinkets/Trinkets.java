@@ -84,6 +84,8 @@ public class Trinkets {
 	public static boolean EnhancedVisuals = false;
 	public static boolean IceAndFire = false;
 	public static boolean FireResistanceTiers = false;
+	public static boolean BetterDiving = false;
+	public static boolean SoManyEnchantments = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -116,6 +118,8 @@ public class Trinkets {
 		EnhancedVisuals = Loader.isModLoaded("enhancedvisuals");
 		IceAndFire = Loader.isModLoaded("iceandfire");
 		FireResistanceTiers = Loader.isModLoaded("fireresistancetiers");
+		BetterDiving = Loader.isModLoaded("better_diving");
+		SoManyEnchantments = Loader.isModLoaded("somanyenchantments");
 
 		Element.registerElements();
 		log.info("Setting Up Races");

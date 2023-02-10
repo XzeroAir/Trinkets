@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -92,6 +93,28 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 					final boolean isSaved = attributeShell.isSaved();
 					if (!(this instanceof TrinketRaceBase)) {
 						UpdatingAttribute attribute = new UpdatingAttribute(this.getTranslationKey() + "." + name, uuid, name).setAmount(amount).setOperation(operation).setSavedInNBT(isSaved);
+						if (name.equalsIgnoreCase("forge.swimSpeed")) {
+							boolean skip = false;
+							if (!TrinketsConfig.SERVER.misc.depthStacks) {
+								if ((EnchantmentHelper.getDepthStriderModifier(entity) > 0)) {
+									skip = true;
+								}
+							}
+							try {
+								if (Trinkets.SoManyEnchantments && !TrinketsConfig.SERVER.misc.underwaterStriderStacks) {
+									Enchantment e = Enchantment.getEnchantmentByLocation("somanyenchantments:underwaterstrider");
+									boolean hasUnderwaterStrider = ((e != null) && (EnchantmentHelper.getMaxEnchantmentLevel(e, entity) > 0));
+									if (hasUnderwaterStrider) {
+										skip = true;
+									}
+								}
+							} catch (Exception e) {
+							}
+							if (skip) {
+								attribute.removeModifier(entity);
+								continue;
+							}
+						}
 						attribute.addModifier(entity, amount, operation);
 					}
 				}

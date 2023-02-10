@@ -332,6 +332,12 @@ public class ServerConfig {
 		public boolean depthStacks = false;
 
 		@Config.RequiresWorldRestart
+		@Config.Comment("Does Underwater Strider from Rins So many Enchantments Stack with Swim Speed Attributes?")
+		@Config.Name("Underwater Strider Stacks")
+		@LangKey(cfgPrefix + ".misc.sme.underwaterstrider")
+		public boolean underwaterStriderStacks = false;
+
+		@Config.RequiresWorldRestart
 		@Config.Comment("If enabled, the player will be unable to move when transforming from one race to another")
 		@Config.Name("Prevent Movement while transforming")
 		@LangKey(cfgPrefix + ".misc.movement")

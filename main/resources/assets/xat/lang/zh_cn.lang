@@ -986,6 +986,8 @@ xat.config.misc.tooltip=
 
 xat.config.misc.depth=Depth Strider Stacks
 xat.config.misc.depth.tooltip=Does Depth Strider Stack with Swim Speed Attributes?
+xat.config.misc.sme.underwaterstrider=Underwaater Strider Stacks
+xat.config.misc.sme.underwaterstrider.tooltip=Does Underwater Strider from Rin's So Many Enchantments Stack with Swim Speed Attributes?
 xat.config.misc.movement=Prevent Movement while transforming
 xat.config.misc.movement.tooltip=If enabled, the player will be unable to move when transforming from one race to another
 xat.config.misc.interaction.fix=Reach Interaction Fix

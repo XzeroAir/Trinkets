@@ -20,7 +20,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraft.util.math.Vec3d;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IMiningAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
@@ -47,45 +48,20 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			} else {
 				entity.setAir(300);
 			}
-			if (Loader.isModLoaded("better_diving")) {
+			if (Trinkets.BetterDiving) {
 				entity.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 150, 0, false, false));
 			}
 		}
-		//TODO REDO THIS
-		if ((serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity)) {
+		if ((!Trinkets.BetterDiving) && (serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity)) {
 			final BlockPos head = entity.getPosition();
 			final IBlockState headBlock = entity.world.getBlockState(head);
 			final Block block = headBlock.getBlock();
 			if ((entity.isInWater() || entity.isInLava()) && (block != Blocks.AIR)) {
 				this.handleMovement(entity);
-				//				double motion = 0.1;
-				//				final double bouyance = 0.25;
-				//				if (entity.isInLava()) {
-				//					motion = 0.09;
-				//				}
-				//				if (!entity.isSneaking()) {
-				//					entity.motionY = 0f;
-				//					if ((this.movingForward(entity, entity.getHorizontalFacing()) == true)) {
-				//						if (((entity.motionX > motion) || (entity.motionX < -motion)) || ((entity.motionZ > motion) || (entity.motionZ < -motion))) {
-				//							entity.motionY += MathHelper.clamp(entity.getLookVec().y / 1, -bouyance, bouyance);
-				//						}
-				//					}
-				//				} else {
-				//					if ((this.movingForward(entity, entity.getHorizontalFacing()) == false)) {
-				//						if (!(entity.motionY > 0)) {
-				//							if (entity.isInLava()) {
-				//								entity.motionY *= 1.75;
-				//							} else {
-				//								entity.motionY *= 1.25;
-				//							}
-				//						} else {
-				//
-				//						}
-				//
-				//					}
-				//				}
 			}
 		}
+		//		double spd = this.entitySpeed(entity);
+		//		System.out.println(spd);
 	}
 
 	@Override
@@ -122,13 +98,8 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 	}
 
 	protected void handleMovement(EntityLivingBase entity) {
-		boolean vanilla = true;
 		if (!entity.world.isRemote) {
-			if (!vanilla) {
-				entity.motionY += 0.02D;
-			} else {
-				entity.motionY += 0.015D;
-			}
+			entity.motionY += 0.02D;
 		} else {
 			GameSettings settings = (Minecraft.getMinecraft()).gameSettings;
 			boolean inputForward = settings.keyBindForward.isKeyDown();
@@ -162,48 +133,15 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			if (inputDown) {
 				up--;
 			}
-			if (vanilla) {
-				entity.motionY += 0.02D;
-				if (inputDown) {
-					slow *= 0.3D;
-				}
-				if (inputUp) {
-					entity.motionY -= 0.03999999910593033D;
-				}
-				if ((inputForward != inputBack) || (inputRight != inputLeft)) {
-					move2D(entity, strafe, forward, -slow, rotationYaw);
-				}
-				if ((inputForward != inputBack) || (inputRight != inputLeft) || (inputUp != inputDown)) {
-					if (inputForward && !inputBack) {
-						if (inputUp && !inputDown) {
-							rotationPitch = (rotationPitch - 90.0F) / 2.0F;
-							up = 0.0D;
-						} else if (inputDown && !inputUp) {
-							rotationPitch = (rotationPitch + 90.0F) / 2.0F;
-							up = 0.0D;
-						}
-					} else if (inputBack && !inputForward) {
-						if (inputUp && !inputDown) {
-							rotationPitch = (rotationPitch + 90.0F) / 2.0F;
-							up = 0.0D;
-						} else if (inputDown && !inputUp) {
-							rotationPitch = (rotationPitch - 90.0F) / 2.0F;
-							up = 0.0D;
-						}
-					}
-					move3DRespectDepthStrider(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
-				}
-			} else {
-				entity.motionY += 0.015D;
-				if ((settings.keyBindSprint.isKeyDown() || entity.isSprinting()) && inputForward && !inputBack) {
-					entity.motionY += 0.005D;
-					if (inputDown) {
-						slow *= 0.3D;
-					}
-					if (inputUp) {
-						entity.motionY -= 0.03999999910593033D;
-					}
-					move2D(entity, strafe, forward, -slow, rotationYaw);
+			entity.motionY += 0.02D;
+			if (inputDown) {
+				slow *= 0.3D;
+			}
+			if ((inputForward != inputBack) || (inputRight != inputLeft)) {
+				move2D(entity, strafe, forward, -slow, rotationYaw);
+			}
+			if ((inputForward != inputBack) || (inputRight != inputLeft) || (inputUp != inputDown)) {
+				if (inputForward && !inputBack) {
 					if (inputUp && !inputDown) {
 						rotationPitch = (rotationPitch - 90.0F) / 2.0F;
 						up = 0.0D;
@@ -211,20 +149,26 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 						rotationPitch = (rotationPitch + 90.0F) / 2.0F;
 						up = 0.0D;
 					}
-					move3DRespectDepthStrider(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
-				} else if (inputDown) {
-					entity.motionY -= 0.03999999910593033D;
-					slow *= 0.7D;
-					move2D(entity, strafe, forward, slow, rotationYaw);
+				} else if (inputBack && !inputForward) {
+					if (inputUp && !inputDown) {
+						rotationPitch = (rotationPitch + 90.0F) / 2.0F;
+						up = 0.0D;
+					} else if (inputDown && !inputUp) {
+						rotationPitch = (rotationPitch - 90.0F) / 2.0F;
+						up = 0.0D;
+					}
 				}
+				//				move3D(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
+				move3DRespectDepthStrider(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
 			}
 		}
 	}
 
 	public double getSwimSpeedFromPlayer(EntityLivingBase entity) {
 		IAttributeInstance movement = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+		IAttributeInstance swimMovement = entity.getEntityAttribute(EntityLivingBase.SWIM_SPEED);
 		double movementSpeed = movement != null ? movement.getBaseValue() : 0.1D;
-		double swimSpeedBase = movementSpeed;
+		double swimSpeedBase = movementSpeed * (swimMovement != null ? Math.max((swimMovement.getAttributeValue() - swimMovement.getBaseValue()), 1D) : 1D);
 		double swimSpeedBonus = 0.0D;
 		ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
 		if (!entity.getHeldItemMainhand().isEmpty()) {
@@ -264,8 +208,8 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			forward *= d;
 			double d1 = Math.sin(yaw * 0.017453292D);
 			double d2 = Math.cos(yaw * 0.017453292D);
-			entity.motionX += (strafe * d2) - (forward * d1);
-			entity.motionZ += (forward * d2) + (strafe * d1);
+			entity.motionX = (strafe * d2) - (forward * d1);
+			entity.motionZ = (forward * d2) + (strafe * d1);
 		}
 	}
 
@@ -284,9 +228,9 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			double d2 = Math.cos(yaw * 0.017453292D);
 			double d3 = Math.sin(pitch * 0.017453292D);
 			double d4 = Math.cos(pitch * 0.017453292D);
-			entity.motionX += (strafe * d2) - (forward * d1 * d4);
-			entity.motionY += up - (forward * d3);
-			entity.motionZ += (forward * d2 * d4) + (strafe * d1);
+			entity.motionX = (strafe * d2) - (forward * d1 * d4);
+			entity.motionY = up - (forward * d3);
+			entity.motionZ = (forward * d2 * d4) + (strafe * d1);
 		}
 	}
 
@@ -314,10 +258,36 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 				}
 				depthStriderFactor += 0.42333323333333334D * depthStriderLevel * (!entity.onGround ? 0.5D : 1.0D);
 			}
-			entity.motionX += ((strafe * d2) - (forward * d1 * d4)) * depthStriderFactor;
-			entity.motionY += up - (forward * d3);
-			entity.motionZ += ((forward * d2 * d4) + (strafe * d1)) * depthStriderFactor;
+			entity.motionX = ((strafe * d2) - (forward * d1 * d4)) * depthStriderFactor;
+			entity.motionY = up - (forward * d3);
+			entity.motionZ = ((forward * d2 * d4) + (strafe * d1)) * depthStriderFactor;
 		}
+	}
+
+	protected double prev_posx;
+	protected double prev_posy;
+	protected double prev_posz;
+
+	public void startVec(EntityLivingBase entity) {
+		prev_posx = entity.posX;
+		prev_posy = entity.posY;
+		prev_posz = entity.posZ;
+	}
+
+	public Vec3d lastVec() {
+		final Vec3d lastPosVec = new Vec3d(prev_posx, prev_posy, prev_posz);
+		return lastPosVec;
+	}
+
+	public double entitySpeed(EntityLivingBase entity) {
+		final Vec3d currentPosVec = new Vec3d(entity.posX, entity.posY, entity.posZ);
+		final double distanceTraveled = this.lastVec().distanceTo(currentPosVec);
+
+		prev_posx = entity.posX;
+		prev_posy = entity.posY;
+		prev_posz = entity.posZ;
+
+		return distanceTraveled;
 	}
 
 	private boolean movingForward(EntityLivingBase entity, EnumFacing facing) {
