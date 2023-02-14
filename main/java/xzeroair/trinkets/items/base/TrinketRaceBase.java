@@ -35,7 +35,11 @@ public class TrinketRaceBase extends AccessoryBase implements IRaceProvider {
 		this.race = race;
 		this.setUUID("892cfd1f-25c5-44a0-9154-f3b630538c82");
 		serverConfig = config;
-		this.setAttributeConfig(race.getRaceAttributes().getAttributes());
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return race.getRaceAttributes().getAttributes();
 	}
 
 	@Override

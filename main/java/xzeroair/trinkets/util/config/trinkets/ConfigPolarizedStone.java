@@ -67,6 +67,11 @@ public class ConfigPolarizedStone {
 	@LangKey(PREFIX + ".repel.range")
 	public double repelRange = 2D;
 
+	@Config.Comment("Should the Polarized Stone Instantly pickup XP, or Pull them toward you. Default True")
+	@Name("11. Instant XP Pickup")
+	@LangKey(PREFIX + ".collection.instant.xp")
+	public boolean instant_xp = true;
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Should this Item Be Registered")
 	@Name("98. Item Enabled")

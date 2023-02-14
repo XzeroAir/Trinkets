@@ -132,6 +132,11 @@ public class Ability implements IAbilityInterface {
 		return flag;
 	}
 
+	public boolean isCreativeFlying(Entity entity) {
+		final boolean flag = (entity instanceof EntityPlayer) && ((((EntityPlayer) entity).capabilities.isFlying));
+		return flag;
+	}
+
 	public boolean isSpectator(Entity entity) {
 		final boolean flag = (entity instanceof EntityPlayer) && (((EntityPlayer) entity).isSpectator());
 		return flag;
@@ -148,6 +153,7 @@ public class Ability implements IAbilityInterface {
 		return this;
 	}
 
+	@Override
 	public Ability cacheAbilityHolder(AbilityHolder holder) {
 		if (abilityHolder == null) {
 			abilityHolder = holder;
@@ -155,6 +161,7 @@ public class Ability implements IAbilityInterface {
 		return this;
 	}
 
+	@Override
 	public AbilityHolder getAbilityHolder() {
 		return abilityHolder;
 	}

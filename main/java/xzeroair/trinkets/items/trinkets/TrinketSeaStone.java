@@ -38,7 +38,6 @@ public class TrinketSeaStone extends AccessoryBase {
 	public TrinketSeaStone(String name) {
 		super(name);
 		this.setUUID("6029aecd-318e-4b45-8c36-2ddd7f481e36");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -51,6 +50,11 @@ public class TrinketSeaStone extends AccessoryBase {
 		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "tanthirst", tan && serverConfig.compat.tan.prevent_thirst);
 		return helper.formatAddVariables(translation, key, key1, key2, key3);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

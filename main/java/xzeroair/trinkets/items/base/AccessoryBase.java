@@ -51,21 +51,21 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 	protected UUID uuid;
 
-	protected String[] attributeConfig;
-
 	public AccessoryBase(String name) {
 		this.setTranslationKey(name);
 		this.setRegistryName(name);
 		this.setMaxStackSize(1);
 		this.setCreativeTab(Trinkets.trinketstab);
-		attributeConfig = new String[0];
 	}
 
+	@Deprecated
 	public AccessoryBase setAttributeConfig(String[] attributeConfig) {
-		this.attributeConfig = attributeConfig;
 		return this;
 	}
 
+	public String[] getAttributeConfig() {
+		return new String[0];
+	}
 	//	@Override
 	//	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
 	//		//		return super.initCapabilities(stack, nbt);
@@ -88,7 +88,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 				AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
 				if ((attributeShell != null) && (this.getUUID() != null)) {
 					final String name = attributeShell.getAttribute();
-					final double amount = attributeShell.getAmount();
+					double amount = attributeShell.getAmount();
 					final int operation = attributeShell.getOperation();
 					final boolean isSaved = attributeShell.isSaved();
 					if (!(this instanceof TrinketRaceBase)) {
@@ -109,6 +109,9 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 									}
 								}
 							} catch (Exception e) {
+							}
+							if ((entity instanceof EntityPlayer) && ((EntityPlayer) entity).capabilities.isFlying) {
+								skip = true;
 							}
 							if (skip) {
 								attribute.removeModifier(entity);
@@ -242,7 +245,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
 		//		this.initAbilities(player);
-		this.initAttributes(attributeConfig, player);
+		this.initAttributes(this.getAttributeConfig(), player);
 		Capabilities.getTrinketProperties(stack, cap -> {
 			cap.onEntityTick(stack, player);
 		});
@@ -272,11 +275,11 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 	@Override
 	public boolean canUnequipAccessory(ItemStack stack, EntityLivingBase player) {
-		if ((EnchantmentHelper.hasBindingCurse(stack) == true) && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
-			return false;
-		}
 		if ((player instanceof EntityPlayer) && ((EntityPlayer) player).capabilities.isCreativeMode) {
 			return true;
+		}
+		if ((EnchantmentHelper.hasBindingCurse(stack) == true) && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
+			return false;
 		}
 		return true;
 	}
@@ -409,6 +412,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 		try {
 			final TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
+			String[] attributeConfig = this.getAttributeConfig();
 			if ((attributeConfig != null) && (attributeConfig.length > 0)) {
 				List<AttributeEntry> attributes = new ArrayList<>();
 				for (String entry : attributeConfig) {

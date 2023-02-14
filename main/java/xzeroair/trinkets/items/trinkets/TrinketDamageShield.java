@@ -44,7 +44,6 @@ public class TrinketDamageShield extends AccessoryBase {
 	public TrinketDamageShield(String name) {
 		super(name);
 		this.setUUID("c0885371-20dd-4c56-86eb-78f24d9fe777");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -83,6 +82,11 @@ public class TrinketDamageShield extends AccessoryBase {
 		final KeyEntry FirstAid = new LangEntry(this.getTranslationKey(stack), "headshots", serverConfig.compat.firstaid.chance_ignore);
 		final KeyEntry key6 = new OptionEntry("headshotchance", serverConfig.compat.firstaid.chance_ignore, MathHelper.clamp((1F / serverConfig.compat.firstaid.chance_headshots) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, FirstAid, key5, key6);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

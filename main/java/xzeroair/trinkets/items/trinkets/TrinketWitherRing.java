@@ -27,7 +27,6 @@ public class TrinketWitherRing extends AccessoryBase {
 	public TrinketWitherRing(String name) {
 		super(name);
 		this.setUUID("bca63279-4a19-4891-b4b0-a5a2f76e4b90");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -41,9 +40,11 @@ public class TrinketWitherRing extends AccessoryBase {
 		return helper.formatAddVariables(translation, key, key1, key2, key3);
 	}
 
-	/**
-	 * This Triggers before @method playerEquipped() in AccessoryBase
-	 */
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
+	}
+
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		abilities.add(new AbilityWitherAffinity());

@@ -10,7 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -20,7 +19,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IMiningAbility;
@@ -52,16 +50,18 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 				entity.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 150, 0, false, false));
 			}
 		}
-		if ((!Trinkets.BetterDiving) && (serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity)) {
+		if ((!Trinkets.BetterDiving) && (serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity) && !this.isCreativeFlying(entity)) {
 			final BlockPos head = entity.getPosition();
 			final IBlockState headBlock = entity.world.getBlockState(head);
 			final Block block = headBlock.getBlock();
 			if ((entity.isInWater() || entity.isInLava()) && (block != Blocks.AIR)) {
-				this.handleMovement(entity);
+				if (serverConfig.old_tweaks) {
+					this.handleMovementOld(entity);
+				} else {
+					this.handleMovement(entity);
+				}
 			}
 		}
-		//		double spd = this.entitySpeed(entity);
-		//		System.out.println(spd);
 	}
 
 	@Override
@@ -81,8 +81,59 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 		return newSpeed;
 	}
 
+	protected void handleMovementOld(EntityLivingBase entity) {
+		double motion = 0.1;
+		final double bouyance = 0.25;
+		if (entity.isInLava()) {
+			motion = 0.09;
+		}
+		if (!entity.isSneaking()) {
+			entity.motionY = 0f;
+			if ((this.movingForward(entity, entity.getHorizontalFacing()) == true)) {
+				if (((entity.motionX > motion) || (entity.motionX < -motion)) || ((entity.motionZ > motion) || (entity.motionZ < -motion))) {
+					entity.motionY += MathHelper.clamp(entity.getLookVec().y / 1, -bouyance, bouyance);
+				}
+			}
+		} else {
+			if ((this.movingForward(entity, entity.getHorizontalFacing()) == false)) {
+				if (!(entity.motionY > 0)) {
+					if (entity.isInLava()) {
+						entity.motionY *= 1.75;
+					} else {
+						entity.motionY *= 1.25;
+					}
+				} else {
+
+				}
+
+			}
+		}
+	}
+
+	protected double getSwimSpeedFromPlayer(EntityLivingBase entity) {
+		IAttributeInstance movement = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+		IAttributeInstance swimMovement = entity.getEntityAttribute(EntityLivingBase.SWIM_SPEED);
+		double swimMulti = swimMovement != null ? swimMovement.getAttributeValue() * 0.2D : 1D;
+		double movementSpeed = movement != null ? movement.getBaseValue() : 0.1D;
+		double swimSpeedBase = movementSpeed * (Math.max(swimMulti, 0D));
+		ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+		double min = swimSpeedBase * 0.01D;
+		double max = swimSpeedBase * 1D;
+		double speed = MathHelper.clamp(swimSpeedBase, min, max);
+		double depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
+		if (depthStriderLevel > 0) {
+			speed += (swimSpeedBase * 0.667D) * depthStriderLevel;
+		}
+		return speed;
+	}
+
 	protected double calculateSlow(EntityLivingBase entity) {
-		double slow = 0.02D;
+		IAttributeInstance movement = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+		IAttributeInstance swimMovement = entity.getEntityAttribute(EntityLivingBase.SWIM_SPEED);
+		double swimMulti = swimMovement != null ? swimMovement.getAttributeValue() : 1D;
+		double movementSpeed = movement != null ? movement.getBaseValue() : 0.1D;
+		double swimSpeedBase = movementSpeed * (Math.max(swimMulti, 0D));
+		double slow = swimSpeedBase * 0.2D;
 		ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
 		double depthStrider = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
 		if (depthStrider > 0.0D) {
@@ -92,9 +143,10 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			if (!entity.onGround) {
 				depthStrider *= 0.5D;
 			}
-			slow += ((entity.getAIMoveSpeed() - slow) * depthStrider) / 3.0D;
+			double striderSlow = ((swimSpeedBase - slow) * depthStrider) / 3.0D;
+			slow += striderSlow;
 		}
-		return slow * 0.98D;
+		return slow;
 	}
 
 	protected void handleMovement(EntityLivingBase entity) {
@@ -133,12 +185,13 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			if (inputDown) {
 				up--;
 			}
-			entity.motionY += 0.02D;
 			if (inputDown) {
 				slow *= 0.3D;
+			} else {
 			}
+			entity.motionY += 0.02D;
 			if ((inputForward != inputBack) || (inputRight != inputLeft)) {
-				move2D(entity, strafe, forward, -slow, rotationYaw);
+				this.move2D(entity, strafe, forward, -slow, rotationYaw);
 			}
 			if ((inputForward != inputBack) || (inputRight != inputLeft) || (inputUp != inputDown)) {
 				if (inputForward && !inputBack) {
@@ -158,45 +211,28 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 						up = 0.0D;
 					}
 				}
-				//				move3D(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
-				move3DRespectDepthStrider(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
+				this.move3D(entity, strafe, up, forward, speed, rotationYaw, rotationPitch);
+				ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+				int depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
+				if (inputUp) {
+					if (depthStriderLevel == 0) {
+						entity.motionY *= 0.6D;
+					} else {
+						entity.motionY *= 0.772D;
+					}
+				}
+				if (inputDown) {
+					if (depthStriderLevel == 0) {
+					} else {
+						entity.motionY *= 0.936D;
+					}
+				}
+
 			}
 		}
 	}
 
-	public double getSwimSpeedFromPlayer(EntityLivingBase entity) {
-		IAttributeInstance movement = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-		IAttributeInstance swimMovement = entity.getEntityAttribute(EntityLivingBase.SWIM_SPEED);
-		double movementSpeed = movement != null ? movement.getBaseValue() : 0.1D;
-		double swimSpeedBase = movementSpeed * (swimMovement != null ? Math.max((swimMovement.getAttributeValue() - swimMovement.getBaseValue()), 1D) : 1D);
-		double swimSpeedBonus = 0.0D;
-		ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-		if (!entity.getHeldItemMainhand().isEmpty()) {
-			swimSpeedBonus -= 0.08D;
-		}
-		if (!entity.getHeldItemOffhand().isEmpty()) {
-			swimSpeedBonus -= 0.08D;
-		}
-		if (!this.isCreativePlayer(entity) && (entity instanceof EntityPlayer)) {
-			double hunger = ((EntityPlayer) entity).getFoodStats().getFoodLevel() / 20.0D;
-			if (hunger < 0.2D) {
-				swimSpeedBonus += (2.5D * hunger) - 0.5D;
-			}
-		}
-		if (!entity.isInsideOfMaterial(Material.WATER)) {
-			swimSpeedBase *= 1.3D;
-		}
-		double min = swimSpeedBase * 0.01D;
-		double max = swimSpeedBase * 1D;
-		double speed = MathHelper.clamp(swimSpeedBase * (1.0D + swimSpeedBonus), min, max);
-		int depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
-		if (depthStriderLevel > 0) {
-			speed += swimSpeedBase * 1D * depthStriderLevel;
-		}
-		return speed;
-	}
-
-	public static void move2D(Entity entity, double strafe, double forward, double speed, double yaw) {
+	protected void move2D(Entity entity, double strafe, double forward, double speed, double yaw) {
 		double d = (strafe * strafe) + (forward * forward);
 		if (d >= 1.0E-4D) {
 			d = Math.sqrt(d);
@@ -208,12 +244,12 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			forward *= d;
 			double d1 = Math.sin(yaw * 0.017453292D);
 			double d2 = Math.cos(yaw * 0.017453292D);
-			entity.motionX = (strafe * d2) - (forward * d1);
-			entity.motionZ = (forward * d2) + (strafe * d1);
+			entity.motionX += (strafe * d2) - (forward * d1);
+			entity.motionZ += (forward * d2) + (strafe * d1);
 		}
 	}
 
-	public static void move3D(Entity entity, double strafe, double up, double forward, double speed, double yaw, double pitch) {
+	protected void move3D(EntityLivingBase entity, double strafe, double up, double forward, double speed, double yaw, double pitch) {
 		double d = (strafe * strafe) + (up * up) + (forward * forward);
 		if (d >= 1.0E-4D) {
 			d = Math.sqrt(d);
@@ -228,69 +264,14 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			double d2 = Math.cos(yaw * 0.017453292D);
 			double d3 = Math.sin(pitch * 0.017453292D);
 			double d4 = Math.cos(pitch * 0.017453292D);
-			entity.motionX = (strafe * d2) - (forward * d1 * d4);
-			entity.motionY = up - (forward * d3);
-			entity.motionZ = (forward * d2 * d4) + (strafe * d1);
+			double upMotion = (up - (forward * d3));
+			entity.motionX += ((strafe * d2) - (forward * d1 * d4));
+			entity.motionY += upMotion;
+			entity.motionZ += ((forward * d2 * d4) + (strafe * d1));
 		}
 	}
 
-	public static void move3DRespectDepthStrider(EntityLivingBase entity, double strafe, double up, double forward, double speed, double yaw, double pitch) {
-		double d = (strafe * strafe) + (up * up) + (forward * forward);
-		if (d >= 1.0E-4D) {
-			d = Math.sqrt(d);
-			if (d < 1.0D) {
-				d = 1.0D;
-			}
-			d = speed / d;
-			strafe *= d;
-			up *= d;
-			forward *= d;
-			double d1 = Math.sin(yaw * 0.017453292D);
-			double d2 = Math.cos(yaw * 0.017453292D);
-			double d3 = Math.sin(pitch * 0.017453292D);
-			double d4 = Math.cos(pitch * 0.017453292D);
-			double depthStriderFactor = 1.0D;
-			ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-			int depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
-			if (depthStriderLevel > 0) {
-				if (depthStriderLevel > 3) {
-					depthStriderLevel = 3;
-				}
-				depthStriderFactor += 0.42333323333333334D * depthStriderLevel * (!entity.onGround ? 0.5D : 1.0D);
-			}
-			entity.motionX = ((strafe * d2) - (forward * d1 * d4)) * depthStriderFactor;
-			entity.motionY = up - (forward * d3);
-			entity.motionZ = ((forward * d2 * d4) + (strafe * d1)) * depthStriderFactor;
-		}
-	}
-
-	protected double prev_posx;
-	protected double prev_posy;
-	protected double prev_posz;
-
-	public void startVec(EntityLivingBase entity) {
-		prev_posx = entity.posX;
-		prev_posy = entity.posY;
-		prev_posz = entity.posZ;
-	}
-
-	public Vec3d lastVec() {
-		final Vec3d lastPosVec = new Vec3d(prev_posx, prev_posy, prev_posz);
-		return lastPosVec;
-	}
-
-	public double entitySpeed(EntityLivingBase entity) {
-		final Vec3d currentPosVec = new Vec3d(entity.posX, entity.posY, entity.posZ);
-		final double distanceTraveled = this.lastVec().distanceTo(currentPosVec);
-
-		prev_posx = entity.posX;
-		prev_posy = entity.posY;
-		prev_posz = entity.posZ;
-
-		return distanceTraveled;
-	}
-
-	private boolean movingForward(EntityLivingBase entity, EnumFacing facing) {
+	protected boolean movingForward(EntityLivingBase entity, EnumFacing facing) {
 		return ((entity.getHorizontalFacing().getDirectionVec().getX() * entity.motionX) > 0) || ((entity.getHorizontalFacing().getDirectionVec().getZ() * entity.motionZ) > 0);
 	}
 

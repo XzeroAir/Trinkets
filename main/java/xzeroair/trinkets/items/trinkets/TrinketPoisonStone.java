@@ -27,7 +27,6 @@ public class TrinketPoisonStone extends AccessoryBase {
 	public TrinketPoisonStone(String name) {
 		super(name);
 		this.setUUID("e86e5b58-1b62-4a54-bba1-6594de844c2e");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -41,6 +40,11 @@ public class TrinketPoisonStone extends AccessoryBase {
 		final float pa = serverConfig.bonus_damage_amount <= 0 ? serverConfig.bonus_damage_amount : serverConfig.bonus_damage_amount - 1;
 		final KeyEntry key4 = new OptionEntry("damagemultiplier", serverConfig.bonus_damage, helper.translateAttributeValue(1, pa));
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

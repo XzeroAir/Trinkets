@@ -29,6 +29,10 @@ public class ClientConfig {
 		@Config.Comment("")
 		@LangKey(cfgPrefix + ".debug.oredict")
 		public boolean showOreDictEntries = false;
+		@Config.Name("Show Movement Speed")
+		@Config.Comment("")
+		@LangKey(cfgPrefix + ".debug.speed")
+		public boolean showMovementSpeed = false;
 	}
 
 	@Config.Name("Trinkets Container Settings")

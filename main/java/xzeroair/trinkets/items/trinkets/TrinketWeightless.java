@@ -20,7 +20,11 @@ public class TrinketWeightless extends AccessoryBase {
 	public TrinketWeightless(String name) {
 		super(name);
 		this.setUUID("ba6e840e-46b2-4cb7-af4a-5f681333abe5");
-		this.setAttributeConfig(serverConfig.attributes);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

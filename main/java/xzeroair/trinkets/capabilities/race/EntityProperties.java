@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,6 +44,7 @@ import xzeroair.trinkets.traits.AbilityHandler;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.StringUtils;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class EntityProperties extends CapabilityBase<EntityProperties, EntityLivingBase> {
@@ -137,6 +139,9 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 	public void onUpdate() {
 		final World world = object.getEntityWorld();
 		final boolean isClient = world.isRemote;
+		if (isClient && TrinketsConfig.CLIENT.debug.showMovementSpeed) {
+			StringUtils.sendMessageToPlayer(object, "Bp/t:" + this.entitySpeed(object), true);
+		}
 		this.stepHeightHandler();
 
 		if (!(object instanceof FakePlayer) && (object instanceof EntityPlayer)) {
@@ -395,6 +400,30 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 				}
 			}
 		}
+	}
+
+	protected double prev_posx;
+	protected double prev_posy;
+	protected double prev_posz;
+
+	public void startVec(EntityLivingBase entity) {
+		prev_posx = entity.posX;
+		prev_posy = entity.posY;
+		prev_posz = entity.posZ;
+	}
+
+	public Vec3d lastVec() {
+		final Vec3d lastPosVec = new Vec3d(prev_posx, prev_posy, prev_posz);
+		return lastPosVec;
+	}
+
+	public double entitySpeed(EntityLivingBase entity) {
+		final Vec3d currentPosVec = new Vec3d(entity.posX, entity.posY, entity.posZ);
+		final double distanceTraveled = this.lastVec().distanceTo(currentPosVec);
+
+		this.startVec(entity);
+
+		return distanceTraveled;
 	}
 
 	public void onLogin() {

@@ -43,15 +43,6 @@ public class TrinketPolarized extends AccessoryBase {
 	public TrinketPolarized(String name) {
 		super(name);
 		this.setUUID("1ed98d9e-3075-45e0-b6f7-fcdff24caed4");
-		this.setAttributeConfig(serverConfig.attributes);
-	}
-
-	@Override
-	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-		abilities.add(new AbilityMagnetic());
-		if (serverConfig.repell) {
-			abilities.add(new AbilityRepel());
-		}
 	}
 
 	@Override
@@ -69,6 +60,19 @@ public class TrinketPolarized extends AccessoryBase {
 		final KeyEntry key5 = new KeyBindEntry("magnetkb", ModKeyBindings.POLARIZED_STONE_ABILITY.getDisplayName());
 		final KeyEntry key6 = new KeyBindEntry("auxkb", ModKeyBindings.AUX_KEY.getDisplayName());
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, key5, key6);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
+	}
+
+	@Override
+	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
+		abilities.add(new AbilityMagnetic());
+		if (serverConfig.repell) {
+			abilities.add(new AbilityRepel());
+		}
 	}
 
 	@Override

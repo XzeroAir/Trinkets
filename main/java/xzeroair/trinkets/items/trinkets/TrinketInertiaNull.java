@@ -25,7 +25,6 @@ public class TrinketInertiaNull extends AccessoryBase {
 	public TrinketInertiaNull(String name) {
 		super(name);
 		this.setUUID("8192af5d-98de-4c1e-a125-e99864b99634");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -34,6 +33,11 @@ public class TrinketInertiaNull extends AccessoryBase {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
 		final KeyEntry key = new OptionEntry("inertianullfd", true, ((100F - (serverConfig.falldamage_amount * 100F)) + "%"));
 		return helper.formatAddVariables(translation, key);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

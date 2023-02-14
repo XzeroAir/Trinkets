@@ -19,6 +19,11 @@ public class ConfigSeaStone {
 	@LangKey(PREFIX + ".betterswimming")
 	public boolean Swim_Tweaks = true;
 
+	@Config.Comment("Use old version of Swimming Tweaks. Default True")
+	@Name("04. Sea Stone's Swimming Tweaks")
+	@LangKey(PREFIX + ".betterswimming.old")
+	public boolean old_tweaks = false;
+
 	@Name("02. Infinite Water Breathing")
 	@LangKey(PREFIX + ".waterbreathing")
 	public boolean underwater_breathing = true;

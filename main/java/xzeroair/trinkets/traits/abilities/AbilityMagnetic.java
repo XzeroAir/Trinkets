@@ -104,20 +104,24 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 	}
 
 	private void handleLoot(Entity entity, Entity drop) {
-		if (!serverConfig.instant_pickup) {
-			if ((drop instanceof EntityItem) || (serverConfig.collectXP && (drop instanceof EntityXPOrb))) {
-				this.pull(drop, entity.posX, entity.posY, entity.posZ);
-			}
-		} else {
+		if ((drop instanceof EntityItem) || (serverConfig.collectXP && (drop instanceof EntityXPOrb))) {
 			if ((entity instanceof EntityPlayer)) {
 				final EntityPlayer player = (EntityPlayer) entity;
 				if (!player.world.isRemote) {
 					if (drop instanceof EntityItem) {
-						this.pickupItem(player, drop);
-					} else {
-						if (serverConfig.collectXP && (drop instanceof EntityXPOrb)) {
-							this.pickupXP(player, drop);
+						if (serverConfig.instant_pickup) {
+							this.pickupItem(player, drop);
+						} else {
+							this.pull(drop, entity.posX, entity.posY, entity.posZ);
 						}
+					} else if (serverConfig.collectXP && (drop instanceof EntityXPOrb)) {
+						if (serverConfig.instant_xp) {
+							this.pickupXP(player, drop);
+						} else {
+							this.pull(drop, entity.posX, entity.posY, entity.posZ);
+						}
+					} else {
+						this.pull(drop, entity.posX, entity.posY, entity.posZ);
 					}
 				}
 			} else {

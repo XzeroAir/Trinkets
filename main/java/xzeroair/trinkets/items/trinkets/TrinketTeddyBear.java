@@ -41,7 +41,11 @@ public class TrinketTeddyBear extends AccessoryBase {
 	public TrinketTeddyBear(String name) {
 		super(name);
 		this.setUUID("33b34669-715d-4caa-a31e-9c643c52ba66");
-		this.setAttributeConfig(serverConfig.attributes);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

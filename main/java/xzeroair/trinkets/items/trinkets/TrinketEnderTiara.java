@@ -47,7 +47,6 @@ public class TrinketEnderTiara extends AccessoryBase {
 	public TrinketEnderTiara(String name) {
 		super(name);
 		this.setUUID("a45dbc1c-17e9-40b4-b6a3-09dea74355b7");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -62,6 +61,11 @@ public class TrinketEnderTiara extends AccessoryBase {
 		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final KeyEntry TAN = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToCold);
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, TAN);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

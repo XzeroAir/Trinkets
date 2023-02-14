@@ -25,7 +25,6 @@ public class TrinketGreaterInertia extends AccessoryBase {
 	public TrinketGreaterInertia(String name) {
 		super(name);
 		this.setUUID("e119ae9a-93b2-4053-ab3c-81108c16ff27");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -34,6 +33,11 @@ public class TrinketGreaterInertia extends AccessoryBase {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
 		final KeyEntry key = new OptionEntry("greaterinertiafd", true, ((100F - (serverConfig.falldamage_amount * 100F)) + "%"));
 		return helper.formatAddVariables(translation, key);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

@@ -34,7 +34,6 @@ public class TrinketFaelisClaws extends AccessoryBase {
 	public TrinketFaelisClaws(String name) {
 		super(name);
 		this.setUUID("4959ec73-142d-4b82-bd0d-cd6cd7431611");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -43,6 +42,11 @@ public class TrinketFaelisClaws extends AccessoryBase {
 		final TranslationHelper helper = TranslationHelper.INSTANCE;
 		final KeyEntry key = new OptionEntry("clawbleed", serverConfig.bleed, serverConfig.bleedDuration);
 		return helper.formatAddVariables(translation, key);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

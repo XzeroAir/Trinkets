@@ -48,7 +48,6 @@ public class TrinketDragonsEye extends AccessoryBase {
 	public TrinketDragonsEye(String name) {
 		super(name);
 		this.setUUID("6a345136-49b7-4b71-88dc-87301e329ac1");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -103,6 +102,11 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", isIceVariant && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
 
 		return helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker).replace("#underline:", "");
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override

@@ -29,7 +29,6 @@ public class TrinketArcingOrb extends AccessoryBase {
 	public TrinketArcingOrb(String name) {
 		super(name);
 		this.setUUID("249e65db-7dea-4825-8489-e6aa99a70be1");
-		this.setAttributeConfig(serverConfig.attributes);
 	}
 
 	@Override
@@ -44,6 +43,11 @@ public class TrinketArcingOrb extends AccessoryBase {
 		final KeyEntry key5 = new OptionEntry("boltdamage", serverConfig.attackAbility, serverConfig.attackDmg);
 		final KeyEntry key6 = new KeyBindEntry("arckb", serverConfig.attackAbility, ModKeyBindings.ARCING_ORB_ABILITY.getDisplayName());
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, key5, key6);
+	}
+
+	@Override
+	public String[] getAttributeConfig() {
+		return serverConfig.attributes;
 	}
 
 	@Override
