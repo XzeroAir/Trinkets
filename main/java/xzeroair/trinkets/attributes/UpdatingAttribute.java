@@ -24,6 +24,10 @@ public class UpdatingAttribute {
 		this(Reference.MODID + "." + attribute.getName() + ".modifier", uuid, attribute.getName());
 	}
 
+	public UpdatingAttribute(String name, UUID uuid, IAttribute attribute) {
+		this(name, uuid, attribute.getName());
+	}
+
 	public UpdatingAttribute(String name, UUID uuid, String attributeName) {
 		modifierName = name;
 		this.uuid = uuid;
@@ -89,15 +93,16 @@ public class UpdatingAttribute {
 					//					float oldHealth = entity.getHealth();
 					//					float oldMax = entity.getMaxHealth();
 					AttributeInstance.applyModifier(modifier);
+					//					entity.setHealth(oldHealth);
 					//					float newMax = entity.getMaxHealth();
 					//					float newHealth = entity.getHealth();
 					//					float diff = newMax - oldMax;
-					FirstAidCompat.rescale(entity);
 					//					if (diff > 0) {
 					//						entity.heal(diff);
 					//					} else {
 
 					//					}
+					FirstAidCompat.rescale(entity);
 					//					if (!world.isRemote) {
 					//						if (world instanceof WorldServer) {
 					//							final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));

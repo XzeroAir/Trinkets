@@ -352,6 +352,7 @@ public class ServerConfig {
 		@Config.Name("VIP")
 		@LangKey(cfgPrefix + ".misc.vip")
 		public boolean retrieveVIP = true;
+
 	}
 
 }

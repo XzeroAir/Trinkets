@@ -142,6 +142,10 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 			}
 			if (!entity.onGround) {
 				depthStrider *= 0.5D;
+			} else {
+				if (entity.isActiveItemStackBlocking()) {
+					depthStrider *= 0.02D;
+				}
 			}
 			double striderSlow = ((swimSpeedBase - slow) * depthStrider) / 3.0D;
 			slow += striderSlow;

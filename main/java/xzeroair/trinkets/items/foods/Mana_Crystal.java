@@ -53,7 +53,8 @@ public class Mana_Crystal extends FoodBase {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entity) {
 		final MagicStats magic = Capabilities.getMagicStats(entity);
 		if (magic != null) {
-			magic.setBonusMana(magic.getBonusMana() + 1);
+			final double currentBonus = magic.getBonusMana();
+			magic.setBonusMana(currentBonus + 1);
 		}
 		return super.onItemUseFinish(stack, worldIn, entity);
 	}

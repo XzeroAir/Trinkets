@@ -34,9 +34,10 @@ public class OnWorldJoinHandler {
 			map.registerAttribute(RaceAttribute.ENTITY_RACE);
 			map.registerAttribute(JumpAttribute.Jump);
 			map.registerAttribute(JumpAttribute.stepHeight);
+			map.registerAttribute(MagicAttributes.MAX_MANA);
 			map.registerAttribute(MagicAttributes.regen);
-			//			map.registerAttribute(MagicAttributes.regenCooldown);
-			//			map.registerAttribute(MagicAttributes.affinity);
+			map.registerAttribute(MagicAttributes.regenCooldown);
+			map.registerAttribute(MagicAttributes.affinity);
 		}
 	}
 

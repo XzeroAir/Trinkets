@@ -54,7 +54,9 @@ public class RaceAttribute {
 		if (AttributeInstance == null) {
 			return;
 		}
-		AttributeInstance.removeAllModifiers();
+		if (!AttributeInstance.getModifiers().isEmpty()) {
+			AttributeInstance.removeAllModifiers();
+		}
 	}
 
 }

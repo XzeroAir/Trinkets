@@ -145,7 +145,6 @@ public class GuiEntityProperties extends GuiScreen {
 		bX -= 30;
 		bY -= (height / 4) + 34;
 		variant = new GuiPropertiesSlider(variantSlider, bX, bY, 100, 20, "Variant", (properties.getRaceHandler().getTraitVariant()) / 255F, 1F, 0F, (slider, wrapper) -> {
-			System.out.println((slider.getSliderValue() * (255 * 2)) / 255);
 			properties.getRaceHandler().setTraitVariant((int) ((slider.getSliderValue() * (255 * 2)) / 255));
 			slider.displayString = "Variant: " + (int) ((slider.getSliderValue() * (255 * 2)) / 255);
 		});

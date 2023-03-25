@@ -140,9 +140,11 @@ death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
 
 xat.jump=Jump
 xat.stepheight=Step Height
+xat.entityMagic.maxMana=Max Mana
 xat.entityMagic.regen=MP Regen
 attribute.name.xat.jump=Jump
 attribute.name.xat.stepheight=Step Height
+attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=MP Regen
 
 ####################################Materials####################################
@@ -826,6 +828,10 @@ xat.config.magic.mana.cap.max=Max Mana
 xat.config.magic.mana.cap.max.tooltip=
 xat.config.magic.mana.cap.affinity=Cap Affinity
 xat.config.magic.mana.cap.affinity.tooltip=If the mana cap is enabled, should racial affinity apply before the cap, or after
+xat.config.magic.mana.bonus=Bonus Mana
+xat.config.magic.mana.bonus.tooltip=Bonus Mana Obtained from Mana Crystals and Moon Rose
+xat.config.magic.mana.cap.bonus=Bonus Mana Cap
+xat.config.magic.mana.cap.bonus.tooltip=Cap Bonus Mana Obtained from Mana Crystals and Moon Rose, set to 0 to disable
 xat.config.magic.mana.recovery.list=Recovery Items
 xat.config.magic.mana.recovery.list.tooltip=Items that Recover Mana\n modid:item_name;meta;amount
 
@@ -1027,87 +1033,3 @@ xat.config.immunities.potions.tooltip=Potions in this list can not be obtained
 
 xat.config.attributes=Attributes
 xat.config.attributes.tooltip="For More Information on Attributes"\n"https://minecraft.gamepedia.com/Attribute"
-
-xat.config.attributes.armor.tooltip=Enable Attribute Modifier
-xat.config.attributes.armor=Armor
-xat.config.attributes.armor.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.armor.amount=Armor Amount
-xat.config.attributes.armor.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.armor.operation=Armor Operation
-
-xat.config.attributes.armortoughness.tooltip=Enable Attribute Modifier
-xat.config.attributes.armortoughness=Armor Toughness
-xat.config.attributes.armortoughness.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.armortoughness.amount=Armor Toughness Amount
-xat.config.attributes.armortoughness.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.armortoughness.operation=Armor Toughness Operation
-
-xat.config.attributes.attackspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.attackspeed=Attack Speed
-xat.config.attributes.attackspeed.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.attackspeed.amount=Attack Speed Amount
-xat.config.attributes.attackspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.attackspeed.operation=Attack Speed Operation
-
-xat.config.attributes.damage.tooltip=Enable Attribute Modifier
-xat.config.attributes.damage=Damage
-xat.config.attributes.damage.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.damage.amount=Damage Amount
-xat.config.attributes.damage.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.damage.operation=Damage Operation
-
-xat.config.attributes.health.tooltip=Enable Attribute Modifier
-xat.config.attributes.health=Health
-xat.config.attributes.health.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.health.amount=Health Amount
-xat.config.attributes.health.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.health.operation=Health Operation
-
-xat.config.attributes.knockback.tooltip=Enable Attribute Modifier
-xat.config.attributes.knockback=Knockback
-xat.config.attributes.knockback.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.knockback.amount=Knockback Amount
-xat.config.attributes.knockback.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.knockback.operation=Knockback Operation
-
-xat.config.attributes.luck.tooltip=Enable Attribute Modifier
-xat.config.attributes.luck=Luck
-xat.config.attributes.luck.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.luck.amount=Luck Amount
-xat.config.attributes.luck.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.luck.operation=Luck Operation
-
-xat.config.attributes.reach.tooltip=Enable Attribute Modifier
-xat.config.attributes.reach=Reach
-xat.config.attributes.reach.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.reach.amount=Reach Amount
-xat.config.attributes.reach.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.reach.operation=Reach Operation
-
-xat.config.attributes.movementspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.movementspeed=Movement Speed
-xat.config.attributes.movementspeed.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.movementspeed.amount=Movement Speed Amount
-xat.config.attributes.movementspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.movementspeed.operation=Movement Speed Operation
-
-xat.config.attributes.swimspeed.tooltip=Enable Attribute Modifier
-xat.config.attributes.swimspeed=Swim Speed
-xat.config.attributes.swimspeed.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.swimspeed.amount=Swim Speed Amount
-xat.config.attributes.swimspeed.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.swimspeed.operation=Swim Speed Operation
-
-xat.config.attributes.jump.tooltip=Enable Attribute Modifier
-xat.config.attributes.jump=Jump Force
-xat.config.attributes.jump.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.jump.amount=Jump Force Amount
-xat.config.attributes.jump.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.jump.operation=Jump Force Operation
-
-xat.config.attributes.stepheight.tooltip=Enable Attribute Modifier
-xat.config.attributes.stepheight=Step Height
-xat.config.attributes.stepheight.amount.tooltip=Attribute Modifier Amount
-xat.config.attributes.stepheight.amount=Step Height Amount
-xat.config.attributes.stepheight.operation.tooltip=Determines the Math used for the Attribute Modifer
-xat.config.attributes.stepheight.operation=Step Height Operation

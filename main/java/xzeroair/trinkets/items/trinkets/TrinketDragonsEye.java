@@ -95,7 +95,7 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final Element element = this.getPrimaryElement(stack);
 		final boolean isIceVariant = element == Elements.ICE;
-		final KeyEntry key2 = new OptionEntry("variantresist", element == Elements.ICE ? "Ice Resistance" : "Fire Resistance");
+		final KeyEntry key2 = new OptionEntry("variantresist", new TextComponentTranslation(isIceVariant ? "xat.effect.ice_resistance" : "effect.fireResistance").getFormattedText());// element == Elements.ICE ? "Ice Resistance" : "Fire Resistance");
 		final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : TANHot.option()).getFormattedText());

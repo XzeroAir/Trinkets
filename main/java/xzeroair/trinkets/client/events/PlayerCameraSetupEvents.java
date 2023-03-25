@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.trinkets.TrinketDragonsEye;
 import xzeroair.trinkets.items.trinkets.TrinketSeaStone;
@@ -226,7 +227,11 @@ public class PlayerCameraSetupEvents {
 				if ((overlay == OverlayType.FIRE) &&
 						((acc.getItem() instanceof TrinketDragonsEye) ||
 								acc.getItem().getRegistryName().toString().equalsIgnoreCase(ModItems.RaceTrinkets.TrinketDragonRing.getRegistryName().toString()))) {
-					return true;
+					if (((TrinketDragonsEye) acc.getItem()).getPrimaryElement() == Elements.FIRE) {
+						return true;
+					} else {
+						return false;
+					}
 				} else if ((overlay == OverlayType.WATER) && (acc.getItem() instanceof TrinketSeaStone)) {
 					return true;
 				} else {

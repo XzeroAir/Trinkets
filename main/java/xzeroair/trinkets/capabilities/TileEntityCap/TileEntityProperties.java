@@ -88,8 +88,9 @@ public class TileEntityProperties extends CapabilityBase<TileEntityProperties, T
 									if (e.isSneaking()) {
 										final Counter counter = this.getTickHandler().getCounter("absorb.cooldown", TrinketsConfig.SERVER.mana.essence_cooldown, false, true, true, false);
 										if (counter.Tick()) {
-											final int currentBonus = prop.getBonusMana();
-											prop.setBonusMana(currentBonus + 1);
+											final double currentBonus = prop.getBonusMana();
+											double addedAmount = 1;
+											prop.setBonusMana(currentBonus + addedAmount);
 											this.setEssence(teEssence - 1);
 										}
 									}

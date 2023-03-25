@@ -20,7 +20,7 @@ public class ScreenOverlayEvents {
 
 	private float mana = 0;
 	private float maxMana = 0;
-	private int bonusMana = 0;
+	//	private int bonusMana = 0;
 
 	private float manaCost = 0;
 
@@ -28,7 +28,7 @@ public class ScreenOverlayEvents {
 
 	public void SyncMana(float mana, int bonusMana, float maxMana) {
 		this.setMana(mana);
-		this.setBonusMana(bonusMana);
+		//		this.setBonusMana(bonusMana);
 		this.setMaxMana(maxMana);
 	}
 
@@ -60,7 +60,7 @@ public class ScreenOverlayEvents {
 		final MagicStats stats = Capabilities.getMagicStats(Minecraft.getMinecraft().player);
 		if (stats != null) {
 			this.setMana(stats.getMana());
-			this.setBonusMana(stats.getBonusMana());
+			//			this.setBonusMana(stats.getBonusMana());
 			this.setMaxMana(stats.getMaxMana());
 		}
 		if (!this.needMana() && (this.getCost() <= 0)) {
@@ -110,12 +110,12 @@ public class ScreenOverlayEvents {
 		}
 	}
 
-	private void setBonusMana(int bonusMana) {
-		if (this.bonusMana != bonusMana) {
-			this.bonusMana = bonusMana;
-			this.resetCounter();
-		}
-	}
+	//	private void setBonusMana(int bonusMana) {
+	//		if (this.bonusMana != bonusMana) {
+	//			this.bonusMana = bonusMana;
+	//			this.resetCounter();
+	//		}
+	//	}
 
 	private void setMaxMana(float maxMana) {
 		if (this.maxMana != maxMana) {
@@ -132,9 +132,9 @@ public class ScreenOverlayEvents {
 		return mana;
 	}
 
-	private int getBonusMana() {
-		return bonusMana;
-	}
+	//	private int getBonusMana() {
+	//		return bonusMana;
+	//	}
 
 	private float getMaxMana() {
 		return maxMana;

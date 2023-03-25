@@ -4,14 +4,15 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
@@ -134,24 +135,25 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 		if (itemEntity instanceof EntityItem) {
 			final EntityItem item = (EntityItem) itemEntity;
 			if (!(item.getItem().getItem() instanceof TrinketPolarized)) {
-				for (final ItemStack slotStack : player.inventory.mainInventory) {
-					if (slotStack.isEmpty()) {
-						player.addItemStackToInventory(item.getItem());
-					} else if (slotStack.isItemEqual(item.getItem())) {
-						if (slotStack.isStackable()) {
-							// if (item.getItem().areItemStackShareTagsEqual(slotStack, item.getItem())) {
-							if (ItemStack.areItemStackShareTagsEqual(slotStack, item.getItem())) {
-								if ((slotStack.getCount() + item.getItem().getCount()) <= slotStack.getMaxStackSize()) {
-									player.addItemStackToInventory(item.getItem());
-								} else {
-									if ((slotStack.getMaxStackSize() - slotStack.getCount()) > 0) {
-										player.addItemStackToInventory(item.getItem().splitStack((slotStack.getMaxStackSize() - slotStack.getCount())));
-									}
-								}
-							}
-						}
-					}
-				}
+				item.onCollideWithPlayer(player);
+				//				for (final ItemStack slotStack : player.inventory.mainInventory) {
+				//					if (slotStack.isEmpty()) {
+				//						player.addItemStackToInventory(item.getItem());
+				//					} else if (slotStack.isItemEqual(item.getItem())) {
+				//						if (slotStack.isStackable()) {
+				//							// if (item.getItem().areItemStackShareTagsEqual(slotStack, item.getItem())) {
+				//							if (ItemStack.areItemStackShareTagsEqual(slotStack, item.getItem())) {
+				//								if ((slotStack.getCount() + item.getItem().getCount()) <= slotStack.getMaxStackSize()) {
+				//									player.addItemStackToInventory(item.getItem());
+				//								} else {
+				//									if ((slotStack.getMaxStackSize() - slotStack.getCount()) > 0) {
+				//										player.addItemStackToInventory(item.getItem().splitStack((slotStack.getMaxStackSize() - slotStack.getCount())));
+				//									}
+				//								}
+				//							}
+				//						}
+				//					}
+				//				}
 			}
 		}
 	}
@@ -159,22 +161,53 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 	private void pickupXP(EntityPlayer player, Entity xpOrb) {
 		if (xpOrb instanceof EntityXPOrb) {
 			final EntityXPOrb xp = (EntityXPOrb) xpOrb;
-			final ItemStack itemstack = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, player);
+			player.xpCooldown = 0;
+			xp.onCollideWithPlayer(player);
+			//			final ItemStack itemstack = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, player);
+			//
+			//			if (!itemstack.isEmpty() && itemstack.isItemDamaged()) {
+			//				final float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
+			//				final int iE = Math.min(this.roundAverage(xp.xpValue * ratio), itemstack.getItemDamage());
+			//				xp.xpValue -= this.roundAverage(iE / ratio);
+			//				itemstack.setItemDamage(itemstack.getItemDamage() - iE);
+			//			}
+			//
+			//			if (xp.xpValue > 0) {
+			//				player.addExperience(xp.xpValue);
+			//			}
+			//			if (!xp.isDead) {
+			//				xp.setDead();
+			//			}
+		}
+	}
 
-			if (!itemstack.isEmpty() && itemstack.isItemDamaged()) {
-				final float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
-				final int iE = Math.min(this.roundAverage(xp.xpValue * ratio), itemstack.getItemDamage());
-				xp.xpValue -= this.roundAverage(iE / ratio);
-				itemstack.setItemDamage(itemstack.getItemDamage() - iE);
+	public ItemStack getEnchantedItem(Enchantment enchantment, EntityLivingBase entity) {
+		List<ItemStack> list = enchantment.getEntityEquipment(entity);
+
+		if (list.isEmpty()) {
+			return ItemStack.EMPTY;
+		} else {
+			List<ItemStack> list1 = Lists.<ItemStack>newArrayList();
+
+			for (ItemStack itemstack : list) {
+				if (!itemstack.isEmpty() && (EnchantmentHelper.getEnchantmentLevel(enchantment, itemstack) > 0)) {
+					list1.add(itemstack);
+				}
 			}
 
-			if (xp.xpValue > 0) {
-				player.addExperience(xp.xpValue);
-			}
-			if (!xp.isDead) {
-				xp.setDead();
+			return list1.isEmpty() ? ItemStack.EMPTY : (ItemStack) list1.get(entity.getRNG().nextInt(list1.size()));
+		}
+	}
+
+	public List<ItemStack> getEnchantedItems(Enchantment enchantment, EntityLivingBase entity) {
+		List<ItemStack> list = enchantment.getEntityEquipment(entity);
+		List<ItemStack> list1 = Lists.<ItemStack>newArrayList();
+		for (ItemStack itemstack : list) {
+			if (!itemstack.isEmpty() && (EnchantmentHelper.getEnchantmentLevel(enchantment, itemstack) > 0)) {
+				list1.add(itemstack);
 			}
 		}
+		return list1;
 	}
 
 	protected int roundAverage(float value) {

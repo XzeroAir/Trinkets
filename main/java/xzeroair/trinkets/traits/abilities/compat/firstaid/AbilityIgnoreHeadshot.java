@@ -29,7 +29,7 @@ public class AbilityIgnoreHeadshot extends Ability implements IFirstAidAbility {
 	@Method(modid = "firstaid")
 	public boolean firstAidHit(EntityLivingBase entity, DamageSource source, float undistributedDmg, AbstractPlayerDamageModel before, AbstractPlayerDamageModel after) {
 		if (TrinketsConfig.SERVER.Items.DAMAGE_SHIELD.damage_ignore) {
-			final int rand = random.nextInt(serverConfig.compat.firstaid.chance_headshots);
+			final int rand = serverConfig.compat.firstaid.chance_headshots > 0 ? random.nextInt(serverConfig.compat.firstaid.chance_headshots) : 0;
 			String string = "Ouch!";
 			if (TrinketsConfig.SERVER.misc.retrieveVIP) {
 				final VipStatus vip = Capabilities.getVipStatus(entity);
@@ -40,12 +40,14 @@ public class AbilityIgnoreHeadshot extends Ability implements IFirstAidAbility {
 					}
 				}
 			}
-			if ((after.HEAD.currentHealth < 1) || (after.BODY.currentHealth < 1)) {
+			if ((after.HEAD.currentHealth < 1) && (after.BODY.currentHealth > 0)) {
 				if (rand == 0) {
 					if (TrinketsConfig.SERVER.Items.DAMAGE_SHIELD.special && (entity instanceof EntityPlayer)) {
 						final TextComponentString message = new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + string);
 						((EntityPlayer) entity).sendStatusMessage(message, true);
 					}
+					after.HEAD.currentHealth = before.HEAD.currentHealth;
+					after.scheduleResync();
 					return true;
 				}
 			}

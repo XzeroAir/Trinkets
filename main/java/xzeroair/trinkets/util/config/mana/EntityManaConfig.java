@@ -3,6 +3,7 @@ package xzeroair.trinkets.util.config.mana;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
+import net.minecraftforge.common.config.Config.RangeDouble;
 import xzeroair.trinkets.util.Reference;
 
 public class EntityManaConfig {
@@ -58,6 +59,18 @@ public class EntityManaConfig {
 	@Name("10. Mana Reagent Harmful")
 	@LangKey(PREFIX + ".mana_reagent.harmful")
 	public boolean reagentHarmful = true;
+
+	@Config.Comment("Cap Bonus Mana Obtained from Mana Crystals and Moon Rose, set to 0 to disable")
+	@Name("11. Cap Bonus Mana")
+	@LangKey(PREFIX + ".mana.cap.bonus")
+	@RangeDouble(min = 0, max = Double.MAX_VALUE)
+	public float cap_bonus = 0;
+
+	@Config.Comment("Bonus Mana Obtained from Mana Crystals and Moon Rose")
+	@Name("12. Bonus Mana")
+	@LangKey(PREFIX + ".mana.bonus")
+	@RangeDouble(min = 0, max = Double.MAX_VALUE)
+	public float bonus = 10;
 
 	@Config.Comment("modid:item_name;meta;amount")
 	@Name("97. MP Recovery Items")
