@@ -17,8 +17,21 @@ import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 
 public class AbilityFireImmunity extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility {
 
+	protected int amplifier = 0;
+
 	public AbilityFireImmunity() {
 		super(Abilities.fireImmunity);
+	}
+
+	public int getAmplifier() {
+		return amplifier;
+	}
+
+	public AbilityFireImmunity setAmplifier(int amp) {
+		if (amplifier != amp) {
+			amplifier = amp;
+		}
+		return this;
 	}
 
 	@Override
@@ -26,7 +39,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
 		if (entity.isBurning()) {
 			entity.extinguish();
 		}
-		int amp = 0;
+		int amp = this.getAmplifier();
 		if (Trinkets.FireResistanceTiers) {
 			AbilityHolder holder = this.getAbilityHolder();
 			if (holder != null) {
