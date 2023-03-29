@@ -80,7 +80,7 @@ public class AlphaWolf extends EntityWolf {
 			}
 		}
 		final boolean r = this.getPassengers().contains(this.getOwner());
-		if (!r && (ticksExisted > 20)) {
+		if (!r && (ticksExisted > 1)) {
 			this.setDead();
 		}
 	}
@@ -89,17 +89,58 @@ public class AlphaWolf extends EntityWolf {
 	public void setDead() {
 		if (!world.isRemote) {
 			try {
-				final Entity oldWolf = EntityList.createEntityFromNBT(this.getPreviousWolf(), world);
-				if (oldWolf != null) {
-					oldWolf.setLocationAndAngles(posX, posY + 1.1F, posZ, rotationYaw, 0F);
-					world.spawnEntity(oldWolf);
-					//		world.onEntityAdded(oldWolf);
+				final NBTTagCompound old = this.getPreviousWolf();
+				if (old != null) {
+					final Entity oldWolf = EntityList.createEntityFromNBT(old, world);
+					if (oldWolf != null) {
+						oldWolf.setLocationAndAngles(posX, posY + 1.1F, posZ, rotationYaw, 0F);
+						if (world.spawnEntity(oldWolf)) {
+							this.storeOldWolf(new NBTTagCompound());
+						}
+					}
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
 		super.setDead();
+	}
+
+	@Override
+	public boolean startRiding(Entity entityIn) {
+		return super.startRiding(entityIn);
+	}
+
+	@Override
+	public boolean startRiding(Entity entityIn, boolean force) {
+		return super.startRiding(entityIn, force);
+	}
+
+	@Override
+	protected boolean canBeRidden(Entity entityIn) {
+		return super.canBeRidden(entityIn);
+	}
+
+	@Override
+	public void dismountEntity(Entity entityIn) {
+		super.dismountEntity(entityIn);
+	}
+
+	@Override
+	public void dismountRidingEntity() {
+		super.dismountRidingEntity();
+	}
+
+	@Override
+	protected void removePassenger(Entity passenger) {
+		//		System.out.println("Trigger?"); // Runs on the server when logging out due to the forced unmounting
+		super.removePassenger(passenger);
+	}
+
+	@Override
+	public void removePassengers() {
+		//		System.out.println("Trigger????");
+		super.removePassengers();
 	}
 
 	public void setTamedBy(EntityLivingBase entity) {
@@ -332,6 +373,9 @@ public class AlphaWolf extends EntityWolf {
 	}
 
 	public NBTTagCompound getPreviousWolf() {
+		if (storedWolf == null) {
+			storedWolf = new NBTTagCompound();
+		}
 		return storedWolf;
 	}
 
@@ -342,6 +386,7 @@ public class AlphaWolf extends EntityWolf {
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 		compound.setTag("xat.wolf.stored", storedWolf);
+		compound.setBoolean("xat:summoned", true);
 	}
 
 	/**

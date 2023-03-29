@@ -74,7 +74,7 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
 			} else if (!player.isRiding()) {
 				RayTraceResult result = RayTraceHelper.rayTrace(world, player, reachDistance * 0.5D, true);
 				if ((result != null) && (result.typeOfHit == Type.ENTITY)) {
-					if (result.entityHit instanceof EntityWolf) {
+					if ((result.entityHit instanceof EntityWolf) && !(result.entityHit instanceof AlphaWolf)) {
 						this.MountWolf(player, (EntityWolf) result.entityHit);
 					}
 				}
@@ -105,18 +105,21 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
 		if (!world.isRemote) {
 			if (!entity.isRiding()) {
 				final AlphaWolf newWolf = new AlphaWolf(world);
-				final NBTTagCompound tag = new NBTTagCompound();
-				wolf.writeToNBT(tag);
-				tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
-				newWolf.storeOldWolf(tag);
 				newWolf.setCustomNameTag(wolf.getCustomNameTag());
 				newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
 				newWolf.setTamedBy(entity);
 				newWolf.setHealth(wolf.getHealth());
-				world.spawnEntity(newWolf);
-				entity.startRiding(newWolf);
-				wolf.setDead();
-				return true;
+				if (world.spawnEntity(newWolf)) {
+					newWolf.getEntityData().setBoolean("xat:summoned", true);
+					if (entity.startRiding(newWolf)) {
+						final NBTTagCompound tag = new NBTTagCompound();
+						wolf.writeToNBT(tag);
+						tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
+						newWolf.storeOldWolf(tag);
+						wolf.setDead();
+						return true;
+					}
+				}
 			}
 		}
 		return false;
