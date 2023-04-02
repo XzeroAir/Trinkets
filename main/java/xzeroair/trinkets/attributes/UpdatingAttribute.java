@@ -119,7 +119,7 @@ public class UpdatingAttribute {
 
 	public void removeModifier(EntityLivingBase entity) {
 		final World world = entity == null ? null : entity.getEntityWorld();
-		if (((entity == null) || (world == null)) || (world.isRemote)) {
+		if (((entity == null) || (world == null))) {
 			return;
 		}
 		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);

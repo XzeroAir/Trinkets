@@ -225,13 +225,9 @@ public class PlayerCameraSetupEvents {
 		if ((overlay == OverlayType.FIRE) || (overlay == OverlayType.WATER)) {
 			final boolean cancel = !TrinketHelper.getAccessory(event.getPlayer(), acc -> {
 				if ((overlay == OverlayType.FIRE) &&
-						((acc.getItem() instanceof TrinketDragonsEye) ||
+						(((acc.getItem() instanceof TrinketDragonsEye) && (((TrinketDragonsEye) acc.getItem()).getPrimaryElement() == Elements.FIRE)) ||
 								acc.getItem().getRegistryName().toString().equalsIgnoreCase(ModItems.RaceTrinkets.TrinketDragonRing.getRegistryName().toString()))) {
-					if (((TrinketDragonsEye) acc.getItem()).getPrimaryElement() == Elements.FIRE) {
-						return true;
-					} else {
-						return false;
-					}
+					return true;
 				} else if ((overlay == OverlayType.WATER) && (acc.getItem() instanceof TrinketSeaStone)) {
 					return true;
 				} else {

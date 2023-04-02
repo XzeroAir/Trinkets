@@ -74,10 +74,12 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 
 	@Override
 	public void onUpdate() {
-		if (object.getEntityWorld().isRemote) {
-			sync = false;
-			return;
-		}
+		//		if (object instanceof EntityPlayer) {
+		//			IAttributeInstance maxMana = object.getEntityAttribute(MagicAttributes.MAX_MANA);
+		//			if (maxMana != null) {
+		//				System.out.println(maxMana.getModifiers());
+		//			}
+		//		}
 		if (MANA_BONUS != null) {
 			float bonusPerPoint = TrinketsConfig.SERVER.mana.bonus;
 			if (bonusPerPoint > 0) {
@@ -88,6 +90,10 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 			} else {
 				MANA_BONUS.removeModifier(object);
 			}
+		}
+		if (object.getEntityWorld().isRemote) {
+			sync = false;
+			return;
 		}
 		final boolean isCreative = (object instanceof EntityPlayer) && (((EntityPlayer) object).isCreative());
 		if (!TrinketsConfig.SERVER.mana.mana_enabled || isCreative) {
@@ -274,8 +280,9 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 
 	@Override
 	public NBTTagCompound saveToNBT(NBTTagCompound tag) {
-		tag.setFloat("mana", mana);
-		tag.setDouble("bonus_mana", bonusMana);
+		tag.setFloat("mana", this.getMana());
+		tag.setFloat("max_mana", this.getMaxMana());
+		tag.setDouble("bonus_mana", this.getBonusMana());
 		return tag;
 	}
 
@@ -283,6 +290,9 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
 	public void loadFromNBT(NBTTagCompound tag) {
 		if (tag.hasKey("mana")) {
 			mana = tag.getFloat("mana");
+		}
+		if (tag.hasKey("max_mana")) {
+			maxMana = tag.getFloat("max_mana");
 		}
 		if (tag.hasKey("bonus_mana")) {
 			bonusMana = tag.getDouble("bonus_mana");
