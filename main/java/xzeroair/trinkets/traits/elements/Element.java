@@ -79,6 +79,7 @@ public class Element extends IForgeRegistryEntry.Impl<Element> {// implements IN
 		Registry.register(new IceElement());
 		Registry.register(new FireElement());
 		Registry.register(new WaterElement());
+		Registry.register(new LightningElement());
 		//			Registry.register(new EarthElement());
 		//			Registry.register(new VoidElement());
 	}

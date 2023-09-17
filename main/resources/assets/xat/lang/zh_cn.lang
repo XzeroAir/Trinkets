@@ -262,7 +262,9 @@ item.polarized_stone.0.magnetmode=吸引模式 $collecttoggle:
 item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
 
 item.dragons_eye.0.name=巨龙之眼
+item.dragons_eye.0.fire.name=火龍之眼
 item.dragons_eye.0.ice.name=冰龙之眼
+item.dragons_eye.0.lightning.name=閃電龍之眼
 item.dragons_eye.0.tooltip1=§6获得防火
 item.dragons_eye.0.tooltip2=§2获得夜视 §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
@@ -275,6 +277,7 @@ item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
 item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6免疫炽热
 item.dragons_eye.0.coldimmune=§6免疫冻伤
+item.dragons_eye.0.paralysisimmune=§6免疫麻痹
 item.dragons_eye.0.compat.enhancedvisuals=
 item.dragons_eye.0.compat.iaf.ice.frostwalker=§6获得§3冰霜行者
 
@@ -398,11 +401,17 @@ xat.effect.glowing=辉光
 xat.item.potion.glowing.tooltip1=§6治疗 100% 生命值
 xat.item.potion.glowing.tooltip2=§6恢复 100% 魔力
 
-potion.effect.xat.ice_resistance=冰霜抗性药水
+potion.effect.xat.ice_resistance=抗冻性
 splash_potion.effect.xat.ice_resistance=喷溅型冰霜抗性药水
 lingering_potion.effect.xat.ice_resistance=滞留型冰霜抗性药水
 tipped_arrow.effect.xat.ice_resistance=冰霜抗性之箭
 xat.effect.ice_resistance=冰霜抗性
+
+potion.effect.xat.lightning_resistance=抗雷击
+splash_potion.effect.xat.lightning_resistance=喷溅型闪电抗性药水
+lingering_potion.effect.xat.lightning_resistance=滞留型闪电抗性药水
+tipped_arrow.effect.xat.lightning_resistance=闪电抗性之箭
+xat.effect.lightning_resistance=抗雷击
 
 potion.effect.xat.restorative=恢复药水
 splash_potion.effect.xat.restorative=喷溅型恢复药水

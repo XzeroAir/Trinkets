@@ -11,6 +11,7 @@ public class Elements {
 	public static final Element ICE;
 	public static final Element FIRE;
 	public static final Element WATER;
+	public static final Element LIGHTNING;
 	//	public static final Element EARTH;
 	//	public static final Element AIR;
 	//	public static final Element LIGHTNING;
@@ -38,9 +39,9 @@ public class Elements {
 		ICE = getRegisteredElement("Ice");
 		FIRE = getRegisteredElement("Fire");
 		WATER = getRegisteredElement("Water");
+		LIGHTNING = getRegisteredElement("Lightning");
 		//		EARTH = getRegisteredElement("Earth");
 		//		AIR = getRegisteredElement("Air");
-		//		LIGHTNING = getRegisteredElement("Lightning");
 		//		POSION = getRegisteredElement("Poison");
 		//		LIGHT = getRegisteredElement("Light");
 		//		DARK = getRegisteredElement("Dark");

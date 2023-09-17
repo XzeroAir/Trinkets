@@ -127,6 +127,16 @@ public class ConfigDragonsEye {
 			@Name("02. Frost Walker")
 			@LangKey(PREFIX + ".iceandfire.ice.frostwalker")
 			public boolean FROST_WALKER = true;
+
+			@Config.Comment("Should there be a Lightning Variant of the Dragons eye")
+			@Name("03. Lightning Variant")
+			@LangKey(PREFIX + ".iceandfire.lightning.variant")
+			public boolean LIGHTNING_VARIANT = true;
+
+			@Config.Comment("Should the Lightning Variant have Paralysis Immunity")
+			@Name("04. Paralysis Immunity")
+			@LangKey(PREFIX + ".iceandfire.lightning.paralysis")
+			public boolean PARALYSIS_IMMUNITY = true;
 		}
 
 		@Name("Fire Resistance Tiers")

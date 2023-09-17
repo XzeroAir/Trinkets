@@ -18,6 +18,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class RecipeDragonEye extends ShapedOreRecipe {
@@ -50,10 +51,13 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 			for (ItemStack stack : i.getMatchingStacks()) {
 				if (!stack.isEmpty() && (stack.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull"))) {
 					int meta = stack.getMetadata();
-					Capabilities.getTrinketProperties(
-							output, prop -> prop.getElementAttributes().setPrimaryElement(meta == 1 ? Elements.ICE : Elements.FIRE)
-							//							output, prop -> prop.getElementAttributes().setPrimaryElement(meta == 1 ? Elements.ICE : Elements.NEUTRAL)
-					);
+					if (meta == 1) {
+						setTrinketProperties(output, 1, Elements.ICE);
+					} else if (meta == 2) {
+						setTrinketProperties(output, 2, Elements.LIGHTNING);
+					} else {
+						setTrinketProperties(output, 0, Elements.FIRE);
+					}
 					break;
 				}
 			}
@@ -76,22 +80,16 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 									tagCompound = new NBTTagCompound();
 									output.setTagCompound(tagCompound);
 								}
-								if (stack.getItemDamage() == 0) {
-									//									Capabilities.getTrinketProperties(
-									//											output, prop -> {
-									//												prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
-									//												prop.setVariant(Elements.FIRE.getID());
-									//											}
-									//									);
-								} else {
+								if (stack.getItemDamage() == 1) {
 									if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.ICE_VARIANT) {
-										Capabilities.getTrinketProperties(
-												output, prop -> {
-													prop.setVariant(Elements.ICE.getID());
-													prop.getElementAttributes().setPrimaryElement(Elements.ICE);
-												}
-										);
+										setTrinketProperties(output, 1, Elements.ICE);
 									}
+								} else if (stack.getItemDamage() == 2) {
+									if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.LIGHTNING_VARIANT) {
+										setTrinketProperties(output, 2, Elements.LIGHTNING);
+									}
+								} else {
+									setTrinketProperties(output, 0, Elements.FIRE);
 								}
 							}
 						}
@@ -119,5 +117,14 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 
 			return new RecipeDragonEye(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
 		}
+	}
+
+	private void setTrinketProperties(ItemStack stack, int variant, Element element) {
+		Capabilities.getTrinketProperties(
+				stack, prop -> {
+					prop.setVariant(variant);
+					prop.getElementAttributes().setPrimaryElement(element);
+				}
+		);
 	}
 }

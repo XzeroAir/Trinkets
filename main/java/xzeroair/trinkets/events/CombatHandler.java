@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -19,14 +20,12 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
-import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
-import xzeroair.trinkets.traits.abilities.interfaces.IBowAbility;
-import xzeroair.trinkets.traits.abilities.interfaces.IHealAbility;
+import xzeroair.trinkets.traits.abilities.interfaces.*;
 
 public class CombatHandler extends EventBaseHandler {
 
@@ -118,6 +117,37 @@ public class CombatHandler extends EventBaseHandler {
 					}
 			);
 		}
+	}
+
+	@SubscribeEvent
+	public void onStruckByLightningEvent(EntityStruckByLightningEvent event) {
+		if (!(event.getEntity() instanceof EntityLivingBase)) {
+			return;
+		}
+		final EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+		if (!entity.isEntityAlive()) {
+			return;
+		}
+		Capabilities.getEntityProperties(entity, prop -> {
+			boolean cancel = false;
+			Map<String, AbilityHolder> abilities = prop.getAbilityHandler().getActiveAbilities();
+			for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+				String key = entry.getKey();
+				AbilityHolder holder = entry.getValue();
+				try {
+					final IAbilityInterface handler = holder.getAbility();
+					if (handler instanceof ILightningStrikeAbility) {
+						cancel = ((ILightningStrikeAbility) handler).onStruckByLightning(entity, cancel);
+					}
+				} catch (final Exception e) {
+					Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+					e.printStackTrace();
+				}
+			}
+			if (cancel) {
+				event.setResult(Event.Result.DENY);
+			}
+		});
 	}
 
 	@SubscribeEvent

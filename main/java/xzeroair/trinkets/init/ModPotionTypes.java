@@ -12,6 +12,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.items.base.BasePotion;
 import xzeroair.trinkets.items.potions.IceResistance;
+import xzeroair.trinkets.items.potions.LightningResistance;
 import xzeroair.trinkets.items.potions.PotionObject;
 import xzeroair.trinkets.items.potions.TransformationPotion;
 import xzeroair.trinkets.races.EntityRace;
@@ -26,6 +27,7 @@ public class ModPotionTypes {
 	public static final String advancedGlowing = "glowing";
 	public static final String restore = "restorative";
 	public static final String iceResist = "ice_resistance";
+	public static final String lightningResist = "lightning_resistance";
 
 	public static HashMap<String, Potion> TrinketPotions = new HashMap();//new ArrayList<>();
 	public static HashMap<String, PotionType> TrinketPotionTypes = new HashMap();//new ArrayList<>();
@@ -163,6 +165,15 @@ public class ModPotionTypes {
 				9600,
 				Ingredient.fromItem(Item.getItemFromBlock(Blocks.SNOW))
 		).registerWithPotion();
+		createCompoundPotion(
+				new LightningResistance(lightningResist, 3600, 15132390, false),
+				TrinketPotionObjects.get(baseSparkling).getPotionType(),
+				lightningResist,
+				15132390,
+				3600,
+				9600,
+				Ingredient.fromItem(ModItems.foods.mana_candy)
+		).registerWithPotionWithoutRecipe();
 
 		/*
 		 * Create Race Potions

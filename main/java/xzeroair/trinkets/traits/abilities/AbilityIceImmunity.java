@@ -57,12 +57,6 @@ public class AbilityIceImmunity extends Ability implements ITickableAbility, IPo
 	}
 
 	@Override
-	public void onAbilityAdded(EntityLivingBase entity) {
-		//		Capabilities.getEntityProperties(entity, prop -> {
-		//		});
-	}
-
-	@Override
 	public void onAbilityRemoved(EntityLivingBase entity) {
 		if (ice_resist != null) {
 			entity.removePotionEffect(ice_resist);
