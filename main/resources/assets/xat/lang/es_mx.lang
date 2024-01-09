@@ -263,7 +263,9 @@ item.polarized_stone.0.magnetmode=Modo recolectar $collecttoggle:
 item.polarized_stone.0.repelmode=Modo repeler $repeltoggle:
 
 item.dragons_eye.0.name=Ojo de Dragon
+item.dragons_eye.0.fire.name=Ojo de Dragon de fuego
 item.dragons_eye.0.ice.name=Ojo de Dragon de hielo
+item.dragons_eye.0.lightning.name=Ojo de Dragon de eléctrico
 item.dragons_eye.0.tooltip1=§6Da $variantresist:
 item.dragons_eye.0.tooltip2=§2Da Vision nocturna §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
@@ -276,6 +278,7 @@ item.dragons_eye.0.treasurefinder.off=Creo que mi tesoro ya esta lleno $looking:
 item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6Inmunidad a Hipertermia
 item.dragons_eye.0.coldimmune=§6Inmunidad a Hipotermia
+item.dragons_eye.0.paralysisimmune=§6Inmunidad a Parálisis
 item.dragons_eye.0.compat.enhancedvisuals=
 item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Da §3Paso helado
 
@@ -400,11 +403,17 @@ xat.effect.glowing=Brillante
 xat.item.potion.glowing.tooltip1=§6Cura 100% de tu salud maxima
 xat.item.potion.glowing.tooltip2=§6Restaura 100% de Mana
 
-potion.effect.xat.ice_resistance=Pocion de Resistencia al hielo
+potion.effect.xat.ice_resistance=Resistencia al hielo
 splash_potion.effect.xat.ice_resistance=Pocion arrojadiza de Resistencia al hielo
 lingering_potion.effect.xat.ice_resistance=Pocion persistente de Resistencia al hielo
 tipped_arrow.effect.xat.ice_resistance=Flecha de Resistencia al hielo
-xat.effect.ice_resistance=Resis. al hielo
+xat.effect.ice_resistance=Resistencia al hielo
+
+potion.effect.xat.lightning_resistance=Resistencia al eléctrica
+splash_potion.effect.xat.lightning_resistance=Pocion arrojadiza de Resistencia al eléctrica
+lingering_potion.effect.xat.lightning_resistance=Pocion persistente de Resistencia al eléctrica
+tipped_arrow.effect.xat.lightning_resistance=Flecha de Resistencia al eléctrica
+xat.effect.lightning_resistance=Resistencia al eléctrica
 
 potion.effect.xat.restorative=Pocion de Restauracion
 splash_potion.effect.xat.restorative=Pocion arrojadiza de Restauracion

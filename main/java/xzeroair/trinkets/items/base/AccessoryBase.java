@@ -321,9 +321,12 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	@Override
 	public Element getPrimaryElement(ItemStack stack) {
 		return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> {
-			Element e = Element.getByNameOrId(prop.getVariant() + "");
 			if (prop.getVariant() == 1) {
 				prop.getElementAttributes().setPrimaryElement(Elements.ICE);
+			} else if (prop.getVariant() == 2) {
+				prop.getElementAttributes().setPrimaryElement(Elements.LIGHTNING);
+			} else {
+				prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
 			}
 			Element primary = prop.getElementAttributes().getPrimaryElement();
 			if (primary != Elements.NEUTRAL) {
