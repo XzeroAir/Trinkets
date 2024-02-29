@@ -33,6 +33,7 @@ xat.tooltip.on=#reset:(#green:On#reset:)
 xat.tooltip.off=#reset:(#red:Off#reset:)
 xat.tooltip.enabled=#reset:[#green:Enabled#reset:]
 xat.tooltip.disabled=#reset:[#red:Disabled#reset:]
+xat.tooltip.weight=Weight:
 
 key.xat.category=Trinkets and Baubles
 key.xat.trinket_target.desc=Dragons Eye: Cycle
