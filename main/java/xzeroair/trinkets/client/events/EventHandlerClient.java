@@ -18,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -272,7 +273,7 @@ public class EventHandlerClient {
 						if (prop.getCurrentRace().equals(EntityRaces.faelis)) {
 							final double weight = ConfigHelper.parseItemArmor(stack, TrinketsConfig.SERVER.races.faelis.heavyArmor);
 							if (weight > 0) {
-								event.getToolTip().add("Weight: " + weight);
+								event.getToolTip().add(I18n.format("xat.tooltip.weight") + " " + weight);
 							}
 						}
 					}
