@@ -109,7 +109,7 @@ public class AbilityBlockFinder extends AbilityBase implements ITickableAbility,
 			int color = OreTrackingHelper.getColor(getName);
 			if (!colorString.isEmpty()) {
 				try {
-					color = Integer.parseInt(colorString);
+					color = Integer.decode(colorString);
 				} catch (final Exception e) {
 				}
 			}
