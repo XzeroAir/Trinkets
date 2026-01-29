@@ -19,8 +19,14 @@ public class TrinketsGuiFactory extends DefaultGuiFactory {
 	}
 
 	@Override
+	public boolean hasConfigGui() {
+		return super.hasConfigGui();
+	}
+
+	@Override
 	public GuiScreen createConfigGui(GuiScreen parent) {
-		return new GuiConfig(parent, getConfigElements(), modid, false, false, title);
+//		return new GuiConfig(parent, getConfigElements(), Reference.MODID, false, false, Trinkets.config.toString());
+		return super.createConfigGui(parent);
 	}
 
 	private static List<IConfigElement> getConfigElements() {

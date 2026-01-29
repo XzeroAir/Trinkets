@@ -54,13 +54,18 @@ public class Trinkets {
         @Nonnull
         @Override
         public ItemStack createIcon() {
-            if (TrinketsConfig.SERVER.Items.GLOW_RING.enabled) {
-                if (Loader.isModLoaded("baubles")) {
-                    return new ItemStack(ModItems.baubles.BaubleGlowRing);
-                } else {
-                    return new ItemStack(ModItems.trinkets.TrinketGlowRing);
+            try {
+                if(TrinketsConfig.SERVER.Items.GLOW_RING.enabled) {
+                    if (Loader.isModLoaded("baubles")) {
+                        return new ItemStack(ModItems.baubles.BaubleGlowRing);
+                    } else {
+                        return new ItemStack(ModItems.trinkets.TrinketGlowRing);
+                    }
+                } else{
+                    return new ItemStack(Items.POTATO);
                 }
-            } else {
+            } catch (Exception e) {
+                e.printStackTrace();
                 return new ItemStack(Items.POTATO);
             }
         }
@@ -86,8 +91,7 @@ public class Trinkets {
     public void preInit(FMLPreInitializationEvent event) {
 
         directory = event.getModConfigurationDirectory();
-        config = new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg"));
-        TrinketsConfig.readConfig();
+        config = TrinketsConfig.readConfig(new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg")));
 
         MOD_COMPAT.preInitChecks();
 

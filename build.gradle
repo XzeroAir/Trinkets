@@ -160,7 +160,7 @@ jar {
                 'Timestamp'               : System.currentTimeMillis(),
                 'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                 'Built-On-Minecraft'      : minecraft_version,
-                'FMLCorePlugin': mixin_loader_class,
+//                'FMLCorePlugin': mixin_loader_class,
                 'FMLCorePluginContainsFMLMod': 'true',
 //                'ForceLoadAsMod': 'true', //Comment out in dev environment, uncomment for building
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
