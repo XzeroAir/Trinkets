@@ -109,7 +109,7 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget.trim());
 		final KeyEntry keybind1 = new KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
 		final KeyEntry keybind2 = new KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final Element element = this.getPrimaryElement(stack);
 		final boolean isIceVariant = element == Elements.ICE;
 		final boolean isLightningVariant = element == Elements.LIGHTNING;
@@ -123,11 +123,11 @@ public class TrinketDragonsEye extends AccessoryBase {
 		final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
 		final KeyEntry IAFParalysis = new LangEntry(this.getTranslationKey(stack), "paralysisimmune", isLightningVariant && serverConfig.compat.iaf.LIGHTNING_VARIANT && serverConfig.compat.iaf.PARALYSIS_IMMUNITY);
-		final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : isLightningVariant ? IAFParalysis.option() : TANHot.option()).getFormattedText());
+		final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : isLightningVariant ? "" : TANHot.option()).getFormattedText());
 		final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", isIceVariant && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
-
-		return helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker, IAFParalysis)
+		final String output = helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker, IAFParalysis)
 				.replace("#underline:", "");
+		return output;
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class TrinketDragonsEye extends AccessoryBase {
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		abilities.add(new AbilityNightVision().toggleAbility(true));
 		final Element element = this.getPrimaryElement(stack);
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		if (serverConfig.compat.iaf.FIRE_VARIANT && (element == Elements.FIRE)) {
 			abilities.add(new AbilityFireImmunity());
 			if (tan && serverConfig.compat.tan.immuneToHeat) {

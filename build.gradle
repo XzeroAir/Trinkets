@@ -1,216 +1,193 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-		maven { url = "https://repo.spongepowered.org/repository/maven-public" }
-		maven { url = "http://repo.spongepowered.org/maven" }
-        maven { url = "https://plugins.gradle.org/m2/" }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
-    }
+plugins {
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
+    id 'org.spongepowered.mixin' version "${mixin_gradle_version}"
+    id 'wtf.gofancy.fancygradle' version '1.1.+'
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'java'
-apply plugin: 'eclipse'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
-
-ext.configFile = file('build.properties')
-ext.config = parseConfig(configFile)
-
-version = "${mod_version}"
-group = "dev.xzeroair.${mod_id}"
-archivesBaseName = "${mod_name}"
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.4' 
-}
-
-minecraft {
-    version = "${config.mc_version}-${config.forge_version}"
-    runDir = "eclipse/assets"
-
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = config.mc_mappings
-    replace 'GRADLE:BUILD', config.build_number
-    replace 'GRADLE:VERSION', config.version
-
-    // Scala: not even once
-    replace 'scala.actors.threadpool.Arrays', 'java.util.Arrays'
-
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-	//useDepAts = true
-
-    if (project.hasProperty('coreplugin')) {
-        clientJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
-        serverJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+        mergetool
     }
-
-    if (project.hasProperty('mc_username')) {
-        clientRunArgs += ['--username', project.mc_username]
-        if (project.hasProperty('mc_password')) {
-            clientRunArgs += ['--password', project.mc_password]
-        }
-    }
-    if (project.hasProperty('mc_uuid')) {
-        clientRunArgs += ['--uuid', project.mc_uuid]
-    }
-
-    // disable server gui
-    serverRunArgs += 'nogui'
-
-    // skip the screen to confirm that you want to load a world with missing registry entries
-    serverJvmArgs += '-Dfml.doNotBackup=true'
-    clientJvmArgs += '-Dfml.doNotBackup=true'
-
-    // skip having to confirm on server
-    serverJvmArgs += '-Dfml.queryResult=confirm'
-
-    //skip jansi warnings in the log
-    serverJvmArgs += '-Dlog4j.skipJansi=true'
-    clientJvmArgs += '-Dlog4j.skipJansi=true'
-
-    if (project.hasProperty('client_args')) {
-        clientJvmArgs += project.client_args
-    }
-    if (project.hasProperty('server_args')) {
-        serverJvmArgs += project.server_args
-    }
-}
-
-sourceSets {
-        main {
-            java {
-                srcDir 'main/java'
-            }
-            resources {
-                srcDir 'main/resources'
-            }
-        }
-}
-
-jar {
-    exclude "**/*.bat"
-    exclude "**/*.psd"
-    exclude "**/*.exe"
-    exclude "**/unused"
-	exclude "**/gitignored"
-}
-
-dependencies {
-
-	//deobfProvided "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
-	// at runtime, use the full JEI jar
-
-	//deobfCompile "com.github.azanor:Baubles:7035b13"
-    //compile files(
-    //    'Baubles-deobf.jar'
-	//)
-	//compile fileTree(dir: 'libraries', include: [':Baubles API', ':ArtemisLib'])
-	//deobfProvided project(':Baubles API')
-	//deobfProvided project(':ArtemisLib')
-	
-	//compile (project(':Baubles API')) {
-	//	transitive = false
-	//}
-	//compile (project(':ArtemisLib')) {
-	//	transitive = false
-	//}
-	//compile (project(':SimpleDifficulty')) {
-	//	transitive = false
-	//}
-	
-	compile fileTree(dir: 'libs', include: '*.jar')
-	
-	deobfCompile "curse.maven:patchouli-306770:3162874"
-	
-	// compile against the JEI API but do not include it at runtime
-	//runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
-	
-}
-
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info', '**/psd/**'
-    }
-	//move access transformers into META-INF
-	rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 repositories {
-	mavenLocal()
-	mavenCentral()
-	jcenter()
-//	maven { url = 'https://maven.minecraftforge.net' }
-	maven {
-		url = "https://repo.spongepowered.org/repository/maven-public"
-	}
+    mavenCentral()
     maven {
-        url = 'https://repo.spongepowered.org/maven'
+        name = 'Sponge / Mixin'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
-	maven {
-		// seems to be necessary to build now, idk
-		url = "https://repo.maven.apache.org/maven2/"
-	}
     maven {
-        name 'Chisel'
-        url "http://maven.tterrag.com/"
-    }
-	maven {
-	    url "https://www.cursemaven.com"
-	}
-	maven {
-		// location of the maven that hosts JEI files
-		name = "Progwml6 maven"
-		url = "http://dvs1.progwml6.com/files/maven"
-	}
-	maven {
-		// location of a maven mirror for JEI files, as a fallback
-		name = "ModMaven"
-		url = "modmaven.k-4u.nl"
-	}
-    maven {
-		name 'Baubles'
-        url = 'https://jitpack.io'
+        url = uri('https://www.cursemaven.com')
+        content {
+            includeGroup 'curse.maven'
+        }
     }
     maven {
         name = "CurseForge"
         url = "https://minecraft.curseforge.com/api/maven/"
     }
-	maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/repositories/snapshots/"
-	}
-}
-
-def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
+    flatDir {
+        dirs 'libs\\'
     }
 }
+
+version = "${minecraft_version}-${version}"
+group = "dev.xzeroair.${mod_id}"
+base {
+    archivesName = "${mod_name}-Forge"
+}
+
+mixin {
+    add sourceSets.main, "mixins.${mod_id}.refmap.json"
+}
+
+// Using the default Java version Minecraft is being shipped with
+//java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+
+minecraft {
+    mappings channel: 'stable', version: '39-1.12'
+
+    copyIdeResources = true
+    // Automatically enable AccessTransformers if the file exists
+    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
+
+    runs {
+        client {
+            args "--username=xzeroair", "--uuid=f5f28614-4e8b-4788-ae78-b020493dc5cb"
+            jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+            workingDirectory 'run'
+            ideaModule "${project.name}.main"
+            taskName 'Client'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                Trinkets { source sourceSets.main }
+            }
+        }
+
+        server {
+            workingDirectory 'run'
+            ideaModule "${project.name}.main"
+            taskName 'Server'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                Trinkets { source sourceSets.main }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/generated/resources'
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+//    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+    //Mixin
+    implementation "org.spongepowered:mixin:${mixin_version}"
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    implementation "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    //FermiumBooter
+    //implementation fg.deobf("curse.maven:fermiumbooter-${fermiumbooter_version}")
+
+    implementation fg.deobf("curse.maven:jei-${jei_version}")
+
+    //FlatDir Mods
+//    implementation fg.deobf("libs:SRParasites:${srparasites_version}") //Third party distro disabled
+
+    //CurseMaven Mods
+    implementation fg.deobf("curse.maven:baubles-227083:2518667")
+    implementation fg.deobf("curse.maven:first-aid-276837:4414252")
+    //implementation fg.deobf("curse.maven:elenai-dodge-373104:3575333")
+    implementation fg.deobf("curse.maven:betterquesting-${betterquesting_version}")
+    implementation fg.deobf("curse.maven:lycanitesmobs-${lycanitesmobs_version}")
+    implementation fg.deobf("curse.maven:mobends-${mobends_version}")
+    implementation fg.deobf("curse.maven:potioncore-${potioncore_version}")
+    implementation fg.deobf("curse.maven:scalinghealth-${scalinghealth_version}")
+
+    implementation fg.deobf("curse.maven:reskillable-286382:2815686")
+    implementation fg.deobf("curse.maven:quark-243121:2924091")
+    implementation fg.deobf("curse.maven:electroblobs-wizardry-265642:4284076")
+    implementation fg.deobf("curse.maven:antique-atlas-227795:2823030")
+    implementation fg.deobf("curse.maven:carry-on-274259:3271178")
+//    implementation fg.deobf("curse.maven:iceandfire-rlcraft-888556:6596246")
+//    implementation fg.deobf("curse.maven:wolf-armor-and-storage-253689:3648545")
+
+    implementation fg.deobf("curse.maven:artemislib-313590:2741812")
+    implementation fg.deobf("curse.maven:tough-as-nails-246391:2710969")
+    implementation fg.deobf("curse.maven:elenai-dodge-373104:3575333")
+    implementation fg.deobf("curse.maven:enhancedvisuals-255389:3507523")
+    implementation fg.deobf("curse.maven:simpledifficulty-360779:3613814")
+
+    //CurseMaven Libs
+    implementation fg.deobf("curse.maven:silentlib-${silentlib_version}")
+    implementation fg.deobf("curse.maven:autoreglib-${autoreglib_version}")
+    implementation fg.deobf("curse.maven:llibrary-${llibrary_version}")
+
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_name,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : project.jar.archiveVersion,
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Timestamp'               : System.currentTimeMillis(),
+                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                'Built-On-Minecraft'      : minecraft_version,
+                'FMLCorePlugin': mixin_loader_class,
+                'FMLCorePluginContainsFMLMod': 'true',
+                'ForceLoadAsMod': 'true', //Comment out in dev environment, uncomment for building
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+        ])
+    }
+}
+
+processResources {
+    filesMatching(['mcmod.info', 'pack.mcmeta', 'mods.toml', 'META-INF/mods.toml', 'mixins.json', '*.mixins.json']) {
+        expand project.properties
+    }
+
+    //move access transformers into META-INF
+    rename '(.+_at.cfg)', 'META-INF/$1'
+}
+
+jar.finalizedBy('reobfJar')
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId base.archivesName.get()
+//            from components.java
+//            fg.component(it)
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "file://" + System.getenv("local_maven")
+//        }
+//    }
+//}

@@ -110,11 +110,12 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 							}
 						}
 						if (serverConfig.spawnChance) {
-							if (client) {
-								StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string2, false);
-							}
+							//							if (client) {
+							//								StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string2, false);
+							//							}
 							if (!client) {
 								try {
+									//									StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string2, false);
 									final EntityEnderman knight = new EntityEnderman(attacked.getEntityWorld());
 									final double x = attacked.getPosition().getX();
 									final double y = attacked.getPosition().getY();
@@ -132,7 +133,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 						if (serverConfig.dmgChance) {
 							cancel = true;
 							if (client) {
-								StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string, false);
+								StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + string, false);
 							}
 						}
 					}

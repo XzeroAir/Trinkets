@@ -27,6 +27,7 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigFairyRing;
 import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
+import xzeroair.trinkets.util.helpers.EntityHelper;
 
 public class RaceFairy extends EntityRacePropertiesHandler {
 
@@ -74,7 +75,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 
 	@Override
 	public boolean mountEntity(Entity mount) {
-		if (this.isCreativePlayer()) {
+		if (EntityHelper.isCreative(entity)) {
 			return true;
 		} else if (!serverConfig.canMount) {
 			return false;

@@ -247,7 +247,7 @@ public class TrinketInventoryContainer extends Container {
 				((IAccessoryInterface) itemstack.getItem()).onAccessoryUnequipped(itemstack, playerIn);
 			}
 
-			if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+			if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 				final IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
 				if (itemstack1.isEmpty() && !baubles.isEventBlocked() && (slot instanceof TrinketSlot) &&
 						itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {

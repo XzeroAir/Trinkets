@@ -381,7 +381,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 	}
 
 	private SizeAttribute getArtemisAttributeSize() {
-		if (Trinkets.ArtemisLib && TrinketsConfig.compat.artemislib) {
+		if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.artemislib) {
 			final double h = (this.getTargetHeight() - 100) * 0.01D;
 			final double w = (this.getTargetWidth() - 100) * 0.01D;
 			return new SizeAttribute(entity, h, w, 0);
@@ -409,11 +409,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 			targetHeight = source.targetHeight;
 			targetWidth = source.targetWidth;
 		}
-	}
-
-	public boolean isCreativePlayer() {
-		final boolean flag = (entity instanceof EntityPlayer) && (((EntityPlayer) entity).isCreative() || ((EntityPlayer) entity).isSpectator());
-		return flag;
 	}
 
 	public boolean canFly() {

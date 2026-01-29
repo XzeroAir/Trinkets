@@ -40,7 +40,7 @@ public class NBTIngredient extends Ingredient {
 			if (stack.getItem() == stackToCheck.getItem()) {
 				final int metadata = stack.getMetadata();
 				if ((metadata == OreDictionary.WILDCARD_VALUE) || (metadata == stackToCheck.getMetadata())) {
-					if (Trinkets.IceAndFire) {
+					if (Trinkets.MOD_COMPAT.IceAndFire) {
 						boolean isSkull = (stack.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull")) && (stackToCheck.getItem().getRegistryName().toString().equalsIgnoreCase("iceandfire:dragon_skull"));
 						if (isSkull) {
 							int skull1 = stack.hasTagCompound() ? stack.getTagCompound().getInteger("Stage") : -1;

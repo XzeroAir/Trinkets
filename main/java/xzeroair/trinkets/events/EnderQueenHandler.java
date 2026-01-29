@@ -7,6 +7,7 @@ import com.google.common.base.Predicates;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -36,20 +37,21 @@ public class EnderQueenHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void soundEvent(PlaySoundEvent event) {
+		if (!event.getSound().getSoundLocation().toString().contentEquals("minecraft:entity.endermen.stare")) {
+			return;
+		}
 		final EntityPlayerSP player = Minecraft.getMinecraft().player;
-		if ((player != null) && (player.world != null)) {
-			if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) ||
-					(TrinketHelper.getSlotInfoForArmor(
-							player,
-							stack -> !stack.isEmpty() &&
-									stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
-					) != null)
-					||
-					TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player)) {
-				if (event.getSound().getSoundLocation().toString().contentEquals("minecraft:entity.endermen.stare")) {
-					event.setResultSound(null);
-				}
-			}
+		if ((player == null) || (player.world == null)) {
+			return;
+		}
+		if (TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player) ||
+				(TrinketHelper.getSlotInfoForArmor(
+						player,
+						stack -> !stack.isEmpty() &&
+								stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
+				) != null) ||
+				TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
+			event.setResultSound(null);
 		}
 	}
 
@@ -75,47 +77,52 @@ public class EnderQueenHandler {
 
 	@SubscribeEvent
 	public void EnderTeleportEvent(EnderTeleportEvent event) {
-		if (!TrinketsConfig.SERVER.Items.ENDER_CROWN.teleport) {
+		if (TrinketsConfig.SERVER.Items.ENDER_CROWN.teleport) {
 			return;
 		}
 		final Entity entity = event.getEntity();
-		if (entity == null) {
+		if ((entity == null) || entity.isInWater()) {
 			return;
 		}
-		final boolean isPlayer = entity instanceof EntityPlayer;
-		boolean pvpEnabled = false;
-		if (isPlayer) {
+
+		if (this.blockEntityTeleport(entity) || (this.blockPlayerTeleport(entity))) {
+			final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
+			final List<EntityLivingBase> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(
+					EntityLivingBase.class, bBox,
+					Predicates.and(
+							EntitySelectors.NOT_SPECTATING,
+							player -> TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player) ||
+									(TrinketHelper.getSlotInfoForArmor(
+											player,
+											stack -> !stack.isEmpty() &&
+													stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
+									) != null) || TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)
+					)
+			);
+			if (!entLivList.isEmpty()) {
+				event.setCanceled(true);
+			}
+		}
+	}
+
+	protected boolean blockPlayerTeleport(Entity entity) {
+		if (entity instanceof EntityPlayer) {
 			try {
 				if (entity instanceof EntityPlayerMP) {
-					pvpEnabled = ((EntityPlayerMP) entity).getServer().isPVPEnabled();
+					return ((EntityPlayerMP) entity).getServer().isPVPEnabled();
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
-		if ((entity instanceof EntityEnderman) || (isPlayer && pvpEnabled)) {
-			final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
-			//			final List<EntityPlayer> entLivList = event.getEntity().getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
-			final List<EntityPlayer> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(
-					EntityPlayer.class, bBox,
-					Predicates.and(
-							EntitySelectors.NOT_SPECTATING,
-							player -> (((player != null) &&
-									TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) ||
-									(TrinketHelper.getSlotInfoForArmor(
-											player,
-											stack -> !stack.isEmpty() &&
-													stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
-									) != null) ||
-									TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player))
-					)
-			);
-			if (!entLivList.isEmpty() && !entLivList.contains(entity)) {
-				if (!entity.isInWater()) {
-					event.setCanceled(true);
-				}
-			}
+		return false;
+	}
+
+	protected boolean blockEntityTeleport(Entity entity) {
+		if (!(entity instanceof EntityPlayer) && (entity instanceof EntityLivingBase)) {
+			return true;
 		}
+		return false;
 	}
 
 }

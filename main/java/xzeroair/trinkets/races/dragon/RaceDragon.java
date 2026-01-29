@@ -61,7 +61,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 		if (serverConfig.breath_damage > 0) {
 			this.addAbility(new AbilityFireBreathing());
 		}
-		if ((Trinkets.ToughAsNails || Trinkets.SimpleDifficulty) && serverConfig.compat.tan.immuneToHeat) {
+		if ((Trinkets.MOD_COMPAT.ToughAsNails || Trinkets.MOD_COMPAT.SimpleDifficulty) && serverConfig.compat.tan.immuneToHeat) {
 			this.addAbility(new AbilityHeatImmunity());
 		}
 		this.addAbility(new AbilityFireImmunity());

@@ -58,7 +58,7 @@ public class TrinketEnderTiara extends AccessoryBase {
 		final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "endermenfollow", serverConfig.Follow);
 		final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "waterhurts", serverConfig.water_hurts);
 		final KeyEntry key4 = new OptionEntry("chance", serverConfig.dmgChance || serverConfig.spawnChance, MathHelper.clamp((1F / serverConfig.chance) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final KeyEntry TAN = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToCold);
 		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, TAN);
 	}
@@ -71,7 +71,7 @@ public class TrinketEnderTiara extends AccessoryBase {
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		abilities.add(new AbilityEnderQueen());
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		if (tan && serverConfig.compat.tan.immuneToCold) {
 			abilities.add(new AbilityColdImmunity());
 		}

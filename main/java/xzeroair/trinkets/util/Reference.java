@@ -7,7 +7,7 @@ public class Reference {
 
 	public static final String MODID = "xat";
 	public static final String NAME = "Trinkets and Baubles";
-	public static final String VERSION = "0.32.5";
+	public static final String VERSION = "0.32.6";
 	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,);after:baubles";
 	public static final String acceptedMinecraftVersions = "";
 	public static final String RESOURCE_PREFIX = MODID.toLowerCase() + ":";

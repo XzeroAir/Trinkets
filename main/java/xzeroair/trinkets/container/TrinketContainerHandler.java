@@ -65,7 +65,7 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
 		if ((stack.getItem() instanceof IAccessoryInterface)) {
 			final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
 			return trinket.canEquipAccessory(stack, player);
-		} else if (TrinketsConfig.compat.baubles && Trinkets.Baubles && (stack.getItem() instanceof IBauble)) {
+		} else if (TrinketsConfig.compat.baubles && Trinkets.MOD_COMPAT.Baubles && (stack.getItem() instanceof IBauble)) {
 			final IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
 			boolean valid = true;
 			try {

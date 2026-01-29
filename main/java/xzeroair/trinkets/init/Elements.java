@@ -6,45 +6,45 @@ import xzeroair.trinkets.util.Reference;
 
 public class Elements {
 
-	public static final Element[] EMPTY;
-	public static final Element NEUTRAL;
-	public static final Element ICE;
-	public static final Element FIRE;
-	public static final Element WATER;
-	public static final Element EARTH;
-	public static final Element AIR;
-	public static final Element LIGHTNING;
-	public static final Element POISON;
-	public static final Element LIGHT;
-	public static final Element DARK;
-	public static final Element VOID;
+    public static final Element[] EMPTY;
+    public static final Element NEUTRAL;
+    public static final Element ICE;
+    public static final Element FIRE;
+    public static final Element WATER;
+    public static final Element EARTH;
+    public static final Element AIR;
+    public static final Element LIGHTNING;
+    public static final Element POISON;
+    public static final Element LIGHT;
+    public static final Element DARK;
+    public static final Element VOID;
 
-	private static Element getRegisteredElement(String name) {
-		return getRegisteredElement(Reference.MODID, name);
-	}
+    private static Element getRegisteredElement(String name) {
+        return getRegisteredElement(Reference.MODID, name);
+    }
 
-	private static Element getRegisteredElement(String modid, String name) {
-		Element element = Element.Registry.getValue(new ResourceLocation(modid, name));
-		if (element == null) {
-			throw new IllegalStateException("Invalid Race requested: " + name);
-		} else {
-			return element;
-		}
-	}
+    private static Element getRegisteredElement(String modid, String name) {
+        Element element = Element.Registry.getValue(new ResourceLocation(modid, name));
+        if (element == null) {
+            throw new IllegalStateException("Invalid Element requested: " + name);
+        } else {
+            return element;
+        }
+    }
 
-	static {
-		EMPTY = new Element[0];
-		NEUTRAL = getRegisteredElement("Neutral");
-		ICE = getRegisteredElement("Ice");
-		FIRE = getRegisteredElement("Fire");
-		WATER = getRegisteredElement("Water");
-		EARTH = getRegisteredElement("Earth");
-		AIR = getRegisteredElement("Air");
-		LIGHTNING = getRegisteredElement("Lightning");
-		POISON = getRegisteredElement("Poison");
-		LIGHT = getRegisteredElement("Light");
-		DARK = getRegisteredElement("Dark");
-		VOID = getRegisteredElement("Void");
-	}
+    static {
+        EMPTY = new Element[0];
+        NEUTRAL = getRegisteredElement("Neutral");
+        ICE = getRegisteredElement("Ice");
+        FIRE = getRegisteredElement("Fire");
+        WATER = getRegisteredElement("Water");
+        EARTH = getRegisteredElement("Earth");
+        AIR = getRegisteredElement("Air");
+        LIGHTNING = getRegisteredElement("Lightning");
+        POISON = getRegisteredElement("Poison");
+        LIGHT = getRegisteredElement("Light");
+        DARK = getRegisteredElement("Dark");
+        VOID = getRegisteredElement("Void");
+    }
 
 }

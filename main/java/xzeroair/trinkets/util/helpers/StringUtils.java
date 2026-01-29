@@ -6,8 +6,11 @@ import java.util.function.Function;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
+import xzeroair.trinkets.network.GenericChatMessage;
+import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.Reference;
 
 public class StringUtils {
@@ -215,6 +218,15 @@ public class StringUtils {
 	}
 
 	public static void sendMessageToPlayer(Entity entity, String msg, boolean onScreen) {
+		if ((entity instanceof EntityPlayer) && !msg.isEmpty()) {
+			// TODO Chat Message
+			NetworkHandler.sendTo(new GenericChatMessage((EntityPlayer) entity, msg, onScreen), (EntityPlayerMP) entity);
+			//			final TextComponentString message = new TextComponentString(msg);
+			//			((EntityPlayer) entity).sendMessage(message);
+		}
+	}
+
+	public static void sendStatusMessageToPlayer(Entity entity, String msg, boolean onScreen) {
 		if ((entity instanceof EntityPlayer) && !msg.isEmpty()) {
 			final TextComponentString message = new TextComponentString(msg);
 			((EntityPlayer) entity).sendStatusMessage(message, onScreen);

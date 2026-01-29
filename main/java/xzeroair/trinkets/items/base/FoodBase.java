@@ -60,9 +60,9 @@ public class FoodBase extends ItemFood implements IsModelLoaded {
 			}
 		}
 		final TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
-		final boolean tanEnabled = Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails;
-		final boolean faEnabled = Trinkets.FirstAid;
-		final boolean evEnabled = Trinkets.EnhancedVisuals && TrinketsConfig.compat.enhancedvisuals;
+		final boolean tanEnabled = Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails;
+		final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
+		final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.compat.enhancedvisuals;
 		final String TAN = !tanEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
 		final String FA = !faEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
 		final String EV = !evEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));

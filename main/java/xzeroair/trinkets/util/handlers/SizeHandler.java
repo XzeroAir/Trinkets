@@ -13,7 +13,7 @@ import xzeroair.trinkets.util.helpers.TrinketReflectionHelper;
 public class SizeHandler {
 
 	public static void setSize(EntityLivingBase entity, float TLHeight, float TLWidth) {
-		if (Trinkets.ArtemisLib && TrinketsConfig.compat.artemislib) {
+		if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.artemislib) {
 			return;
 		}
 		if (entity.isChild()) {
@@ -69,7 +69,7 @@ public class SizeHandler {
 	}
 
 	public static void setSize(EntityLivingBase entity, EntityProperties properties) {
-		if (Trinkets.ArtemisLib && TrinketsConfig.compat.artemislib) {
+		if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.artemislib) {
 			return;
 		}
 		float height = properties.getRaceHandler().getHeight();

@@ -20,7 +20,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -33,7 +33,6 @@ import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
-import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.traits.abilities.base.ItemAbilityProvider;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
@@ -50,8 +49,13 @@ import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 public abstract class AccessoryBase extends Item implements IsModelLoaded, IAccessoryInterface, ItemAbilityProvider, IElementProvider {
 
 	protected UUID uuid;
-	@Deprecated
-	protected String[] attributes;
+
+	public AccessoryBase(String modid, String name) {
+		this.setTranslationKey(name);
+		this.setRegistryName(new ResourceLocation(modid, name));
+		this.setMaxStackSize(1);
+		this.setCreativeTab(Trinkets.trinketstab);
+	}
 
 	public AccessoryBase(String name) {
 		this.setTranslationKey(name);
@@ -60,28 +64,9 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		this.setCreativeTab(Trinkets.trinketstab);
 	}
 
-	@Deprecated
-	public AccessoryBase setAttributeConfig(String[] attributeConfig) {
-		attributes = attributeConfig;
-		return this;
-	}
-
 	public String[] getAttributeConfig() {
-		if (attributes != null) {
-			return attributes;
-		}
 		return new String[0];
 	}
-	//	@Override
-	//	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-	//		//		return super.initCapabilities(stack, nbt);
-	//		TrinketProperties properties = new TrinketProperties(stack);
-	//		properties.loadFromNBT(nbt);
-	//		return new CapabilityProviderBase<>(
-	//				Capabilities.ITEM_TRINKET,
-	//				properties
-	//		);
-	//	}
 
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
@@ -107,7 +92,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 								}
 							}
 							try {
-								if (Trinkets.SoManyEnchantments && !TrinketsConfig.SERVER.misc.underwaterStriderStacks) {
+								if (Trinkets.MOD_COMPAT.SoManyEnchantments && !TrinketsConfig.SERVER.misc.underwaterStriderStacks) {
 									Enchantment e = Enchantment.getEnchantmentByLocation("somanyenchantments:underwaterstrider");
 									boolean hasUnderwaterStrider = ((e != null) && (EnchantmentHelper.getMaxEnchantmentLevel(e, entity) > 0));
 									if (hasUnderwaterStrider) {
@@ -185,7 +170,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 	@Override
 	public String getAccessoryType() {
-		return "trinket";//BaubleType.bauble_type;
+		return "trinket";
 	}
 
 	//
@@ -203,7 +188,6 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		Capabilities.getTrinketProperties(stack, cap -> {
 			cap.onUpdate(stack, world, entity, itemSlot, isSelected);
 		});
-		//		Capabilities.getTrinketProperties(stack, TrinketProperties::onUpdate);
 	}
 
 	@Override
@@ -218,8 +202,10 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	 * use the non player specific method for entities other then the player
 	 */
 	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
-		this.onEntityArmorTick(world, player, itemStack);
+	public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
+		Capabilities.getTrinketProperties(stack, cap -> {
+			cap.onArmorTick(world, player, stack);
+		});
 	}
 
 	/*
@@ -227,6 +213,9 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 	 */
 	@Override
 	public void onEntityArmorTick(World world, EntityLivingBase entity, ItemStack stack) {
+		Capabilities.getTrinketProperties(stack, cap -> {
+			cap.onEntityArmorTick(world, entity, stack);
+		});
 	}
 
 	@Override
@@ -250,10 +239,8 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 	@Override
 	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		//		this.initAbilities(player);
-		this.initAttributes(this.getAttributeConfig(), player);
 		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onEntityTick(stack, player);
+			cap.onPlayerTick(stack, player);
 		});
 	}
 
@@ -284,7 +271,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 		if ((player instanceof EntityPlayer) && ((EntityPlayer) player).capabilities.isCreativeMode) {
 			return true;
 		}
-		if ((EnchantmentHelper.hasBindingCurse(stack) == true) && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() != Item.getItemById(399))) {
+		if (EnchantmentHelper.hasBindingCurse(stack)) {
 			return false;
 		}
 		return true;
@@ -326,14 +313,7 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 
 	@Override
 	public Element getPrimaryElement(ItemStack stack) {
-		return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> {
-			Element primary = prop.getElementAttributes().getPrimaryElement();
-			if (primary != Elements.NEUTRAL) {
-				return primary;
-			} else {
-				return element;
-			}
-		});
+		return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> prop.getElementAttributes().getPrimaryElement());
 	}
 
 	@Override
@@ -378,10 +358,10 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
 			}
 		}
 		final TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
-		final boolean tanEnabled = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails);
-		final boolean sdEnabled = (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
-		final boolean faEnabled = Trinkets.FirstAid;
-		final boolean evEnabled = Trinkets.EnhancedVisuals && TrinketsConfig.compat.enhancedvisuals;
+		final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails);
+		final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
+		final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.compat.enhancedvisuals;
 		final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
 		final String FA = !faEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
 		final String EV = !evEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));

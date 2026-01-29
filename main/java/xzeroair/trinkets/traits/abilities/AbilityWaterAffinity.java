@@ -45,7 +45,7 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 				if (air < 20) {
 					entity.setAir(20);
 				}
-				if (Trinkets.BetterDiving) {
+				if (Trinkets.MOD_COMPAT.BetterDiving) {
 					if (!hasWB || ((entity.ticksExisted % 199) == 0)) {
 						entity.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 200, 0, false, false));
 					}
@@ -62,7 +62,7 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 				entity.getActivePotionEffect(MobEffects.WATER_BREATHING).setPotionDurationMax(true);
 			}
 		}
-		if ((!Trinkets.BetterDiving) && (serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity) && !this.isCreativeFlying(entity)) {
+		if ((!Trinkets.MOD_COMPAT.BetterDiving) && (serverConfig.Swim_Tweaks == true) && !this.isSpectator(entity) && !this.isCreativeFlying(entity)) {
 			final BlockPos head = entity.getPosition();
 			final IBlockState headBlock = entity.world.getBlockState(head);
 			final Block block = headBlock.getBlock();

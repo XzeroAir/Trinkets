@@ -51,7 +51,7 @@ public class EventRegistry {
 
 		MinecraftForge.EVENT_BUS.register(new BlockBreakEvents());
 
-		if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+		if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			MinecraftForge.EVENT_BUS.register(new BaubleEventHandler());
 		}
 		if (TrinketsConfig.SERVER.GUI.guiEnabled) {
@@ -110,7 +110,7 @@ public class EventRegistry {
 				e.printStackTrace();
 			}
 		}
-		if ((Trinkets.ElenaiDodge1 || Loader.isModLoaded("elenaidodge")) && TrinketsConfig.compat.elenaiDodge) {
+		if ((Trinkets.MOD_COMPAT.ElenaiDodge1 || Loader.isModLoaded("elenaidodge")) && TrinketsConfig.compat.elenaiDodge) {
 			try {
 				MinecraftForge.EVENT_BUS.register(new ElenaiDodgeCompat());
 			} catch (final Exception e) {

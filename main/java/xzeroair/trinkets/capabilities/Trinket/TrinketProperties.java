@@ -192,6 +192,10 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 	}
 
 	public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
+		this.onEntityArmorTick(world, player, stack);
+	}
+
+	public void onEntityArmorTick(World world, EntityLivingBase entity, ItemStack stack) {
 
 	}
 
@@ -227,14 +231,39 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 				abilities.clear();
 			}
 		}
-		//		}
 		if (sync) {
 			this.sendInformationToTracking(entity);
 			sync = false;
 		}
 	}
 
+	public void onPlayerTick(ItemStack stack, EntityPlayer player) {
+		this.onEntityTick(stack, player);
+	}
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~Keybind handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private boolean compareWithStack(ItemStack second, boolean ignoreDurability) {
+		return this.compareStacks(object, second, ignoreDurability);
+		//		if (second == null || second.isEmpty()) {
+		//			return false;
+		//		}
+		//		Item firstItem = this.object.getItem();
+		//		Item secondItem = second.getItem();
+		//		String firstItemID = firstItem.getRegistryName().toString();
+		//		String secondItemID = secondItem.getRegistryName().toString();
+		//		if (!firstItemID.contentEquals(secondItemID)) {
+		//			return false;
+		//		} else {
+		//			if (object.isItemEqual(second)) {
+		//				return true;
+		//			} else if (object.isItemEqualIgnoreDurability(second) && ignoreDurability) {
+		//				return true;
+		//			} else {
+		//				return false;
+		//			}
+		//		}
+	}
 
 	private boolean compareStacks(ItemStack first, ItemStack second, boolean ignoreDurability) {
 		if ((first == null) || (second == null)) {
@@ -247,6 +276,7 @@ public class TrinketProperties extends CapabilityBase<TrinketProperties, ItemSta
 		Item secondItem = second.getItem();
 		String firstItemID = firstItem.getRegistryName().toString();
 		String secondItemID = secondItem.getRegistryName().toString();
+		//		firstItem.getRegistryName().compareTo(secondItem.getRegistryName());
 		if (!firstItemID.contentEquals(secondItemID)) {
 			return false;
 		} else {

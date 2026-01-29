@@ -40,7 +40,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
 			entity.extinguish();
 		}
 		int amp = this.getAmplifier();
-		if (Trinkets.FireResistanceTiers) {
+		if (Trinkets.MOD_COMPAT.FireResistanceTiers) {
 			AbilityHolder holder = this.getAbilityHolder();
 			if (holder != null) {
 				if (holder.getSourceID().equalsIgnoreCase("xat:" + ModItems.DragonsEye)) {
@@ -88,7 +88,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
 
 	@Override
 	public float damaged(EntityLivingBase attacked, DamageSource source, float dmg) {
-		if (Trinkets.FireResistanceTiers) {
+		if (Trinkets.MOD_COMPAT.FireResistanceTiers) {
 			return dmg;
 		}
 		if (source.isFireDamage()) {

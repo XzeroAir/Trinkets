@@ -54,28 +54,14 @@ public class NetworkHandler extends BasicNetworkWrapper {
 		// PARTICLES
 		this.registerPacket(EffectsRenderPacket.class);
 
+		// MISC
 		this.registerPacket(VipStatusPacket.class);
 
 		this.registerPacket(OpenTrinketGui.class);
 
 		this.registerPacketClient(PacketConfigSync.class);
-
-		//		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(PacketConfigSync.Handler.class, PacketConfigSync.class, nextId(), Side.CLIENT);
-		//
-		//		INSTANCE.registerMessage(BlocklistSyncPacket.Handler.class, BlocklistSyncPacket.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(BlocklistSyncPacket.Handler.class, BlocklistSyncPacket.class, nextId(), Side.CLIENT);
-		//		//Handle VIP
-		//		INSTANCE.registerMessage(VipStatusPacket.Handler.class, VipStatusPacket.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(VipStatusPacket.Handler.class, VipStatusPacket.class, nextId(), Side.CLIENT);
-		//
-		//		//Handle Trinkets Container
-		//		INSTANCE.registerMessage(OpenTrinketGui.class, OpenTrinketGui.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(MoveHudMessage.class, MoveHudMessage.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(OpenDefaultInventory.class, OpenDefaultInventory.class, nextId(), Side.SERVER);
-		//
-		//		INSTANCE.registerMessage(StatusEffectPacket.Handler.class, StatusEffectPacket.class, nextId(), Side.SERVER);
-		//		INSTANCE.registerMessage(CombineStatusEffectPacket.Handler.class, CombineStatusEffectPacket.class, nextId(), Side.SERVER);
+		// TODO Make sure to do something with the Chat Message Packet, its probably unnecessary
+		this.registerPacketClient(GenericChatMessage.class);
 
 	}
 

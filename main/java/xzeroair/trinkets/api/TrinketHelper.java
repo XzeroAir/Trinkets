@@ -125,7 +125,7 @@ public class TrinketHelper {
 				final ITrinketContainerHandler TrinketHandler = getTrinketHandler(entity);
 				return TrinketHandler != null ? getTrinketHandler(entity).getStackInSlot(this.getSlot()) : ItemStack.EMPTY;
 			case BAUBLES:
-				if (Trinkets.Baubles) {
+				if (Trinkets.MOD_COMPAT.Baubles) {
 					IItemHandler BaublesHandler = BaublesHelper.getBaublesHandler(entity);
 					if (BaublesHandler != null) {
 						return BaublesHandler.getStackInSlot(this.getSlot());
@@ -539,7 +539,7 @@ public class TrinketHelper {
 	}
 
 	public static ItemStack getBaubleStack(EntityLivingBase entity, Predicate<ItemStack> predicate) {
-		if (Trinkets.Baubles && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 			if (baubles != null) {
 				for (int i = 0; i < baubles.getSlots(); i++) {
@@ -554,7 +554,7 @@ public class TrinketHelper {
 	}
 
 	public static void applyToBaubles(EntityLivingBase entity, Consumer<ItemStack> consumer) {
-		if (Trinkets.Baubles && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 			if (baubles != null) {
 				for (int i = 0; i < baubles.getSlots(); i++) {
@@ -571,7 +571,7 @@ public class TrinketHelper {
 
 	public static int countBaubles(EntityLivingBase entity, Predicate<ItemStack> predicate) {
 		int ret = 0;
-		if (Trinkets.Baubles && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 			if (baubles != null) {
 				for (int i = 0; i < baubles.getSlots(); i++) {
@@ -588,7 +588,7 @@ public class TrinketHelper {
 	}
 
 	public static SlotInformation getBaubleSlotInformation(EntityLivingBase entity, Predicate<ItemStack> predicate) {
-		if (Trinkets.Baubles && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 			if (baubles != null) {
 				for (int i = 0; i < baubles.getSlots(); i++) {
@@ -606,7 +606,7 @@ public class TrinketHelper {
 
 	public static List<SlotInformation> getSlotInfoForBaubles(EntityLivingBase entity, Predicate<ItemStack> predicate) {
 		final List<SlotInformation> list = new ArrayList<>();
-		if (Trinkets.Baubles && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
 			final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
 			if (baubles != null) {
 				for (int i = 0; i < baubles.getSlots(); i++) {
@@ -633,7 +633,7 @@ public class TrinketHelper {
 				if (!Trinket.getStackInSlot(slot).isEmpty()) {
 					return Trinket.getStackInSlot(slot);
 				}
-			} else if (Trinkets.Baubles && (handler == 2)) {
+			} else if (Trinkets.MOD_COMPAT.Baubles && (handler == 2)) {
 				final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
 				if (!baubles.getStackInSlot(slot).isEmpty()) {
 					return baubles.getStackInSlot(slot);

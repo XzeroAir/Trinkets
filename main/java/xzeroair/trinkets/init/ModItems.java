@@ -302,7 +302,7 @@ public class ModItems {
 		misc.registerItems();
 		trinkets.registerItems();
 		RaceTrinkets.registerItems();
-		if(Trinkets.Baubles) {
+		if(Trinkets.MOD_COMPAT.Baubles) {
 		baubles.registerItems();
 		}
 	}

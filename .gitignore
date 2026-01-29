@@ -29,3 +29,11 @@ replay_pid*
 /build/
 /.settings/
 /bin/
+/out
+/.idea
+/run
+*.iws
+*.iws
+*.iml
+*.ipr
+*.ipr

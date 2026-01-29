@@ -47,7 +47,7 @@ public class TrinketSeaStone extends AccessoryBase {
 		final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "bubbles", serverConfig.underwater_breathing);
 		final KeyEntry key1 = new OptionEntry("bubbles", true, serverConfig.underwater_breathing ? 10 + "" : 1 + "");
 		final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "betterswimming", serverConfig.Swim_Tweaks);
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
 		final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "tanthirst", tan && serverConfig.compat.tan.prevent_thirst);
 		return helper.formatAddVariables(translation, key, key1, key2, key3);
 	}
@@ -60,8 +60,8 @@ public class TrinketSeaStone extends AccessoryBase {
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		abilities.add(new AbilityWaterAffinity());
-		final boolean simplediff = (Trinkets.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
-		final boolean tan = (Trinkets.ToughAsNails && TrinketsConfig.compat.toughasnails) || simplediff;
+		final boolean simplediff = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
+		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || simplediff;
 		if (tan && serverConfig.compat.tan.prevent_thirst) {
 			abilities.add(new AbilityThirstImmunity());
 			if (simplediff) {
@@ -102,9 +102,10 @@ public class TrinketSeaStone extends AccessoryBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerModels() {
-		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
+//		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
 		final ModelResourceLocation worn = new ModelResourceLocation(this.getRegistryName().toString() + "_worn", "inventory");
-		ModelBakery.registerItemVariants(this, normal, worn);
+//		ModelBakery.registerItemVariants(this, normal, worn);
+		ModelBakery.registerItemVariants(this, worn);
 		ModelLoader.setCustomMeshDefinition(this, stack -> worn);
 	}
 

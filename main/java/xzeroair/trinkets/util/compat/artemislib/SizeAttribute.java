@@ -76,7 +76,7 @@ public class SizeAttribute {
 	}
 
 	public void addModifiers() {
-		if (Trinkets.ArtemisLib) {
+		if (Trinkets.MOD_COMPAT.ArtemisLib) {
 			if (height != 0) {
 				this.addHeightModifier();
 			}
@@ -87,7 +87,7 @@ public class SizeAttribute {
 	}
 
 	public void removeModifiers() {
-		if (Trinkets.ArtemisLib) {
+		if (Trinkets.MOD_COMPAT.ArtemisLib) {
 			this.removeHeightModifier();
 			this.removeWidthModifier();
 		}

@@ -43,6 +43,6 @@ public class DragonSkullIngredientFactory implements IIngredientFactory {
 			tagCompound2.setInteger("Stage", TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.stage);
 			return NBTIngredient.fromStacks(stack, stack2);
 		}
-		return Trinkets.IceAndFire ? NBTIngredient.fromStacks(stack) : IngredientNever.EMPTY;
+		return Trinkets.MOD_COMPAT.IceAndFire ? NBTIngredient.fromStacks(stack) : IngredientNever.EMPTY;
 	}
 }

@@ -632,7 +632,7 @@ xat.config.server.dragons_eye.iceandfire.default.resist.tooltip=Should the Base 
 xat.config.client.dragons_eye.growl.enabled=Dragon's Growl
 xat.config.client.dragons_eye.growl.enabled.tooltip=When The Treasure Finder is Enabled, Should There be a Growl the Treasure Finder Pings Treasure
 xat.config.client.dragons_eye.growl.activation=Dragon's Growl Trigger
-xat.config.client.dragons_eye.growl.activation.tooltip=Determines When the Dragon's Growl Happens\nOptions:\nSNEAK\nSTAND\nBOTH
+xat.config.client.dragons_eye.growl.activation.tooltip=Determines When the Dragon's Growl HappensnOptions:nSNEAKnSTANDnBOTH
 xat.config.client.dragons_eye.growl.volume=Dragon's Growl Volume
 xat.config.client.dragons_eye.growl.volume.tooltip=Dragon's Growl Volume Control
 xat.config.client.dragons_eye.orefinder.refresh.rate=Refresh Rate
@@ -714,7 +714,7 @@ xat.config.server.damage_shield.resistance.stacks.max.tooltip=The max level resi
 xat.config.server.damage_shield.epic.gamer=Эпичный профессиональный игрок
 xat.config.server.damage_shield.epic.gamer.tooltip=Only Disable this if you're 'The' Epic Pro Gamer (Easter Egg)
 xat.config.server.damage_shield.firstaid.ignore.headshots=Игнорирование выстрелов в голову
-xat.config.server.damage_shield.firstaid.ignore.headshots.tooltip=If First aid is installed, Chance to Ignore Fatal Head Damage\nOnly Triggers if the Next Attack was supposed to kill you
+xat.config.server.damage_shield.firstaid.ignore.headshots.tooltip=If First aid is installed, Chance to Ignore Fatal Head DamagenOnly Triggers if the Next Attack was supposed to kill you
 xat.config.server.damage_shield.firstaid.ignore.headshots.chance=Шанс игнорирования выстрелов в голову
 xat.config.server.damage_shield.firstaid.ignore.headshots.chance.tooltip=1 in X Chance to Ignore Fatal Headshot Damage
 
@@ -860,7 +860,7 @@ xat.config.magic.mana.bonus.tooltip=Bonus Mana Obtained from Mana Crystals and M
 xat.config.magic.mana.cap.bonus=Bonus Mana Cap
 xat.config.magic.mana.cap.bonus.tooltip=Cap Bonus Mana Obtained from Mana Crystals and Moon Rose, set to 0 to disable
 xat.config.magic.mana.recovery.list=Recovery Items
-xat.config.magic.mana.recovery.list.tooltip=Items that Recover Mana\n modid:item_name;meta;amount
+xat.config.magic.mana.recovery.list.tooltip=Items that Recover Manan modid:item_name;meta;amount
 xat.config.magic.mana.players_only=Только игроки
 xat.config.magic.mana.players_only.tooltip=Только у игрока есть Мана.
 
@@ -1015,7 +1015,7 @@ xat.config.server.settings.tooltip=Settings which change the gameplay.
 xat.config.server.container.settings=Trinket Container Settings
 xat.config.server.container.settings.tooltip=Settings regarding the Trinkets Container on the server
 xat.config.server.container.enabled=Trinkets Container Enabled
-xat.config.server.container.enabled.tooltip=Should Trinkets & Baubles use it's own Built-in Container\nIf Disabled, please use "Baubles" by Azanor, Otherwise you wont be able to use this mod
+xat.config.server.container.enabled.tooltip=Should Trinkets & Baubles use it's own Built-in ContainernIf Disabled, please use "Baubles" by Azanor, Otherwise you wont be able to use this mod
 xat.config.server.container.slots=Slots
 xat.config.server.container.slots.tooltip=How many slots should the Trinkets container have
 
@@ -1052,13 +1052,13 @@ xat.config.fire_resistance_tiers=Fire Resistance Tiers
 xat.config.fire_resistance_tiers.tooltip=
 
 xat.config.baubles=Baubles
-xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+xat.config.baubles.tooltip=If the mod Baubles is installed what bauble slot should it usenAvailable Types:nTrinket, Any, AllnAmulet, Necklace, PendantnRing, RingsnBeltnHead, HatnBody, ChestnCharm
 
 xat.config.baubles.type=Bauble Type
-xat.config.baubles.type.tooltip=If the mod Baubles is installed what bauble slot should it use\nAvailable Types:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
+xat.config.baubles.type.tooltip=If the mod Baubles is installed what bauble slot should it usenAvailable Types:nTrinket, Any, AllnAmulet, Necklace, PendantnRing, RingsnBeltnHead, HatnBody, ChestnCharm
 
 xat.config.immunities.potions=Immune to Potion
 xat.config.immunities.potions.tooltip=Potions in this list can not be obtained
 
 xat.config.attributes=Attributes
-xat.config.attributes.tooltip="For More Information on Attributes"\n"https://minecraft.gamepedia.com/Attribute"
+xat.config.attributes.tooltip="For More Information on Attributes"n"https://minecraft.gamepedia.com/Attribute"

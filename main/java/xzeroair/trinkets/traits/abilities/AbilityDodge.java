@@ -153,7 +153,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
 					return false;
 				}
 			}
-			if (Trinkets.ElenaiDodge1 && TrinketsConfig.compat.elenaiDodge) {
+			if (Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.compat.elenaiDodge) {
 				return false;
 			}
 			final float cost = serverConfig.dodgeCost;

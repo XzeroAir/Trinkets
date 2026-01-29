@@ -92,7 +92,7 @@ public class TrinketDamageShield extends AccessoryBase {
 	@Override
 	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 		abilities.add(new AbilityResistance());
-		if (Trinkets.FirstAid && serverConfig.compat.firstaid.chance_ignore) {
+		if (Trinkets.MOD_COMPAT.FirstAid && serverConfig.compat.firstaid.chance_ignore) {
 			abilities.add(new AbilityIgnoreHeadshot());
 		}
 	}

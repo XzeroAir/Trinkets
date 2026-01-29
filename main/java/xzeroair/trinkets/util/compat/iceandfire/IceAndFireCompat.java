@@ -6,7 +6,7 @@ import xzeroair.trinkets.Trinkets;
 public class IceAndFireCompat {
 
 	public static Potion getPotionEffectByName(String name) {
-		if (Trinkets.IceAndFire) {
+		if (Trinkets.MOD_COMPAT.IceAndFire) {
 			try {
 				return Potion.getPotionFromResourceLocation("iceandfire:" + name);
 			} catch (Exception e) {

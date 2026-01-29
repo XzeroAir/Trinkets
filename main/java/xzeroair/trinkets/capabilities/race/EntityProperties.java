@@ -144,10 +144,11 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
 	@Override
 	public void onUpdate() {
+//		System.out.println("Running?");
 		final World world = object.getEntityWorld();
 		final boolean isClient = world.isRemote;
 		if (isClient && TrinketsConfig.CLIENT.debug.showMovementSpeed) {
-			StringUtils.sendMessageToPlayer(object, "Bp/t:" + this.entitySpeed(object), true);
+			StringUtils.sendStatusMessageToPlayer(object, "Bp/t:" + this.entitySpeed(object), true);
 		}
 		this.stepHeightHandler();
 

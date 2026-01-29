@@ -42,7 +42,7 @@ public class TrinketSlot extends SlotItemHandler {
 			if (stack.getItem() instanceof IAccessoryInterface) {
 				((IAccessoryInterface) stack.getItem()).onAccessoryUnequipped(stack, player);
 			} else {
-				if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+				if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 					if (stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 						stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(stack, player);
 					}
@@ -60,7 +60,7 @@ public class TrinketSlot extends SlotItemHandler {
 				if (currentStack.getItem() instanceof IAccessoryInterface) {
 					((IAccessoryInterface) currentStack.getItem()).onAccessoryUnequipped(currentStack, player);
 				} else {
-					if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+					if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 						if (this.getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 							this.getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(currentStack, player);
 						}

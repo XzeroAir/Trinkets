@@ -9,7 +9,7 @@ import xzeroair.trinkets.Trinkets;
 public class FirstAidCompat {
 
 	public static void rescale(EntityLivingBase entity) {
-		if (Trinkets.FirstAid && (entity instanceof EntityPlayer)) {
+		if (Trinkets.MOD_COMPAT.FirstAid && (entity instanceof EntityPlayer)) {
 			try {
 				AbstractPlayerDamageModel cap = entity.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
 				cap.runScaleLogic((EntityPlayer) entity);

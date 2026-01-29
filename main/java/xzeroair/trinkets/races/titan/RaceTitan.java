@@ -18,6 +18,7 @@ import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.traits.abilities.other.AbilityHeavy;
 import xzeroair.trinkets.traits.abilities.other.AbilityLargeHands;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.EntityHelper;
 
 public class RaceTitan extends EntityRacePropertiesHandler {
 
@@ -51,7 +52,7 @@ public class RaceTitan extends EntityRacePropertiesHandler {
 
 	@Override
 	public boolean mountEntity(Entity mount) {
-		if (this.isCreativePlayer()) {
+		if (EntityHelper.isCreative(entity)) {
 			return true;
 		} else if (!serverConfig.canMount) {
 			return false;

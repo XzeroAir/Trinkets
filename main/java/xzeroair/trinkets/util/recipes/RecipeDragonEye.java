@@ -48,7 +48,7 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 	public ItemStack getRecipeOutput() {
 		final ItemStack output = super.getRecipeOutput().copy();
 		boolean checkSkull = false;
-		if (Trinkets.IceAndFire && (output.getItem() instanceof AccessoryBase)) {
+		if (Trinkets.MOD_COMPAT.IceAndFire && (output.getItem() instanceof AccessoryBase)) {
 			for (Ingredient i : this.getIngredients()) {
 				if (checkSkull) {
 					break;
@@ -86,7 +86,7 @@ public class RecipeDragonEye extends ShapedOreRecipe {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (Trinkets.IceAndFire && (output.getItem() instanceof AccessoryBase)) {
+		if (Trinkets.MOD_COMPAT.IceAndFire && (output.getItem() instanceof AccessoryBase)) {
 			try {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack stack = inv.getStackInSlot(i);

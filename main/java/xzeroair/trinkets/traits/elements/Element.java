@@ -1,6 +1,8 @@
 package xzeroair.trinkets.traits.elements;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -86,6 +88,27 @@ public class Element extends IForgeRegistryEntry.Impl<Element> {// implements IN
 		Registry.register(new PoisonElement());
 		Registry.register(new VoidElement());
 		Registry.register(new WaterElement());
+	}
+
+
+	public void damageResistances(){
+		NBTTagCompound elements = new NBTTagCompound();
+
+	}
+
+	public NBTTagCompound addElement(NBTTagCompound elements){
+		NBTTagCompound damageResistanceTypes = new NBTTagCompound();
+		damageResistanceTypes = addDamageResist(damageResistanceTypes, "Fire", 10, false);
+		damageResistanceTypes = addDamageResist(damageResistanceTypes, "Ice", 5, false);
+		damageResistanceTypes = addDamageResist(damageResistanceTypes, "Lightning", 2, false);
+		elements.setTag("damageResistanceTypes", damageResistanceTypes);
+		return elements;
+	}
+
+	public NBTTagCompound addDamageResist(NBTTagCompound elementTag, String resistType, int amount, boolean IsFlat) {
+		elementTag.setInteger(resistType, amount);
+		elementTag.setBoolean("isFlatDamage", IsFlat);
+		return elementTag;
 	}
 
 }

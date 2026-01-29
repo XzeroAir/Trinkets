@@ -78,7 +78,7 @@ public class Registries {
 		Trinkets.log.info("Registering Misc");
 		event.getRegistry().registerAll(ModItems.misc.ITEMS.toArray(new Item[0]));
 
-		if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+		if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			Trinkets.log.info("Registering Baubles");
 			for (final Item item : ModItems.baubles.ITEMS) {
 				if (item instanceof IAccessoryInterface) {
@@ -152,7 +152,7 @@ public class Registries {
 				}
 			}
 		}
-		if (Trinkets.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
+		if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.compat.xatItemsInTrinketGuiOnly) {
 			for (final Item item : ModItems.baubles.ITEMS) {
 				if (item instanceof IsModelLoaded) {
 					((IsModelLoaded) item).registerModels();
