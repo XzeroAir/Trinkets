@@ -143,6 +143,11 @@ ability.ice_immunity.name=Ice Immunity
 ability.firstaid_reflex.name=Reflejos rapidos
 ability.firstaid_reflex.tooltip1=Probabilidad de ignorar tiros a la cabeza fatales
 
+xat.element.neutral.name=Neutral
+xat.element.fire.name=Fire
+xat.element.ice.name=Ice
+xat.element.lightning.name=Lightning
+
 damagetype.xat.water=agua
 death.attack.xat.water=%1$s murio %2$s mientras llevaba puesta la Corona de Reina ender
 
@@ -150,10 +155,12 @@ xat.jump=Salto
 xat.stepheight=Altura de paso
 xat.entityMagic.maxMana=Mana max.
 xat.entityMagic.regen=Regen. MP
+xat.flyspeed=Fly Speed
 attribute.name.xat.jump=Altura de salto
 attribute.name.xat.stepheight=Altura de paso
 attribute.name.xat.entityMagic.maxMana=Mana max.
 attribute.name.xat.entityMagic.regen=Regen. MP
+attribute.name.xat.flyspeed=Fly Speed
 
 ####################################Materials####################################
 
@@ -227,10 +234,10 @@ item.titan_ring.0.tooltip4=§cRompes plantas al caminar
 item.titan_ring.0.heavy=§cTe hundes en el agua
 
 item.dragon_ring.0.name=§6Anillo de los Dragones
-item.dragon_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.dragon_ring.0.tooltip2=§6Presiona §r<§e*breathkb:§r>§6 para escupir fuego
-item.dragon_ring.0.tooltip3=§6Da Resistencia al fuego
-item.dragon_ring.0.tooltip4=§2Da Vision nocturna §r<§e*denvkb:§r>
+#item.dragon_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+#item.dragon_ring.0.tooltip2=§6Presiona §r<§e*breathkb:§r>§6 para escupir fuego
+#item.dragon_ring.0.tooltip3=§6Da Resistencia al fuego
+#item.dragon_ring.0.tooltip4=§2Da Vision nocturna §r<§e*denvkb:§r>
 
 item.teddy_bear.0.name=Osito de peluche
 item.teddy_bear.0.tooltip1=§6Si lo sostienes al dormir, te dara efectos positivos
@@ -278,7 +285,6 @@ item.dragons_eye.0.tooltip2=§2Da Vision nocturna §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.tooltip4=@frostwalker:
 item.dragons_eye.0.treasurefinder=§6Objetivo actual: §3#underline:$target:§r <§e*deofkb:§r>
-
 item.dragons_eye.0.treasurefinder.on=§6Necesito mas§f $target:§6 para mi tesoro $looking:
 item.dragons_eye.0.treasurefinder.notfound=§6No estoy seguro de que necesito para mi tesoro. §c(Item no encontrado, retorno $target:)
 item.dragons_eye.0.treasurefinder.off=Creo que mi tesoro ya esta lleno $looking:
@@ -1050,8 +1056,8 @@ xat.config.misc.interaction.fix.tooltip=El Alcance de Minecraft Vanilla no manej
 xat.config.misc.vip=Habilitar VIP
 xat.config.misc.vip.tooltip=La lista VIP podria ser inaccesible bajo ciertas circunstancias.\nUsa esto para reducir el tiempo de carga del juego.
 
-xat.config.compatability=Compatibilidad con otros mods
-xat.config.compatability.tooltip=Configuraciones que afectaran como interactua este mod con otros mods.
+xat.config.compatibility=Compatibilidad con otros mods
+xat.config.compatibility.tooltip=Configuraciones que afectaran como interactua este mod con otros mods.
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=Deberia Trinkets and Baubles interactuar con Tough as Nails?

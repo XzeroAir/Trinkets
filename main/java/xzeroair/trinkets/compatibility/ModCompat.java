@@ -18,6 +18,8 @@ public class ModCompat {
     public boolean FireResistanceTiers = false;
     public boolean BetterDiving = false;
     public boolean SoManyEnchantments = false;
+    public boolean MoBends = false;
+    public boolean LycanitesMobs = false;
 
     public void preInitChecks() {
 
@@ -33,6 +35,8 @@ public class ModCompat {
         FireResistanceTiers = Loader.isModLoaded("fireresistancetiers");
         BetterDiving = Loader.isModLoaded("better_diving");
         SoManyEnchantments = Loader.isModLoaded("somanyenchantments");
+        MoBends = Loader.isModLoaded("mobends");
+        LycanitesMobs = Loader.isModLoaded("lycanitesmobs");
 
     }
 }

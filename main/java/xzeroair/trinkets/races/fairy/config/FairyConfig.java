@@ -10,41 +10,14 @@ import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 //@Config(name = Reference.filePath+"Races/Fairy", modid = Reference.MODID)
 public class FairyConfig {
 
-//	private final static String PREFIX = Reference.MODID + ".config";
-//
-//	@Name("Server Settings")
-//	@LangKey(PREFIX + ".server.settings")
-//	public static xServer SERVER = new xServer();
-//	public static class xServer {
 		private final String name = "fairy";
 		private final String PREFIX = Reference.MODID + ".config.races." + name;
 
-//		@Config.RequiresMcRestart
 		@Config.RequiresWorldRestart
 		@Config.Comment("Creative Flight. Set to False to Disable. Default True")
 		@Name("01. Creative Flight")
 		@LangKey(PREFIX + ".flight")
 		public boolean creative_flight = true;
-
-//		@Config.RequiresMcRestart
-		@Config.RequiresWorldRestart
-		@Config.Comment("Change the flight speed from the Vanilla Default of 0.05")
-		@Name("02. Change Flight Speed")
-		@LangKey(PREFIX + ".flight.speed")
-		public boolean creative_flight_speed = true;
-
-//		@Config.RequiresMcRestart
-		@Config.RequiresWorldRestart
-		@Config.Comment("How Fast the player moves when in Creative Flight. Vanilla Default 0.05. Default 0.02")
-		@Name("03. Creative Flight Speed")
-		@Config.RangeDouble(min = 0.01, max = 1)
-		@LangKey(PREFIX + ".flight.speed.amount")
-		public double flight_speed = 0.02;
-
-//		@Config.Comment("Jump Height Adjustment. Set to False to Disable. Default True")
-//		@Name("04. Jump Height")
-//		@LangKey(PREFIX + ".jumpheight")
-//		public boolean step_height = true;
 
 		@Config.Comment("Fairy's Climbing Ability. Set to False to Disable. Default True")
 		@Name("05. Climbing")
@@ -172,38 +145,40 @@ public class FairyConfig {
 	                "minecraft:chorus_plant",
 	                "minecraft:chorus_flower",
 	                "minecraft:observer",
-	                "minecraft:white_shulker_box",
-	                "minecraft:orange_shulker_box",
-	                "minecraft:magenta_shulker_box",
-	                "minecraft:light_blue_shulker_box",
-	                "minecraft:yellow_shulker_box",
-	                "minecraft:lime_shulker_box",
-	                "minecraft:pink_shulker_box",
-	                "minecraft:gray_shulker_box",
-	                "minecraft:silver_shulker_box",
-	                "minecraft:cyan_shulker_box",
-	                "minecraft:purple_shulker_box",
-	                "minecraft:blue_shulker_box",
-	                "minecraft:brown_shulker_box",
-	                "minecraft:green_shulker_box",
-	                "minecraft:red_shulker_box",
-	                "minecraft:black_shulker_box",
-	                "minecraft:white_glazed_terracotta",
-	                "minecraft:orange_glazed_terracotta",
-	                "minecraft:magenta_glazed_terracotta",
-	                "minecraft:light_blue_glazed_terracotta",
-	                "minecraft:yellow_glazed_terracotta",
-	                "minecraft:lime_glazed_terracotta",
-	                "minecraft:pink_glazed_terracotta",
-	                "minecraft:gray_glazed_terracotta",
-	                "minecraft:silver_glazed_terracotta",
-	                "minecraft:cyan_glazed_terracotta",
-	                "minecraft:purple_glazed_terracotta",
-	                "minecraft:blue_glazed_terracotta",
-	                "minecraft:brown_glazed_terracotta",
-	                "minecraft:green_glazed_terracotta",
-	                "minecraft:red_glazed_terracotta",
-	                "minecraft:black_glazed_terracotta",
+					"minecraft:*_shulker_box",
+//					"minecraft:white_shulker_box",
+//					"minecraft:orange_shulker_box",
+//					"minecraft:magenta_shulker_box",
+//					"minecraft:light_blue_shulker_box",
+//					"minecraft:yellow_shulker_box",
+//					"minecraft:lime_shulker_box",
+//					"minecraft:pink_shulker_box",
+//					"minecraft:gray_shulker_box",
+//					"minecraft:silver_shulker_box",
+//					"minecraft:cyan_shulker_box",
+//					"minecraft:purple_shulker_box",
+//					"minecraft:blue_shulker_box",
+//					"minecraft:brown_shulker_box",
+//					"minecraft:green_shulker_box",
+//					"minecraft:red_shulker_box",
+//					"minecraft:black_shulker_box",
+					"minecraft:*_glazed_terracotta",
+//	                "minecraft:white_glazed_terracotta",
+//	                "minecraft:orange_glazed_terracotta",
+//	                "minecraft:magenta_glazed_terracotta",
+//	                "minecraft:light_blue_glazed_terracotta",
+//	                "minecraft:yellow_glazed_terracotta",
+//	                "minecraft:lime_glazed_terracotta",
+//	                "minecraft:pink_glazed_terracotta",
+//	                "minecraft:gray_glazed_terracotta",
+//	                "minecraft:silver_glazed_terracotta",
+//	                "minecraft:cyan_glazed_terracotta",
+//	                "minecraft:purple_glazed_terracotta",
+//	                "minecraft:blue_glazed_terracotta",
+//	                "minecraft:brown_glazed_terracotta",
+//	                "minecraft:green_glazed_terracotta",
+//	                "minecraft:red_glazed_terracotta",
+//	                "minecraft:black_glazed_terracotta",
 	                "minecraft:sign",
 	                "minecraft:wooden_door",
 	                "minecraft:iron_door",
@@ -285,6 +260,7 @@ public class FairyConfig {
 				"Name:xat.entityMagic.regen.cooldown, Amount:0, Operation:0",
 				"Name:xat.entityMagic.affinity, Amount:0, Operation:0",
 				"Name:xat.jump, Amount:-0.25, Operation:2",
-				"Name:xat.stepheight, Amount:-0.35, Operation:0"
+				"Name:xat.stepheight, Amount:-0.35, Operation:0",
+				"Name:xat.flyspeed, Amount:-0.6, Operation:2"
 		};
 }

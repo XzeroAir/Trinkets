@@ -1,7 +1,5 @@
 package xzeroair.trinkets.items.trinkets;
 
-import java.util.List;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -22,49 +20,51 @@ import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
+import java.util.List;
+
 public class TrinketArcingOrb extends AccessoryBase {
 
-	public final ConfigArcingOrb serverConfig = TrinketsConfig.SERVER.Items.ARCING_ORB;
+    public final ConfigArcingOrb serverConfig = TrinketsConfig.SERVER.Items.ARCING_ORB;
 
-	public TrinketArcingOrb(String name) {
-		super(name);
-		this.setUUID("249e65db-7dea-4825-8489-e6aa99a70be1");
-	}
+    public TrinketArcingOrb(String name) {
+        super(name);
+        this.setUUID("249e65db-7dea-4825-8489-e6aa99a70be1");
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "dodge", serverConfig.dodgeAbility && !(TrinketsConfig.compat.elenaiDodge));
-		final KeyEntry key1 = new LangEntry(this.getTranslationKey(stack), "dodge.stun", serverConfig.dodgeStuns);
-		final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "boltattack", serverConfig.attackAbility);
-		final KeyEntry key3 = new OptionEntry("dodgecost", serverConfig.dodgeAbility, serverConfig.dodgeCost);
-		final KeyEntry key4 = new OptionEntry("boltcost", serverConfig.attackAbility, serverConfig.attackCost);
-		final KeyEntry key5 = new OptionEntry("boltdamage", serverConfig.attackAbility, serverConfig.attackDmg);
-		final KeyEntry key6 = new KeyBindEntry("arckb", serverConfig.attackAbility, ModKeyBindings.ARCING_ORB_ABILITY.getDisplayName());
-		return helper.formatAddVariables(translation, key, key1, key2, key3, key4, key5, key6);
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "dodge", serverConfig.dodgeAbility && !(TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE));
+        final KeyEntry key1 = new LangEntry(this.getTranslationKey(stack), "dodge.stun", serverConfig.dodgeStuns);
+        final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "boltattack", serverConfig.attackAbility);
+        final KeyEntry key3 = new OptionEntry("dodgecost", serverConfig.dodgeAbility, serverConfig.dodgeCost);
+        final KeyEntry key4 = new OptionEntry("boltcost", serverConfig.attackAbility, serverConfig.attackCost);
+        final KeyEntry key5 = new OptionEntry("boltdamage", serverConfig.attackAbility, serverConfig.attackDmg);
+        final KeyEntry key6 = new KeyBindEntry("arckb", serverConfig.attackAbility, ModKeyBindings.ARCING_ORB_ABILITY.getDisplayName());
+        return helper.formatAddVariables(translation, key, key1, key2, key3, key4, key5, key6);
+    }
 
-	@Override
-	public String[] getAttributeConfig() {
-		return serverConfig.attributes;
-	}
+    @Override
+    public String[] getAttributeConfig() {
+        return serverConfig.attributes;
+    }
 
-	@Override
-	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-		abilities.add(new AbilityLightningBolt());
-		abilities.add(new AbilityDodge());
-	}
+    @Override
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityLightningBolt());
+        abilities.add(new AbilityDodge());
+    }
 
-	@Override
-	public boolean ItemEnabled() {
-		return serverConfig.enabled;
-	}
+    @Override
+    public boolean ItemEnabled() {
+        return serverConfig.enabled;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+    }
 
 }

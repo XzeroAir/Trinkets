@@ -50,6 +50,10 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
 		final boolean isClient = world.isRemote;
 		final ItemStack heldItemStack = entity.getHeldItemMainhand();
 		final Block block = state.getBlock();
+		if(block == null){
+			// Fix edge case?
+			return 0;
+		}
 		if (!heldItemStack.isEmpty() && !block.getHarvestTool(state).contentEquals("pickaxe")) {
 			return expToDrop;
 		}

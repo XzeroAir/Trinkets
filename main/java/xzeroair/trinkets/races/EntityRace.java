@@ -1,8 +1,5 @@
 package xzeroair.trinkets.races;
 
-import java.util.UUID;
-
-import javax.annotation.Nullable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -27,180 +24,187 @@ import xzeroair.trinkets.races.titan.RaceTitanAttributes;
 import xzeroair.trinkets.traits.elements.IElementProvider;
 import xzeroair.trinkets.util.TrinketsConfig;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements IElementProvider {
 
-	public static final ForgeRegistry<EntityRace> Registry = Registries.getRaceRegistry();//Trinkets.RaceRegistry;
+    public static final ForgeRegistry<EntityRace> Registry = Registries.getRaceRegistry();//Trinkets.RaceRegistry;
 
-	/*----------------------------------Constructor----------------------------------------*/
+    /*----------------------------------Constructor----------------------------------------*/
 
-	protected final UUID uuid;
-	protected final String name;
-	protected int primaryColor = 3289650;
-	protected int secondaryColor = 16777215;
+    protected final UUID uuid;
+    protected final String name;
+    protected int primaryColor = 3289650;
+    protected int secondaryColor = 16777215;
 
-	protected int magicAffinityValue = 100;
-	protected int raceHeight = 100;
-	protected int raceWidth = 100;
-	protected boolean canFly = false;
+    protected int magicAffinityValue = 100;
+    protected int raceHeight = 100;
+    protected int raceWidth = 100;
+    protected boolean canFly = false;
 
-	private EntityRace(String name, String uuid, int color1, int color2, boolean internal) {
-		this(name, uuid, color1, color2);
-		this.setRegistryName(name);
-	}
+    private EntityRace(String name, String uuid, int color1, int color2, boolean internal) {
+        this(name, uuid, color1, color2);
+        this.setRegistryName(name);
+    }
 
-	public EntityRace(String name, String uuid, int color1, int color2) {
-		this.name = name;
-		this.uuid = UUID.fromString(uuid);
-		primaryColor = color1;
-		secondaryColor = color2;
-	}
+    public EntityRace(String name, String uuid, int color1, int color2) {
+        this.name = name;
+        this.uuid = UUID.fromString(uuid);
+        primaryColor = color1;
+        secondaryColor = color2;
+    }
 
-	public static int getIdFromRace(EntityRace race) {
-		return race == null ? 0 : Registry.getID(race);
-	}
+    public int getID() {
+        return Registry.getID(this);
+    }
 
-	public static EntityRace getRaceById(int id) {
-		return Registry.getValue(id);
-	}
+    public static int getIdFromRace(EntityRace race) {
+        return race == null ? 0 : Registry.getID(race);
+    }
 
-	public static EntityRace getByUUID(UUID uuid) {
-		for (EntityRace race : Registry.getValuesCollection()) {
-			if (race.getUUID().compareTo(uuid) == 0) {
-				return race;
-			}
-		}
-		return EntityRaces.none;//.getObjectByUUID(uuid);
-	}
+    public static EntityRace getRaceById(int id) {
+        return Registry.getValue(id);
+    }
 
-	/**
-	 * Tries to get an race by it's name (e.g. human) or a String representation of
-	 * a numerical ID. If both fail, null is returned.
-	 */
-	@Nullable
-	public static EntityRace getByNameOrId(String id) {
-		final EntityRace race = Registry.getValue(new ResourceLocation(id.toLowerCase()));
+    public static EntityRace getByUUID(UUID uuid) {
+        for (EntityRace race : Registry.getValuesCollection()) {
+            if (race.getUUID().compareTo(uuid) == 0) {
+                return race;
+            }
+        }
+        return EntityRaces.none;//.getObjectByUUID(uuid);
+    }
 
-		if (race == null) {
-			try {
-				return getRaceById(Integer.parseInt(id));
-			} catch (final NumberFormatException var3) {
-			}
-		}
+    /**
+     * Tries to get an race by it's name (e.g. human) or a String representation of
+     * a numerical ID. If both fail, null is returned.
+     */
+    @Nullable
+    public static EntityRace getByNameOrId(String id) {
+        final EntityRace race = Registry.getValue(new ResourceLocation(id.toLowerCase()));
 
-		return race;
-	}
+        if (race == null) {
+            try {
+                return getRaceById(Integer.parseInt(id));
+            } catch (final NumberFormatException var3) {
+            }
+        }
 
-	/*-----------------------------------Code Start-------------------------------------*/
+        return race;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /*-----------------------------------Code Start-------------------------------------*/
 
-	public UUID getUUID() {
-		return uuid;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getRaceHeight() {
-		return raceHeight;
-	}
+    public UUID getUUID() {
+        return uuid;
+    }
 
-	public EntityRace setRaceHeight(int raceHeight) {
-		this.raceHeight = raceHeight;
-		return this;
-	}
+    public int getRaceHeight() {
+        return raceHeight;
+    }
 
-	public int getRaceWidth() {
-		return raceWidth;
-	}
+    public EntityRace setRaceHeight(int raceHeight) {
+        this.raceHeight = raceHeight;
+        return this;
+    }
 
-	public EntityRace setRaceWidth(int raceWidth) {
-		this.raceWidth = raceWidth;
-		return this;
-	}
+    public int getRaceWidth() {
+        return raceWidth;
+    }
 
-	public EntityRace setRaceSize(int sizeV) {
-		return this.setRaceHeight(sizeV).setRaceWidth(sizeV);
-	}
+    public EntityRace setRaceWidth(int raceWidth) {
+        this.raceWidth = raceWidth;
+        return this;
+    }
 
-	public int getMagicAffinity() {
-		return magicAffinityValue;
-	}
+    public EntityRace setRaceSize(int sizeV) {
+        return this.setRaceHeight(sizeV).setRaceWidth(sizeV);
+    }
 
-	public EntityRace setMagicAffinity(int magicAffinity) {
-		magicAffinityValue = magicAffinity;
-		return this;
-	}
+    public int getMagicAffinity() {
+        return magicAffinityValue;
+    }
 
-	public boolean canFly() {
-		return canFly;
-	}
+    public EntityRace setMagicAffinity(int magicAffinity) {
+        magicAffinityValue = magicAffinity;
+        return this;
+    }
 
-	public EntityRace setCanFly(boolean canFly) {
-		this.canFly = canFly;
-		return this;
-	}
+    public boolean canFly() {
+        return canFly;
+    }
 
-	public int getPrimaryColor() {
-		return primaryColor;
-	}
+    public EntityRace setCanFly(boolean canFly) {
+        this.canFly = canFly;
+        return this;
+    }
 
-	public int getSecondaryColor() {
-		return secondaryColor;
-	}
+    public int getPrimaryColor() {
+        return primaryColor;
+    }
 
-	public EntityRacePropertiesHandler getRaceHandler(EntityLivingBase e) {
-		switch (name) {
-		case "Fairy":
-			return new RaceFairy(e);
-		case "Dwarf":
-			return new RaceDwarf(e);
-		case "Titan":
-			return new RaceTitan(e);
-		case "Goblin":
-			return new RaceGoblin(e);
-		case "Elf":
-			return new RaceElf(e);
-		case "Faelis":
-			return new RaceFaelis(e);
-		case "Dragon":
-			return new RaceDragon(e);
-		case "Human":
-			return new RaceHuman(e);
-		default:
-			return new EmptyHandler(e);
-		}
-	}
+    public int getSecondaryColor() {
+        return secondaryColor;
+    }
 
-	public RaceAttributesWrapper getRaceAttributes() {
-		switch (name) {
-		case "Fairy":
-			return new RaceFairyAttributes();
-		case "Dwarf":
-			return new RaceDwarfAttributes();
-		case "Titan":
-			return new RaceTitanAttributes();
-		case "Goblin":
-			return new RaceGoblinAttributes();
-		case "Elf":
-			return new RaceElfAttributes();
-		case "Faelis":
-			return new RaceFaelisAttributes();
-		case "Dragon":
-			return new RaceDragonAttributes();
-		case "Human":
-			return new RaceAttributesWrapper();
-		default:
-			return new RaceAttributesWrapper();
-		}
-	}
+    public EntityRacePropertiesHandler getRaceHandler(EntityLivingBase e) {
+        switch (name) {
+            case "Fairy":
+                return new RaceFairy(e);
+            case "Dwarf":
+                return new RaceDwarf(e);
+            case "Titan":
+                return new RaceTitan(e);
+            case "Goblin":
+                return new RaceGoblin(e);
+            case "Elf":
+                return new RaceElf(e);
+            case "Faelis":
+                return new RaceFaelis(e);
+            case "Dragon":
+                return new RaceDragon(e);
+            case "Human":
+                return new RaceHuman(e);
+            default:
+                return new EmptyHandler(e);
+        }
+    }
 
-	public boolean isNone() {
-		return name.contentEquals("None");
-	}
+    public RaceAttributesWrapper getRaceAttributes() {
+        switch (name) {
+            case "Fairy":
+                return new RaceFairyAttributes();
+            case "Dwarf":
+                return new RaceDwarfAttributes();
+            case "Titan":
+                return new RaceTitanAttributes();
+            case "Goblin":
+                return new RaceGoblinAttributes();
+            case "Elf":
+                return new RaceElfAttributes();
+            case "Faelis":
+                return new RaceFaelisAttributes();
+            case "Dragon":
+                return new RaceDragonAttributes();
+            case "Human":
+                return new RaceAttributesWrapper();
+            default:
+                return new RaceAttributesWrapper();
+        }
+    }
 
-	/*------------------------------------------Register Races--------------------------------------------*/
+    public boolean isNone() {
+        return name.contentEquals("None");
+    }
 
-//@formatter:off
+    /*------------------------------------------Register Races--------------------------------------------*/
+
+    //@formatter:off
 	public static void registerRaces() {
 		registerRace((new EntityRace("None"		, "00000000-0000-0000-0000-000000000000", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(100));
 		registerRace((new EntityRace("Human"		, "c82ec7c3-2a9d-4a08-b0dd-7ce086c6771b", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(100));
@@ -222,7 +226,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
 	}
 //@formatter:on
 
-	protected static void registerRace(EntityRace race) {
-		Registry.register(race);
-	}
+    protected static void registerRace(EntityRace race) {
+        Registry.register(race);
+    }
 }

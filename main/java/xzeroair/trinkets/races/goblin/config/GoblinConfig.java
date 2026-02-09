@@ -6,6 +6,7 @@ import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
+//@formatter:off
 public class GoblinConfig {
 
 	private final String name = "goblin";
@@ -15,14 +16,17 @@ public class GoblinConfig {
 	@Name("01. Resistances")
 	@LangKey(PREFIX + ".natural_resistance")
 	public boolean natural_resistance = true;
+
 	@Config.Comment("")
 	@Name("02. Goblin Rider")
 	@LangKey(PREFIX + ".rider")
 	public boolean rider = true;
+
 	@Config.Comment("Should Creepers Ignore Goblin Players")
 	@Name("03. Friendly Creepers")
 	@LangKey(PREFIX + ".creeper")
 	public boolean friendly_creepers = true;
+
 	@Config.Comment("Should Creepers Explode when Attacked by Goblin Players")
 	@Name("03. Creepers Explode")
 	@LangKey(PREFIX + ".creeper.explode")

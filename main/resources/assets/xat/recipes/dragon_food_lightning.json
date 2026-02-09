@@ -1,0 +1,43 @@
+{
+  "type": "xat:dragon_eye_iaf",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ],
+  "pattern": [
+    "CFC",
+    "DCD",
+    "C#C"
+  ],
+  "key": {
+    "#": {
+      "item": "xat:moon_rose"
+    },
+    "F": {
+      "type": "xat:nbt",
+      "item": "xat:dragons_eye",
+      "nbt": {
+        "Elements": {
+          "primary": "xat:lightning"
+        }
+      },
+      "data": 0
+    },
+    "D": {
+      "item": "minecraft:dragon_breath"
+    },
+    "C": {
+      "item": "xat:mana_crystal"
+    }
+  },
+  "result": {
+    "item": "xat:dragon_gem",
+    "nbt": {
+      "Elements": {
+        "primary": "xat:lightning"
+      }
+    }
+  }
+}

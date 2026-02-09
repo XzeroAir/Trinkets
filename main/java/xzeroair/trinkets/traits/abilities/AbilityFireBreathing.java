@@ -20,87 +20,83 @@ import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 
-	protected double breathStage = 0;
+    protected double breathStage = 0;
 
-	public AbilityFireBreathing() {
-		super(Abilities.fireBreathing);
-	}
+    public AbilityFireBreathing() {
+        super(Abilities.fireBreathing);
+    }
 
-	protected boolean DragonBreath(Entity entity) {
-		if (this.isSpectator(entity)) {
-			return false;
-		}
-		if (breathStage > 3) {
-			breathStage = 0;
-		}
-		if (breathStage == 0) {
-			final MagicStats magic = Capabilities.getMagicStats(entity);
-			if (magic != null) {
-				if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.breath_cost)) {
-					return false;
-				}
-			}
-			int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> ColorHelper.convertHexadecimalToDecimal(prop.getRaceHandler().getAltTraitColor()));
-			final World world = entity.getEntityWorld();
-			final float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
-			final float headPosZ = (float) (entity.posZ + (1.8F * 1 * 0.3F * Math.sin(((entity.rotationYaw + 90) * Math.PI) / 180)));
-			final float headPosY = (float) ((entity.posY + (entity.getEyeHeight() * 0.8)));
-			final double d2 = entity.getLookVec().x;
-			final double d3 = entity.getLookVec().y;
-			final double d4 = entity.getLookVec().z;
-			world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
-			if (!world.isRemote) {
-				//TODO Have a max life, tick it down, then kill the projectile, use the life to show decide on the look
-				final MovingThrownProjectile breath = new MovingThrownProjectile(
-						entity.getEntityWorld(), (EntityLivingBase) entity,
-						d2, d3, d4,
-						bcolor
-				);
-				breath.setPosition(headPosX, headPosY, headPosZ);
-				breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 0.0F);
-				world.spawnEntity(breath.setColor(bcolor));
-			}
-		}
-		breathStage += 1;
-		return true;
-	}
+    protected boolean DragonBreath(Entity entity) {
+        if (this.isSpectator(entity)) {
+            return false;
+        }
+        if (breathStage > 3) {
+            breathStage = 0;
+        }
+        if (breathStage == 0) {
+            final MagicStats magic = Capabilities.getMagicStats(entity);
+            if (magic != null) {
+                if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.breath_cost)) {
+                    return false;
+                }
+            }
+            int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> ColorHelper.getColorFromString(prop.getRaceHandler().getAltTraitColor()));
+            final World world = entity.getEntityWorld();
+            final float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
+            final float headPosZ = (float) (entity.posZ + (1.8F * 1 * 0.3F * Math.sin(((entity.rotationYaw + 90) * Math.PI) / 180)));
+            final float headPosY = (float) ((entity.posY + (entity.getEyeHeight() * 0.8)));
+            final double d2 = entity.getLookVec().x;
+            final double d3 = entity.getLookVec().y;
+            final double d4 = entity.getLookVec().z;
+            world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
+            if (!world.isRemote) {
+                //TODO Have a max life, tick it down, then kill the projectile, use the life to show decide on the look
+                final MovingThrownProjectile breath = new MovingThrownProjectile(entity.getEntityWorld(), (EntityLivingBase) entity, d2, d3, d4, bcolor);
+                breath.setPosition(headPosX, headPosY, headPosZ);
+                breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 0.0F);
+                world.spawnEntity(breath.setColor(bcolor));
+            }
+        }
+        breathStage += 1;
+        return true;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getKey() {
-		return ModKeyBindings.RACE_ABILITY.getDisplayName();
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getKey() {
+        return ModKeyBindings.RACE_ABILITY.getDisplayName();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getAuxKey() {
-		return ModKeyBindings.AUX_KEY.getDisplayName();
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getAuxKey() {
+        return ModKeyBindings.AUX_KEY.getDisplayName();
+    }
 
-	@Override
-	public boolean onKeyPress(Entity entity, boolean Aux) {
-		final MagicStats magic = Capabilities.getMagicStats(entity);
-		if (magic != null) {
-			return magic.getMana() >= TrinketsConfig.SERVER.races.dragon.breath_cost;
-		}
-		return true;
-	}
+    @Override
+    public boolean onKeyPress(Entity entity, boolean Aux) {
+        final MagicStats magic = Capabilities.getMagicStats(entity);
+        if (magic != null) {
+            return magic.getMana() >= TrinketsConfig.SERVER.races.dragon.breath_cost;
+        }
+        return true;
+    }
 
-	@Override
-	public boolean onKeyDown(Entity entity, boolean Aux) {
-		if (this.DragonBreath(entity)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public boolean onKeyDown(Entity entity, boolean Aux) {
+        if (this.DragonBreath(entity)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public boolean onKeyRelease(Entity entity, boolean Aux) {
-		if (breathStage != 0) {
-			breathStage = 0;
-		}
-		return true;
-	}
+    @Override
+    public boolean onKeyRelease(Entity entity, boolean Aux) {
+        if (breathStage != 0) {
+            breathStage = 0;
+        }
+        return true;
+    }
 
 }

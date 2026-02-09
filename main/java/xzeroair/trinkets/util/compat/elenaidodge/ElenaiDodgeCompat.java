@@ -1,7 +1,6 @@
 package xzeroair.trinkets.util.compat.elenaidodge;
 
 import com.elenai.elenaidodge.api.DodgeEvent.ServerDodgeEvent;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -14,34 +13,34 @@ import xzeroair.trinkets.util.TrinketsConfig;
 
 public class ElenaiDodgeCompat extends EventBaseHandler {
 
-	@SubscribeEvent
-	public void DodgeEvent(ServerDodgeEvent event) {
-		if (!TrinketsConfig.compat.elenaiDodge) {
-			return;
-		}
-		if (event.getCooldown() > 0) {
-			return;
-		}
-		final EntityPlayer player = event.getPlayer();
-		Capabilities.getEntityProperties(player, prop -> {
-			try {
-				final IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + Abilities.dodging);
-				if (ability instanceof AbilityDodge) {
-					Capabilities.getMagicStats(player, magic -> {
-						final float cost = TrinketsConfig.SERVER.Items.ARCING_ORB.dodgeCost;
-						if (magic.spendMana(cost)) {
-							final AbilityDodge dodge = (AbilityDodge) ability;
-							dodge.dodge(player);
-						}
-					});
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
+    @SubscribeEvent
+    public void DodgeEvent(ServerDodgeEvent event) {
+        if (!TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE) {
+            return;
+        }
+        if (event.getCooldown() > 0) {
+            return;
+        }
+        final EntityPlayer player = event.getPlayer();
+        Capabilities.getEntityProperties(player, prop -> {
+            try {
+                final IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + Abilities.dodging);
+                if (ability instanceof AbilityDodge) {
+                    Capabilities.getMagicStats(player, magic -> {
+                        final float cost = TrinketsConfig.SERVER.Items.ARCING_ORB.dodgeCost;
+                        if (magic.spendMana(cost)) {
+                            final AbilityDodge dodge = (AbilityDodge) ability;
+                            dodge.dodge(player);
+                        }
+                    });
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	//	@SubscribeEvent // This is a Client Side only Event
-	//	public void RequestDodge(RequestDodgeEvent event) {
-	//	}
+    //	@SubscribeEvent // This is a Client Side only Event
+    //	public void RequestDodge(RequestDodgeEvent event) {
+    //	}
 }

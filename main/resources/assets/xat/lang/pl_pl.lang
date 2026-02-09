@@ -4,7 +4,7 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= These are informational example text, they do not show up in game.
 xat.exampletext.1= Tooltips for Items go up to 10
 xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 Compatability Texts per Item, examples are
+xat.exampletext.3= There are 3 compatibility Texts per Item, examples are
 xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
 xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
 xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
@@ -33,6 +33,7 @@ xat.tooltip.disabled=§r[§cWyłączony§r]
 xat.tooltip.weight=Ciężar:
 
 xat.config.race.size=Ustawienia rozmiaru
+xat.config.race.size.tooltip=Size Configuration
 
 key.xat.category=Trinkets and Baubles
 key.xat.trinket_target.desc=Oko smoka: zmień cel
@@ -138,6 +139,11 @@ ability.safe_guard.tooltip2=Ignoruje obrażenia co $sohcount: trafień
 ability.firstaid_reflex.name=Szybkie odruchy
 ability.firstaid_reflex.tooltip1=Szansa na uniknięcie śmiertelnych trafień w głowę
 
+xat.element.neutral.name=Neutral
+xat.element.fire.name=Fire
+xat.element.ice.name=Ice
+xat.element.lightning.name=Lightning
+
 damagetype.xat.water=woda
 death.attack.xat.water=%1$s został zabity przez %2$s podczas noszenia korony królowej Enderu
 
@@ -145,10 +151,12 @@ xat.jump=Wysokość skoku
 xat.stepheight=Wysokość wchodzenia
 xat.entityMagic.maxMana=Maksymalna mana
 xat.entityMagic.regen=Regeneracja MP
+xat.flyspeed=Fly Speed
 attribute.name.xat.jump=Wysokość skoku
 attribute.name.xat.stepheight=Wysokość wchodzenia
 attribute.name.xat.entityMagic.maxMana=Maksymalna mana
 attribute.name.xat.entityMagic.regen=Regeneracja MP
+attribute.name.xat.flyspeed=Fly Speed
 
 ####################################Materials####################################
 
@@ -158,7 +166,7 @@ item.glowing_powder.tooltip1=Materiał rzemieślniczy szczebla 1
 item.glowing_ingot.name=§eJasktrawa sztabka
 item.glowing_ingot.tooltip1=§eMateriał rzemieślniczy szczebla 2
 
-item.glowing_gem.name§6Jaskrawy klejnot
+item.glowing_gem.name=§6Jaskrawy klejnot
 item.glowing_gem.tooltip1=§6Materiał rzemieślniczy szczebla 3
 
 item.mana_candy.name=§bCukierek many
@@ -222,10 +230,10 @@ item.titan_ring.0.tooltip4=§cNiszczysz rośliny
 item.titan_ring.0.heavy=§cToniesz w wodzie
 
 item.dragon_ring.0.name=§6Pierścień smoków
-item.dragon_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.dragon_ring.0.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6 aby zionąć ogniem
-item.dragon_ring.0.tooltip3=§6Daje niewrażliwość na ogień
-item.dragon_ring.0.tooltip4=§2Daje noktowizję §r<§e*denvkb:§r>
+#item.dragon_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
+#item.dragon_ring.0.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6 aby zionąć ogniem
+#item.dragon_ring.0.tooltip3=§6Daje niewrażliwość na ogień
+#item.dragon_ring.0.tooltip4=§2Daje noktowizję §r<§e*denvkb:§r>
 
 item.teddy_bear.0.name=Pluszowy miś
 item.teddy_bear.0.tooltip1=§6Jeżeli trzymany podczas snu, daje wzmocnienie
@@ -251,6 +259,7 @@ item.sea_stone.0.bubbles=§6Nieskończony tlen na poziomie §r[§3$bubbles:§r]�
 item.sea_stone.0.betterswimming=§2Ulepszone pływanie
 item.sea_stone.0.compat.tan=@tanthirst:
 item.sea_stone.0.tanthirst=§6Niewrażliwość na pragnienie
+item.sea_stone.0.compat.enhancedvisuals=Wyłącza niewyraźne widzenie podczas wchodzenia do wody
 
 item.polarized_stone.0.name=Spolaryzowany kamień
 item.polarized_stone.0.tooltip1=@collect:
@@ -272,7 +281,6 @@ item.dragons_eye.0.tooltip2=§2Daje noktowizję §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.tooltip4=@frostwalker:
 item.dragons_eye.0.treasurefinder=§6Obecny cel: §3§n$target:§r <§e*deofkb:§r>
-
 item.dragons_eye.0.treasurefinder.on=§6Potrzebuję więcej §f $target:§6 do mego skarbca $looking:
 item.dragons_eye.0.treasurefinder.notfound=§6Nie jestem pewny, czego potrzebuję §c(Item not found, returned as $target:)
 item.dragons_eye.0.treasurefinder.off=Sądzę, że mój skarbiec jest wystarczająco pełny $looking:
@@ -280,6 +288,7 @@ item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6Niewrażliwość na przegrzanie
 item.dragons_eye.0.coldimmune=§6Niewrażliwość na hipotermię
 item.dragons_eye.0.paralysisimmune=§6Niewrażliwość na sparaliżowanie
+item.dragons_eye.0.compat.enhancedvisuals=
 item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Daje §3mroźnego piechura
 
 item.poison_stone.0.name=Trujący kamień
@@ -505,6 +514,7 @@ xat.config.client.gui.settings=Ustawienia menu trinkets
 xat.config.client.gui.settings.tooltip=Ustawienia dotyczące menu Trinkets na kliencie.
 
 xat.config.client.magic.hud.settings=Ustawienia paska many
+xat.config.client.magic.hud.settings.tooltip=Konfiguracja renderowania paska many.
 xat.config.client.magic.hud.shown=Wyświetlaj pasek many?
 xat.config.client.magic.hud.shown.always=Zawsze wyświetlaj pasek many?
 xat.config.client.magic.hud.horizontal=Renderuj w poziomie?
@@ -529,6 +539,7 @@ xat.config.client.render.entity.renderer.replace.fog.tooltip=Kiedy EntityRendere
 
 xat.config.client.race.properties.gui.settings=Menu właściwości ras
 xat.config.client.race.properties.gui.shown=Przycisk właściwości ras
+xat.config.client.race.properties.gui.shown.tooltip=Włączyć przycisk Interfejs właściwości rasy?
 
 #####################################[Food Configs]#####################################
 
@@ -584,6 +595,7 @@ xat.config.server.potion.playersonly.tooltip=Czy mikstury powinny działać tylk
 #####################################[Item Configs]#####################################
 
 xat.config.items=Ustawienia przedmiotów
+xat.config.items.tooltip=Konfiguracja drobiazgów
 xat.config.items.transformation=Przedmioty przemian
 
 xat.config.glow_ring=Ustawienia pierścienia zaklętych oczu
@@ -609,6 +621,8 @@ xat.config.server.dragons_eye.orefinder.blocks.list=Lista bloków wyszukiwacza s
 xat.config.server.dragons_eye.orefinder.blocks.list.tooltip=Lista bloków wskazywanych przez wyszukiwacz skarbów
 xat.config.server.dragons_eye.toughasnails.immunity.heat=Niewrażliwość na ciepło?
 xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana, czy gracz powinien być niewrażliwy na ciepło?
+xat.config.server.dragons_eye.toughasnails.immunity.cold=Immune to Cold
+xat.config.server.dragons_eye.toughasnails.immunity.cold.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Cold
 
 xat.config.server.dragons_eye.iceandfire.recipe.stage=Wiek czaszki
 xat.config.server.dragons_eye.iceandfire.recipe.stage.tooltip=Jeżeli modyfikacja "Ice and Fire" jest zainstalowana, czy oko smoka powinno wymagać konkretego wieku czaszki do receptury? Ustawienie wartości 0 akceptuje każdy wiek.
@@ -837,7 +851,9 @@ xat.config.magic.moon_rose.essence.tooltip=Ile magicznej esencji ma księżycowa
 xat.config.magic.moon_rose.cooldown=Czas przyswajania
 xat.config.magic.moon_rose.cooldown.tooltip=Ile czasu (w tickach) zajmuje przyswojenie 1 magicznej esencji z księżycowej róży?
 xat.config.magic.mana_crystal.explodes=Kryształ many wybucha?
+xat.config.magic.mana_crystal.explodes.tooltip=Will Mana Crystals explode when struck against stone, producing Mana Reagent?
 xat.config.magic.mana_reagent.harmful=Odczynnik many wybucha?
+xat.config.magic.mana_reagent.harmful.tooltip=Will the Mana reagent harm you when you consume it?
 
 xat.config.magic.mana.enabled=Mana włączona?
 xat.config.magic.mana.enabled.tooltip=
@@ -866,6 +882,7 @@ xat.config.magic.mana.players_only.tooltip=Czy tylko gracze mogą mieć manę?
 xat.config.races=Ustawienia ras
 
 xat.config.races.dwarf=Ustawienia krasnoluda
+xat.config.races.dwarf.tooltip=
 xat.config.races.dwarf.blocks=Ustawienia bloków
 xat.config.races.dwarf.blocks.tooltip=
 xat.config.races.dwarf.blocks.xp=Bloki dają doświadczenie?
@@ -892,6 +909,7 @@ xat.config.races.dwarf.static_mining=Stała szybkość kopania?
 xat.config.races.dwarf.static_mining.tooltip=Przy kopaniu, szybkość kopania będzie ustawiona na Block Hardness * 4, nie uwzględniając innych modyfikatorów.
 
 xat.config.races.elf=Ustawienia elfa
+xat.config.races.elf.tooltip=
 xat.config.races.elf.chargeshot.enabled=Strzał mocy?
 xat.config.races.elf.chargeshot.enabled.tooltip=Czy elfy powinny mieć możliwość wzmacniania strzałów z łuku maną?
 xat.config.races.elf.chargeshot.cost=Koszt strzału mocy?
@@ -908,6 +926,7 @@ xat.config.races.elf.chargeshot.explode=Pełne naładowanie wybucha?
 xat.config.races.elf.chargeshot.explode.tooltip=Jeżeli strzał mocy jest w pełni naładowany, czy strzała powinna wybuchnąć przy kontakcie i zadać obrażenia obszarowe?
 
 xat.config.races.fairy=Ustawienia wróżki
+xat.config.races.fairy.tooltip=
 xat.config.races.fairy.flight=Latanie?
 xat.config.races.fairy.flight.tooltip=Pozwolić graczowi na latanie z trybu kreatywnego?
 xat.config.races.fairy.flight.speed=Zmieniona szybkość latania?
@@ -945,6 +964,7 @@ xat.config.races.goblin.natural_resistance=Naturalna odporność?
 xat.config.races.goblin.natural_resistance.tooltip=Czy gobliny powinny być odporne na ogień i wybuchy?
 
 xat.config.races.titan=Ustawienia tytana
+xat.config.races.titan.tooltip=
 xat.config.races.titan.jumpheight=Poprawki wysokości skoku?
 xat.config.races.titan.jumpheight.tooltip=Czy poprawić wysokość skoku i wysokość wchodzenia na bloki gracza, aby zgadzały się z rozmiarem gracza?
 xat.config.races.titan.heavy=Ciężki?
@@ -965,6 +985,7 @@ xat.config.races.titan.mount.blacklist=Lista ujeżdżalnych bytów
 xat.config.races.titan.mount.blacklist.tooltip=W zależności od opcji "Biała lista ujeżdżanych bytów", tylko te byty można ujeżdżać lub tylko tych nie można.
 
 xat.config.races.faelis=Ustawienia kotowatego
+xat.config.races.faelis.tooltip=
 xat.config.races.faelis.claw.bonus=Bonus pazurów?
 xat.config.races.faelis.claw.bonus.tooltip=Czy gracz powinien zadawać dodatkowe obrażenia przy ataku pustą ręką?
 xat.config.races.faelis.claw.bonus.amount=Wartość dodatkowych obrażeń
@@ -987,6 +1008,7 @@ xat.config.races.faelis.milk.list=Mleko
 xat.config.races.faelis.milk.list.tooltip=Lista przedmiotów uznawanych za mleko
 
 xat.config.races.dragon=Ustawienia smoka
+xat.config.races.dragon.tooltip=
 xat.config.races.dragon.flight=Latanie?
 xat.config.races.dragon.flight.tooltip=Pozwolić graczowi na latanie z trybu kreatywnego?
 xat.config.races.dragon.flight.speed=Zmieniona szybkość latania?
@@ -1032,8 +1054,8 @@ xat.config.misc.interaction.fix.tooltip=Minecraft Vanilla nie radzi sobie z inte
 xat.config.misc.vip=VIP Włączony?
 xat.config.misc.vip.tooltip=Lista VIP może być niedostępna w pewnych okolicznościach. Użyj tego aby skrócić czas uruchamiania gry.
 
-xat.config.compatability=Ustawienia kompatybilności
-xat.config.compatability.tooltip=Ustawienia mające wpływ na zachowanie tej modyfikacji w połączeniu z innymi
+xat.config.compatibility=Ustawienia kompatybilności
+xat.config.compatibility.tooltip=Ustawienia mające wpływ na zachowanie tej modyfikacji w połączeniu z innymi
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana

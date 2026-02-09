@@ -1,9 +1,5 @@
 package xzeroair.trinkets.races.titan;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,69 +16,72 @@ import xzeroair.trinkets.traits.abilities.other.AbilityLargeHands;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.EntityHelper;
 
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
+
 public class RaceTitan extends EntityRacePropertiesHandler {
 
-	public static final TitanConfig serverConfig = TrinketsConfig.SERVER.races.titan;
-	public static List<String> disallowedMounts = Arrays.asList(serverConfig.mountBlacklist);
+    public static final TitanConfig serverConfig = TrinketsConfig.SERVER.races.titan;
 
-	//	private UpdatingAttribute speed, attack;
+    //	private UpdatingAttribute speed, attack;
 
-	public RaceTitan(@Nonnull EntityLivingBase e) {
-		super(e, EntityRaces.titan);
-		disallowedMounts = Arrays.asList(serverConfig.mountBlacklist);
-	}
+    public RaceTitan(@Nonnull EntityLivingBase e) {
+        super(e, EntityRaces.titan);
+    }
 
-	@Override
-	public void startTransformation() {
-		this.addAbility(new AbilityLargeHands());
-		if (serverConfig.sink) {
-			this.addAbility(new AbilityHeavy());
-		}
-	}
+    @Override
+    public void startTransformation() {
+        this.addAbility(new AbilityLargeHands());
+        if (serverConfig.sink) {
+            this.addAbility(new AbilityHeavy());
+        }
+    }
 
-	@Override
-	public void whileTransformed() {
-		if (!entity.world.isRemote && entity.isRiding()) {
-			final Entity mount = entity.getRidingEntity();
-			if ((mount != null) && !this.mountEntity(mount)) {
-				entity.dismountRidingEntity();
-			}
-		}
-	}
+    @Override
+    public void whileTransformed() {
+        if (!entity.world.isRemote && entity.isRiding()) {
+            final Entity mount = entity.getRidingEntity();
+            if ((mount != null) && !this.mountEntity(mount)) {
+                entity.dismountRidingEntity();
+            }
+        }
+    }
 
-	@Override
-	public boolean mountEntity(Entity mount) {
-		if (EntityHelper.isCreative(entity)) {
-			return true;
-		} else if (!serverConfig.canMount) {
-			return false;
-		} else if (!disallowedMounts.isEmpty()) {
-			try {
-				final ResourceLocation regName = EntityRegistry.getEntry(mount.getClass()).getRegistryName();
-				final String modID = regName.getNamespace();
-				final String entityID = regName.getPath();
-				final boolean doesWildcardExist = disallowedMounts.contains(modID + ":*");
-				final boolean exists = disallowedMounts.contains(regName.toString());
-				if (doesWildcardExist || exists) {
-					return serverConfig.whitelist;
-				} else {
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-			return !serverConfig.whitelist;
-		} else {
-			return true;
-		}
-	}
+    @Override
+    public boolean mountEntity(Entity mount) {
+        if (EntityHelper.isCreative(entity)) {
+            return true;
+        } else if (!serverConfig.canMount) {
+            return false;
+        } else if (serverConfig.mountBlacklist.length > 0) {
+            List<String> disallowedMounts = Arrays.asList(serverConfig.mountBlacklist);
+            try {
+                final ResourceLocation regName = EntityRegistry.getEntry(mount.getClass()).getRegistryName();
+                final String modID = regName.getNamespace();
+                final String entityID = regName.getPath();
+                final boolean doesWildcardExist = disallowedMounts.contains(modID + ":*");
+                final boolean exists = disallowedMounts.contains(regName.toString());
+                if (doesWildcardExist || exists) {
+                    return serverConfig.whitelist;
+                } else {
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            return !serverConfig.whitelist;
+        } else {
+            return true;
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-		super.doRenderPlayerPre(entity, x, y, z, renderer, partialTick);
-		if (entity.limbSwingAmount > 0) {
-			entity.limbSwingAmount -= 0.04F;
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
+        super.doRenderPlayerPre(entity, x, y, z, renderer, partialTick);
+        if (entity.limbSwingAmount > 0) {
+            entity.limbSwingAmount -= 0.04F;
+        }
+    }
 
 }

@@ -1,405 +1,397 @@
 package xzeroair.trinkets.traits.abilities;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.client.particles.ParticleGreed;
-import xzeroair.trinkets.enums.TargetOreType;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.network.AbilityCacheSyncPacket;
+import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.compat.OreDictionaryCompat;
+import xzeroair.trinkets.util.Utils.TempCache;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigDragonsEye;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.EntryType;
 import xzeroair.trinkets.util.config.ConfigHelper.TreasureEntry;
 import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
 import xzeroair.trinkets.util.handlers.Counter;
-import xzeroair.trinkets.util.helpers.RayTraceHelper;
+import xzeroair.trinkets.util.helpers.StringUtils;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
+
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class AbilityBlockFinder extends Ability implements ITickableAbility, IToggleAbility, IKeyBindInterface {
 
-	protected final ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
-	protected final ClientConfigDragonsEye clientConfig = TrinketsConfig.CLIENT.items.DRAGON_EYE;
+    protected final ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
+    protected final ClientConfigDragonsEye clientConfig = TrinketsConfig.CLIENT.items.DRAGON_EYE;
 
-	protected boolean firstTick = false;
+    protected boolean firstTick = false;
 
-	public AbilityBlockFinder() {
-		super(Abilities.blockDetection);
-		firstTick = true;
-	}
+    protected TreeMap<Integer, TreasureEntry> TreasureBlocks = new TreeMap<>();
+    protected TreeMap<Double, TempCache<Vec3d, TreasureEntry>> cache = new TreeMap<>();
+    protected TreasureEntry targetTreasure;
 
-	private int targetValue = -1;
+    public AbilityBlockFinder() {
+        super(Abilities.blockDetection);
+        firstTick = true;
+        targetTreasure = new TreasureEntry("");
+        initTreasureBlocks();
+    }
 
-	public int getTargetValue() {
-		return targetValue;
-	}
+    private int targetValue = -1;
 
-	@Override
-	public boolean abilityEnabled() {
-		return targetValue > 0;
-	}
+    public int getTargetValue() {
+        return targetValue;
+    }
 
-	@Override
-	public IToggleAbility toggleAbility(boolean enabled) {
-		return this;
-	}
+    @Override
+    public boolean abilityEnabled() {
+        return targetValue > 0;
+    }
 
-	@Override
-	public IToggleAbility toggleAbility(int value) {
-		targetValue = value;
-		return this;
-	}
+    @Override
+    public IToggleAbility toggleAbility(boolean enabled) {
+        return this;
+    }
 
-	protected void IterateBlocks(EntityLivingBase entity, final Vec3d origin, final World world, AxisAlignedBB aabb) {
-		final int i = MathHelper.floor(aabb.minX);
-		final int j = MathHelper.floor(aabb.maxX + 1.0D);
-		final int k = MathHelper.floor(aabb.minY);
-		final int l = MathHelper.floor(aabb.maxY + 1.0D);
-		final int i1 = MathHelper.floor(aabb.minZ);
-		final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
-		final boolean closest = serverConfig.BLOCKS.closest;
-		final TreeMap<Double, Vec3d> collection = new TreeMap();
-		final TreasureEntry treasure = this.getTreasure();
-		if (treasure == null) {
-			return;
-		} else if (treasure.getObjectRegistryName().contentEquals("*:*")) {
-			return;
-		}
-		for (int k1 = i; k1 < j; ++k1) {
-			for (int l1 = k; l1 < l; ++l1) {
-				for (int i2 = i1; i2 < j1; ++i2) {
-					final Vec3d pos = new Vec3d(k1, l1, i2);
-					final BlockPos bPos = new BlockPos(pos);
-					final IBlockState state = world.getBlockState(bPos);
-					final Block block = state.getBlock();
-					if (!(block.isAir(state, world, bPos)) && treasure.doesBlockMatchEntry(state)) {
-						double blockDist = pos.distanceTo(origin);
-						collection.put(blockDist, pos);
-					}
-				}
-			}
-		}
-		try {
-			final ResourceLocation isEntityRegName = new ResourceLocation(treasure.getObjectRegistryName());
-			if (EntityList.isRegistered(isEntityRegName)) {
-				final Class<? extends Entity> e = EntityList.getClass(isEntityRegName);
-				if (e != null) {
-					final List<? extends Entity> entList = world.getEntitiesWithinAABB(e, aabb);
-					if (!entList.isEmpty()) {
-						for (final Entity targetEntity : entList) {
-							final Vec3d pos = targetEntity.getPositionVector();
-							final double chestDist = pos.distanceTo(origin);
-							collection.put(chestDist, pos);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
+    @Override
+    public IToggleAbility toggleAbility(int value) {
+        targetValue = value;
+        return this;
+    }
 
-		if (!collection.isEmpty() && world.isRemote) {
-			final Entry<Double, Vec3d> first = collection.firstEntry();
-			final double distance = first.getKey();
-			if (first.getKey() > 1.8) {
-				this.playSound(entity, new BlockPos(first.getValue()), distance);
-			}
-			if (closest) {
-				for (int p1 = 0; p1 < 3; p1++) {
-					this.SpawnParticle(entity.getEntityWorld(), first.getValue(), treasure.getColor());
-				}
-			} else {
-				int particleCount = 0;
-				for (Entry<Double, Vec3d> e : collection.entrySet()) {
-					if (particleCount >= clientConfig.Particles_Max) {
-						break;
-					}
-					for (int p1 = 0; p1 < 3; p1++) {
-						this.SpawnParticle(entity.getEntityWorld(), e.getValue(), treasure.getColor());
-						particleCount++;
-					}
-				}
-			}
-		}
-	}
+    protected void IterateBlocks(EntityLivingBase entity, final Vec3d origin, final World world, AxisAlignedBB aabb) {
+        final boolean closest = serverConfig.BLOCKS.closest;
+//        final boolean closest = TrinketsConfig.getClientStore().DRAGON_EYE_OF_CLOSEST;
+        if (!world.isRemote) {
+            final TreasureEntry treasure = this.getTreasure(targetValue);
+            if (treasure == null) {
+                return;
+            } else if (treasure.getObjectRegistryName().contentEquals("*:*")) {
+                return;
+            }
+            TreeMap<Double, TempCache<Vec3d, TreasureEntry>> collection = new TreeMap<>();
+            if (treasure.getObjectType().compareTo(EntryType.BLOCK) == 0 || treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0) {
+//            System.out.println("" + treasure.parseTargetName() + "|" + treasure.getObjectRegistryName() + "|" + treasure.getObjectType());
+                final int i = MathHelper.floor(aabb.minX);
+                final int j = MathHelper.floor(aabb.maxX + 1.0D);
+                final int k = MathHelper.floor(aabb.minY);
+                final int l = MathHelper.floor(aabb.maxY + 1.0D);
+                final int i1 = MathHelper.floor(aabb.minZ);
+                final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
+                boolean foundIt = false;
+                for (int k1 = i; k1 < j; ++k1) {
+                    for (int l1 = k; l1 < l; ++l1) {
+                        for (int i2 = i1; i2 < j1; ++i2) {
+                            final Vec3d pos = new Vec3d(k1, l1, i2);
+                            final BlockPos bPos = new BlockPos(pos);
+                            final IBlockState state = world.getBlockState(bPos);
+                            final Block block = state.getBlock();
+                            if (!(block.isAir(state, world, bPos)) && treasure.doesBlockMatchEntry(state)) {
+                                foundIt = true;
+                                double blockDist = pos.distanceTo(origin);
+                                collection.put(blockDist, new TempCache<>(pos, treasure));
+                            }
+                        }
+                    }
+                }
+            }
+            if (treasure.getObjectType().compareTo(EntryType.ENTITY) == 0) {
+                try {
+                    final ResourceLocation isEntityRegName = new ResourceLocation(treasure.getObjectRegistryName());
+                    if (EntityList.isRegistered(isEntityRegName)) {
+                        final Class<? extends Entity> e = EntityList.getClass(isEntityRegName);
+                        if (e != null) {
+                            final List<? extends Entity> entList = world.getEntitiesWithinAABB(e, aabb);
+                            if (!entList.isEmpty()) {
+                                for (final Entity targetEntity : entList) {
+                                    final Vec3d pos = targetEntity.getPositionVector();
+                                    final double entDist = pos.distanceTo(origin);
+                                    collection.put(entDist, new TempCache<>(pos, treasure));
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+            sendBlockCacheToPlayer(entity, collectBlocks(collection));
+        } else {
+            if (!cache.isEmpty()) {
+                final Entry<Double, TempCache<Vec3d, TreasureEntry>> first = cache.firstEntry();
+                final double distance = first.getKey();
+                if (first.getKey() > 1.8) {
+                    this.playSound(entity, new BlockPos(first.getValue().getFirst()), distance);
+                }
+                if (closest) {
+                    for (int p1 = 0; p1 < 3; p1++) {
+                        this.SpawnParticle(entity.getEntityWorld(), first.getValue().getFirst(), first.getValue().getSecond().getColor());
+                    }
+                } else {
+                    int particleCount = 0;
+                    for (Entry<Double, TempCache<Vec3d, TreasureEntry>> e : cache.entrySet()) {
+                        if (particleCount >= clientConfig.Particles_Max) {
+                            break;
+                        }
+                        for (int p1 = 0; p1 < 3; p1++) {
+                            this.SpawnParticle(entity.getEntityWorld(), e.getValue().getFirst(), e.getValue().getSecond().getColor());
+                            particleCount++;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public void tickAbility(EntityLivingBase entity) {
-		if (serverConfig.oreFinder) {
-			final int length = serverConfig.BLOCKS.Blocks.length;
-			final World world = entity.getEntityWorld();
-			if (targetValue > length) {
-				targetValue = -1;
-			}
-			if (targetValue < 0) {
-				return;
-			}
-			final int vd = serverConfig.BLOCKS.DR.C00_VD;
-			final int hd = serverConfig.BLOCKS.DR.C001_HD;
-			final AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(hd, vd, hd);
-			final int rf = clientConfig.Render_Cooldown;
-			final Counter counter = tickHandler.getCounter("refresh_rate", rf, true, true, true, false);
-			if (firstTick || counter.Tick()) {
-				firstTick = false;
-				this.IterateBlocks(entity, entity.getPositionVector(), world, aabb);
-			}
-		}
-	}
+    @Override
+    public void tickAbility(EntityLivingBase entity) {
+        if (TrinketsConfig.getClientStore().DRAGON_EYE_OF_ENABLED) {
+            final World world = entity.getEntityWorld();
+            if (!world.isRemote) {
+                final int length = TreasureBlocks.size();
+                if (targetValue > length) {
+                    targetValue = -1;
+                }
+                if (targetValue < 0) {
+                    return;
+                }
+            }
+            final int vd = serverConfig.BLOCKS.DR.C00_VD;
+            final int hd = serverConfig.BLOCKS.DR.C001_HD;
+            if (vd <= 0 || hd <= 0) {
+                return;
+            }
+            final AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(hd, vd, hd);
+            final int rf = clientConfig.Render_Cooldown;
+            final Counter counter = tickHandler.getCounter("refresh_rate", rf, true, true, true, false);
+            if (firstTick || counter.Tick()) {
+                firstTick = false;
+                this.IterateBlocks(entity, entity.getPositionVector(), world, aabb);
+            }
+        }
+    }
 
-	public TreasureEntry getTreasure() {
-		final TreeMap<Integer, TreasureEntry> TreasureBlocks = ConfigHelper.TrinketConfigStorage.TreasureBlocks;
-		return TreasureBlocks.get(targetValue);
-	}
+    public TreasureEntry getTreasure() {
+        return targetTreasure;
+    }
 
-	@SideOnly(Side.CLIENT)
-	protected void drawPath(EntityLivingBase player, Vec3d target, int color) {
-		final double d = player.getDistance(target.x, target.y, target.z);
-		if (d > 2) {
-			final RayTraceHelper.Beam beam = new RayTraceHelper.Beam(player.world, player, d, 1D, false);
-			GlStateManager.pushMatrix();
-			RayTraceHelper.drawPath(player.getPositionVector().add(0, player.getEyeHeight() * 0.8, 0), target, player.world, beam, color, 2);
-			GlStateManager.popMatrix();
-		}
-	}
+    public TreasureEntry getTreasure(int mapID) {
+        return TreasureBlocks.get(mapID);
+    }
 
-	@SideOnly(Side.CLIENT)
-	protected void SpawnParticle(World world, Vec3d pos, int color) {
-		final double X = Reference.random.nextDouble() + pos.x;
-		final double Y = Reference.random.nextDouble() + pos.y;
-		final double Z = Reference.random.nextDouble() + pos.z;
-		GlStateManager.pushMatrix();
-		final ParticleGreed effect = new ParticleGreed(world, new Vec3d(X, Y, Z), color, 1F, false);
-		Minecraft.getMinecraft().effectRenderer.addEffect(effect);
-		GlStateManager.popMatrix();
-	}
+//    @SideOnly(Side.CLIENT)
+//    protected void drawPath(EntityLivingBase player, Vec3d target, int color) {
+//        final double d = player.getDistance(target.x, target.y, target.z);
+//        if (d > 2) {
+//            final RayTraceHelper.Beam beam = new RayTraceHelper.Beam(player.world, player, d, 1D, false);
+//            GlStateManager.pushMatrix();
+//            RayTraceHelper.drawPath(player.getPositionVector().add(0, player.getEyeHeight() * 0.8, 0), target, player.world, beam, color, 2);
+//            GlStateManager.popMatrix();
+//        }
+//    }
 
-	@SideOnly(Side.CLIENT)
-	protected void playSound(EntityLivingBase entity, BlockPos pos, double distance) {
-		if (clientConfig.Dragon_Growl) {
-			if (entity instanceof EntityPlayer) {
-				final EntityPlayer player = (EntityPlayer) entity;
-				final boolean sneaking = clientConfig.Dragon_Growl_Sneak.contentEquals("SNEAK") && player.isSneaking();
-				final boolean standing = clientConfig.Dragon_Growl_Sneak.contentEquals("STAND") && !player.isSneaking();
-				final boolean both = clientConfig.Dragon_Growl_Sneak.contentEquals("BOTH");
-				final float configVolume = clientConfig.Dragon_Growl_Volume;
-				final float volume = ((configVolume / 100));
-				final int drH = serverConfig.BLOCKS.DR.C001_HD;
-				final int drV = serverConfig.BLOCKS.DR.C00_VD;
-				double test = MathHelper.sqrt((drH * drH) + (drV * drV));
-				if (test <= 0) {
-					test = 1;
-				}
-				if (((sneaking && !standing) == true) || ((standing && !sneaking) == true) || (both == true)) {
-					float v = 1F;//MathHelper.clamp(((volume * 0.1F) * distance), 0.0F, 3F);
-					try {
-						v = (float) (1F - (distance / test));
-					} catch (final Exception e) {
-					}
-					if (pos != null) {
-						player.world.playSound(player, pos, SoundEvents.ENTITY_ENDERDRAGON_GROWL, SoundCategory.PLAYERS, v * volume, 1.0F);
-					}
-				}
-			}
-		}
-	}
+    @SideOnly(Side.CLIENT)
+    protected void SpawnParticle(World world, Vec3d pos, int color) {
+        final double X = Reference.random.nextDouble() + pos.x;
+        final double Y = Reference.random.nextDouble() + pos.y;
+        final double Z = Reference.random.nextDouble() + pos.z;
+        GlStateManager.pushMatrix();
+        final ParticleGreed effect = new ParticleGreed(world, new Vec3d(X, Y, Z), color, 1F, false);
+        Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+        GlStateManager.popMatrix();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getKey() {
-		final String kb = ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName();
-		return kb;
-	}
+    @SideOnly(Side.CLIENT)
+    protected void playSound(EntityLivingBase entity, BlockPos pos, double distance) {
+        if (clientConfig.Dragon_Growl) {
+            if (entity instanceof EntityPlayer) {
+                final EntityPlayer player = (EntityPlayer) entity;
+                final boolean sneaking = clientConfig.Dragon_Growl_Sneak.contentEquals("SNEAK") && player.isSneaking();
+                final boolean standing = clientConfig.Dragon_Growl_Sneak.contentEquals("STAND") && !player.isSneaking();
+                final boolean both = clientConfig.Dragon_Growl_Sneak.contentEquals("BOTH");
+                final float configVolume = clientConfig.Dragon_Growl_Volume;
+                final float volume = ((configVolume / 100));
+//                final int drV = TrinketsConfig.getClientStore().DRAGON_EYE_OF_VD;
+//                final int drH = TrinketsConfig.getClientStore().DRAGON_EYE_OF_HD;
+//                double test = MathHelper.sqrt((drH * drH) + (drV * drV));
+//                if (test <= 0) {
+//                    test = 1;
+//                }
+                if (((sneaking && !standing) == true) || ((standing && !sneaking) == true) || (both == true)) {
+                    float v = (float) (1F - (distance / 10D)) * volume;
+                    if (v > 1F) {
+                        v = 1F;
+                    } else if (v < 0F) {
+                        v = 0F;
+                    }
+                    if (pos != null) {
+                        player.world.playSound(player, pos, SoundEvents.ENTITY_ENDERDRAGON_GROWL, SoundCategory.PLAYERS, v, 1.0F);
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getAuxKey() {
-		return ModKeyBindings.AUX_KEY.getDisplayName();
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getKey() {
+        return ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName();
+    }
 
-	@Override
-	public boolean onKeyPress(Entity entity, boolean Aux) {
-		if (TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder) {
-			final int size = TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.Blocks.length;
-			final int off = -1;
-			final int max = size - 1;
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getAuxKey() {
+        return ModKeyBindings.AUX_KEY.getDisplayName();
+    }
 
-			if (!Aux) {
-				targetValue++;
-			} else {
-				targetValue--;
-			}
-			if (targetValue >= size) {
-				targetValue = off;
-			} else if (targetValue < off) {
-				targetValue = max;
-			}
+    @Override
+    public boolean onKeyPress(Entity entity, boolean Aux) {
+        if (TrinketsConfig.getClientStore().DRAGON_EYE_OF_ENABLED) {
 
-			if (entity instanceof EntityPlayer) {
-				if (entity.world.isRemote) {
-					TranslationHelper helper = TranslationHelper.INSTANCE;
-					final ItemStack stack = new ItemStack(ModItems.trinkets.TrinketDragonsEye);
-					final EntityPlayer player = (EntityPlayer) entity;
-					//TODO Try to Render with outline
-					if ((targetValue != off)) {
-						final TreasureEntry entry = this.getTreasure();
-						final String target = this.parseTargetName(
-								entry
-						).trim();
-						final String entryRegName = entry == null ? "NULL" : entry.getObjectRegistryName();
-						final String NotFound = helper.formatAddVariables(
-								new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.notfound").getFormattedText(),
-								new OptionEntry(
-										"target",
-										true,
-										entryRegName
-								),
-								new OptionEntry("looking", true, helper.toggleCheckTranslation(true))
-						);
-						final String FoundTarget = helper.formatAddVariables(
-								new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.on").getFormattedText(),
-								new OptionEntry(
-										"target",
-										true,
-										target
-								),
-								new OptionEntry("looking", true, helper.toggleCheckTranslation(true))
-						);
-						//								ranslationHelper.translateDragonEyeTarget(FinderOn.getFormattedText(), targetValue);
-						final String Message = target.isEmpty() ? NotFound : FoundTarget;
-						player.sendStatusMessage(new TextComponentString(Message), true);
-					} else { // Is On
-						//												final String offMode = TranslationHelper.INSTANCE.formatLangKeys(stack, FinderOff);
-						player.sendStatusMessage(
-								new TextComponentString(
-										helper.formatAddVariables(
-												new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.off").getFormattedText(),
-												new OptionEntry("looking", true, helper.toggleCheckTranslation(false))
-										)
-								), true
-						);
-					}
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+            final int rf = clientConfig.Render_Cooldown;
+            final Counter counter = tickHandler.getCounter("refresh_rate", rf, true, true, true, false);
+            counter.resetTick();
 
-	public String parseTargetName(final TreasureEntry treasure) {
-		if (treasure == null) {
-			//			return "NONE";
-			return "";
-		}
-		try {
-			String target = treasure.getObjectRegistryName();
-			if (treasure.getObjectType() == EntryType.OREDICTIONARY) {
-				return target.replaceFirst("oreDict:", "").replaceAll("(([ ]?[oO][rR][eE])|([\\[\\]])|([tT][iI][lL][eE][\\.]))", "");
-			} else if (treasure.getObjectType() == EntryType.ENTITY) {
-				try {
-					ResourceLocation t = new ResourceLocation(target);
-					if (EntityList.isRegistered(t)) {
-						//	Class<? extends Entity> ent = EntityList.getClass(t);
-						//	return EntityRegistry.getEntry(ent).newInstance(null).getName();
-						return new TextComponentTranslation("entity." + EntityList.getTranslationName(t) + ".name").getFormattedText();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (treasure.getObjectType() == EntryType.MATERIAL) {
-				//				return "INVALID ENTRY";
-				return "";
-			} else {
-				final String namespace = treasure.getModID();
-				final String pathID = treasure.getObjectID();
-				final boolean isWildSpace = namespace.contentEquals("*");
-				final boolean isWildPath = pathID.contentEquals("*");
-				final int meta = treasure.getMeta();
-				if (isWildSpace) {
-					if (isWildPath) {
-						return "";
-					} else {
-						return pathID;
-					}
-				} else {
-					if (isWildPath) {
-						return namespace + " " + new TextComponentTranslation("stat.blocksButton").getFormattedText();
-					} else {
-						final Item itemTarget = Item.getByNameOrId(target);
-						ItemStack parseName = new ItemStack(itemTarget, 1);
-						if (itemTarget == null) {
-							if (Block.getBlockFromName(target) != null) {
-								target = Block.getBlockFromName(target).getRegistryName().toString();
-							}
-						}
-						target = parseName.getTextComponent().getUnformattedText();
-						if ((itemTarget != null) && itemTarget.getHasSubtypes() && (meta != OreDictionaryCompat.wildcard)) {
-							final NonNullList<ItemStack> parseMeta = NonNullList.create();
-							itemTarget.getSubItems(CreativeTabs.SEARCH, parseMeta);
-							for (final ItemStack t : parseMeta) {
-								if (t.getMetadata() == meta) {
-									parseName = new ItemStack(itemTarget, 1, meta);
-									target = parseName.getTextComponent().getUnformattedText();
-									break;
-								}
-							}
-						}
-					}
-				}
-				if (target.equalsIgnoreCase("[air]")) {
-					return "";
-				}
-				return target
-						.replaceAll(
-								"("
-										+ "([ ]?[oO][rR][eE])"
-										+ "|"
-										+ "([\\[\\]])"
-										+ "|"
-										+ "([tT][iI][lL][eE][\\.])"
-										+ ")",
-								""
-						);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "";
-	}
+            if (!entity.world.isRemote) {
+                int size = TreasureBlocks.size();
+                final int off = -1;
+                final int max = size - 1;
+                if (!Aux) {
+                    targetValue++;
+                } else {
+                    targetValue--;
+                }
+                if (targetValue >= size) {
+                    targetValue = off;
+                } else if (targetValue < off) {
+                    targetValue = max;
+                }
+                firstTick = true;
+                TranslationHelper helper = TranslationHelper.INSTANCE;
+                final ItemStack stack = new ItemStack(ModItems.trinkets.TrinketDragonsEye);
+                if ((targetValue != -1)) {
+                    final ConfigHelper.TreasureEntry entry = getTreasure(targetValue);
+                    targetTreasure = entry;
+                    final String target = entry.parseTargetName().trim();
+                    final String entryRegName = entry == null ? "NULL" : entry.getObjectRegistryName();
+                    final String NotFound = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.notfound").getFormattedText(), new TranslationHelper.OptionEntry("target", true, entryRegName), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
+                    final String FoundTarget = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.on").getFormattedText(), new TranslationHelper.OptionEntry("target", true, target), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
+                    final String message = target.isEmpty() ? NotFound : FoundTarget;
+                    StringUtils.sendStatusMessageToPlayer(entity, message, true);
+                } else { // Is On
+                    targetTreasure = TreasureEntry.EMPTY;
+                    sendBlockCacheToPlayer(entity, collectBlocks(null));
+                    final String message = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.off").getFormattedText(), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(false)));
+                    StringUtils.sendStatusMessageToPlayer(entity, message, true);
+                }
+            } else {
+                if (!cache.isEmpty()) {
+                    cache.clear();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
-	protected int getColor(String name) {
-		return TargetOreType.Color(name);
-	}
+    protected void sendBlockCacheToPlayer(Entity entity, NBTTagCompound tag) {
+        World world = entity.getEntityWorld();
+        if (world instanceof WorldServer && entity instanceof EntityPlayerMP && tag != null && !tag.isEmpty()) {
+            NetworkHandler.sendTo(new AbilityCacheSyncPacket(((EntityPlayerMP) entity), tag), (EntityPlayerMP) entity);
+        }
+    }
+
+    protected NBTTagCompound collectBlocks(TreeMap<Double, TempCache<Vec3d, TreasureEntry>> collection) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("Ability", this.getRegistryName().toString());
+        tag.setString("Target", targetTreasure.getOriginalEntry());
+        if (collection != null && !collection.isEmpty()) {
+            int index = 0;
+            for (Entry<Double, TempCache<Vec3d, TreasureEntry>> e : collection.entrySet()) {
+                double distance = e.getKey();
+                Vec3d vec = e.getValue().getFirst();
+                NBTTagCompound blockTag = new NBTTagCompound();
+                blockTag.setDouble("Distance", distance);
+                blockTag.setDouble("x", vec.x);
+                blockTag.setDouble("y", vec.y);
+                blockTag.setDouble("z", vec.z);
+                tag.setTag(index + "", blockTag);
+                index++;
+            }
+        }
+        return tag;
+    }
+
+    @Override
+    public void loadTagCacheFromNBT(NBTTagCompound tag) {
+        if (!cache.isEmpty()) {
+            cache.clear();
+        }
+        if (tag != null && !tag.isEmpty()) {
+            TreasureEntry entry = TreasureEntry.EMPTY;
+            if (tag.hasKey("Target")) {
+                String t = tag.getString("Target");
+                if (!t.isEmpty()) {
+                    entry = new TreasureEntry(t);
+                }
+            }
+            targetTreasure = entry;
+            for (int i = 0; i < tag.getSize(); i++) {
+                NBTTagCompound blockTag = tag.getCompoundTag(i + "");
+                if (blockTag != null && !blockTag.isEmpty()) {
+                    if (blockTag.hasKey("Distance") && blockTag.hasKey("x") && blockTag.hasKey("y") && blockTag.hasKey("z")) {
+                        double distance = blockTag.getDouble("Distance");
+                        Vec3d vec = new Vec3d(blockTag.getDouble("x"), blockTag.getDouble("y"), blockTag.getDouble("z"));
+//                        TreasureEntry treasure = new TreasureEntry(blockTag.getString("Target"));
+                        cache.put(distance, new TempCache<>(vec, targetTreasure));
+                    }
+                }
+            }
+        }
+    }
+
+    public void initTreasureBlocks() {
+        if (!TreasureBlocks.isEmpty()) {
+            TreasureBlocks.clear();
+        }
+        final String[] treasures = TrinketsConfig.SERVER.Items.DRAGON_EYE.BLOCKS.Blocks;
+        int index = 0;
+        for (String entry : treasures) {
+            TreasureEntry treasure = new TreasureEntry(entry);
+            boolean existsCheck = treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0 ? true : Block.getBlockFromName(treasure.getObjectRegistryName()) != null;
+            if (!treasure.isEmpty() && existsCheck) {
+                TreasureBlocks.put(index, treasure);
+                index++;
+            }
+        }
+    }
 
 }

@@ -1,10 +1,5 @@
 package xzeroair.trinkets.items.base;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,7 +15,8 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -33,6 +29,7 @@ import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.traits.abilities.base.ItemAbilityProvider;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
@@ -46,429 +43,438 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public abstract class AccessoryBase extends Item implements IsModelLoaded, IAccessoryInterface, ItemAbilityProvider, IElementProvider {
 
-	protected UUID uuid;
+    protected UUID uuid;
 
-	public AccessoryBase(String modid, String name) {
-		this.setTranslationKey(name);
-		this.setRegistryName(new ResourceLocation(modid, name));
-		this.setMaxStackSize(1);
-		this.setCreativeTab(Trinkets.trinketstab);
-	}
+    public AccessoryBase(String modid, String name) {
+        this.setTranslationKey(name);
+        this.setRegistryName(new ResourceLocation(modid, name));
+        this.setMaxStackSize(1);
+        this.setCreativeTab(Trinkets.trinketstab);
+    }
 
-	public AccessoryBase(String name) {
-		this.setTranslationKey(name);
-		this.setRegistryName(name);
-		this.setMaxStackSize(1);
-		this.setCreativeTab(Trinkets.trinketstab);
-	}
+    public AccessoryBase(String name) {
+        this.setTranslationKey(name);
+        this.setRegistryName(name);
+        this.setMaxStackSize(1);
+        this.setCreativeTab(Trinkets.trinketstab);
+    }
 
-	public String[] getAttributeConfig() {
-		return new String[0];
-	}
+    public String[] getAttributeConfig() {
+        return new String[0];
+    }
 
-	@Override
-	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
+    @Override
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
 
-	}
+    }
 
-	protected void initAttributes(String[] attributeConfig, EntityLivingBase entity) {
-		if ((attributeConfig != null) && (attributeConfig.length > 0)) {
-			for (String entry : attributeConfig) {
-				AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-				if ((attributeShell != null) && (this.getUUID() != null)) {
-					final String name = attributeShell.getAttribute();
-					double amount = attributeShell.getAmount();
-					final int operation = attributeShell.getOperation();
-					final boolean isSaved = attributeShell.isSaved();
-					if (!(this instanceof TrinketRaceBase)) {
-						UpdatingAttribute attribute = new UpdatingAttribute(this.getTranslationKey() + "." + name, uuid, name).setAmount(amount).setOperation(operation).setSavedInNBT(isSaved);
-						if (name.equalsIgnoreCase("forge.swimSpeed")) {
-							boolean skip = false;
-							if (!TrinketsConfig.SERVER.misc.depthStacks) {
-								if ((EnchantmentHelper.getDepthStriderModifier(entity) > 0)) {
-									skip = true;
-								}
-							}
-							try {
-								if (Trinkets.MOD_COMPAT.SoManyEnchantments && !TrinketsConfig.SERVER.misc.underwaterStriderStacks) {
-									Enchantment e = Enchantment.getEnchantmentByLocation("somanyenchantments:underwaterstrider");
-									boolean hasUnderwaterStrider = ((e != null) && (EnchantmentHelper.getMaxEnchantmentLevel(e, entity) > 0));
-									if (hasUnderwaterStrider) {
-										skip = true;
-									}
-								}
-							} catch (Exception e) {
-							}
-							if ((entity instanceof EntityPlayer) && ((EntityPlayer) entity).capabilities.isFlying) {
-								skip = true;
-							}
-							if (skip) {
-								attribute.removeModifier(entity);
-								continue;
-							}
-						}
-						attribute.addModifier(entity, amount, operation);
-					}
-				}
-			}
-		}
-	}
+    protected void initAttributes(String[] attributeConfig, EntityLivingBase entity) {
+        if ((attributeConfig != null) && (attributeConfig.length > 0)) {
+            for (String entry : attributeConfig) {
+                AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+                if ((attributeShell != null) && (this.getUUID() != null)) {
+                    final String name = attributeShell.getAttribute();
+                    double amount = attributeShell.getAmount();
+                    final int operation = attributeShell.getOperation();
+                    final boolean isSaved = attributeShell.isSaved();
+                    if (!(this instanceof TrinketRaceBase)) {
+                        UpdatingAttribute attribute = new UpdatingAttribute(this.getTranslationKey() + "." + name, uuid, name).setAmount(amount).setOperation(operation).setSavedInNBT(isSaved);
+                        if (name.equalsIgnoreCase("forge.swimSpeed")) {
+                            boolean skip = false;
+                            if (!TrinketsConfig.SERVER.misc.depthStacks) {
+                                if ((EnchantmentHelper.getDepthStriderModifier(entity) > 0)) {
+                                    skip = true;
+                                }
+                            }
+                            try {
+                                if (Trinkets.MOD_COMPAT.SoManyEnchantments && !TrinketsConfig.SERVER.misc.underwaterStriderStacks) {
+                                    Enchantment e = Enchantment.getEnchantmentByLocation("somanyenchantments:underwaterstrider");
+                                    boolean hasUnderwaterStrider = ((e != null) && (EnchantmentHelper.getMaxEnchantmentLevel(e, entity) > 0));
+                                    if (hasUnderwaterStrider) {
+                                        skip = true;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if ((entity instanceof EntityPlayer) && ((EntityPlayer) entity).capabilities.isFlying) {
+                                skip = true;
+                            }
+                            if (skip) {
+                                attribute.removeModifier(entity);
+                                continue;
+                            }
+                        }
+                        attribute.addModifier(entity, amount, operation);
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean hasCustomEntity(ItemStack stack) {
-		return super.hasCustomEntity(stack);
-	}
+    @Override
+    public boolean hasCustomEntity(@Nonnull ItemStack stack) {
+        return super.hasCustomEntity(stack);
+    }
 
-	@Override
-	public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-		return super.createEntity(world, location, itemstack);
-	}
+    @Override
+    public Entity createEntity(@Nonnull World world, @Nonnull Entity location, @Nonnull ItemStack itemstack) {
+        return super.createEntity(world, location, itemstack);
+    }
 
-	@Override
-	public boolean isShield(ItemStack stack, EntityLivingBase entity) {
-		return super.isShield(stack, entity);
-	}
+    @Override
+    public boolean isShield(@Nonnull ItemStack stack, EntityLivingBase entity) {
+        return super.isShield(stack, entity);
+    }
 
-	@Override
-	public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
-		return super.isValidArmor(stack, armorType, entity);
-	}
+    @Override
+    public boolean isValidArmor(@Nonnull ItemStack stack, @Nonnull EntityEquipmentSlot armorType, @Nonnull Entity entity) {
+        return super.isValidArmor(stack, armorType, entity);
+    }
 
-	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-		return super.onDroppedByPlayer(item, player);
-	}
+    @Override
+    public boolean onDroppedByPlayer(@Nonnull ItemStack item, @Nonnull EntityPlayer player) {
+        return super.onDroppedByPlayer(item, player);
+    }
 
-	@Override
-	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		return super.onEntityItemUpdate(entityItem);
-	}
+    @Override
+    public boolean onEntityItemUpdate(@Nonnull EntityItem entityItem) {
+        return super.onEntityItemUpdate(entityItem);
+    }
 
-	@Override
-	public String getItemStackDisplayName(ItemStack stack) {
-		return super.getItemStackDisplayName(stack);
-	}
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        return super.getItemStackDisplayName(stack);
+    }
 
-	@Override
-	public boolean isDamageable() {
-		return false;
-	}
+    @Override
+    public boolean isDamageable() {
+        return false;
+    }
 
-	// ITrinketInterface
+    // ITrinketInterface
 
-	@Override
-	public int getSlot(ItemStack stack) {
-		return Capabilities.getTrinketProperties(stack, -1, (prop, slot) -> prop.getSlot());
-	}
+    @Override
+    public int getSlot(ItemStack stack) {
+        return Capabilities.getTrinketProperties(stack, -1, (prop, slot) -> prop.getSlot());
+    }
 
-	@Override
-	public String getItemHandler(ItemStack stack) {
-		return Capabilities.getTrinketProperties(stack, ItemHandlerType.NONE.getName(), (prop, slot) -> prop.getSlotInfo().getHandler());
-	}
+    @Override
+    public String getItemHandler(ItemStack stack) {
+        return Capabilities.getTrinketProperties(stack, ItemHandlerType.NONE.getName(), (prop, slot) -> prop.getSlotInfo().getHandler());
+    }
 
-	@Override
-	public String getAccessoryType() {
-		return "trinket";
-	}
+    //
+    public UUID getUUID() {
+        return uuid;
+    }
 
-	//
-	public UUID getUUID() {
-		return uuid;
-	}
+    protected void setUUID(String uuid) {
+        this.uuid = UUID.fromString(uuid);
+    }
 
-	protected void setUUID(String uuid) {
-		this.uuid = UUID.fromString(uuid);
-	}
+    @Override
+    public void onUpdate(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull Entity entity, int itemSlot, boolean isSelected) {
+        super.onUpdate(stack, world, entity, itemSlot, isSelected);
+        Capabilities.getTrinketProperties(stack, cap -> cap.onUpdate(stack, world, entity, itemSlot, isSelected));
+    }
 
-	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-		super.onUpdate(stack, world, entity, itemSlot, isSelected);
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onUpdate(stack, world, entity, itemSlot, isSelected);
-		});
-	}
+    @Override
+    public void onCreated(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player) {
+        super.onCreated(stack, world, player);
+        Capabilities.getTrinketProperties(stack, cap -> cap.onCrafted(stack, world, player));
+    }
 
-	@Override
-	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
-		super.onCreated(stack, world, player);
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onCrafted(stack, world, player);
-		});
-	}
+    /*
+     * use the non player specific method for entities other than the player
+     */
+    @Override
+    public void onArmorTick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull ItemStack stack) {
+        Capabilities.getTrinketProperties(stack, cap -> cap.onArmorTick(world, player, stack));
+    }
 
-	/*
-	 * use the non player specific method for entities other then the player
-	 */
-	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onArmorTick(world, player, stack);
-		});
-	}
+    /*
+     * Not Player Specific ArmorTick
+     */
+    @Override
+    public void onEntityArmorTick(World world, EntityLivingBase entity, ItemStack stack) {
+        Capabilities.getTrinketProperties(stack, cap -> cap.onEntityArmorTick(world, entity, stack));
+    }
 
-	/*
-	 * Not Player Specific ArmorTick
-	 */
-	@Override
-	public void onEntityArmorTick(World world, EntityLivingBase entity, ItemStack stack) {
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onEntityArmorTick(world, entity, stack);
-		});
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ActionResult<ItemStack> defaultReturn = super.onItemRightClick(world, player, hand);
+        return Capabilities.getTrinketProperties(player.getHeldItem(hand), defaultReturn, (prop, result) -> {
+            return prop.itemRightClicked(world, player, hand, result);
+        });
+    }
 
-	@Override
-	public void onAccessoryEquipped(ItemStack stack, EntityLivingBase entity) {
-		final boolean isClient = entity.world.isRemote;
-		Capabilities.getTrinketProperties(stack, cap -> {
-			if (!isClient) {
-				cap.itemEquipped(stack, entity);
-			} else {
-				entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
-			}
-		});
-	}
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        final EnumActionResult defaultReturn = super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+        return Capabilities.getTrinketProperties(player.getHeldItem(hand), defaultReturn, (prop, result) -> {
+            return prop.itemUsed(player, world, pos, hand, facing, hitX, hitY, hitZ, result);
+        });
+    }
 
-	@Override
-	public void eventLivingUpdateTick(ItemStack stack, EntityLivingBase entity) {
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onEntityTick(stack, entity);
-		});
-	}
+    @Override
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+        final EnumActionResult defaultReturn = super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+        return Capabilities.getTrinketProperties(player.getHeldItem(hand), defaultReturn, (prop, result) -> {
+            return prop.itemLeftClicked(player, world, pos, side, hitX, hitY, hitZ, hand, result);
+        });
+    }
 
-	@Override
-	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		Capabilities.getTrinketProperties(stack, cap -> {
-			cap.onPlayerTick(stack, player);
-		});
-	}
+    @Override
+    public void onAccessoryEquipped(ItemStack stack, EntityLivingBase entity) {
+        final boolean isClient = entity.world.isRemote;
+        Capabilities.getTrinketProperties(stack, cap -> {
+            if (!isClient) {
+                cap.itemEquipped(stack, entity);
+            } else {
+                entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
+            }
+        });
+    }
 
-	@Override
-	public void onAccessoryUnequipped(ItemStack stack, EntityLivingBase entity) {
-		final boolean isClient = entity.world.isRemote;
-		Capabilities.getTrinketProperties(stack, cap -> {
-			if (!isClient) {
-				cap.itemUnequipped(stack, entity);
-			} else {
-				entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
-			}
-		});
-		AttributeHelper.removeAttributesByUUID(entity, this.getUUID());
-	}
+    @Override
+    public void eventLivingUpdateTick(ItemStack stack, EntityLivingBase entity) {
+        Capabilities.getTrinketProperties(stack, cap -> cap.onEntityTick(stack, entity));
+    }
 
-	@Override
-	public void eventPlayerLogout(ItemStack stack, EntityPlayer player) {
-		AttributeHelper.removeAttributesByUUID(player, this.getUUID());
-	}
+    @Override
+    public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
+        Capabilities.getTrinketProperties(stack, cap -> cap.onPlayerTick(stack, player));
+    }
 
-	// API
+    @Override
+    public void onAccessoryUnequipped(ItemStack stack, EntityLivingBase entity) {
+        final boolean isClient = entity.world.isRemote;
+        Capabilities.getTrinketProperties(stack, cap -> {
+            if (!isClient) {
+                cap.itemUnequipped(stack, entity);
+            } else {
+                entity.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 2f);
+            }
+        });
+        AttributeHelper.removeAttributesByUUID(entity, this.getUUID());
+    }
 
-	// API END
+    @Override
+    public void eventPlayerLogout(ItemStack stack, EntityPlayer player) {
+        AttributeHelper.removeAttributesByUUID(player, this.getUUID());
+    }
 
-	@Override
-	public boolean canUnequipAccessory(ItemStack stack, EntityLivingBase player) {
-		if ((player instanceof EntityPlayer) && ((EntityPlayer) player).capabilities.isCreativeMode) {
-			return true;
-		}
-		if (EnchantmentHelper.hasBindingCurse(stack)) {
-			return false;
-		}
-		return true;
-	}
+    // API
 
-	@Override
-	public NBTTagCompound getNBTShareTag(ItemStack stack) {
-		return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, tag) -> {
-			if (tag == null) {
-				tag = new NBTTagCompound();
-			}
-			return prop.saveToNBT(tag);
-		});
-	}
+    // API END
 
-	@Override
-	public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
-		super.readNBTShareTag(stack, nbt);
-		Capabilities.getTrinketProperties(stack, prop -> prop.loadFromNBT(nbt));
-	}
+    @Override
+    public boolean canUnequipAccessory(ItemStack stack, EntityLivingBase player) {
+        if ((player instanceof EntityPlayer) && ((EntityPlayer) player).capabilities.isCreativeMode) {
+            return true;
+        }
+        return !EnchantmentHelper.hasBindingCurse(stack);
+    }
 
-	public NBTTagCompound getTagCompoundSafe(ItemStack stack) {
-		if (stack.getTagCompound() == null) {
-			stack.setTagCompound(new NBTTagCompound());
-		}
-		return stack.getTagCompound();
-	}
+    @Override
+    public NBTTagCompound getNBTShareTag(@Nonnull ItemStack stack) {
+        return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, tag) -> {
+            if (tag == null) {
+                tag = new NBTTagCompound();
+            }
+            return prop.saveToNBT(tag);
+        });
+    }
 
-	@Override
-	public boolean canEquipAccessory(ItemStack stack, EntityLivingBase player) {
-		return !TrinketHelper.AccessoryCheck(player, this);
-	}
+    @Override
+    public void readNBTShareTag(@Nonnull ItemStack stack, NBTTagCompound nbt) {
+        super.readNBTShareTag(stack, nbt);
+        Capabilities.getTrinketProperties(stack, prop -> prop.loadFromNBT(nbt));
+    }
 
-	@SideOnly(Side.CLIENT)
-	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		return helper.formatAddVariables(translation);
-	}
+    public NBTTagCompound getTagCompoundSafe(ItemStack stack) {
+        if (stack.getTagCompound() == null) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        return stack.getTagCompound();
+    }
 
-	@Override
-	public Element getPrimaryElement(ItemStack stack) {
-		return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> prop.getElementAttributes().getPrimaryElement());
-	}
+    @Override
+    public boolean canEquipAccessory(ItemStack stack, EntityLivingBase player) {
+        return !TrinketHelper.AccessoryCheck(player, this);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
-		super.addInformation(stack, world, tooltip, flagIn);
-		if (world == null) {
-			return;
-		}
-		EntityPlayer player = null;
-		try {
-			player = Minecraft.getMinecraft().player;
-		} catch (Exception e) {
-		}
-		if (player == null) {
-			return;
-		}
-		if (TrinketsConfig.CLIENT.debug.showID) {
-			final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
-			if (prop != null) {
-				final SlotInformation info = prop.getSlotInfo();
-				tooltip.add("§6" + info.getHandler() + "§r:§f" + info.getSlot() + "§r");
-			}
-		}
+    @SideOnly(Side.CLIENT)
+    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        return helper.formatAddVariables(translation);
+    }
 
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		//SharedMonsterAttributes.readAttributeModifierFromNBT(compound);
-		//		final String attribute = new TextComponentString("attribute.name.generic.maxHealth").getFormattedText();
-		//		tooltip.add("§6" + attribute);
-		// Add Attributes through the Capability, and get them from that, and then render them here, can do that instead of Adding them through the constructor
-		// Also allows for more dynamic attributes, can get the attributes list on equip or something
-		// Make sure not to accidentally leave attributes on the player
-		// User For Loops instead of Streams, create a For loop predicate getter?
+    @Override
+    public Element getPrimaryElement(ItemStack stack) {
+        return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> prop.getElementAttributes().getPrimaryElement());
+    }
 
-		for (int i = 1; i < 10; i++) {
-			final int index = i;
-			final String string = helper.getLangTranslation(stack.getTranslationKey() + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
-			if (!helper.isStringEmpty(string)) {
-				tooltip.add(
-						string
-				);
-			}
-		}
-		final TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
-		final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails);
-		final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
-		final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
-		final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.compat.enhancedvisuals;
-		final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
-		final String FA = !faEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
-		final String EV = !evEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));
-		if (GuiScreen.isCtrlKeyDown()) {
-			if (!helper.isStringEmpty(TAN)) {
-				final String modifier = sdEnabled ? " (Simple Difficulty)" : tanEnabled ? " (Tough as Nails)" : "";
-				tooltip.add(
-						TAN + helper.gold + modifier
-				);
-			}
-			if (!helper.isStringEmpty(FA)) {
-				tooltip.add(
-						FA + helper.gold + " (First Aid)"
-				);
-			}
-			if (!helper.isStringEmpty(EV)) {
-				tooltip.add(
-						EV + helper.gold + " (Enhanced Visuals)"
-				);
-			}
-		} else {
-			if ((!helper.isStringEmpty(TAN)) ||
-					(!helper.isStringEmpty(EV)) ||
-					(!helper.isStringEmpty(FA))
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+        super.addInformation(stack, world, tooltip, flagIn);
+        if (world == null) {
+            return;
+        }
+        EntityPlayer player = null;
+        try {
+            player = Minecraft.getMinecraft().player;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (player == null) {
+            return;
+        }
+        if (TrinketsConfig.CLIENT.debug.showID) {
+            final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
+            if (prop != null) {
+                final SlotInformation info = prop.getSlotInfo();
+                tooltip.add("§6" + info.getHandler() + "§r:§f" + info.getSlot() + "§r");
+            }
+        }
 
-			) {
-				tooltip.add(helper.reset + "" + helper.dGray + ctrl.getFormattedText());
-			}
-		}
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        //SharedMonsterAttributes.readAttributeModifierFromNBT(compound);
+        //		final String attribute = new TextComponentString("attribute.name.generic.maxHealth").getFormattedText();
+        //		tooltip.add("§6" + attribute);
+        // Add Attributes through the Capability, and get them from that, and then render them here, can do that instead of Adding them through the constructor
+        // Also allows for more dynamic attributes, can get the attributes list on equip or something
+        // Make sure not to accidentally leave attributes on the player
+        // User For Loops instead of Streams, create a For loop predicate getter?
 
-		try {
-			final TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
-			String[] attributeConfig = this.getAttributeConfig();
-			if ((attributeConfig != null) && (attributeConfig.length > 0)) {
-				List<AttributeEntry> attributes = new ArrayList<>();
-				for (String entry : attributeConfig) {
-					AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-					if ((attributeShell != null)) {
-						final double amount = attributeShell.getAmount();
-						if (amount != 0) {
-							attributes.add(attributeShell);
-						}
-					}
-				}
-				if (!attributes.isEmpty()) {
-					tooltip.add(helper.reset + "" + helper.dGray + shift.getFormattedText());
-					if (GuiScreen.isShiftKeyDown()) {
-						for (AttributeEntry entry : attributes) {
-							final String name = entry.getAttribute();
-							final double amount = entry.getAmount();
-							final int operation = entry.getOperation();
-							if ((player.getAttributeMap().getAttributeInstanceByName(name) != null)) {
-								double d0 = amount;
-								double d1;
-								boolean flag = false;
-								if ((operation != 1) && (operation != 2)) {
-									d1 = d0;
-								} else {
-									d1 = d0 * 100.0D;
-								}
-								final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
-								if (flag) {
-									final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-									tooltip.add(" " + never.getFormattedText());
-									//I18n.translateToLocalFormatted("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-								} else if (d0 > 0.0D) {
-									final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-									addition.getStyle().setColor(TextFormatting.BLUE);
-									String s = addition.getFormattedText();
-									tooltip.add(" " + s);
-									// I18n.translateToLocalFormatted("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-								} else if (d0 < 0.0D) {
-									d1 = d1 * -1.0D;
-									final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-									subtraction.getStyle().setColor(TextFormatting.RED);
-									String s = subtraction.getFormattedText();
-									tooltip.add(" " + s);
-									//I18n.translateToLocalFormatted("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
-								}
-							}
-						}
-					}
-				}
+        String translationKey = stack.getTranslationKey();
+        ResourceLocation regName = stack.getItem().getRegistryName();
+        if (regName != null && regName.toString().contentEquals("xat:dragon_ring")) {
+            String tlKey = ModItems.trinkets.TrinketDragonsEye.getTranslationKey() + ".0";
+            for (int i = 1; i < 10; i++) {
+                final int index = i;
+                final String string = helper.getLangTranslation(tlKey + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
+                if (!helper.isStringEmpty(string)) {
+                    tooltip.add(string);
+                }
+            }
+        }
+        for (int i = 1; i < 10; i++) {
+            final int index = i;
+            final String string = helper.getLangTranslation(translationKey + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
+            if (!helper.isStringEmpty(string)) {
+                tooltip.add(string);
+            }
+        }
+        final TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
+        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
+        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
+        final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
+        final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS;
+        final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
+        final String FA = !faEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
+        final String EV = !evEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));
+        if (GuiScreen.isCtrlKeyDown()) {
+            if (!helper.isStringEmpty(TAN)) {
+                final String modifier = sdEnabled ? " (Simple Difficulty)" : tanEnabled ? " (Tough as Nails)" : "";
+                tooltip.add(TAN + helper.gold + modifier);
+            }
+            if (!helper.isStringEmpty(FA)) {
+                tooltip.add(FA + helper.gold + " (First Aid)");
+            }
+            if (!helper.isStringEmpty(EV)) {
+                tooltip.add(EV + helper.gold + " (Enhanced Visuals)");
+            }
+        } else {
+            if ((!helper.isStringEmpty(TAN)) || (!helper.isStringEmpty(EV)) || (!helper.isStringEmpty(FA))
 
-			}
-		} catch (Exception e) {
-		}
+            ) {
+                tooltip.add(helper.reset + "" + helper.dGray + ctrl.getFormattedText());
+            }
+        }
 
-		//		try {
-		//			tooltip.add(this.getPrimaryElement(stack).getName() + "");
-		//		} catch (Exception e) {
-		//		}
-	}
+        try {
+            final TextComponentTranslation shift = new TextComponentTranslation(Reference.MODID + ".holdshift");
+            String[] attributeConfig = this.getAttributeConfig();
+            if ((attributeConfig != null) && (attributeConfig.length > 0)) {
+                List<AttributeEntry> attributes = new ArrayList<>();
+                for (String entry : attributeConfig) {
+                    AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+                    if ((attributeShell != null)) {
+                        final double amount = attributeShell.getAmount();
+                        if (amount != 0) {
+                            attributes.add(attributeShell);
+                        }
+                    }
+                }
+                if (!attributes.isEmpty()) {
+                    tooltip.add(helper.reset + "" + helper.dGray + shift.getFormattedText());
+                    if (GuiScreen.isShiftKeyDown()) {
+                        for (AttributeEntry entry : attributes) {
+                            final String name = entry.getAttribute();
+                            final double amount = entry.getAmount();
+                            final int operation = entry.getOperation();
+                            if ((player.getAttributeMap().getAttributeInstanceByName(name) != null)) {
+                                double d1;
+                                boolean flag = false;
+                                if ((operation != 1) && (operation != 2)) {
+                                    d1 = amount;
+                                } else {
+                                    d1 = amount * 100.0D;
+                                }
+                                final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
+                                if (flag) {
+                                    final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                                    tooltip.add(" " + never.getFormattedText());
+                                    //I18n.translateToLocalFormatted("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
+                                } else if (amount > 0.0D) {
+                                    final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                                    addition.getStyle().setColor(TextFormatting.BLUE);
+                                    String s = addition.getFormattedText();
+                                    tooltip.add(" " + s);
+                                    // I18n.translateToLocalFormatted("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
+                                } else if (amount < 0.0D) {
+                                    d1 = d1 * -1.0D;
+                                    final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, Reference.DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                                    subtraction.getStyle().setColor(TextFormatting.RED);
+                                    String s = subtraction.getFormattedText();
+                                    tooltip.add(" " + s);
+                                    //I18n.translateToLocalFormatted("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), I18n.translateToLocal("attribute.name." + name)));
+                                }
+                            }
+                        }
+                    }
+                }
 
-	/*
-	 * Don't Edit Below this
-	 */
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public String getTranslationKey(ItemStack stack) {
-		// Name + Item Damage equals the Lang File Name
-		return super.getTranslationKey() + "." + stack.getItemDamage();
-	}
+    /*
+     * Don't Edit Below this
+     */
 
-	@Override
-	public EnumRarity getRarity(ItemStack stack) {
-		//		return super.getRarity(stack);
-		return EnumRarity.RARE;
-	}
+    @Override
+    public String getTranslationKey(@Nonnull ItemStack stack) {
+        // Name + Item Damage equals the Lang File Name
+        return super.getTranslationKey() + "." + stack.getItemDamage();
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        //		return super.getRarity(stack);
+        return EnumRarity.RARE;
+    }
 }

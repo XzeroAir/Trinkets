@@ -8,44 +8,51 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.network.ThreadSafePacket;
+import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
 
 public class OpenTrinketGui extends ThreadSafePacket {
 
-	private int guiID;
+    private int guiID;
 
-	public OpenTrinketGui() {
-	}
+    public OpenTrinketGui() {
+    }
 
-	public OpenTrinketGui(int guiID) {
-		this.guiID = guiID;
-	}
+    public OpenTrinketGui(int guiID) {
+        this.guiID = guiID;
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeInt(guiID);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(guiID);
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		guiID = buf.readInt();
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        guiID = buf.readInt();
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
-		final Minecraft mc = Minecraft.getMinecraft();
-		final World world = mc.player.getEntityWorld();
-		mc.player.openGui(Trinkets.instance, guiID, world, 0, 0, 0);
-	}
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        final World world = mc.player.getEntityWorld();
+        mc.player.openGui(Trinkets.instance, guiID, world, 0, 0, 0);
+    }
 
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
-		final EntityPlayerMP entity = server.player;
-		if (guiID == 99) {
-			entity.openContainer.onContainerClosed(entity);
-			entity.openContainer = entity.inventoryContainer;
-		} else {
-			entity.openContainer.onContainerClosed(entity);
-			entity.openGui(Trinkets.instance, guiID, entity.world, 0, 0, 0);
-		}
-	}
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
+        final EntityPlayerMP entity = server.player;
+        if (guiID == 99) {
+            entity.openContainer.onContainerClosed(entity);
+            entity.openContainer = entity.inventoryContainer;
+        } else {
+            if (guiID == Reference.GUI) {
+                if (!TrinketsConfig.SERVER.GUI.guiEnabled) {
+                    return;
+                }
+            }
+            entity.openContainer.onContainerClosed(entity);
+            entity.openGui(Trinkets.instance, guiID, entity.world, 0, 0, 0);
+        }
+    }
 }

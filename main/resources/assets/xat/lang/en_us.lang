@@ -4,7 +4,7 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= These are informational example text, they do not show up in game.
 xat.exampletext.1= Tooltips for Items go up to 10
 xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 Compatability Texts per Item, examples are
+xat.exampletext.3= There are 3 compatibility Texts per Item, examples are
 xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
 xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
 xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
@@ -33,6 +33,7 @@ xat.tooltip.disabled=§r[§cDisabled§r]
 xat.tooltip.weight=Weight:
 
 xat.config.race.size=Size Settings
+xat.config.race.size.tooltip=Size Configuration
 
 key.xat.category=Trinkets and Baubles
 key.xat.trinket_target.desc=Dragons Eye: Cycle
@@ -141,6 +142,11 @@ ability.ice_immunity.name=Ice Immunity
 ability.firstaid_reflex.name=Fast Reflexes
 ability.firstaid_reflex.tooltip1=Chance to Ignore Fatal Headshots
 
+xat.element.neutral.name=Neutral
+xat.element.fire.name=Fire
+xat.element.ice.name=Ice
+xat.element.lightning.name=Lightning
+
 damagetype.xat.water=water
 death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
 
@@ -148,10 +154,12 @@ xat.jump=Jump
 xat.stepheight=Step Height
 xat.entityMagic.maxMana=Max Mana
 xat.entityMagic.regen=MP Regen
+xat.flyspeed=Fly Speed
 attribute.name.xat.jump=Jump
 attribute.name.xat.stepheight=Step Height
 attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=MP Regen
+attribute.name.xat.flyspeed=Fly Speed
 
 ####################################Materials####################################
 
@@ -225,10 +233,10 @@ item.titan_ring.0.tooltip4=§cTramples plants
 item.titan_ring.0.heavy=§cSinks in water
 
 item.dragon_ring.0.name=§6Ring of the Dragons
-item.dragon_ring.0.tooltip1=§6Entity size $rsize: of normal
-item.dragon_ring.0.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Fire
-item.dragon_ring.0.tooltip3=§6Grants Fire Resistance
-item.dragon_ring.0.tooltip4=§2Grants Night Vision §r<§e*denvkb:§r>
+#item.dragon_ring.0.tooltip1=§6Entity size $rsize: of normal
+#item.dragon_ring.0.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Fire
+#item.dragon_ring.0.tooltip3=§6Grants Fire Resistance
+#item.dragon_ring.0.tooltip4=§2Grants Night Vision §r<§e*denvkb:§r>
 
 item.teddy_bear.0.name=Teddy Bear
 item.teddy_bear.0.tooltip1=§6If held when sleeping, provides a buff
@@ -254,6 +262,7 @@ item.sea_stone.0.bubbles=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
 item.sea_stone.0.betterswimming=§2Enhanced Swimming
 item.sea_stone.0.compat.tan=@tanthirst:
 item.sea_stone.0.tanthirst=§6Immunity to Thirst
+item.sea_stone.0.compat.enhancedvisuals=Disables blurred vision when entering the water
 
 item.polarized_stone.0.name=Polarized Stone
 item.polarized_stone.0.tooltip1=@collect:
@@ -275,7 +284,6 @@ item.dragons_eye.0.tooltip2=§2Grants Night Vision §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.tooltip4=@frostwalker:
 item.dragons_eye.0.treasurefinder=§6Current Target: §3#underline:$target:§r <§e*deofkb:§r>
-
 item.dragons_eye.0.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
 item.dragons_eye.0.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
 item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:
@@ -283,6 +291,7 @@ item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6Immunity to hyperthermia
 item.dragons_eye.0.coldimmune=§6Immunity to hypothermia
 item.dragons_eye.0.paralysisimmune=§6Immunity to paralysis
+item.dragons_eye.0.compat.enhancedvisuals=
 item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Grants §3Frost Walker
 
 item.poison_stone.0.name=Poison Stone
@@ -508,6 +517,7 @@ xat.config.client.gui.settings=Trinkets Container
 xat.config.client.gui.settings.tooltip=Settings regarding the Trinkets Container on the client.
 
 xat.config.client.magic.hud.settings=Mana Bar Settings
+xat.config.client.magic.hud.settings.tooltip=Configuration for Mana Bar rendering.
 xat.config.client.magic.hud.shown=Render Mana Bar
 xat.config.client.magic.hud.shown.always=Render Mana Bar Always
 xat.config.client.magic.hud.horizontal=Horizontal Rendering
@@ -532,6 +542,7 @@ xat.config.client.render.entity.renderer.replace.fog.tooltip=When the Trinket an
 
 xat.config.client.race.properties.gui.settings=Race Properties Gui
 xat.config.client.race.properties.gui.shown=Race Properties Button
+xat.config.client.race.properties.gui.shown.tooltip=Enable the Race Properties Interface button?
 
 #####################################[Food Configs]#####################################
 
@@ -587,6 +598,7 @@ xat.config.server.potion.playersonly.tooltip=Whether the transformation potions 
 #####################################[Item Configs]#####################################
 
 xat.config.items=Item Settings
+xat.config.items.tooltip=Trinket Configuration
 xat.config.items.transformation=Transformation Items
 
 xat.config.glow_ring=Ring of Enchanted Eyes Settings
@@ -611,7 +623,9 @@ xat.config.server.dragons_eye.orefinder.blocks.tooltip=
 xat.config.server.dragons_eye.orefinder.blocks.list=Treasure Finder Block list
 xat.config.server.dragons_eye.orefinder.blocks.list.tooltip=What the Treasure Finding Feature of the Dragon's Eye can Detect
 xat.config.server.dragons_eye.toughasnails.immunity.heat=Immune to Heat
-xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails is Installed Should the player be Immune to Heat
+xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Heat
+xat.config.server.dragons_eye.toughasnails.immunity.cold=Immune to Cold
+xat.config.server.dragons_eye.toughasnails.immunity.cold.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Cold
 
 xat.config.server.dragons_eye.iceandfire.recipe.stage=Skull Stage
 xat.config.server.dragons_eye.iceandfire.recipe.stage.tooltip=If Ice and Fire is Installed, Should the Dragon's Eye Require a Specific Stage of Skull for the recipe. Set to 0 for any stage
@@ -840,7 +854,9 @@ xat.config.magic.moon_rose.essence.tooltip=How much Magical Essence the Moon Ros
 xat.config.magic.moon_rose.cooldown=Absorption Cooldown
 xat.config.magic.moon_rose.cooldown.tooltip=How long it takes in Ticks to absorb 1 essence from a Moon Rose
 xat.config.magic.mana_crystal.explodes=Mana Crystal Explodes
+xat.config.magic.mana_crystal.explodes.tooltip=Will Mana Crystals explode when struck against stone, producing Mana Reagent?
 xat.config.magic.mana_reagent.harmful=Mana Reagent Harmful
+xat.config.magic.mana_reagent.harmful.tooltip=Will the Mana reagent harm you when you consume it?
 
 xat.config.magic.mana.enabled=Mana Enabled
 xat.config.magic.mana.enabled.tooltip=
@@ -869,6 +885,7 @@ xat.config.magic.mana.players_only.tooltip=Only players have Mana
 xat.config.races=Race Settings
 
 xat.config.races.dwarf=Dwarf Race Settings
+xat.config.races.dwarf.tooltip=
 xat.config.races.dwarf.blocks=Block Settings
 xat.config.races.dwarf.blocks.tooltip=
 xat.config.races.dwarf.blocks.xp=Blocks Give XP
@@ -895,6 +912,7 @@ xat.config.races.dwarf.static_mining=Static Mining
 xat.config.races.dwarf.static_mining.tooltip=When Mining, Mining Speed is static at (Block Hardness * 4), Not Including other Modifiers.
 
 xat.config.races.elf=Elf Race Settings
+xat.config.races.elf.tooltip=
 xat.config.races.elf.chargeshot.enabled=Charge Shot
 xat.config.races.elf.chargeshot.enabled.tooltip=Should Elves have the ability to enhance bow attacks with Mana
 xat.config.races.elf.chargeshot.cost=Charge Shot Cost
@@ -911,6 +929,7 @@ xat.config.races.elf.chargeshot.explode=Full Charges Explode
 xat.config.races.elf.chargeshot.explode.tooltip=If a fully charged shot should explode on impact causing splash damage
 
 xat.config.races.fairy=Fairy Race Settings
+xat.config.races.fairy.tooltip=
 xat.config.races.fairy.flight=Creative Flight
 xat.config.races.fairy.flight.tooltip=Grants the player Creative Flight if Enabled
 xat.config.races.fairy.flight.speed=Creative Flight Speed
@@ -948,6 +967,7 @@ xat.config.races.goblin.natural_resistance=Naturally Resistant
 xat.config.races.goblin.natural_resistance.tooltip=Should Goblins be naturally resistant to Fire and explosions
 
 xat.config.races.titan=Titan Race Settings
+xat.config.races.titan.tooltip=
 xat.config.races.titan.jumpheight=Jump Height Adjustment
 xat.config.races.titan.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
 xat.config.races.titan.heavy=Heavy Player
@@ -968,6 +988,7 @@ xat.config.races.titan.mount.blacklist=Mount Blacklist
 xat.config.races.titan.mount.blacklist.tooltip=Entities that can not be mounted, or can only be mounted
 
 xat.config.races.faelis=Faelis Race Settings
+xat.config.races.faelis.tooltip=
 xat.config.races.faelis.claw.bonus=Claw Bonus
 xat.config.races.faelis.claw.bonus.tooltip=When enabled, this will add bonus damage to any attack dealt with an empty hand.
 xat.config.races.faelis.claw.bonus.amount=Bonus Amount
@@ -990,6 +1011,7 @@ xat.config.races.faelis.milk.list=Milk
 xat.config.races.faelis.milk.list.tooltip=List of Items that count as Milk
 
 xat.config.races.dragon=Dragon Race Settings
+xat.config.races.dragon.tooltip=
 xat.config.races.dragon.flight=Creative Flight
 xat.config.races.dragon.flight.tooltip=Grants the player Creative Flight if Enabled
 xat.config.races.dragon.flight.speed=Creative Flight Speed
@@ -1035,8 +1057,8 @@ xat.config.misc.interaction.fix.tooltip=Vanilla MC doesn't handle interaction wi
 xat.config.misc.vip=VIP Enabled
 xat.config.misc.vip.tooltip=The VIP list may be unaccessible under some circumstance, use this to shorten game launching time.
 
-xat.config.compatability=Compatability Settings
-xat.config.compatability.tooltip=Settings which affect how this mod works with other mods.
+xat.config.compatibility=Compatibility Settings
+xat.config.compatibility.tooltip=Settings which affect how this mod works with other mods.
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=

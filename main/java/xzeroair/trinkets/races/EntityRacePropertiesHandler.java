@@ -1,8 +1,5 @@
 package xzeroair.trinkets.races;
 
-import java.util.function.BiFunction;
-
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
@@ -26,9 +23,9 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.race.EntityProperties.RaceCache;
 import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiEntityProperties;
 import xzeroair.trinkets.client.gui.hud.mana.ManaHud;
-import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.IncreasedReachPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
@@ -42,577 +39,600 @@ import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.function.BiFunction;
+
 public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
-	protected boolean firstUpdate;
-	protected boolean firstTransformUpdate;
+    protected boolean firstUpdate;
+    protected boolean firstTransformUpdate;
 
-	protected EntityLivingBase entity;
-	//	protected ElementalAttributes elements;
+    protected EntityLivingBase entity;
 
-	protected int targetWidth = 100;
-	protected int targetHeight = 100;
+    protected int targetWidth = 100;
+    protected int targetHeight = 100;
 
-	protected EntityRace race;
+    protected RaceCache raceCache;
 
-	protected boolean showTraits;
-	protected String traitColor;
-	protected String traitColorAlt;
-	protected int traitVariant;
+    protected boolean showTraits;
+    protected String traitColor;
+    protected String traitColorAlt;
+    protected int traitVariant;
+    protected int traitVariantMax;
 
-	protected EntityProperties properties;
+    protected EntityProperties properties;
 
-	protected float healthBeforeTransformation; // TODO Store the Health before, then calculate the health afterwards
-	protected float maxHealthBeforeTranformation;
+    protected float healthBeforeTransformation; // TODO Store the Health before, then calculate the health afterwards
+    protected float maxHealthBeforeTranformation;
 
-	protected double progress = 0D;
+    protected double progress = 0D;
 
-	public EntityRacePropertiesHandler(EntityLivingBase e, EntityRace race) {
-		entity = e;
-		firstUpdate = true;
-		firstTransformUpdate = true;
-		showTraits = true;
-		this.race = race;
-		//		elements = new ElementalAttributes();
-		traitColor = ColorHelper.convertDecimalColorToHexadecimal(race.getPrimaryColor());
-		traitColorAlt = ColorHelper.convertDecimalColorToHexadecimal(race.getSecondaryColor());
-		traitVariant = 0;
-		this.setTargetHeight(race.getRaceHeight());
-		this.setTargetWidth(race.getRaceWidth());
-	}
+    public EntityRacePropertiesHandler(@Nonnull EntityLivingBase e, @Nonnull RaceCache cache) {
+        entity = e;
+        firstUpdate = true;
+        firstTransformUpdate = true;
+        showTraits = true;
+        this.raceCache = cache;
+        traitColor = ColorHelper.convertDecimalColorToHexadecimal(cache.getRace().getPrimaryColor());
+        traitColorAlt = ColorHelper.convertDecimalColorToHexadecimal(cache.getRace().getSecondaryColor());
+        traitVariant = 0;
+        traitVariantMax = 3;
+        this.setTargetHeight(cache.getRace().getRaceHeight());
+        this.setTargetWidth(cache.getRace().getRaceWidth());
+    }
 
-	protected void initAttributes() {
-		double d = Double.parseDouble(Reference.DECIMALFORMAT.format(this.TransformationProgress()));
-		if (d != 0) {
-			final World world = entity.getEntityWorld();
-			String[] raceAttributes = race.getRaceAttributes().getAttributes();
-			if (raceAttributes.length > 0) {
-				for (String entry : raceAttributes) {
-					AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-					if (attributeShell != null) {
-						String name = attributeShell.getAttribute();
-						double amount = attributeShell.getAmount();
-						int operation = attributeShell.getOperation();
-						boolean isSaved = attributeShell.isSaved();
-						UpdatingAttribute attribute = new UpdatingAttribute(race.getName() + "." + name, race.getUUID(), name).setSavedInNBT(true);
-						//					attribute.addModifier(entity, (amount), operation);
-						attribute.addModifier(entity, (amount * d), operation);
-					}
-				}
-			}
-		}
-	}
+    public EntityRacePropertiesHandler(EntityLivingBase e, EntityRace race) {
+        this(e, new RaceCache(race));
+    }
 
-	public EntityRacePropertiesHandler setEntityProperties(EntityProperties properties) {
-		this.properties = properties;
-		return this;
-	}
+    protected void initAttributes() {
+        double d = Double.parseDouble(Reference.DECIMALFORMAT.format(this.TransformationProgress()));
+        if (d != 0) {
+            final World world = entity.getEntityWorld();
+            String[] raceAttributes = raceCache.getRace().getRaceAttributes().getAttributes();
+            if (raceAttributes.length > 0) {
+                for (String entry : raceAttributes) {
+                    AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+                    if (attributeShell != null) {
+                        String name = attributeShell.getAttribute();
+                        double amount = attributeShell.getAmount();
+                        int operation = attributeShell.getOperation();
+                        boolean isSaved = attributeShell.isSaved();
+                        UpdatingAttribute attribute = new UpdatingAttribute(getRace().getName() + "." + name, getRace().getUUID(), name).setSavedInNBT(true);
+                        attribute.addModifier(entity, (amount * d), operation);
+                    }
+                }
+            }
+        }
+    }
 
-	protected EntityProperties getEntityProperties() {
-		if (properties != null) {
-			return properties;
-		} else {
-			EntityProperties tmp = Capabilities.getEntityProperties(entity);
-			if (tmp == null) {
-				tmp = new EntityProperties(entity);
-			}
-			return tmp;
-		}
-	}
+    public EntityRacePropertiesHandler setEntityProperties(EntityProperties properties) {
+        this.properties = properties;
+        return this;
+    }
 
-	public EntityRacePropertiesHandler setFirstUpdate(boolean firstUpdate) {
-		this.firstUpdate = firstUpdate;
-		return this;
-	}
+    protected EntityProperties getEntityProperties() {
+        if (properties != null) {
+            return properties;
+        } else {
+            EntityProperties tmp = Capabilities.getEntityProperties(entity);
+            if (tmp == null) {
+                tmp = new EntityProperties(entity);
+            }
+            return tmp;
+        }
+    }
 
-	//	public EntityRacePropertiesHandler setElements(ElementalAttributes elements) {
-	//		this.elements = elements;
-	//		return this;
-	//	}
+    public EntityRacePropertiesHandler setFirstUpdate(boolean firstUpdate) {
+        this.firstUpdate = firstUpdate;
+        return this;
+    }
 
-	public EntityRace getRace() {
-		return race;
-	}
+    public EntityRace getRace() {
+        return this.getRaceCache().getRace();
+    }
 
-	//	public ElementalAttributes getElementalProperties() {
-	//		return elements;
-	//	}
+    public RaceCache getRaceCache() {
+        return raceCache;
+    }
 
-	public void addAbility(IAbilityInterface ability) {
-		this.getEntityProperties().getAbilityHandler().registerRaceAbility(this.getRace().getRegistryName().toString(), ability);
-	}
+    public void addAbility(IAbilityInterface ability) {
+        if (ability.getRequiredElement() != null) {
+            if (!getEntityProperties().getCurrentRace().compareElement(ability.getRequiredElement())) {
+                return;
+            }
+        }
+        this.getEntityProperties().getAbilityHandler().registerRaceAbility(this.getRace().getRegistryName().toString(), ability);
+    }
 
-	@Nullable
-	public IAbilityInterface getAbility(String ability) {
-		return this.getEntityProperties().getAbilityHandler().getAbility(ability);
-	}
+    @Nullable
+    public IAbilityInterface getAbility(String ability) {
+        return this.getEntityProperties().getAbilityHandler().getAbility(ability);
+    }
 
-	public void removeAbility(String ability) {
-		this.getEntityProperties().getAbilityHandler().removeAbility(ability);
-	}
+    public void removeAbility(String ability) {
+        this.getEntityProperties().getAbilityHandler().removeAbility(ability);
+    }
 
-	/**
-	 * Use {@link #startTransformation()} instead
-	 */
-	public void onTransform() {
-		firstTransformUpdate = true;
-		healthBeforeTransformation = entity.getHealth();
-		maxHealthBeforeTranformation = entity.getMaxHealth();
-		this.startTransformation();
-		try {
-			this.loadNBTData(this.getEntityProperties().getTag());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Use {@link #startTransformation()} instead
+     */
+    public void onTransform() {
+        firstTransformUpdate = true;
+        healthBeforeTransformation = entity.getHealth();
+        maxHealthBeforeTranformation = entity.getMaxHealth();
+        this.startTransformation();
+    }
 
-	/**
-	 * Use {@link #endTransformation()} instead
-	 */
-	public void onTransformEnd() {
-		this.endTransformation();
-		SizeAttribute artemis = this.getArtemisAttributeSize();
-		if (artemis != null) {
-			artemis.removeModifiers();
-		}
-		try {
-			this.savedNBTData(this.getEntityProperties().getTag());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Use {@link #endTransformation()} instead
+     */
+    public void onTransformEnd() {
+        this.endTransformation();
+        SizeAttribute artemis = this.getArtemisAttributeSize();
+        if (artemis != null) {
+            artemis.removeModifiers();
+        }
+        try {
+            this.savedNBTData(this.getEntityProperties().getTag());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void onTick() {
-		this.updateSize();
-		SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
-		this.initAttributes();
-		this.eyeHeightHandler();
-		if (this.isTransformed()) {
-			SizeAttribute artemis = this.getArtemisAttributeSize();
-			if (artemis != null) {
-				artemis.addModifiers();
-			}
-			this.whileTransformed();
-			firstTransformUpdate = false;
-		}
-		if (cooldown > 0) {
-			cooldown--;
-		} else {
-			cooldown = 0;
-		}
-	}
+    public void onTick() {
+        this.updateSize();
+        SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
+        this.initAttributes();
+        this.eyeHeightHandler();
+        if (this.isTransformed()) {
+            if (firstTransformUpdate && !entity.world.isRemote) {
+                float newMaxHealth = entity.getMaxHealth();
+                float difference = healthBeforeTransformation - maxHealthBeforeTranformation;
+                float healAmount = (maxHealthBeforeTranformation - newMaxHealth) + difference;
+                if (healAmount > 0) {
+                    entity.heal(healAmount);
+                }
+            }
+            SizeAttribute artemis = this.getArtemisAttributeSize();
+            if (artemis != null) {
+                artemis.addModifiers();
+            }
+            this.whileTransformed();
+            firstTransformUpdate = false;
+        }
+        if (cooldown > 0) {
+            cooldown--;
+        } else {
+            cooldown = 0;
+        }
+    }
 
-	protected float cooldown = 0;
+    protected float cooldown = 0;
 
-	@Override
-	public void interact(PlayerInteractEvent event) {
-		if (TrinketsConfig.SERVER.misc.reach) {
-			final EntityPlayer player = event.getEntityPlayer();
-			final boolean isClient = player.world.isRemote;
-			if (isClient) {
-				if ((cooldown != 0)) {
-					return;
-				}
-				final KeyBinding lClick = Minecraft.getMinecraft().gameSettings.keyBindAttack;
-				final KeyBinding rClick = Minecraft.getMinecraft().gameSettings.keyBindUseItem;
-				final IAttributeInstance reach = player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE);
-				if ((reach.getAttributeValue() > 5)) {
-					final RayTraceResult result = RayTraceHelper.rayTrace(player, reach.getAttributeValue() * 0.8);
-					if ((result != null) && (result.typeOfHit == Type.ENTITY)) {
-						final Entity entity = result.entityHit;
-						final Vec3d vec = result.hitVec;
-						if (lClick.isKeyDown()) {
-							NetworkHandler.sendToServer(new IncreasedReachPacket(player, EnumHand.MAIN_HAND, entity, vec.x, vec.y, vec.z));
-							cooldown = player.getCooldownPeriod();
-							Trinkets.proxy.renderEffect(3, player.getEntityWorld(), result.hitVec.x, result.hitVec.y + (entity.height * 0.5F), result.hitVec.z, 0, 0, 0, 0, 1, 1);
-						} else if (rClick.isKeyDown()) {
-							NetworkHandler.sendToServer(new IncreasedReachPacket(player, EnumHand.OFF_HAND, entity, vec.x, vec.y, vec.z));
-						}
-					}
-				}
-			}
-		}
-	}
+    @Override
+    public void interact(PlayerInteractEvent event) {
+        if (TrinketsConfig.getClientStore().REACH_FIX) {
+            final EntityPlayer player = event.getEntityPlayer();
+            final boolean isClient = player.world.isRemote;
+            if (isClient) {
+                if ((cooldown != 0)) {
+                    return;
+                }
+                final KeyBinding lClick = Minecraft.getMinecraft().gameSettings.keyBindAttack;
+                final KeyBinding rClick = Minecraft.getMinecraft().gameSettings.keyBindUseItem;
+                final IAttributeInstance reach = player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE);
+                if ((reach.getAttributeValue() > 5)) {
+                    final RayTraceResult result = RayTraceHelper.rayTrace(player, reach.getAttributeValue() * 0.8);
+                    if ((result != null) && (result.typeOfHit == Type.ENTITY)) {
+                        final Entity entity = result.entityHit;
+                        final Vec3d vec = result.hitVec;
+                        if (lClick.isKeyDown()) {
+                            NetworkHandler.sendToServer(new IncreasedReachPacket(player, EnumHand.MAIN_HAND, entity, vec.x, vec.y, vec.z));
+                            cooldown = player.getCooldownPeriod();
+                            Trinkets.proxy.renderEffect(3, player.getEntityWorld(), result.hitVec.x, result.hitVec.y + (entity.height * 0.5F), result.hitVec.z, 0, 0, 0, 0, 1, 1);
+                        } else if (rClick.isKeyDown()) {
+                            NetworkHandler.sendToServer(new IncreasedReachPacket(player, EnumHand.OFF_HAND, entity, vec.x, vec.y, vec.z));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public boolean isTransforming() {
-		return (this.getEntityProperties().getHeightValue() != this.getTargetHeight()) || (this.getEntityProperties().getWidthValue() != this.getTargetWidth());
-		//false;//this.getSize() != this.getTargetSize();
-	}
+    public boolean isTransforming() {
+        return (this.getEntityProperties().getHeightValue() != this.getTargetHeight()) || (this.getEntityProperties().getWidthValue() != this.getTargetWidth());
+        //false;//this.getSize() != this.getTargetSize();
+    }
 
-	public boolean isTransformed() {
-		return (this.getEntityProperties().getHeightValue() == this.getTargetHeight()) && (this.getEntityProperties().getWidthValue() == this.getTargetWidth());
-	}
+    public boolean isTransformed() {
+        return (this.getEntityProperties().getHeightValue() == this.getTargetHeight()) && (this.getEntityProperties().getWidthValue() == this.getTargetWidth());
+    }
 
-	public double TransformationProgress() {
-		if (!this.isTransformed() && !this.isTransforming()) {
-			return 1D;
-		}
-		return progress;
-	}
+    public double TransformationProgress() {
+        if (!this.isTransformed() && !this.isTransforming()) {
+            return 1D;
+        }
+        return progress;
+    }
 
-	// TODO HERE
-	protected void updateSize() {
-		//		if (this.isTransforming()) {
-		if ((!this.isTransformed() && this.isTransforming()) || (this.TransformationProgress() < 1D)) {
-			final int height = this.getEntityProperties().getHeightValue();
-			final int width = this.getEntityProperties().getWidthValue();
-			final BiFunction<Integer, Integer, Integer> increment = (x, y) -> {
-				if (x < y) {
-					return x + 1;
-				} else if (x > y) {
-					return x - 1;
-				} else {
-					return x;
-				}
-			};
-			final int h = increment.apply(height, this.getTargetHeight());
-			this.getEntityProperties().setHeightValue(h);
-			final int w = increment.apply(width, this.getTargetWidth());
-			this.getEntityProperties().setWidthValue(w);
-			//			System.out.println(h + "|" + w);
-			int previousRaceTargetHeight = this.getEntityProperties().getPreviousRace().getRaceHeight();
-			int previousRaceTargetWidth = this.getEntityProperties().getPreviousRace().getRaceWidth();
-			double heightProgress = this.transformProgress(previousRaceTargetHeight, this.getTargetHeight(), height);
-			double widthProgress = this.transformProgress(previousRaceTargetWidth, this.getTargetWidth(), width);
-			double finalValue = this.isTransformed() ? 1D : StringUtils.getAccurateDouble(heightProgress * widthProgress);
-			//MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(heightProgress * widthProgress)), 0D);//(heightProgress * widthProgress);
-			//			System.out.println(height + "|" + width + "| " + heightProgress + " | " + widthProgress + " | " + finalValue);
-			if ((finalValue >= 0D) && (finalValue <= 1D) && (progress != finalValue)) {
-				progress = finalValue;
-				//				this.savedNBTData(properties.getTag());
-			}
-			if (this.TransformationProgress() >= 1D) {
-				float heal = (float) StringUtils.getAccurateDouble(((entity.getMaxHealth() - maxHealthBeforeTranformation) - (maxHealthBeforeTranformation - healthBeforeTransformation)));
-				if (heal > 0) {
-					entity.heal(heal);
-				}
-				//			FirstAidCompat.rescale(entity);
-			}
-		}
-		//			System.out.println(finalValue + "|" + heightProgress + "|" + widthProgress + "|" + progress);
-		//		}
-	}
+    // TODO HERE
+    protected void updateSize() {
+        //		if (this.isTransforming()) {
+        if ((!this.isTransformed() && this.isTransforming()) || (this.TransformationProgress() < 1D)) {
+            final int height = this.getEntityProperties().getHeightValue();
+            final int width = this.getEntityProperties().getWidthValue();
+            final BiFunction<Integer, Integer, Integer> increment = (x, y) -> {
+                if (x < y) {
+                    return x + 1;
+                } else if (x > y) {
+                    return x - 1;
+                } else {
+                    return x;
+                }
+            };
+            final int h = increment.apply(height, this.getTargetHeight());
+            this.getEntityProperties().setHeightValue(h);
+            final int w = increment.apply(width, this.getTargetWidth());
+            this.getEntityProperties().setWidthValue(w);
+            //			System.out.println(h + "|" + w);
+            int previousRaceTargetHeight = this.getEntityProperties().getPreviousRace().getRace().getRaceHeight();
+            int previousRaceTargetWidth = this.getEntityProperties().getPreviousRace().getRace().getRaceWidth();
+            double heightProgress = this.transformProgress(previousRaceTargetHeight, this.getTargetHeight(), height);
+            double widthProgress = this.transformProgress(previousRaceTargetWidth, this.getTargetWidth(), width);
+            double finalValue = this.isTransformed() ? 1D : StringUtils.getAccurateDouble(heightProgress * widthProgress);
+            //MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(heightProgress * widthProgress)), 0D);//(heightProgress * widthProgress);
+            //			System.out.println(height + "|" + width + "| " + heightProgress + " | " + widthProgress + " | " + finalValue);
+            if ((finalValue >= 0D) && (finalValue <= 1D) && (progress != finalValue)) {
+                progress = finalValue;
+                //				this.savedNBTData(properties.getTag());
+            }
+            if (this.TransformationProgress() >= 1D) {
+                float heal = (float) StringUtils.getAccurateDouble(((entity.getMaxHealth() - maxHealthBeforeTranformation) - (maxHealthBeforeTranformation - healthBeforeTransformation)));
+                if (heal > 0) {
+                    entity.heal(heal);
+                }
+                //			FirstAidCompat.rescale(entity);
+            }
+        }
+        //			System.out.println(finalValue + "|" + heightProgress + "|" + widthProgress + "|" + progress);
+        //		}
+    }
 
-	protected double transformProgress(int previousTarget, int currentTarget, int currentValue) {
-		double rtn = (MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D));
-		if (rtn < 0.01) {
-			return 0D;
-		}
-		if (rtn > 1D) {
-			return 1D;
-		}
-		return rtn;
-	}
+    protected double transformProgress(int previousTarget, int currentTarget, int currentValue) {
+        double rtn = (MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D));
+        if (rtn < 0.01) {
+            return 0D;
+        }
+        if (rtn > 1D) {
+            return 1D;
+        }
+        return rtn;
+    }
 
-	protected void eyeHeightHandler() {
-		if (!(entity instanceof EntityPlayer)) {
-			return;
-		}
+    protected void eyeHeightHandler() {
+        if (!(entity instanceof EntityPlayer)) {
+            return;
+        }
 
-		EntityPlayer player = (EntityPlayer) entity;
+        EntityPlayer player = (EntityPlayer) entity;
 
-		if (!TrinketsConfig.CLIENT.cameraHeight) {
-			this.resetEyeHeight(player);
-			return;
-		}
-		if (this.isTransforming() || this.isTransformed()) {
-			// 165 when sneaking
-			// 162 eyeheight, sneaking is -0.8
-			float f = (float) StringUtils.getAccurateDouble(((this.getHeight() * 0.85F)));
+        if (!TrinketsConfig.CLIENT.cameraHeight) {
+            this.resetEyeHeight(player);
+            return;
+        }
+        if (this.isTransforming() || this.isTransformed()) {
+            // 165 when sneaking
+            // 162 eyeheight, sneaking is -0.8
+            float f = (float) StringUtils.getAccurateDouble(((this.getHeight() * 0.85F)));
 
-			if (player.isPlayerSleeping()) {
-				f = 0.2F;
-			} else if (!player.isSneaking()) {
-				if (player.isElytraFlying()) {
-					f *= 0.2F;//0.4F;
-				}
-			} else {
-				f -= f / 20;//0.08F;
-			}
-			if (player.isRiding()) {
-				final Entity mount = player.getRidingEntity();
-				if (mount != null) {
-					final float mountHeight = mount.height;
-					//					final double mountOffset = mount.getMountedYOffset();
-					//					final double t = mountHeight - mountOffset;
-					//					if (f < mountHeight) {
-					//						f = mountHeight;
-					//					}
-					//					f += t;
-					f = MathHelper.clamp(f, mountHeight, f);
-				}
-			}
-			player.eyeHeight = f;
-		} else {
-			this.resetEyeHeight(player);
-		}
-	}
+            if (player.isPlayerSleeping()) {
+                f = 0.2F;
+            } else if (!player.isSneaking()) {
+                if (player.isElytraFlying()) {
+                    f *= 0.2F;//0.4F;
+                }
+            } else {
+                f -= f / 20;//0.08F;
+            }
+            if (player.isRiding()) {
+                final Entity mount = player.getRidingEntity();
+                if (mount != null) {
+                    final float mountHeight = mount.height;
+                    //					final double mountOffset = mount.getMountedYOffset();
+                    //					final double t = mountHeight - mountOffset;
+                    //					if (f < mountHeight) {
+                    //						f = mountHeight;
+                    //					}
+                    //					f += t;
+                    f = MathHelper.clamp(f, mountHeight, f);
+                }
+            }
+            player.eyeHeight = f;
+        } else {
+            this.resetEyeHeight(player);
+        }
+    }
 
-	private void resetEyeHeight(EntityPlayer player) {
-		if (player.eyeHeight != player.getDefaultEyeHeight()) {
-			player.eyeHeight = player.getDefaultEyeHeight();
-		}
-	}
+    private void resetEyeHeight(@Nonnull EntityPlayer player) {
+        if (player.eyeHeight != player.getDefaultEyeHeight()) {
+            player.eyeHeight = player.getDefaultEyeHeight();
+        }
+    }
 
-	public int getTargetHeight() {
-		return targetHeight;
-	}
+    public int getTargetHeight() {
+        return targetHeight;
+    }
 
-	public void setTargetHeight(int targetHeight) {
-		this.targetHeight = targetHeight;
-	}
+    public void setTargetHeight(int targetHeight) {
+        this.targetHeight = targetHeight;
+    }
 
-	public int getTargetWidth() {
-		return targetWidth;
-	}
+    public int getTargetWidth() {
+        return targetWidth;
+    }
 
-	public void setTargetWidth(int targetWidth) {
-		this.targetWidth = targetWidth;
-	}
+    public void setTargetWidth(int targetWidth) {
+        this.targetWidth = targetWidth;
+    }
 
-	public float getHeight() {
-		final float TLHeight = (float) (this.getEntityProperties().getDefaultHeight() * (this.getEntityProperties().getHeightValue() * 0.01));
-		return TLHeight;//(float) StringUtils.getAccurateDouble(TLHeight, properties.getDefaultHeight());
-	}
+    public float getHeight() {
+        final float TLHeight = (float) (this.getEntityProperties().getDefaultHeight() * (this.getEntityProperties().getHeightValue() * 0.01));
+        return TLHeight;//(float) StringUtils.getAccurateDouble(TLHeight, properties.getDefaultHeight());
+    }
 
-	public float getWidth() {
-		final float TLWidth = (float) (this.getEntityProperties().getDefaultWidth() * (this.getEntityProperties().getWidthValue() * 0.01));
-		return TLWidth;//(float) StringUtils.getAccurateDouble(TLWidth, properties.getDefaultWidth());
-	}
+    public float getWidth() {
+        final float TLWidth = (float) (this.getEntityProperties().getDefaultWidth() * (this.getEntityProperties().getWidthValue() * 0.01));
+        return TLWidth;//(float) StringUtils.getAccurateDouble(TLWidth, properties.getDefaultWidth());
+    }
 
-	private SizeAttribute getArtemisAttributeSize() {
-		if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.artemislib) {
-			final double h = (this.getTargetHeight() - 100) * 0.01D;
-			final double w = (this.getTargetWidth() - 100) * 0.01D;
-			return new SizeAttribute(entity, h, w, 0);
-		}
-		return null;
-	}
+    @Nullable
+    private SizeAttribute getArtemisAttributeSize() {
+        if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.artemislib) {
+            final double h = (this.getTargetHeight() - 100) * 0.01D;
+            final double w = (this.getTargetWidth() - 100) * 0.01D;
+            return new SizeAttribute(entity, h, w, 0);
+        }
+        return null;
+    }
 
-	public void copyFrom(EntityRacePropertiesHandler source, boolean wasDeath, boolean keepInv) {
-		if (race == source.race) {
-			final boolean isNormal = race == null ? true : race.equals(EntityRaces.none);
-			if (wasDeath) {
-				if (keepInv) {
-					if (isNormal) {
-						return;
-					}
-				}
-			}
-			progress = source.progress;
-			//			elements = source.elements;
-			//			artemisSupport = source.artemisSupport;
-			showTraits = source.showTraits;
-			traitColor = source.traitColor;
-			traitColorAlt = source.traitColorAlt;
-			traitVariant = source.traitVariant;
-			targetHeight = source.targetHeight;
-			targetWidth = source.targetWidth;
-		}
-	}
+    public void copyFrom(@Nonnull EntityRacePropertiesHandler source, boolean wasDeath, boolean keepInv) {
+        if (getRaceCache().compareRace(source.getRaceCache())) {
+            final boolean isNormal = getRace().isNone();
+            if (wasDeath) {
+                if (keepInv) {
+                    if (isNormal) {
+                        return;
+                    }
+                }
+            }
+            progress = source.progress;
+            showTraits = source.showTraits;
+            traitColor = source.traitColor;
+            traitColorAlt = source.traitColorAlt;
+            traitVariant = source.traitVariant;
+            targetHeight = source.targetHeight;
+            targetWidth = source.targetWidth;
+        }
+    }
 
-	public boolean canFly() {
-		return race == null ? false : race.canFly();
-	}
+    public boolean canFly() {
+        return getRace().canFly();
+    }
 
-	/*------------------------------------------Race Handlers--------------------------------------------*/
+    /*------------------------------------------Race Handlers--------------------------------------------*/
 
-	@Override
-	public NBTTagCompound savedNBTData(NBTTagCompound compound) {
-		if ((race != null) && !race.isNone()) {
-			final String key = race.getRegistryName().toString();
-			final NBTTagCompound tag = new NBTTagCompound();
-			tag.setBoolean("trait_shown", showTraits);
-			tag.setString("trait_color", traitColor);
-			tag.setString("trait_color_alt", traitColorAlt);
-			tag.setInteger("trait_variant", traitVariant);
-			tag.setDouble("transformation_progress", progress);
-			//			elements.saveToNBT(tag);
-			if (!tag.isEmpty()) {
-				compound.setTag(key, tag);
-			}
-		}
-		return compound;
-	}
+    @Override
+    public NBTTagCompound savedNBTData(NBTTagCompound compound) {
+        if (!getRace().isNone()) {
+            final String key = getRace().getRegistryName().toString();
+            final NBTTagCompound tag = new NBTTagCompound();
+            tag.setBoolean("trait_shown", showTraits);
+            tag.setString("trait_color", traitColor);
+            tag.setString("trait_color_alt", traitColorAlt);
+            tag.setInteger("trait_variant", traitVariant);
+            tag.setDouble("transformation_progress", progress);
+            if (!tag.isEmpty()) {
+                compound.setTag(key, tag);
+            }
+        }
+        return compound;
+    }
 
-	@Override
-	public void loadNBTData(NBTTagCompound compound) {
-		if ((race != null) && !race.isNone()) {
-			final String key = race.getRegistryName().toString();
-			if (compound.hasKey(key)) {
-				final NBTTagCompound rTag = compound.getCompoundTag(key);
-				if (rTag.hasKey("trait_shown")) {
-					showTraits = rTag.getBoolean("trait_shown");
-				}
-				if (rTag.hasKey("trait_color")) {
-					traitColor = rTag.getString("trait_color");
-				}
-				if (rTag.hasKey("trait_color_alt")) {
-					traitColorAlt = rTag.getString("trait_color_alt");
-				}
-				if (rTag.hasKey("trait_variant")) {
-					traitVariant = rTag.getInteger("trait_variant");
-				}
-				if (rTag.hasKey("transformation_progress")) {
-					progress = rTag.getDouble("transformation_progress");
-				}
-				//				elements.loadFromNBT(rTag);
-			}
-		}
-	}
+    @Override
+    public void loadNBTData(NBTTagCompound compound) {
+        if (!getRace().isNone()) {
+            final String key = getRace().getRegistryName().toString();
+            if (compound.hasKey(key)) {
+                final NBTTagCompound rTag = compound.getCompoundTag(key);
+                if (rTag.hasKey("trait_shown")) {
+                    showTraits = rTag.getBoolean("trait_shown");
+                }
+                if (rTag.hasKey("trait_color")) {
+                    traitColor = rTag.getString("trait_color");
+                }
+                if (rTag.hasKey("trait_color_alt")) {
+                    traitColorAlt = rTag.getString("trait_color_alt");
+                }
+                if (rTag.hasKey("trait_variant")) {
+                    traitVariant = rTag.getInteger("trait_variant");
+                }
+                if (rTag.hasKey("transformation_progress")) {
+                    progress = rTag.getDouble("transformation_progress");
+                }
+            }
+        }
+    }
 
-	public boolean showTraits() {
-		return showTraits;
-	}
+    public boolean showTraits() {
+        return showTraits;
+    }
 
-	public void setShowTraits(boolean showTraits) {
-		this.showTraits = showTraits;
-	}
+    public void setShowTraits(boolean showTraits) {
+        this.showTraits = showTraits;
+    }
 
-	public String getTraitColor() {
-		return traitColor;
-	}
+    public String getTraitColor() {
+        return traitColor;
+    }
 
-	public void setTraitColor(String color) {
-		traitColor = color;
-	}
+    public void setTraitColor(String color) {
+        traitColor = color;
+    }
 
-	public String getAltTraitColor() {
-		return traitColorAlt;
-	}
+    public String getAltTraitColor() {
+        return traitColorAlt;
+    }
 
-	public void setAltTraitColor(String color) {
-		traitColorAlt = color;
-	}
+    public void setAltTraitColor(String color) {
+        traitColorAlt = color;
+    }
 
-	public int getTraitVariant() {
-		return traitVariant;
-	}
+    public int getTraitVariant() {
+        return traitVariant;
+    }
 
-	public void setTraitVariant(int variant) {
-		traitVariant = variant;
-	}
+    /**
+     * Lazy way to solve problem for cosmetic slider issue.
+     *
+     * @return
+     */
+    public int getMaxTraitVariant() {
+        if (traitVariantMax <= 0) {
+            traitVariantMax = 1;
+        }
+        return traitVariantMax;
+    }
 
-	/*
-	 * Player Entities Only
-	 */
-	@Override
-	public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-		final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-		if ((entity == Minecraft.getMinecraft().player) && (screen != null) && !((screen instanceof GuiChat) || (screen instanceof GuiEntityProperties) || (screen instanceof ManaHud))) {
-			return;
-		}
-		if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-			final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
-			final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
-			final double xLoc = (x / wScale) - x;
-			final double yLoc = (y / hScale) - y;
-			final double zLoc = (z / wScale) - z;
+    public void setTraitVariant(int variant) {
+        traitVariant = variant;
+    }
 
-			final double yOffset = entity.getYOffset();
-			final Entity mount = entity.getRidingEntity();
-			//			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
-			final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
-			//			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
-			//						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
-			final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
-			if (entity.isRiding()) {
-				GlStateManager.translate(0, mountedOffset, 0);
-				GlStateManager.translate(0, -yOffset, 0);
-				GlStateManager.translate(0, retMountedOffset, 0);
-			}
-			GlStateManager.scale(wScale, hScale, wScale);
-			if (entity.isRiding()) {
-				GlStateManager.translate(0, -retMountedOffset, 0);
-				GlStateManager.translate(0, yOffset, 0);
-				GlStateManager.translate(0, -mountedOffset, 0);
-			}
-			GlStateManager.translate(xLoc, yLoc, zLoc);
-		}
-	}
+    public void setMaxTraitVariant(int variant) {
+        traitVariantMax = variant;
+    }
 
-	/*
-	 * Player Entities Only
-	 */
-	@Override
-	public void doRenderPlayerPost(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-	}
+    /*
+     * Player Entities Only
+     */
+    @Override
+    public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
+        final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        if ((entity == Minecraft.getMinecraft().player) && (screen != null) && !((screen instanceof GuiChat) || (screen instanceof GuiEntityProperties) || (screen instanceof ManaHud))) {
+            return;
+        }
+        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
+            final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
+            final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
+            final double xLoc = (x / wScale) - x;
+            final double yLoc = (y / hScale) - y;
+            final double zLoc = (z / wScale) - z;
 
-	/*
-	 * Both Player and Non Player Entities
-	 */
-	@Override
-	public <T extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-		if (entity instanceof EntityPlayer) {
-			if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-				GlStateManager.pushMatrix();
-				final float t2 = this.getEntityProperties().getDefaultHeight() - (entity.height);
-				GlStateManager.translate(0, t2, 0);
-			}
-		}
-	}
+            final double yOffset = entity.getYOffset();
+            final Entity mount = entity.getRidingEntity();
+            //			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
+            final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
+            //			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
+            //						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
+            final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
+            if (entity.isRiding()) {
+                GlStateManager.translate(0, mountedOffset, 0);
+                GlStateManager.translate(0, -yOffset, 0);
+                GlStateManager.translate(0, retMountedOffset, 0);
+            }
+            GlStateManager.scale(wScale, hScale, wScale);
+            if (entity.isRiding()) {
+                GlStateManager.translate(0, -retMountedOffset, 0);
+                GlStateManager.translate(0, yOffset, 0);
+                GlStateManager.translate(0, -mountedOffset, 0);
+            }
+            GlStateManager.translate(xLoc, yLoc, zLoc);
+        }
+    }
 
-	/*
-	 * Both Player and Non Player Entities
-	 */
-	@Override
-	public <T extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-		if (entity instanceof EntityPlayer) {
-			if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-				GlStateManager.popMatrix();
-			}
-		}
-	}
+    /*
+     * Player Entities Only
+     */
+    @Override
+    public void doRenderPlayerPost(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
+    }
 
-	/*
-	 * Non Player Entities Only
-	 */
-	@Override
-	public <T extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-		if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-			GlStateManager.pushMatrix();
-			final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
-			final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
-			final double xLoc = (x / wScale) - x;
-			final double yLoc = (y / hScale) - y;
-			final double zLoc = (z / wScale) - z;
+    /*
+     * Both Player and Non Player Entities
+     */
+    @Override
+    public <T extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+        if (entity instanceof EntityPlayer) {
+            if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
+                GlStateManager.pushMatrix();
+                final float t2 = this.getEntityProperties().getDefaultHeight() - (entity.height);
+                GlStateManager.translate(0, t2, 0);
+            }
+        }
+    }
 
-			final double yOffset = entity.getYOffset();
-			final Entity mount = entity.getRidingEntity();
-			//			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
-			final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
-			//			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
-			//						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
-			final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
-			//			GlStateManager.translate(-xLoc, -yLoc, -zLoc);
-			if (entity.isRiding()) {
-				GlStateManager.translate(0, mountedOffset, 0);
-				GlStateManager.translate(0, -yOffset, 0);
-				GlStateManager.translate(0, retMountedOffset, 0);
-			}
-			GlStateManager.scale(wScale, hScale, wScale);
-			if (entity.isRiding()) {
-				GlStateManager.translate(0, -retMountedOffset, 0);
-				GlStateManager.translate(0, yOffset, 0);
-				GlStateManager.translate(0, -mountedOffset, 0);
-			}
-			GlStateManager.translate(xLoc, yLoc, zLoc);
-			//			System.out.println(hScale + "|" + wScale + "| X:" + xLoc + "| Y:" + yLoc + "| Z:" + zLoc);
-		}
-	}
+    /*
+     * Both Player and Non Player Entities
+     */
+    @Override
+    public <T extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+        if (entity instanceof EntityPlayer) {
+            if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
+                GlStateManager.popMatrix();
+            }
+        }
+    }
 
-	/*
-	 * Non Player Entities Only
-	 */
-	@Override
-	public <T extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-		if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-			GlStateManager.popMatrix();
-		}
-	}
+    /*
+     * Non Player Entities Only
+     */
+    @Override
+    public <T extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
+            GlStateManager.pushMatrix();
+            final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
+            final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
+            final double xLoc = (x / wScale) - x;
+            final double yLoc = (y / hScale) - y;
+            final double zLoc = (z / wScale) - z;
 
-	//	@Override
-	//	public void doRenderHand(EnumHand hand, ItemStack itemStack, float swingProgress, float interpolatedPitch, float equipProgress, float partialTicks) {
-	//	}
+            final double yOffset = entity.getYOffset();
+            final Entity mount = entity.getRidingEntity();
+            //			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
+            final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
+            //			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
+            //						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
+            final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
+            //			GlStateManager.translate(-xLoc, -yLoc, -zLoc);
+            if (entity.isRiding()) {
+                GlStateManager.translate(0, mountedOffset, 0);
+                GlStateManager.translate(0, -yOffset, 0);
+                GlStateManager.translate(0, retMountedOffset, 0);
+            }
+            GlStateManager.scale(wScale, hScale, wScale);
+            if (entity.isRiding()) {
+                GlStateManager.translate(0, -retMountedOffset, 0);
+                GlStateManager.translate(0, yOffset, 0);
+                GlStateManager.translate(0, -mountedOffset, 0);
+            }
+            GlStateManager.translate(xLoc, yLoc, zLoc);
+            //			System.out.println(hScale + "|" + wScale + "| X:" + xLoc + "| Y:" + yLoc + "| Z:" + zLoc);
+        }
+    }
+
+    /*
+     * Non Player Entities Only
+     */
+    @Override
+    public <T extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
+            GlStateManager.popMatrix();
+        }
+    }
+
+    //	@Override
+    //	public void doRenderHand(EnumHand hand, ItemStack itemStack, float swingProgress, float interpolatedPitch, float equipProgress, float partialTicks) {
+    //	}
 
 }

@@ -1,7 +1,5 @@
 package xzeroair.trinkets.items.trinkets;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -10,6 +8,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -18,16 +17,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.AbilityBlockFinder;
-import xzeroair.trinkets.traits.abilities.AbilityFireImmunity;
-import xzeroair.trinkets.traits.abilities.AbilityFrostWalker;
-import xzeroair.trinkets.traits.abilities.AbilityIceImmunity;
-import xzeroair.trinkets.traits.abilities.AbilityLightningImmunity;
-import xzeroair.trinkets.traits.abilities.AbilityNightVision;
+import xzeroair.trinkets.traits.abilities.*;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityHeatImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
@@ -41,170 +36,178 @@ import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+
 public class TrinketDragonsEye extends AccessoryBase {
 
-	public static final ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
-	public static final ClientConfigDragonsEye clientConfig = TrinketsConfig.CLIENT.items.DRAGON_EYE;
+    public static final ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
+    public static final ClientConfigDragonsEye clientConfig = TrinketsConfig.CLIENT.items.DRAGON_EYE;
 
-	public TrinketDragonsEye(String name) {
-		super(name);
-		this.setUUID("6a345136-49b7-4b71-88dc-87301e329ac1");
-	}
+    public TrinketDragonsEye(String name) {
+        super(name);
+        this.setUUID("6a345136-49b7-4b71-88dc-87301e329ac1");
+    }
 
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		if (tab == this.getCreativeTab()) {
-			final ItemStack normal = new ItemStack(this, 1, 0);
-			items.add(normal);
-			if (serverConfig.compat.iaf.FIRE_VARIANT) {
-				final ItemStack fire = new ItemStack(this, 1, 0);
-				Capabilities.getTrinketProperties(fire, prop -> {
-					prop.setVariant(1);
-					prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
-				});
-				items.add(fire);
-			}
-			if (serverConfig.compat.iaf.ICE_VARIANT) {
-				final ItemStack ice = new ItemStack(this, 1, 0);
-				Capabilities.getTrinketProperties(ice, prop -> {
-					prop.setVariant(2);
-					prop.getElementAttributes().setPrimaryElement(Elements.ICE);
-				});
-				items.add(ice);
-			}
-			if (serverConfig.compat.iaf.LIGHTNING_VARIANT) {
-				final ItemStack lightning = new ItemStack(this, 1, 0);
-				Capabilities.getTrinketProperties(lightning, prop -> {
-					prop.setVariant(3);
-					prop.getElementAttributes().setPrimaryElement(Elements.LIGHTNING);
-				});
-				items.add(lightning);
-			}
-		}
-	}
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == this.getCreativeTab()) {
+            final ItemStack normal = new ItemStack(this, 1, 0);
+            items.add(normal);
+            if (serverConfig.compat.iaf.FIRE_VARIANT) {
+                final ItemStack fire = new ItemStack(this, 1, 0);
+                NBTTagCompound tag = new NBTTagCompound();
+                Capabilities.getTrinketProperties(fire, prop -> {
+                    prop.setVariant(1);
+                    prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
+                    prop.saveToNBT(tag);
+                });
+                fire.setTagCompound(tag);
+                items.add(fire);
+            }
+            if (serverConfig.compat.iaf.ICE_VARIANT) {
+                final ItemStack ice = new ItemStack(this, 1, 0);
+                NBTTagCompound tag = new NBTTagCompound();
+                Capabilities.getTrinketProperties(ice, prop -> {
+                    prop.setVariant(2);
+                    prop.getElementAttributes().setPrimaryElement(Elements.ICE);
+                    prop.saveToNBT(tag);
+                });
+                ice.setTagCompound(tag);
+                items.add(ice);
+            }
+            if (serverConfig.compat.iaf.LIGHTNING_VARIANT) {
+                final ItemStack lightning = new ItemStack(this, 1, 0);
+                NBTTagCompound tag = new NBTTagCompound();
+                Capabilities.getTrinketProperties(lightning, prop -> {
+                    prop.setVariant(3);
+                    prop.getElementAttributes().setPrimaryElement(Elements.LIGHTNING);
+                    prop.saveToNBT(tag);
+                });
+                lightning.setTagCompound(tag);
+                items.add(lightning);
+            }
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "treasurefinder", serverConfig.oreFinder);
-		String oreTarget = "NONE";
-		try {
-			final EntityPlayer player = Minecraft.getMinecraft().player;
-			final IAbilityInterface ability = Capabilities.getEntityProperties(
-					player,
-					null,
-					(prop, a) -> prop.getAbilityHandler().getAbility("xat:" + Abilities.blockDetection)
-			);
-			if (ability instanceof AbilityBlockFinder) {
-				final AbilityBlockFinder finder = (AbilityBlockFinder) ability;
-				final String target = finder.parseTargetName(finder.getTreasure());
-				if (!target.isEmpty()) {
-					oreTarget = target;
-				}
-			}
-		} catch (Exception e) {
-			oreTarget = "ERROR";
-		}
-		final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget.trim());
-		final KeyEntry keybind1 = new KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
-		final KeyEntry keybind2 = new KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
-		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
-		final Element element = this.getPrimaryElement(stack);
-		final boolean isIceVariant = element == Elements.ICE;
-		final boolean isLightningVariant = element == Elements.LIGHTNING;
-		final KeyEntry key2 = new OptionEntry(
-				"variantresist",
-				new TextComponentTranslation(
-						(element == Elements.FIRE) || ((element == Elements.NEUTRAL) && serverConfig.compat.iaf.DE_FIRE_RESIST) ? "effect.fireResistance" : (element != Elements.NEUTRAL) ? "xat.effect." + element.getName().toLowerCase() + "_resistance" : "ability.block_detection.name"
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "treasurefinder", serverConfig.oreFinder);
+        String oreTarget = "NONE";
+        try {
+            final EntityPlayer player = Minecraft.getMinecraft().player;
+            final IAbilityInterface ability = Capabilities.getEntityProperties(player, null, (prop, a) -> prop.getAbilityHandler().getAbility("xat:" + Abilities.blockDetection));
+            if (ability instanceof AbilityBlockFinder) {
+                final AbilityBlockFinder finder = (AbilityBlockFinder) ability;
+                final String target = finder.getTreasure().parseTargetName();
+                if (!target.isEmpty()) {
+                    oreTarget = target;
+                }
+            }
+        } catch (Exception e) {
+            oreTarget = "ERROR";
+        }
+        final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget);
+        final KeyEntry keybind1 = new KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
+        final KeyEntry keybind2 = new KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
+        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
+        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
+        final boolean tan = tanEnabled || sdEnabled;
+        final Element element = this.getPrimaryElement(stack);
+        final boolean isIceVariant = element == Elements.ICE;
+        final boolean isLightningVariant = element == Elements.LIGHTNING;
+        final KeyEntry key2 = new OptionEntry("variantresist", new TextComponentTranslation((element == Elements.FIRE) || ((element == Elements.NEUTRAL) && serverConfig.compat.iaf.DE_FIRE_RESIST) ? "effect.fireResistance" : (element != Elements.NEUTRAL) ? "xat.effect." + element.getName().toLowerCase() + "_resistance" : "ability.block_detection.name"
 
-				).getFormattedText()
-		);
-		final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
-		final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
-		final KeyEntry IAFParalysis = new LangEntry(this.getTranslationKey(stack), "paralysisimmune", isLightningVariant && serverConfig.compat.iaf.LIGHTNING_VARIANT && serverConfig.compat.iaf.PARALYSIS_IMMUNITY);
-		final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : isLightningVariant ? "" : TANHot.option()).getFormattedText());
-		final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", isIceVariant && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
-		final String output = helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker, IAFParalysis)
-				.replace("#underline:", "");
-		return output;
-	}
+        ).getFormattedText());
+        final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
+        final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
+        final KeyEntry IAFParalysis = new LangEntry(this.getTranslationKey(stack), "paralysisimmune", isLightningVariant && serverConfig.compat.iaf.LIGHTNING_VARIANT && serverConfig.compat.iaf.PARALYSIS_IMMUNITY);
+        final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : isLightningVariant ? "" : TANHot.option()).getFormattedText());
+        final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", isIceVariant && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
+        final String output = helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker, IAFParalysis).replace("#underline:", "");
+        return output;
+    }
 
-	@Override
-	public String[] getAttributeConfig() {
-		return serverConfig.attributes;
-	}
+    @Override
+    public String[] getAttributeConfig() {
+        return serverConfig.attributes;
+    }
 
-	@Override
-	public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-		abilities.add(new AbilityNightVision().toggleAbility(true));
-		final Element element = this.getPrimaryElement(stack);
-		final boolean tan = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.compat.toughasnails) || (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.compat.simpledifficulty);
-		if (serverConfig.compat.iaf.FIRE_VARIANT && (element == Elements.FIRE)) {
-			abilities.add(new AbilityFireImmunity());
-			if (tan && serverConfig.compat.tan.immuneToHeat) {
-				abilities.add(new AbilityHeatImmunity());
-			}
-		} else if (serverConfig.compat.iaf.ICE_VARIANT && (element == Elements.ICE)) {
-			abilities.add(new AbilityIceImmunity());
-			if (serverConfig.compat.iaf.FROST_WALKER) {
-				abilities.add(new AbilityFrostWalker());
-			}
-			if (tan && serverConfig.compat.tan.immuneToCold) {
-				abilities.add(new AbilityColdImmunity());
-			}
-		} else if (serverConfig.compat.iaf.LIGHTNING_VARIANT && (element == Elements.LIGHTNING)) {
-			abilities.add(new AbilityLightningImmunity());
-		} else {
-			if (serverConfig.compat.iaf.DE_FIRE_RESIST) {
-				abilities.add(new AbilityFireImmunity());
-				if (tan && serverConfig.compat.tan.immuneToHeat) {
-					abilities.add(new AbilityHeatImmunity());
-				}
-			}
-		}
-		if (serverConfig.oreFinder) {
-			abilities.add(new AbilityBlockFinder());
-		}
-	}
+    @Override
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityNightVision().toggleAbility(true));
+        final Element element = this.getPrimaryElement(stack);
+        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
+        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
+        final boolean tan = tanEnabled || sdEnabled;
+        if (serverConfig.compat.iaf.FIRE_VARIANT && (element == Elements.FIRE)) {
+            abilities.add(new AbilityFireImmunity());
+            if (tan && serverConfig.compat.tan.immuneToHeat) {
+                abilities.add(new AbilityHeatImmunity());
+            }
+        } else if (serverConfig.compat.iaf.ICE_VARIANT && (element == Elements.ICE)) {
+            abilities.add(new AbilityIceImmunity());
+            if (serverConfig.compat.iaf.FROST_WALKER) {
+                abilities.add(new AbilityFrostWalker());
+            }
+            if (tan && serverConfig.compat.tan.immuneToCold) {
+                abilities.add(new AbilityColdImmunity());
+            }
+        } else if (serverConfig.compat.iaf.LIGHTNING_VARIANT && (element == Elements.LIGHTNING)) {
+            abilities.add(new AbilityLightningImmunity());
+        } else {
+            if (serverConfig.compat.iaf.DE_FIRE_RESIST) {
+                abilities.add(new AbilityFireImmunity());
+                if (tan && serverConfig.compat.tan.immuneToHeat) {
+                    abilities.add(new AbilityHeatImmunity());
+                }
+            }
+        }
+        if (serverConfig.oreFinder) {
+            abilities.add(new AbilityBlockFinder());
+        }
+    }
 
-	@Override
-	public String getItemStackDisplayName(ItemStack stack) {
-		final Element element = this.getPrimaryElement(stack);
-		final String displayName;
-		if (element != Elements.NEUTRAL) {
-			displayName = new TextComponentTranslation(this.getTranslationKey(stack) + "." + element.getName().toLowerCase() + ".name").getFormattedText();
-		} else {
-			displayName = super.getItemStackDisplayName(stack);
-		}
-		return displayName.trim();
-	}
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element != Elements.NEUTRAL) {
+            return new TextComponentTranslation(this.getTranslationKey(stack) + "." + element.getName().toLowerCase() + ".name").getFormattedText().trim();
+        }
+        return super.getItemStackDisplayName(stack).trim();
+    }
 
-	@Override
-	public boolean ItemEnabled() {
-		return serverConfig.enabled;
-	}
+    @Override
+    public boolean ItemEnabled() {
+        return serverConfig.enabled;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		//		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
-		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
-		final ModelResourceLocation iceVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_ice", "inventory");
-		final ModelResourceLocation lightningVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_lightning", "inventory");
-		final ModelResourceLocation fireVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_fire", "inventory");
-		ModelBakery.registerItemVariants(this, normal, fireVariant, iceVariant, lightningVariant);
-		ModelLoader.setCustomMeshDefinition(this, stack -> {
-			final Element element = this.getPrimaryElement(stack);
-			if (element == Elements.LIGHTNING) {
-				return lightningVariant;
-			} else if (element == Elements.ICE) {
-				return iceVariant;
-			} else if (element == Elements.FIRE) {
-				return fireVariant;
-			} else {
-				return normal;
-			}
-		});
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        //		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+        final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
+        final ModelResourceLocation iceVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_ice", "inventory");
+        final ModelResourceLocation lightningVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_lightning", "inventory");
+        final ModelResourceLocation fireVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_fire", "inventory");
+        ModelBakery.registerItemVariants(this, normal, fireVariant, iceVariant, lightningVariant);
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            TrinketProperties prop = Capabilities.getTrinketProperties(stack, new TrinketProperties(stack), (prop1, emptyProp) -> {
+                return prop1;
+            });
+            prop.loadFromNBT(prop.getTag());
+            Element element = prop.getElementAttributes().getPrimaryElement();
+            if (element == Elements.LIGHTNING) {
+                return lightningVariant;
+            } else if (element == Elements.ICE) {
+                return iceVariant;
+            } else if (element == Elements.FIRE) {
+                return fireVariant;
+            } else {
+                return normal;
+            }
+        });
+    }
 }

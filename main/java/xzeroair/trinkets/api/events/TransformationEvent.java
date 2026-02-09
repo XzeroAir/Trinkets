@@ -5,84 +5,109 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.traits.elements.Element;
 
 public abstract class TransformationEvent extends Event {
 
-	protected EntityLivingBase entity;
-	protected EntityRace currentRace;
-	protected EntityProperties properties;
+    protected EntityLivingBase entity;
+    protected EntityRace currentRace;
+    protected EntityProperties properties;
 
-	public TransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
-		this.entity = entity;
-		currentRace = current;
-		this.properties = properties;
-	}
+    public TransformationEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
+        this.entity = entity;
+        currentRace = current;
+        this.properties = properties;
+    }
 
-	public EntityProperties getEntityProperties() {
-		return properties;
-	}
+    public EntityProperties getEntityProperties() {
+        return properties;
+    }
 
-	public EntityLivingBase getEntityLiving() {
-		return entity;
-	}
+    public EntityLivingBase getEntityLiving() {
+        return entity;
+    }
 
-	public EntityRace getCurrentRace() {
-		return currentRace;
-	}
+    public EntityRace getCurrentRace() {
+        return currentRace;
+    }
 
-	@Cancelable
-	public static class RaceUpdateEvent extends TransformationEvent {
+    @Cancelable
+    public static class RaceUpdateEvent extends TransformationEvent {
 
-		protected boolean changed = false;
-		protected EntityRace newRace;
+        protected boolean changed = false;
+        protected boolean elementChanged = false;
+        protected EntityRace newRace;
+        protected Element newElement;
 
-		public RaceUpdateEvent(EntityLivingBase entity, EntityProperties properties, EntityRace current, EntityRace next) {
-			super(entity, properties, current);
-			this.setChanged(!this.getCurrentRace().equals(next));
-			this.setNewRace(next);
-		}
+//		public RaceUpdateEvent(EntityLivingBase entity, EntityProperties properties, ){
+//
+//		}
 
-		public EntityRace getNewRace() {
-			return newRace;
-		}
+        public RaceUpdateEvent(EntityLivingBase entity, EntityProperties properties, EntityRace next, Element nextElement) {
+            super(entity, properties, properties.getCurrentRace().getRace());
+            this.setChanged(!this.getCurrentRace().equals(next));
+            this.setElementChanged(!properties.getCurrentRace().compareElement(nextElement));
+            setNewElement(nextElement);
+            this.setNewRace(next);
+        }
 
-		public void setNewRace(EntityRace race) {
-			newRace = race;
-		}
+        private void setNewElement(Element element) {
+            this.newElement = element;
+        }
 
-		public boolean raceChanged() {
-			return changed;
-		}
+        public Element getNewElement() {
+            return newElement;
+        }
 
-		public void setChanged(boolean changed) {
-			this.changed = changed;
-		}
-	}
+        public boolean ElementChanged() {
+            return elementChanged;
+        }
 
-	public static class StartTransformation extends TransformationEvent {
+        public void setElementChanged(boolean elementChanged) {
+            this.elementChanged = elementChanged;
+        }
 
-		public StartTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
-			super(entity, properties, current);
-		}
-	}
+        public EntityRace getNewRace() {
+            return newRace;
+        }
 
-	public static class EndTransformation extends TransformationEvent {
+        public void setNewRace(EntityRace race) {
+            newRace = race;
+        }
 
-		protected EntityRace prevRace;
+        public boolean raceChanged() {
+            return changed;
+        }
 
-		public EndTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
-			super(entity, properties, current);
-			this.setPreviousRace(this.getCurrentRace());
-		}
+        public void setChanged(boolean changed) {
+            this.changed = changed;
+        }
+    }
 
-		public EntityRace getPreviousRace() {
-			return prevRace;
-		}
+    public static class StartTransformation extends TransformationEvent {
 
-		private void setPreviousRace(EntityRace race) {
-			prevRace = race;
-		}
+        public StartTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
+            super(entity, properties, current);
+        }
+    }
 
-	}
+    public static class EndTransformation extends TransformationEvent {
+
+        protected EntityRace prevRace;
+
+        public EndTransformation(EntityLivingBase entity, EntityProperties properties, EntityRace current) {
+            super(entity, properties, current);
+            this.setPreviousRace(this.getCurrentRace());
+        }
+
+        public EntityRace getPreviousRace() {
+            return prevRace;
+        }
+
+        private void setPreviousRace(EntityRace race) {
+            prevRace = race;
+        }
+
+    }
 
 }

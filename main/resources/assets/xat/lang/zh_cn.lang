@@ -34,6 +34,7 @@ xat.tooltip.disabled=§r[§c禁用§r]
 xat.tooltip.weight=Weight:
 
 xat.config.race.size=Size Settings
+xat.config.race.size.tooltip=Size Configuration
 
 key.xat.category=Trinkets and Baubles
 key.xat.trinket_target.desc=巨龙之眼：切换
@@ -142,6 +143,11 @@ ability.ice_immunity.name=Ice Immunity
 ability.firstaid_reflex.name=快速反应
 ability.firstaid_reflex.tooltip1=概率免疫致命爆头伤害
 
+xat.element.neutral.name=Neutral
+xat.element.fire.name=Fire
+xat.element.ice.name=Ice
+xat.element.lightning.name=Lightning
+
 damagetype.xat.water=水
 death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
 
@@ -149,10 +155,12 @@ xat.jump=跳跃
 xat.stepheight=上坡高度
 xat.entityMagic.maxMana=Max Mana
 xat.entityMagic.regen=魔力值恢复
+xat.flyspeed=Fly Speed
 attribute.name.xat.jump=跳跃
 attribute.name.xat.stepheight=上坡高度
 attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=魔力值恢复
+attribute.name.xat.flyspeed=Fly Speed
 
 ####################################材料####################################
 
@@ -226,10 +234,10 @@ item.titan_ring.0.tooltip4=§c践踏植物
 item.titan_ring.0.heavy=§c在水中下沉
 
 item.dragon_ring.0.name=§6巨龙之戒
-item.dragon_ring.0.tooltip1=§6$rsize:标准体型
-item.dragon_ring.0.tooltip2=§6按住§r<§e*breathkb:§r>§6喷出火焰
-item.dragon_ring.0.tooltip3=§6获得防火
-item.dragon_ring.0.tooltip4=§2获得夜视 §r<§e*denvkb:§r>
+#item.dragon_ring.0.tooltip1=§6$rsize:标准体型
+#item.dragon_ring.0.tooltip2=§6按住§r<§e*breathkb:§r>§6喷出火焰
+#item.dragon_ring.0.tooltip3=§6获得防火
+#item.dragon_ring.0.tooltip4=§2获得夜视 §r<§e*denvkb:§r>
 
 item.teddy_bear.0.name=泰迪熊
 item.teddy_bear.0.tooltip1=§6如果在装备时睡眠，提供增益效果
@@ -277,7 +285,6 @@ item.dragons_eye.0.tooltip2=§2获得夜视 §r<§e*denvkb:§r>
 item.dragons_eye.0.tooltip3=@treasurefinder:
 item.dragons_eye.0.tooltip4=@frostwalker:
 item.dragons_eye.0.treasurefinder=§6当前目标：§3#underline:$target:§r <§e*deofkb:§r>
-
 item.dragons_eye.0.treasurefinder.on=§6我需要更多的§f $target:§6 作为我的财宝 $looking:
 item.dragons_eye.0.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
 item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
@@ -285,7 +292,7 @@ item.dragons_eye.0.compat.tan=$typeimmune:
 item.dragons_eye.0.heatimmune=§6免疫炽热
 item.dragons_eye.0.coldimmune=§6免疫冻伤
 item.dragons_eye.0.paralysisimmune=§6免疫麻痹
-
+item.dragons_eye.0.compat.enhancedvisuals=
 item.dragons_eye.0.compat.iaf.ice.frostwalker=§6获得§3冰霜行者
 
 item.poison_stone.0.name=剧毒之石
@@ -333,7 +340,7 @@ item.arcing_orb.0.tooltip1=§2获得双击闪避的能力 §3$dodgecost:MP
 item.arcing_orb.0.tooltip2=@dodgestun:
 item.arcing_orb.0.tooltip3=§6按住§r<§e*arckb:§r>§6释放一次闪电攻击
 item.arcing_orb.0.tooltip4=每§3$boltcost:MP 造成§3$boltdamage:§6伤害
-item.arcing_orb.0.dodgestun=§6闪避时击晕周围的敌人
+item.arcing_orb.0.dodge.stun=§6闪避时击晕周围的敌人
 
 item.faelis_claw.0.name=猫爪
 item.faelis_claw.0.tooltip1=§6攻击敌人使其流血
@@ -510,6 +517,7 @@ xat.config.client.gui.settings=Trinkets Container
 xat.config.client.gui.settings.tooltip=Settings regarding the Trinkets Container on the client.
 
 xat.config.client.magic.hud.settings=Mana Bar Settings
+xat.config.client.magic.hud.settings.tooltip=魔法条渲染配置。
 xat.config.client.magic.hud.shown=Render Mana Bar
 xat.config.client.magic.hud.shown.always=Render Mana Bar Always
 xat.config.client.magic.hud.horizontal=Horizontal Rendering
@@ -534,6 +542,7 @@ xat.config.client.render.entity.renderer.replace.fog.tooltip=When the Trinket an
 
 xat.config.client.race.properties.gui.settings=Race Properties Gui
 xat.config.client.race.properties.gui.shown=Race Properties Button
+xat.config.client.race.properties.gui.shown.tooltip=启用“种族属性界面”按钮
 
 #####################################[Food Configs]#####################################
 
@@ -589,6 +598,7 @@ xat.config.server.potion.playersonly.tooltip=Whether the transformation potions 
 #####################################[Item Configs]#####################################
 
 xat.config.items=Item Settings
+xat.config.items.tooltip=Trinket Configuration
 xat.config.items.transformation=Transformation Items
 
 xat.config.glow_ring=魔眼之戒设置
@@ -614,6 +624,8 @@ xat.config.server.dragons_eye.orefinder.blocks.list=Treasure Finder Block list
 xat.config.server.dragons_eye.orefinder.blocks.list.tooltip=What the Treasure Finding Feature of the Dragon's Eye can Detect
 xat.config.server.dragons_eye.toughasnails.immunity.heat=Immune to Heat
 xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails is Installed Should the player be Immune to Heat
+xat.config.server.dragons_eye.toughasnails.immunity.cold=Immune to Cold
+xat.config.server.dragons_eye.toughasnails.immunity.cold.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Cold
 
 xat.config.server.dragons_eye.iceandfire.recipe.stage=Skull Stage
 xat.config.server.dragons_eye.iceandfire.recipe.stage.tooltip=If Ice and Fire is Installed, Should the Dragon's Eye Require a Specific Stage of Skull for the recipe. Set to 0 for any stage
@@ -623,8 +635,10 @@ xat.config.server.dragons_eye.iceandfire.ice.variant=Ice Variant
 xat.config.server.dragons_eye.iceandfire.ice.variant.tooltip=Should there be an Ice Variant of the Dragons eye
 xat.config.server.dragons_eye.iceandfire.ice.frostwalker=Frost Walker
 xat.config.server.dragons_eye.iceandfire.ice.frostwalker.tooltip=Should the Ice Variant have Frost Walker
-xat.config.server.dragons_eye.iceandfire.lightning.paralysis.variant=Paralysis Immunity
-xat.config.server.dragons_eye.iceandfire.lightning.paralysis.tooltip=Should the Ice Variant have Paralysis Immunity
+xat.config.server.dragons_eye.iceandfire.lightning.variant=Lightning Variant
+xat.config.server.dragons_eye.iceandfire.lightning.variant.tooltip=Should there be a Lightning Variant of the Dragons eye
+xat.config.server.dragons_eye.iceandfire.lightning.paralysis=Paralysis Immunity
+xat.config.server.dragons_eye.iceandfire.lightning.paralysis.tooltip=Should the Lightning Variant have Paralysis Immunity
 xat.config.server.dragons_eye.iceandfire.default.resist=Default Resist
 xat.config.server.dragons_eye.iceandfire.default.resist.tooltip=Should the Base Dragons Eye have Fire Resistance
 
@@ -840,7 +854,9 @@ xat.config.magic.moon_rose.essence.tooltip=How much Magical Essence the Moon Ros
 xat.config.magic.moon_rose.cooldown=Absorption Cooldown
 xat.config.magic.moon_rose.cooldown.tooltip=How long it takes in Ticks to absorb 1 essence from a Moon Rose
 xat.config.magic.mana_crystal.explodes=Mana Crystal Explodes
+xat.config.magic.mana_crystal.explodes.tooltip=Will Mana Crystals explode when struck against stone, producing Mana Reagent?
 xat.config.magic.mana_reagent.harmful=Mana Reagent Harmful
+xat.config.magic.mana_reagent.harmful.tooltip=Will the Mana reagent harm you when you consume it?
 
 xat.config.magic.mana.enabled=Mana Enabled
 xat.config.magic.mana.enabled.tooltip=
@@ -867,6 +883,7 @@ xat.config.magic.mana.recovery.list.tooltip=Items that Recover Mana\n modid:item
 xat.config.races=Race Settings
 
 xat.config.races.dwarf=Dwarf Race Settings
+xat.config.races.dwarf.tooltip=
 xat.config.races.dwarf.blocks=Block Settings
 xat.config.races.dwarf.blocks.tooltip=
 xat.config.races.dwarf.blocks.xp=Blocks Give XP
@@ -893,6 +910,7 @@ xat.config.races.dwarf.static_mining=Static Mining
 xat.config.races.dwarf.static_mining.tooltip=When Mining, Mining Speed is static at (Block Hardness * 4), Not Including other Modifiers.
 
 xat.config.races.elf=Elf Race Settings
+xat.config.races.elf.tooltip=
 xat.config.races.elf.chargeshot.enabled=Charge Shot
 xat.config.races.elf.chargeshot.enabled.tooltip=Should Elves have the ability to enhance bow attacks with Mana
 xat.config.races.elf.chargeshot.cost=Charge Shot Cost
@@ -909,6 +927,7 @@ xat.config.races.elf.chargeshot.explode=Full Charges Explode
 xat.config.races.elf.chargeshot.explode.tooltip=If a fully charged shot should explode on impact causing splash damage
 
 xat.config.races.fairy=Fairy Race Settings
+xat.config.races.fairy.tooltip=
 xat.config.races.fairy.flight=Creative Flight
 xat.config.races.fairy.flight.tooltip=Grants the player Creative Flight if Enabled
 xat.config.races.fairy.flight.speed=Creative Flight Speed
@@ -946,6 +965,7 @@ xat.config.races.goblin.natural_resistance=Naturally Resistant
 xat.config.races.goblin.natural_resistance.tooltip=Should Goblins be naturally resistant to Fire and explosions
 
 xat.config.races.titan=Titan Race Settings
+xat.config.races.titan.tooltip=
 xat.config.races.titan.jumpheight=Jump Height Adjustment
 xat.config.races.titan.jumpheight.tooltip=Adjusts the players Jump and Step Height to Match the players Size
 xat.config.races.titan.heavy=Heavy Player
@@ -966,6 +986,7 @@ xat.config.races.titan.mount.blacklist=Mount Blacklist
 xat.config.races.titan.mount.blacklist.tooltip=Entities that can not be mounted, or can only be mounted
 
 xat.config.races.faelis=Faelis Race Settings
+xat.config.races.faelis.tooltip=
 xat.config.races.faelis.claw.bonus=Claw Bonus
 xat.config.races.faelis.claw.bonus.tooltip=When enabled, this will add bonus damage to any attack dealt with an empty hand.
 xat.config.races.faelis.claw.bonus.amount=Bonus Amount
@@ -988,6 +1009,7 @@ xat.config.races.faelis.milk.list=Milk
 xat.config.races.faelis.milk.list.tooltip=List of Items that count as Milk
 
 xat.config.races.dragon=Dragon Race Settings
+xat.config.races.dragon.tooltip=
 xat.config.races.dragon.flight=Creative Flight
 xat.config.races.dragon.flight.tooltip=Grants the player Creative Flight if Enabled
 xat.config.races.dragon.flight.speed=Creative Flight Speed
@@ -1033,8 +1055,8 @@ xat.config.misc.interaction.fix.tooltip=Vanilla MC doesn't handle interaction wi
 xat.config.misc.vip=VIP Enabled
 xat.config.misc.vip.tooltip=The VIP list may be unaccessible under some circumstance, use this to shorten game launching time.
 
-xat.config.compatability=Compatability Settings
-xat.config.compatability.tooltip=Settings which affect how this mod works with other mods.
+xat.config.compatibility=Compatibility Settings
+xat.config.compatibility.tooltip=Settings which affect how this mod works with other mods.
 
 xat.config.toughasnails=Tough as Nails
 xat.config.toughasnails.tooltip=

@@ -63,7 +63,7 @@ minecraft {
 
     runs {
         client {
-            args "--username=xzeroair", "--uuid=f5f28614-4e8b-4788-ae78-b020493dc5cb"
+            args "--username=XzeroAir", "--uuid=f5f28614-4e8b-4788-ae78-b020493dc5cb"
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
             jvmArg "-Dmixin.hotSwap=true"
             jvmArg "-Dmixin.checks.interfaces=true"
@@ -78,7 +78,7 @@ minecraft {
         }
 
         server {
-            workingDirectory 'run'
+            workingDirectory 'runServer'
             ideaModule "${project.name}.main"
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
@@ -118,8 +118,8 @@ dependencies {
     //CurseMaven Mods
     implementation fg.deobf("curse.maven:baubles-227083:2518667")
     implementation fg.deobf("curse.maven:first-aid-276837:4414252")
-    //implementation fg.deobf("curse.maven:elenai-dodge-373104:3575333")
-    implementation fg.deobf("curse.maven:betterquesting-${betterquesting_version}")
+//    implementation fg.deobf("curse.maven:elenai-dodge-373104:3575333")
+//    implementation fg.deobf("curse.maven:betterquesting-${betterquesting_version}")
     implementation fg.deobf("curse.maven:lycanitesmobs-${lycanitesmobs_version}")
     implementation fg.deobf("curse.maven:mobends-${mobends_version}")
     implementation fg.deobf("curse.maven:potioncore-${potioncore_version}")
@@ -127,10 +127,12 @@ dependencies {
 
     implementation fg.deobf("curse.maven:reskillable-286382:2815686")
     implementation fg.deobf("curse.maven:quark-243121:2924091")
-    implementation fg.deobf("curse.maven:electroblobs-wizardry-265642:4284076")
+//    implementation fg.deobf("curse.maven:electroblobs-wizardry-265642:4284076")
+    implementation fg.deobf("curse.maven:electroblobs-wizardry-265642:6950392")
     implementation fg.deobf("curse.maven:antique-atlas-227795:2823030")
-    implementation fg.deobf("curse.maven:carry-on-274259:3271178")
-//    implementation fg.deobf("curse.maven:iceandfire-rlcraft-888556:6596246")
+//    implementation fg.deobf("curse.maven:carry-on-274259:3271178")
+    implementation fg.deobf("curse.maven:carry-on-274259:4507139")
+//    implementation fg.deobf("curse.maven:iceandfire-rlcraft-${infrlcraft_version}")
 //    implementation fg.deobf("curse.maven:wolf-armor-and-storage-253689:3648545")
 
     implementation fg.deobf("curse.maven:artemislib-313590:2741812")
@@ -149,21 +151,21 @@ dependencies {
 jar {
     manifest {
         attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_authors,
-                'Specification-Version'   : project.version,
+                'Specification-Title'        : mod_name,
+                'Specification-Vendor'       : mod_authors,
+                'Specification-Version'      : project.version,
 //                'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.version,
-                'Implementation-Vendor'   : mod_authors,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'Timestamp'               : System.currentTimeMillis(),
-                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Built-On-Minecraft'      : minecraft_version,
+                'Implementation-Title'       : project.name,
+                'Implementation-Version'     : project.version,
+                'Implementation-Vendor'      : mod_authors,
+                'Implementation-Timestamp'   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Timestamp'                  : System.currentTimeMillis(),
+                'Built-On-Java'              : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                'Built-On-Minecraft'         : minecraft_version,
 //                'FMLCorePlugin': mixin_loader_class,
                 'FMLCorePluginContainsFMLMod': 'true',
-//                'ForceLoadAsMod': 'true', //Comment out in dev environment, uncomment for building
-                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+//                'ForceLoadAsMod'             : 'true', //Comment out in dev environment, uncomment for building
+//                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
         ])
     }
 }

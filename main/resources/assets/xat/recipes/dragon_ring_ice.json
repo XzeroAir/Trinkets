@@ -1,0 +1,40 @@
+{
+  "type": "xat:dragon_eye_iaf",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ],
+  "pattern": [
+    "#I ",
+    "ICI",
+    " I "
+  ],
+  "key": {
+    "#": {
+      "item": "xat:mana_crystal"
+    },
+    "I": {
+      "item": "xat:glowing_ingot"
+    },
+    "C": {
+      "type": "xat:nbt",
+      "item": "xat:dragon_gem",
+      "nbt": {
+        "Elements": {
+          "primary": "xat:ice"
+        }
+      },
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "xat:dragon_ring",
+    "nbt": {
+      "Elements": {
+        "primary": "xat:ice"
+      }
+    }
+  }
+}

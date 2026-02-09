@@ -26,8 +26,38 @@ public class Reference {
 
     public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.###");
 
-    private static final int ATTRIBUTE_MODIFIER_OPERATION_ADD = 0;
-    private static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_OLD_AMOUNT = 1;
-    private static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_NEW_AMOUNT = 2;
+    /**
+     * Additive Attribute Operation Modifier
+     */
+    public static final int ATTRIBUTE_MODIFIER_OPERATION_ADD = 0;
+    /**
+     * Multiplicative Attribute Operation Modifier
+     */
+    public static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_OLD_AMOUNT = 1;
+    /**
+     * Multiplicative Attribute Operation Modifier
+     */
+    public static final int ATTRIBUTE_MODIFIER_OPERATION_MULTIPLY_NEW_AMOUNT = 2;
+
+    /**
+     * Trinkets Container GUI
+     */
+    public static final int GUI = 0;
+    /**
+     * Trinkets Mana Configuration GUI
+     */
+    public static final int GUI_MANA = 1;
+    /**
+     * Trinkets Entity Properties Configuration GUI
+     */
+    public static final int GUI_ENTITY = 2;
+    /**
+     * Trinkets Entity Attributes and Abilities GUI
+     */
+    public static final int GUI_ATTRIBUTES = 3;
+    /**
+     * Trinkets Race Selection GUI
+     */
+    public static final int GUI_RACE_SELECTION = 4;
 
 }

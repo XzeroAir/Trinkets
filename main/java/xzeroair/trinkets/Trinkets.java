@@ -55,13 +55,13 @@ public class Trinkets {
         @Override
         public ItemStack createIcon() {
             try {
-                if(TrinketsConfig.SERVER.Items.GLOW_RING.enabled) {
+                if (TrinketsConfig.SERVER.Items.GLOW_RING.enabled) {
                     if (Loader.isModLoaded("baubles")) {
                         return new ItemStack(ModItems.baubles.BaubleGlowRing);
                     } else {
                         return new ItemStack(ModItems.trinkets.TrinketGlowRing);
                     }
-                } else{
+                } else {
                     return new ItemStack(Items.POTATO);
                 }
             } catch (Exception e) {
@@ -79,8 +79,6 @@ public class Trinkets {
     public static File directory;
 
     public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
-
-    public static final int GUI = 0;
 
     @SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
     public static CommonProxy proxy;

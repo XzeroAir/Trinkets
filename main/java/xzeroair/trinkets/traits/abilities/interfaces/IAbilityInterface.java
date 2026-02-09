@@ -1,62 +1,73 @@
 package xzeroair.trinkets.traits.abilities.interfaces;
 
-import java.util.List;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
+import xzeroair.trinkets.traits.elements.Element;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public interface IAbilityInterface {
 
-	ResourceLocation getRegistryName();
+    ResourceLocation getRegistryName();
 
-	String getDisplayName();
+    String getDisplayName();
 
-	String getTranslationKey();
+    String getTranslationKey();
 
-	String getUUID();
+    String getUUID();
 
-	@SideOnly(Side.CLIENT)
-	void getDescription(List<String> tooltips);
+    @SideOnly(Side.CLIENT)
+    void getDescription(List<String> tooltips);
 
-	/**
-	 * called when the ability is added to an entity
-	 */
-	default void onAbilityAdded(EntityLivingBase entity) {
+    /**
+     * called when the ability is added to an entity
+     */
+    default void onAbilityAdded(EntityLivingBase entity) {
 
-	}
+    }
 
-	/**
-	 * Called when the ability is removed from the entity
-	 */
-	default void onAbilityRemoved(EntityLivingBase entity) {
+    /**
+     * Called when the ability is removed from the entity
+     */
+    default void onAbilityRemoved(EntityLivingBase entity) {
 
-	}
+    }
 
-	default boolean shouldRemove() {
-		return false;
-	}
+    IAbilityInterface setRequiredElement(Element requiredElement);
 
-	default IAbilityInterface scheduleRemoval() {
-		return this;
-	}
+    @Nullable
+    Element getRequiredElement();
 
-	default AbilityHolder getAbilityHolder() {
-		return null;
-	}
+    default boolean shouldRemove() {
+        return false;
+    }
 
-	default IAbilityInterface cacheAbilityHolder(AbilityHolder holder) {
-		return this;
-	}
+    default IAbilityInterface scheduleRemoval() {
+        return this;
+    }
 
-	default void loadStorage(NBTTagCompound compound) {
-	}
+    default AbilityHolder getAbilityHolder() {
+        return null;
+    }
 
-	default NBTTagCompound saveStorage(NBTTagCompound compound) {
-		return compound;
-	}
+    default IAbilityInterface cacheAbilityHolder(AbilityHolder holder) {
+        return this;
+    }
+
+    default void loadStorage(NBTTagCompound compound) {
+    }
+
+    default NBTTagCompound saveStorage(NBTTagCompound compound) {
+        return compound;
+    }
+
+    default void loadTagCacheFromNBT(NBTTagCompound tag) {
+
+    }
 
 }
