@@ -899,24 +899,4 @@ public class ConfigHelper {
         UNKNOWN, NORMAL, ITEM, BLOCK, ENTITY, MATERIAL, POTION, OREDICTIONARY
     }
 
-    public static class ObjectPair<A, B> {
-
-        private A first;
-        private B second;
-
-        public ObjectPair(A first, B second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public A getFirst() {
-            return first;
-        }
-
-        public B getSecond() {
-            return second;
-        }
-
-    }
-
 }

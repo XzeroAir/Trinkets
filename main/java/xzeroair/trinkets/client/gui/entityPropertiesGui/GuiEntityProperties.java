@@ -157,19 +157,19 @@ public class GuiEntityProperties extends GuiScreen {
          */
         colorField = new GuiTextField(colorFieldID, fontRenderer, bX, bY, 100, 20);
         colorField.setMaxStringLength(8);
-        final String traitColor = properties == null ? "#ffffff" : properties.getRaceHandler().getTraitColor();
-        final float[] defaultRGB = ColorHelper.getRGBColor(traitColor);
-        colorField.setText(traitColor);
+        final int traitPrimaryColor = properties.getRaceHandler().getPrimaryTraitColor();
+        final float[] defaultRGB = ColorHelper.getRGBColor(traitPrimaryColor);
+        colorField.setText(ColorHelper.convertDecimalColorToHexadecimal(traitPrimaryColor));
 
         /**
          * Primary Color reset button.
          */
         this.addButton(new GuiPropertiesButton(resetColor, bX + 102, bY - 1, 20, 20, "R", (button, pressed) -> {
-            final String defaultHex = ColorHelper.convertDecimalColorToHexadecimal(properties.getCurrentRace().getRace().getPrimaryColor());
-            properties.getRaceHandler().setTraitColor(defaultHex);
-            colorField.setText(defaultHex);
+            final int defaultColor = properties.getCurrentRace().getRace().getPrimaryColor();
+            properties.getRaceHandler().setPrimaryTraitColor(defaultColor);
+            colorField.setText(ColorHelper.convertDecimalColorToHexadecimal(defaultColor));
 //            colorField.setTextColor(properties.getCurrentRace().getPrimaryColor());
-            final float[] rgb = ColorHelper.getRGBColor(defaultHex);
+            final float[] rgb = ColorHelper.getRGBColor(defaultColor);
             r.sliderValue = rgb[0];
             r.displayString = "Red: " + ((int) (rgb[0] * 255));
             g.sliderValue = rgb[1];
@@ -184,12 +184,11 @@ public class GuiEntityProperties extends GuiScreen {
          * Primary Trait Slider for the Red Channel
          */
         r = new GuiPropertiesSlider(redSlider, bX, bY, 100, 20, "Red: " + (int) ((defaultRGB[0] * 1F) * 255), defaultRGB[0], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(slider.getSliderValue(), rgb[1], rgb[2]);
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getPrimaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(slider.getSliderValue(), rgb[1], rgb[2]);
+            properties.getRaceHandler().setPrimaryTraitColor(color);
             slider.displayString = "Red" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField.setText(hex);
+            colorField.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField.setTextColor(decimal);
         });
         this.addButton(r);
@@ -200,12 +199,11 @@ public class GuiEntityProperties extends GuiScreen {
          * Primary Trait Slider for the Green Channel
          */
         g = new GuiPropertiesSlider(greenSlider, bX, bY, 100, 20, "Green: " + (int) ((defaultRGB[1] * 1F) * 255), defaultRGB[1], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(rgb[0], slider.getSliderValue(), rgb[2]);
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getPrimaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(rgb[0], slider.getSliderValue(), rgb[2]);
+            properties.getRaceHandler().setPrimaryTraitColor(color);
             slider.displayString = "Green" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField.setText(hex);
+            colorField.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField.setTextColor(decimal);
         });
         this.addButton(g);
@@ -216,12 +214,11 @@ public class GuiEntityProperties extends GuiScreen {
          * Primary Trait Slider for the Blue Channel
          */
         b = new GuiPropertiesSlider(blueSlider, bX, bY, 100, 20, "Blue: " + (int) ((defaultRGB[2] * 1F) * 255), defaultRGB[2], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(rgb[0], rgb[1], slider.getSliderValue());
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getPrimaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(rgb[0], rgb[1], slider.getSliderValue());
+            properties.getRaceHandler().setPrimaryTraitColor(color);
             slider.displayString = "Blue" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField.setText(hex);
+            colorField.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField.setTextColor(decimal);
         });
         this.addButton(b);
@@ -232,16 +229,16 @@ public class GuiEntityProperties extends GuiScreen {
         bY += 3;
         colorField2 = new GuiTextField(colorFieldID2, fontRenderer, bX, bY, 100, 20);
         colorField2.setMaxStringLength(8);
-        final String traitColor2 = properties == null ? "#ffffff" : properties.getRaceHandler().getAltTraitColor();
-        final float[] defaultRGB2 = ColorHelper.getRGBColor(traitColor2);
-        colorField2.setText(traitColor2);
+        final int traitSecondaryColor = properties.getRaceHandler().getSecondaryTraitColor();
+        final float[] defaultRGB2 = ColorHelper.getRGBColor(traitSecondaryColor);
+        colorField2.setText(ColorHelper.convertDecimalColorToHexadecimal(traitSecondaryColor));
 
         this.addButton(new GuiPropertiesButton(resetColor2, bX + 102, bY - 1, 20, 20, "R", (button, pressed) -> {
-            final String defaultHex = ColorHelper.convertDecimalColorToHexadecimal(properties.getCurrentRace().getRace().getSecondaryColor());
-            properties.getRaceHandler().setAltTraitColor(defaultHex);
-            colorField2.setText(defaultHex);
+            final int color = properties.getCurrentRace().getRace().getSecondaryColor();
+            properties.getRaceHandler().setSecondaryTraitColor(color);
+            colorField2.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField2.setTextColor(properties.getCurrentRace().getSecondaryColor());
-            final float[] rgb = ColorHelper.getRGBColor(defaultHex);
+            final float[] rgb = ColorHelper.getRGBColor(color);
             r2.sliderValue = rgb[0];
             r2.displayString = "Red: " + ((int) (rgb[0] * 255));
             g2.sliderValue = rgb[1];
@@ -253,12 +250,11 @@ public class GuiEntityProperties extends GuiScreen {
         bY += 21;
 
         r2 = new GuiPropertiesSlider(redSlider2, bX, bY, 100, 20, "Red: " + (int) ((defaultRGB2[0] * 1F) * 255), defaultRGB2[0], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getAltTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(slider.getSliderValue(), rgb[1], rgb[2]);
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setAltTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getSecondaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(slider.getSliderValue(), rgb[1], rgb[2]);
+            properties.getRaceHandler().setSecondaryTraitColor(color);
             slider.displayString = "Red" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField2.setText(hex);
+            colorField2.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField2.setTextColor(decimal);
         });
         this.addButton(r2);
@@ -266,12 +262,11 @@ public class GuiEntityProperties extends GuiScreen {
         bY += 20;
 
         g2 = new GuiPropertiesSlider(greenSlider2, bX, bY, 100, 20, "Green: " + (int) ((defaultRGB2[1] * 1F) * 255), defaultRGB2[1], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getAltTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(rgb[0], slider.getSliderValue(), rgb[2]);
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setAltTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getSecondaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(rgb[0], slider.getSliderValue(), rgb[2]);
+            properties.getRaceHandler().setSecondaryTraitColor(color);
             slider.displayString = "Green" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField2.setText(hex);
+            colorField2.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField2.setTextColor(decimal);
         });
         this.addButton(g2);
@@ -279,12 +274,11 @@ public class GuiEntityProperties extends GuiScreen {
         bY += 20;
 
         b2 = new GuiPropertiesSlider(blueSlider2, bX, bY, 100, 20, "Blue: " + (int) ((defaultRGB2[2] * 1F) * 255), defaultRGB2[2], 1F, 0F, (slider, wrapper) -> {
-            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getAltTraitColor());
-            final String hex = ColorHelper.getHexColorFromRGB(rgb[0], rgb[1], slider.getSliderValue());
-//            final int decimal = ColorHelper.convertHexadecimalToDecimal(hex);
-            properties.getRaceHandler().setAltTraitColor(hex);
+            final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getSecondaryTraitColor());
+            final int color = ColorHelper.getDecimalFromRGB(rgb[0], rgb[1], slider.getSliderValue());
+            properties.getRaceHandler().setSecondaryTraitColor(color);
             slider.displayString = "Blue" + ": " + (int) ((slider.sliderValue * slider.sliderMaxValue) * 255);
-            colorField2.setText(hex);
+            colorField2.setText(ColorHelper.convertDecimalColorToHexadecimal(color));
 //            colorField2.setTextColor(decimal);
         });
         this.addButton(b2);
@@ -351,14 +345,14 @@ public class GuiEntityProperties extends GuiScreen {
         exampleX -= 30;
         exampleY -= (height / 4);
         exampleY -= 11;
-        final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getTraitColor());
+        final float[] rgb = ColorHelper.getRGBColor(properties.getRaceHandler().getPrimaryTraitColor());
         final float rV = rgb[0];
         final float gV = rgb[1];
         final float bV = rgb[2];
         DrawingHelper.Draw(exampleX + 103, exampleY, 0, 0, 0, 0, 0, 18, 18, 0, 0, rV, gV, bV, 1F);
 
         colorField2.drawTextBox();
-        final float[] rgb2 = ColorHelper.getRGBColor(properties.getRaceHandler().getAltTraitColor());
+        final float[] rgb2 = ColorHelper.getRGBColor(properties.getRaceHandler().getSecondaryTraitColor());
         final float rV2 = rgb2[0];
         final float gV2 = rgb2[1];
         final float bV2 = rgb2[2];
@@ -379,9 +373,10 @@ public class GuiEntityProperties extends GuiScreen {
         if (colorField.isFocused()) {
             colorField.textboxKeyTyped(par1, par2);
             final String text = colorField.getText().toLowerCase().replaceAll("[^#0-9a-f]", "");
+            final int primaryColor = ColorHelper.getColorFromString(text);
             colorField.setText(text);
-            final float[] rgb = ColorHelper.getRGBColor(text);
-            properties.getRaceHandler().setTraitColor(text);
+            final float[] rgb = ColorHelper.getRGBColor(primaryColor);
+            properties.getRaceHandler().setPrimaryTraitColor(primaryColor);
             r.sliderValue = rgb[0];
             r.displayString = "Red: " + ((int) (rgb[0] * 255));
             g.sliderValue = rgb[1];
@@ -392,9 +387,10 @@ public class GuiEntityProperties extends GuiScreen {
         } else if (colorField2.isFocused()) {
             colorField2.textboxKeyTyped(par1, par2);
             final String text = colorField2.getText().toLowerCase().replaceAll("[^#0-9a-f]", "");
+            final int secondaryColor = ColorHelper.getColorFromString(text);
             colorField2.setText(text);
-            final float[] rgb = ColorHelper.getRGBColor(text);
-            properties.getRaceHandler().setAltTraitColor(text);
+            final float[] rgb = ColorHelper.getRGBColor(secondaryColor);
+            properties.getRaceHandler().setSecondaryTraitColor(secondaryColor);
             r2.sliderValue = rgb[0];
             r2.displayString = "Red: " + ((int) (rgb[0] * 255));
             g2.sliderValue = rgb[1];

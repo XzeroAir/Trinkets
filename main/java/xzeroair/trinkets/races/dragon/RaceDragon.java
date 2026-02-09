@@ -82,7 +82,6 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 
     @Override
     public void whileTransformed() {
-//        System.out.println(getRaceCache().getRace().getName() + "|" + getRaceCache().getElement().getName());
         if (entity.world.isRemote) {
             if (!entity.onGround) {
                 lastTick = tick;
@@ -97,7 +96,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
 
     @Override
     public boolean canFly() {
-        return super.canFly() && this.showTraits();
+        return super.canFly() && this.showTraits() && serverConfig.creative_flight;
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Client~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -105,7 +104,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings.png");
     public static final ResourceLocation TEXTURE_ARMS = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_arms.png");
     public static final ResourceLocation TEXTURE_LEATHER = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_leather.png");
-    public static final ResourceLocation TEXTURE_COMBINED = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_combined.png");
+//    public static final ResourceLocation TEXTURE_COMBINED = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings_combined.png");
 
     protected int tick, lastTick = 0;
     protected float armSwing = 0;
@@ -187,8 +186,8 @@ public class RaceDragon extends EntityRacePropertiesHandler {
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
 
-        final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
-        final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getTraitColor() : this.getAltTraitColor());
+        final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getSecondaryTraitColor() : this.getPrimaryTraitColor());
+        final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getPrimaryTraitColor() : this.getSecondaryTraitColor());
         final float alpha = 1F;
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.pushMatrix();

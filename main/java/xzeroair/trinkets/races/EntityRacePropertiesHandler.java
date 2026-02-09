@@ -35,7 +35,7 @@ import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.handlers.SizeHandler;
-import xzeroair.trinkets.util.helpers.ColorHelper;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
@@ -56,8 +56,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     protected RaceCache raceCache;
 
     protected boolean showTraits;
-    protected String traitColor;
-    protected String traitColorAlt;
+    protected int traitPrimaryColor;
+    protected int traitSecondaryColor;
     protected int traitVariant;
     protected int traitVariantMax;
 
@@ -74,8 +74,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         firstTransformUpdate = true;
         showTraits = true;
         this.raceCache = cache;
-        traitColor = ColorHelper.convertDecimalColorToHexadecimal(cache.getRace().getPrimaryColor());
-        traitColorAlt = ColorHelper.convertDecimalColorToHexadecimal(cache.getRace().getSecondaryColor());
+        traitPrimaryColor = cache.getRace().getPrimaryColor();
+        traitSecondaryColor = cache.getRace().getSecondaryColor();
         traitVariant = 0;
         traitVariantMax = 3;
         this.setTargetHeight(cache.getRace().getRaceHeight());
@@ -259,7 +259,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
     // TODO HERE
     protected void updateSize() {
-        //		if (this.isTransforming()) {
         if ((!this.isTransformed() && this.isTransforming()) || (this.TransformationProgress() < 1D)) {
             final int height = this.getEntityProperties().getHeightValue();
             final int width = this.getEntityProperties().getWidthValue();
@@ -276,28 +275,15 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
             this.getEntityProperties().setHeightValue(h);
             final int w = increment.apply(width, this.getTargetWidth());
             this.getEntityProperties().setWidthValue(w);
-            //			System.out.println(h + "|" + w);
             int previousRaceTargetHeight = this.getEntityProperties().getPreviousRace().getRace().getRaceHeight();
             int previousRaceTargetWidth = this.getEntityProperties().getPreviousRace().getRace().getRaceWidth();
             double heightProgress = this.transformProgress(previousRaceTargetHeight, this.getTargetHeight(), height);
             double widthProgress = this.transformProgress(previousRaceTargetWidth, this.getTargetWidth(), width);
             double finalValue = this.isTransformed() ? 1D : StringUtils.getAccurateDouble(heightProgress * widthProgress);
-            //MathHelper.getDouble(Reference.DECIMALFORMAT.format(BigDecimal.valueOf(heightProgress * widthProgress)), 0D);//(heightProgress * widthProgress);
-            //			System.out.println(height + "|" + width + "| " + heightProgress + " | " + widthProgress + " | " + finalValue);
             if ((finalValue >= 0D) && (finalValue <= 1D) && (progress != finalValue)) {
                 progress = finalValue;
-                //				this.savedNBTData(properties.getTag());
-            }
-            if (this.TransformationProgress() >= 1D) {
-                float heal = (float) StringUtils.getAccurateDouble(((entity.getMaxHealth() - maxHealthBeforeTranformation) - (maxHealthBeforeTranformation - healthBeforeTransformation)));
-                if (heal > 0) {
-                    entity.heal(heal);
-                }
-                //			FirstAidCompat.rescale(entity);
             }
         }
-        //			System.out.println(finalValue + "|" + heightProgress + "|" + widthProgress + "|" + progress);
-        //		}
     }
 
     protected double transformProgress(int previousTarget, int currentTarget, int currentValue) {
@@ -311,6 +297,9 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         return rtn;
     }
 
+    /**
+     * Jank McJank Eyeheight Handling.
+     */
     protected void eyeHeightHandler() {
         if (!(entity instanceof EntityPlayer)) {
             return;
@@ -322,7 +311,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
             this.resetEyeHeight(player);
             return;
         }
-        if (this.isTransforming() || this.isTransformed()) {
+
+        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
             // 165 when sneaking
             // 162 eyeheight, sneaking is -0.8
             float f = (float) StringUtils.getAccurateDouble(((this.getHeight() * 0.85F)));
@@ -398,22 +388,17 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     }
 
     public void copyFrom(@Nonnull EntityRacePropertiesHandler source, boolean wasDeath, boolean keepInv) {
-        if (getRaceCache().compareRace(source.getRaceCache())) {
-            final boolean isNormal = getRace().isNone();
-            if (wasDeath) {
-                if (keepInv) {
-                    if (isNormal) {
-                        return;
-                    }
-                }
-            }
+        final boolean isNormal = getRace().isNone();
+        if (!isNormal) {
             progress = source.progress;
-            showTraits = source.showTraits;
-            traitColor = source.traitColor;
-            traitColorAlt = source.traitColorAlt;
-            traitVariant = source.traitVariant;
-            targetHeight = source.targetHeight;
-            targetWidth = source.targetWidth;
+            if (getRaceCache().compareRace(source.getRaceCache())) {
+                showTraits = source.showTraits;
+                traitPrimaryColor = source.traitPrimaryColor;
+                traitSecondaryColor = source.traitSecondaryColor;
+                traitVariant = source.traitVariant;
+                targetHeight = source.targetHeight;
+                targetWidth = source.targetWidth;
+            }
         }
     }
 
@@ -429,13 +414,11 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
             final String key = getRace().getRegistryName().toString();
             final NBTTagCompound tag = new NBTTagCompound();
             tag.setBoolean("trait_shown", showTraits);
-            tag.setString("trait_color", traitColor);
-            tag.setString("trait_color_alt", traitColorAlt);
+            tag.setInteger("ColorPrimary", traitPrimaryColor);
+            tag.setInteger("ColorSecondary", traitSecondaryColor);
             tag.setInteger("trait_variant", traitVariant);
             tag.setDouble("transformation_progress", progress);
-            if (!tag.isEmpty()) {
-                compound.setTag(key, tag);
-            }
+            compound.setTag(key, tag);
         }
         return compound;
     }
@@ -446,21 +429,36 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
             final String key = getRace().getRegistryName().toString();
             if (compound.hasKey(key)) {
                 final NBTTagCompound rTag = compound.getCompoundTag(key);
-                if (rTag.hasKey("trait_shown")) {
-                    showTraits = rTag.getBoolean("trait_shown");
-                }
-                if (rTag.hasKey("trait_color")) {
-                    traitColor = rTag.getString("trait_color");
-                }
-                if (rTag.hasKey("trait_color_alt")) {
-                    traitColorAlt = rTag.getString("trait_color_alt");
-                }
-                if (rTag.hasKey("trait_variant")) {
-                    traitVariant = rTag.getInteger("trait_variant");
-                }
-                if (rTag.hasKey("transformation_progress")) {
-                    progress = rTag.getDouble("transformation_progress");
-                }
+                NBTHelper.hasBoolean(rTag, "trait_shown", (bool) -> {
+                    showTraits = bool;
+                });
+//                if (rTag.hasKey("trait_shown")) {
+//                    showTraits = rTag.getBoolean("trait_shown");
+//                }
+                NBTHelper.hasInteger(rTag, "ColorPrimary", (color) -> {
+                    traitPrimaryColor = color;
+                });
+                NBTHelper.hasInteger(rTag, "ColorSecondary", (color) -> {
+                    traitSecondaryColor = color;
+                });
+//                if (rTag.hasKey("trait_color")) {
+//                    traitColor = rTag.getString("trait_color");
+//                }
+//                if (rTag.hasKey("trait_color_alt")) {
+//                    traitColorAlt = rTag.getString("trait_color_alt");
+//                }
+                NBTHelper.hasInteger(rTag, "TraitVariant", (variant) -> {
+                    traitVariant = variant;
+                });
+//                if (rTag.hasKey("trait_variant")) {
+//                    traitVariant = rTag.getInteger("trait_variant");
+//                }
+                NBTHelper.hasInteger(rTag, "TransformationProgress", (progress) -> {
+                    progress = progress;
+                });
+//                if (rTag.hasKey("transformation_progress")) {
+//                    progress = rTag.getDouble("transformation_progress");
+//                }
             }
         }
     }
@@ -473,20 +471,20 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         this.showTraits = showTraits;
     }
 
-    public String getTraitColor() {
-        return traitColor;
+    public int getPrimaryTraitColor() {
+        return traitPrimaryColor;
     }
 
-    public void setTraitColor(String color) {
-        traitColor = color;
+    public void setPrimaryTraitColor(int color) {
+        traitPrimaryColor = color;
     }
 
-    public String getAltTraitColor() {
-        return traitColorAlt;
+    public int getSecondaryTraitColor() {
+        return traitSecondaryColor;
     }
 
-    public void setAltTraitColor(String color) {
-        traitColorAlt = color;
+    public void setSecondaryTraitColor(int color) {
+        traitSecondaryColor = color;
     }
 
     public int getTraitVariant() {

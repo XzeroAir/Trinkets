@@ -27,12 +27,12 @@ public class ColorHelper {
         return (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
     }
 
-//    public static int getDecimalFromRGB(float r, float g, float b) {
-//        final int rR = (int) (r * 255);
-//        final int rG = (int) (g * 255);
-//        final int rB = (int) (b * 255);
-//        return getDecimalFromRGB(rR, rG, rB);
-//    }
+    public static int getDecimalFromRGB(float r, float g, float b) {
+        final int rR = (int) (r * 255);
+        final int rG = (int) (g * 255);
+        final int rB = (int) (b * 255);
+        return getDecimalFromRGB(rR, rG, rB);
+    }
 
 //    /**
 //     * Experimental

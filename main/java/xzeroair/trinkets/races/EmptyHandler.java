@@ -19,6 +19,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
     public EmptyHandler(EntityLivingBase e, EntityRace race) {
         super(e, race);
+        setMaxTraitVariant(0);
     }
 
     @Override

@@ -62,7 +62,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 
     @Override
     public boolean canFly() {
-        return super.canFly() && this.showTraits();
+        return super.canFly() && this.showTraits() && serverConfig.creative_flight;
     }
 
     @Override
@@ -183,7 +183,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
             GlStateManager.pushMatrix();
             GlStateManager.rotate(angle - tick, 0, 1, 0);
             GlStateManager.translate(-1, 0, 0);
-            final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
+            final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getSecondaryTraitColor() : this.getPrimaryTraitColor());
             DrawingHelper.Draw(TEXTURE, -x, y, z, 0, 0, barCutoffWidth, barCutoffHeight, barWidth, barHeight, texWidth, texHeight, rgb[0], rgb[1], rgb[2], 1F);
             GlStateManager.popMatrix();
 

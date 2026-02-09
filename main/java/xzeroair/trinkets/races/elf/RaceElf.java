@@ -103,8 +103,8 @@ public class RaceElf extends EntityRacePropertiesHandler {
             GlStateManager.translate(0.0F, -0.02F, -0.045F);
             GlStateManager.scale(1.1F, 1.1F, 1.1F);
         }
-        final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getAltTraitColor() : this.getTraitColor());
-        final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getTraitColor() : this.getAltTraitColor());
+        final float[] rgb = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getSecondaryTraitColor() : this.getPrimaryTraitColor());
+        final float[] rgb2 = ColorHelper.getRGBColor(this.getTraitVariant() == 1 ? this.getPrimaryTraitColor() : this.getSecondaryTraitColor());
         final float fscale = 0.30F;
         GlStateManager.scale(fscale, fscale, fscale);
         final double x = 0.0;

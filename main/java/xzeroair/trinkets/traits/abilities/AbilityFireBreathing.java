@@ -16,7 +16,6 @@ import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 
@@ -40,7 +39,7 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
                     return false;
                 }
             }
-            int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> ColorHelper.getColorFromString(prop.getRaceHandler().getAltTraitColor()));
+            int bcolor = Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> prop.getRaceHandler().getSecondaryTraitColor());
             final World world = entity.getEntityWorld();
             final float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
             final float headPosZ = (float) (entity.posZ + (1.8F * 1 * 0.3F * Math.sin(((entity.rotationYaw + 90) * Math.PI) / 180)));
