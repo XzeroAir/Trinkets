@@ -43,8 +43,11 @@ gui.xat.button.open=Open
 gui.xat.button.close=Close
 
 #################################### Entities ####################################
+
 entity.AlphaWolf.name=Wolf King
+
 #################################### Abilities ####################################
+
 ability.creative_flight.name=§6Flying
 ability.creative_flight.tooltip1=§6Grants Creative Flight
 ability.creative_flight.tooltip2=$gui:Double tap jump to start flying, double tap jump again to stop
@@ -61,14 +64,16 @@ ability.block_detection.treasurefinder.notfound=§6I'm unsure what my treasury c
 ability.block_detection.treasurefinder.off=I think my Treasury is sufficiently full $looking:
 
 ability.night_vision.name=§eNight Vision
-ability.night_vision.tooltip1=§2Grants Night Vision§r <§e*denvkb:§r>
+ability.night_vision.tooltip1=§2Grants Night Vision §r<§e*denvkb:§r>
 
 ability.fire_breath.name=§cFire Breath
 ability.fire_breath.tooltip1=$gui:§6Grants Fire Breath
 ability.fire_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Fire §3$fbcost: MP
+
 ability.ice_breath.name=§Ice Breath
 ability.ice_breath.tooltip1=$gui:§6Grants Ice Breath
 ability.ice_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Ice §3$fbcost: MP
+
 #ability.lightning_breath.name=§cLightning Breath
 #ability.lightning_breath.tooltip1=Grants Lightning Breath
 #ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
@@ -79,14 +84,17 @@ ability.fire_immunity.tooltip2=$gui:§6Immune to Fire and Lava
 ability.fire_immunity.tooltip3=$gui:Cannot be set on Fire
 ability.fire_immunity.tooltip4=$gui:Cannot be Harmed by most Fire based attacks
 ability.fire_immunity.tooltip5=$gui:§6Immune to §c$smouldering:
+
 ability.heat_immunity.name=§cHeat Immunity
 ability.heat_immunity.tooltip1=§6Immunity to §cHyperthermia
 
 ability.ice_immunity.name=§bIce Immunity
 ability.ice_immunity.tooltip1=§2Grants §b$potion:
 ability.ice_immunity.tooltip2=$gui:§6Cannot be Harmed by most Ice based attacks
+
 ability.cold_immunity.name=§bCold Immunity
 ability.cold_immunity.tooltip1=§6Immunity to §bHypothermia
+
 ability.frost_walker.name=Frost Walker
 ability.frost_walker.tooltip1=§6Grants §bFrost Walker
 
@@ -127,9 +135,11 @@ ability.water_affinity.tooltip2=@betterswimming:
 ability.water_affinity.bubbles=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
 ability.water_affinity.betterswimming=§2Grants enhanced swimming
 ability.water_affinity.compat.enhancedvisuals=Disables blurred vision when entering the water
+
 ability.thirst_immunity.name=Thirst Poison Immunity
 ability.thirst_immunity.tooltip1=$item:§6Immunity to Thirst Poison Effect
 ability.thirst_immunity.tooltip2=$gui:Immunity to Thirst Poison Effect
+
 ability.parasites_immunity.name=Parasites Immunity
 ability.parasites_immunity.tooltip1=$item:§6Immune to the Parasites
 ability.parasites_immunity.tooltip2=$gui:Immune to the Parasites Effect from drinking dirty water
@@ -137,6 +147,7 @@ ability.parasites_immunity.tooltip2=$gui:Immune to the Parasites Effect from dri
 ability.reduce_kinetic.name=Fall Resistance
 ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 Resistance to fall damage
 ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
+
 ability.nullify_kinetic.name=Kinetic Nullification
 ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 Resistance to fall damage
 ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
@@ -165,6 +176,7 @@ ability.magnetic.tooltip2=§r<§e*magnetkb:§r or §eRight-Click§r>
 ability.magnetic.collect=§6Pulls nearby items @collectxp:
 ability.magnetic.collectxp=and XP Orbs $collecttoggle:
 ability.magnetic.magnetmode=Collection mode $collecttoggle:
+
 ability.repel.name=Repelling Force
 ability.repel.tooltip1=@repel:
 ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r or §eSneak§r + §eRight-Click§r>
@@ -174,6 +186,7 @@ ability.repel.repelmode=Repel mode $repeltoggle:
 ability.skilled_miner.name=Skilled Miner
 ability.skilled_miner.tooltip1=§6Bonus XP when mining
 ability.skilled_miner.tooltip2=$gui:Mining speed is set to Block Hardness * 4
+
 ability.psudo_fortune.name=§6Psudo Fortune
 ability.psudo_fortune.tooltip1=You gain fortune without needing the enchantment
 
@@ -187,6 +200,7 @@ ability.charged_shot.tooltip5=$gui:Causes a small explosion on impact with a ful
 ability.large_hands.name=Large Hands
 ability.large_hands.tooltip1=§6Mine a 3x3x3 radius
 ability.large_hands.tooltip2=§eSneak §2when mining to disable
+
 ability.heavy.name=§cHeavy
 ability.heavy.tooltip1=§cYou Sink in water
 ability.heavy.tooltip2=§cYou Trample plants when walking over them
@@ -237,17 +251,20 @@ damagetype.xat.water=water
 death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
 
 #################################### Attributes ####################################
+
 xat.jump=Jump
 xat.stepheight=Step Height
 xat.entityMagic.maxMana=Max Mana
 xat.entityMagic.regen=MP Regen
 xat.flyspeed=Fly Speed
+
 attribute.name.xat.jump=Jump
 attribute.name.xat.stepheight=Step Height
 attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=MP Regen
 attribute.name.xat.flyspeed=Fly Speed
 attribute.name.xat.entityRace=Enchanted Race
+
 #################################### Materials ####################################
 
 item.glowing_powder.name=Glowing Powder
@@ -833,6 +850,7 @@ xat.config.server.faelis_claw.bleeding.chance.tooltip=1 in X Chance to cause ble
 #####################################[Item Configs End]#####################################
 
 #####################################[Magic Configs]#####################################
+
 xat.config.magic=Magic Settings
 xat.config.magic.tooltip=
 
@@ -869,6 +887,7 @@ xat.config.magic.mana.players_only.tooltip=Only players have Mana
 #####################################[Magic Configs End]#####################################
 
 #####################################[Race Configs]#####################################
+
 xat.config.races=Race Settings
 xat.config.race.size=Size Settings
 xat.config.race.size.tooltip=Size Configuration

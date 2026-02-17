@@ -1,531 +1,511 @@
-## Translated by 502y
+xat.mod.name=Trinkets and Baubles
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
 
-xat.exampletext.start= 这些信息是示例文本,它们不会在游戏中显示。
-xat.exampletext.1= 物品提示最多 10 条
-xat.exampletext.2= item.item.glow_ring.0.tooltip1，item.glow_ring.0.tooltip2，等。
-xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#xat.exampletext.start= 这些信息是示例文本,它们不会在游戏中显示。
+#xat.exampletext.1= 物品提示最多 10 条
+#xat.exampletext.2= item.item.glow_ring.0.tooltip1，item.glow_ring.0.tooltip2，等。
+#xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<按住 Shift>
 xat.holdctrl=<按住 Ctrl>
-xat.noattributes=这个物品不提供任何属性
+xat.noattributes=此物品不提供任何属性修饰。
 xat.onequip=装备时：
 xat.tooltip.attackspeed=攻击速度
 xat.tooltip.attackdamage=攻击伤害
 xat.tooltip.health=生命值
-xat.tooltip.armor=护甲值
-xat.tooltip.toughness=盔甲韧性
+xat.tooltip.armor=护甲
+xat.tooltip.toughness=护甲韧性
 xat.tooltip.knockbackresist=击退抗性
 xat.tooltip.movementspeed=移动速度
 xat.tooltip.luck=幸运
 xat.tooltip.swimspeed=游泳速度
 xat.tooltip.reach=触及距离
-xat.tooltip.stepheight=步行高度
+xat.tooltip.stepheight=跨步高度
 xat.tooltip.jumpheight=跳跃高度
-xat.tooltip.on=§r(§a打开§r)
+xat.tooltip.on=§r(§a开启§r)
 xat.tooltip.off=§r(§c关闭§r)
-xat.tooltip.enabled=§r[§a启用§r]
-xat.tooltip.disabled=§r[§c禁用§r]
-xat.tooltip.weight=Weight:
+xat.tooltip.enabled=§r[§a已启用§r]
+xat.tooltip.disabled=§r[§c已禁用§r]
+xat.tooltip.weight=重量：
 
-xat.config.race.size=Size Settings
-xat.config.race.size.tooltip=Size Configuration
-
-key.xat.category=Trinkets and Baubles
-key.xat.trinket_target.desc=巨龙之眼：切换
-key.xat.trinket_toggle_effect.desc=巨龙之眼：切换夜视
-key.xat.magnet_toggle_effect.desc=磁石：切换磁性
+key.xat.category=饰品与护符
+key.xat.trinket_target.desc=龙之眼：切换目标
+key.xat.trinket_toggle_effect.desc=龙之眼：夜视
+key.xat.magnet_toggle_effect.desc=极化石：磁力
 key.xat.aux_key.desc=辅助键
-key.xat.trinket_gui.desc=饰品 Gui
+key.xat.trinket_gui.desc=饰品界面
 
-key.xat.trinket_arcing_attack.desc=电弧球：攻击
+key.xat.trinket_arcing_attack.desc=电弧宝珠：攻击
 key.xat.race_ability.desc=种族能力
 
 gui.xat.button.open=打开
 gui.xat.button.close=关闭
 
-attribute.name.xat.entityRace=魔法种族
-
 #################################### Entities ####################################
+
 entity.AlphaWolf.name=狼王
+
 #################################### Abilities ####################################
+ability.creative_flight.name=§6飞行
+ability.creative_flight.tooltip1=§6赋予创造模式飞行
+ability.creative_flight.tooltip2=$gui:双击跳跃开始飞行，再次双击停止
+ability.creative_flight.tooltip3=$gui:免疫摔落伤害
 
 ability.block_detection.name=§a贪婪之眼
-ability.block_detection.tooltip1=给与使用者发现附近宝藏的能力
-ability.block_detection.tooltip2=按下 *deofkb: = 下一个目标
-ability.block_detection.tooltip3=按下 *auxkb:+*deofkb: = 上一个目标
+ability.block_detection.tooltip1=§6赋予寻找附近宝藏的能力
+ability.block_detection.tooltip2=@treasurefinder:
+ability.block_detection.tooltip3=$gui:按 *deofkb: = 下一个目标
+ability.block_detection.tooltip4=$gui:按 *auxkb:+*deofkb: = 上一个目标
+ability.block_detection.treasurefinder=§6当前目标：§3§n$target:§r <§e*deofkb:§r>
+ability.block_detection.treasurefinder.on=§6我还需要更多§f $target:§6 来充实我的宝库 $looking:
+ability.block_detection.treasurefinder.notfound=§6我不确定宝库目前需要什么。§c（未找到物品，返回为 $target:）
+ability.block_detection.treasurefinder.off=我认为我的宝库已经足够充盈 $looking:
+
 ability.night_vision.name=§e夜视
-ability.night_vision.tooltip1=§2获得夜视
-ability.night_vision.tooltip2=按下 *denvkb: 切换夜视
-ability.creative_flight.name=§6飞行
-ability.creative_flight.tooltip1=创造模式飞行
-ability.creative_flight.tooltip2=双击跳跃键开始飞行，再次双击以停止飞行
-ability.creative_flight.tooltip3=免疫摔落伤害
+ability.night_vision.tooltip1=§2赋予夜视§r <§e*denvkb:§r>
+
+ability.fire_breath.name=§c火焰吐息
+ability.fire_breath.tooltip1=$gui:§6赋予火焰吐息
+ability.fire_breath.tooltip2=§6按 §r<§e*breathkb:§r>§6 喷吐火焰 §3$fbcost: MP
+
+ability.ice_breath.name=§b寒冰吐息
+ability.ice_breath.tooltip1=$gui:§6赋予寒冰吐息
+ability.ice_breath.tooltip2=§6按 §r<§e*breathkb:§r>§6 喷吐寒冰 §3$fbcost: MP
+
+#ability.lightning_breath.name=§cLightning Breath
+#ability.lightning_breath.tooltip1=Grants Lightning Breath
+#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+
 ability.fire_immunity.name=§c火焰免疫
-ability.fire_immunity.tooltip1=§6免疫火焰和熔岩
-ability.fire_immunity.tooltip2=§不会着火
-ability.fire_immunity.tooltip3=§6不会被基于火焰的攻击伤害
-ability.fire_breathing.name=§c火焰吐息
-ability.fire_breathing.tooltip1=获得火焰吐息的能力
-ability.fire_breathing.tooltip2=按下 *firebreath: 消耗 $fbCost: MP 喷出火焰
-ability.block_climbing.name=攀爬
-ability.block_climbing.tooltip1=能够攀爬某些方块
-ability.wither_immunity.name=凋零免疫
-ability.wither_immunity.tooltip1=免疫凋零伤害
-ability.wither_immunity.tooltip2=攻击时有$witherchance:分之一的几率使敌人凋零
-ability.wither_immunity.tooltip3=攻击处在凋零效果的敌人时获得治疗
-ability.weightless.name=§d失重
-ability.weightless.tooltip1=失重
-ability.weightless.tooltip2=按住攻击键以上升，按住潜行键+攻击键以下降
-ability.well_rested.name=§b充分休息
-ability.well_rested.tooltip1=睡觉时获得数种效果
-ability.well_rested.tooltip2=@LycanitesFear:
-ability.well_rested.tooltip3=@LycanitesInsomnia:
-ability.poison_affinity.name=§2毒素亲和
-ability.poison_affinity.tooltip1=免疫中毒
-ability.poison_affinity.tooltip2=攻击时有$poisonchance:分之一的几率使敌人中毒
-ability.poison_affinity.tooltip3=攻击中毒的敌人时额外造成$poisonbonus:点伤害。
-ability.water_affinity.name=§9流水亲和
-ability.water_affinity.tooltip1=@SurvivalThirst:
-ability.water_affinity.tooltip2=游泳增强
-ability.fall_resistance.name=摔落抵抗
-ability.fall_resistance.tooltip1=获得$fallResist:点摔落伤害抵抗
-ability.nullify_kinetic.name=动能免疫
-ability.nullify_kinetic.tooltip1=免疫摔落和动能伤害
+ability.fire_immunity.tooltip1=§2赋予 §c$potion:
+ability.fire_immunity.tooltip2=$gui:§6免疫火焰与岩浆
+ability.fire_immunity.tooltip3=$gui:不会被点燃
+ability.fire_immunity.tooltip4=$gui:免疫大多数火焰攻击
+ability.fire_immunity.tooltip5=$gui:§6免疫 §c$smouldering:
+
+ability.heat_immunity.name=§c高温免疫
+ability.heat_immunity.tooltip1=§6免疫 §c高温症
+
+ability.ice_immunity.name=§b寒冰免疫
+ability.ice_immunity.tooltip1=§2赋予 §b$potion:
+ability.ice_immunity.tooltip2=$gui:§6免疫大多数冰系攻击
+
 ability.cold_immunity.name=§b寒冷免疫
-ability.cold_immunity.tooltip1=§6免疫寒冷和大多数冷源
-ability.heat_immunity.name=§c热量免疫
-ability.heat_immunity.tooltip1=§6免疫热量和大多数热源
-ability.thirst_immunity.name=脱水免疫
-ability.thirst_immunity.tooltip1=免疫脱水效果
-ability.parasites_immunity.name=寄生免疫
-ability.parasites_immunity.tooltip1=免疫饮水导致的寄生效果
-ability.ender_queen.name=§5末影王权
-ability.ender_queen.tooltip1=末影人将保护你
-ability.ender_queen.tooltip2=受到间接伤害时消耗魔力传送
-ability.ender_queen.tooltip3=水会伤害你
-ability.ender_queen.tooltip4=概率免疫伤害并召唤一个末影人
-ability.vicious_strike.name=§4残暴打击
-ability.vicious_strike.tooltip1=近战攻击时造成流血
-ability.magnetic.name=磁性
-ability.repel.name=强力排斥
-ability.skilled_miner.name=老练矿工
-ability.skilled_miner.tooltip1=挖矿时获得额外经验
-ability.skilled_miner.tooltip2=挖掘速度变为4倍方块硬度
-ability.psudo_fortune.name=§6伪运
-ability.psudo_fortune.tooltip1=你无需时运附魔即可获得时运效果
-ability.charged_shot.name=纯熟弓手
-ability.charged_shot.tooltip1=能够消耗魔力增强弓箭的力量
-ability.charged_shot.tooltip2=拉弓之前潜行
-ability.charged_shot.tooltip3=停止潜行时取消
-ability.charged_shot.tooltip4=弓箭完全充能时造成范围伤害和小型爆炸
-ability.lightning_bolt.name=§3光灵亲和
-ability.lightning_bolt.tooltip1=能消耗魔力值射出光灵箭
+ability.cold_immunity.tooltip1=§6免疫 §b低温症
+
+ability.frost_walker.name=冰霜行者
+ability.frost_walker.tooltip1=§6赋予 §b冰霜行者
+
+ability.lightning_immunity.name=闪电免疫
+ability.lightning_immunity.tooltip1=§2赋予 §d$potion1:
+ability.lightning_immunity.tooltip2=@paralysis:
+ability.lightning_immunity.paralysis=§6免疫 §d麻痹
+ability.lightning_immunity.compat.lycanites=$gui:移除 $potion2:
+
+ability.lightning_bolt.name=§3闪电亲和
+ability.lightning_bolt.tooltip1=§6可以消耗MP发射闪电
+ability.lightning_bolt.tooltip2=§6按住 §r<§e*arckb:§r>§6 释放闪电攻击 §3$boltcost: MP
+ability.lightning_bolt.tooltip3=§3$boltdamage:§6 伤害（基于消耗MP）
+
 ability.dodging.name=闪避
-ability.dodging.tooltip1=能够闪避并击晕周围的敌人
-ability.dodging.tooltip2=如果安装了 Elenai Dodge，使用该模组的闪避系统
-ability.large_hands.name=巨型手掌
-ability.large_hands.tooltip1=能够每次挖掘 3x3x3 的范围 
-ability.large_hands.tooltip2=潜行时挖掘以禁用
+ability.dodging.tooltip1=@dodge:
+ability.dodging.tooltip2=@dodge.stun:
+ability.dodging.dodge=§2赋予双击闪避
+ability.dodging.dodge.stun=§6闪避时眩晕附近敌人 §3$dodgecost: MP
+
+ability.block_climbing.name=攀爬
+ability.block_climbing.tooltip1=§6可以攀爬方块
+
+ability.wither_immunity.name=凋零免疫
+ability.wither_immunity.tooltip1=§6免疫凋零
+ability.wither_immunity.tooltip2=§6攻击时有 §3$chance: §6概率使目标凋零
+ability.wither_immunity.tooltip3=§6攻击凋零目标时恢复 §3$amount: §6颗心
+
+ability.poison_affinity.name=§2毒素亲和
+ability.poison_affinity.tooltip1=§6免疫中毒
+ability.poison_affinity.tooltip2=$gui:§6免疫饥饿
+ability.poison_affinity.tooltip3=§6攻击时有 §3$chance: §6概率使目标中毒
+ability.poison_affinity.tooltip4=§6攻击中毒敌人时造成 $bonus: 额外伤害
+
+ability.water_affinity.name=§9水之亲和
+ability.water_affinity.tooltip1=@bubbles:
+ability.water_affinity.tooltip2=@betterswimming:
+ability.water_affinity.bubbles=§6在 §r[§3$bubbles:§r]§6 气泡时拥有无限氧气
+ability.water_affinity.betterswimming=§2增强游泳能力
+ability.water_affinity.compat.enhancedvisuals=进入水中时不会出现模糊效果
+
+ability.thirst_immunity.name=口渴毒免疫
+ability.thirst_immunity.tooltip1=$item:§6免疫口渴毒效果
+ability.thirst_immunity.tooltip2=$gui:免疫口渴毒效果
+
+ability.parasites_immunity.name=寄生虫免疫
+ability.parasites_immunity.tooltip1=$item:§6免疫寄生虫
+ability.parasites_immunity.tooltip2=$gui:免疫饮用脏水导致的寄生虫效果
+
+ability.reduce_kinetic.name=摔落抗性
+ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 摔落伤害抗性
+ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 动能伤害抗性
+
+ability.nullify_kinetic.name=动能无效化
+ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 摔落伤害抗性
+ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 动能伤害抗性
+
+ability.ender_queen.name=§5末影皇族
+ability.ender_queen.tooltip1=§6皇族
+ability.ender_queen.tooltip2=§2末影人会为你作战 @endermenfollow:
+ability.ender_queen.tooltip3=@damageignored:
+ability.ender_queen.tooltip4=@endermenchance:
+ability.ender_queen.tooltip5=§3$tpchance: §5概率在受到间接伤害时传送 §3$tpcost: MP
+ability.ender_queen.tooltip6=@waterhurts:
+ability.ender_queen.damageignored=§3$chance: §6概率无视伤害
+ability.ender_queen.endermenchance=§3$chance: §6概率生成末影人
+ability.ender_queen.endermenfollow=并跟随你
+ability.ender_queen.waterhurts=§c惧怕水
+ability.ender_queen.compat.enhancedvisuals=禁用末影人静电效果
+
+ability.vicious_strike.name=§4残忍打击
+ability.vicious_strike.tooltip1=§6$chance: 概率造成流血
+ability.vicious_strike.tooltip2=§a流血每秒造成1点伤害，持续 §3$duration:§a 秒
+ability.vicious_strike.tooltip3=§c非Faelis使用时持续时间减少至 §3$reduceddur: §c秒
+
+ability.magnetic.name=磁力
+ability.magnetic.tooltip1=@collect:
+ability.magnetic.tooltip2=§r<§e*magnetkb:§r 或 §e右键§r>
+ability.magnetic.collect=§6吸引附近物品 @collectxp:
+ability.magnetic.collectxp=以及经验球 $collecttoggle:
+ability.magnetic.magnetmode=收集模式 $collecttoggle:
+
+ability.repel.name=排斥力场
+ability.repel.tooltip1=@repel:
+ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r 或 §e潜行§r + §e右键§r>
+ability.repel.repel=§6击退箭矢 $repeltoggle:
+ability.repel.repelmode=排斥模式 $repeltoggle:
+
+ability.skilled_miner.name=熟练矿工
+ability.skilled_miner.tooltip1=§6挖矿时获得额外经验
+ability.skilled_miner.tooltip2=$gui:挖矿速度设为 方块硬度 * 4
+
+ability.psudo_fortune.name=§6伪时运
+ability.psudo_fortune.tooltip1=无需附魔即可获得时运效果
+
+ability.charged_shot.name=熟练弓箭手
+ability.charged_shot.tooltip1=§6使用弓时潜行可激活强力射击
+ability.charged_shot.tooltip2=$gui:可使用法力强化箭矢
+ability.charged_shot.tooltip3=$gui:拉弓前潜行以触发
+ability.charged_shot.tooltip4=$gui:停止潜行将取消
+ability.charged_shot.tooltip5=$gui:满蓄力命中时造成小范围爆炸伤害
+
+ability.large_hands.name=巨型之手
+ability.large_hands.tooltip1=§6挖掘 3x3x3 范围
+ability.large_hands.tooltip2=§e潜行 §2挖矿时禁用
+
 ability.heavy.name=§c沉重
 ability.heavy.tooltip1=§c在水中下沉
-ability.heavy.tooltip2=§c践踏走过的耕地
-ability.safe_guard.name=§6安全守护
-ability.safe_guard.tooltip1=获得抗性提升
-ability.safe_guard.tooltip2=每受到伤害 $sohcount: 次免疫攻击
+ability.heavy.tooltip2=§c行走时践踏植物
 
-ability.frost_walker.name=Frost Walker
-ability.ice_immunity.name=Ice Immunity
+ability.weightless.name=§d失重
+ability.weightless.tooltip1=§6进入失重状态
+ability.weightless.tooltip2=<§e左键§r> 向 §2上
+ability.weightless.tooltip3=<§e潜行§r> + <§e左键§r> 向 §2下
+#ability.weightless.tooltip4=§aGrants Levitation while held
+
+ability.safe_guard.name=§6守护
+ability.safe_guard.tooltip1=§6获得 $soheffect: 药水效果
+ability.safe_guard.tooltip2=@explosionresist:
+ability.safe_guard.tooltip3=§6每 §3$cfghitcount: §6次攻击可无视伤害
+ability.safe_guard.tooltip4=@damageignored:
+ability.safe_guard.damageignored=§6已承受攻击：§3$hitcount:/$cfghitcount:
+ability.safe_guard.explosionresist=§3$explosionresistamount: §6爆炸伤害抗性
+ability.safe_guard.compat.enhancedvisuals=禁用爆炸模糊效果
+
+ability.well_rested.name=§b充分休息
+ability.well_rested.tooltip1=§6睡觉时持有可获得增益
+ability.well_rested.tooltip2=§6移除 $fear: §6并移除 $insomnia:
 
 ability.firstaid_reflex.name=快速反应
-ability.firstaid_reflex.tooltip1=概率免疫致命爆头伤害
+ability.firstaid_reflex.tooltip1=§3$headshotchance:§6 概率无视爆头伤害
 
-xat.element.neutral.name=Neutral
-xat.element.fire.name=Fire
-xat.element.ice.name=Ice
-xat.element.lightning.name=Lightning
+#################################### Elements ####################################
+
+xat.element.neutral.name=§f中性
+xat.element.air.name=§3空气
+xat.element.dark.name=§8黑暗
+xat.element.earth.name=§2大地
+xat.element.fire.name=§c火焰
+xat.element.ice.name=§b寒冰
+xat.element.light.name=§e光明
+xat.element.lightning.name=§d闪电
+xat.element.poison.name=§2毒
+xat.element.void.name=§5虚空
+xat.element.water.name=§9水
+
+#################################### Races ####################################
+
+
+
+#################################### Damage Types ####################################
 
 damagetype.xat.water=水
-death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
+death.attack.xat.water=%1$s 在佩戴末影女王王冠时死于 %2$s
+
+#################################### Attributes ####################################
 
 xat.jump=跳跃
-xat.stepheight=上坡高度
-xat.entityMagic.maxMana=Max Mana
-xat.entityMagic.regen=魔力值恢复
-xat.flyspeed=Fly Speed
+xat.stepheight=跨步高度
+xat.entityMagic.maxMana=最大法力
+xat.entityMagic.regen=法力恢复
+xat.flyspeed=飞行速度
+
 attribute.name.xat.jump=跳跃
-attribute.name.xat.stepheight=上坡高度
-attribute.name.xat.entityMagic.maxMana=Max Mana
-attribute.name.xat.entityMagic.regen=魔力值恢复
-attribute.name.xat.flyspeed=Fly Speed
+attribute.name.xat.stepheight=跨步高度
+attribute.name.xat.entityMagic.maxMana=最大法力
+attribute.name.xat.entityMagic.regen=法力恢复
+attribute.name.xat.flyspeed=飞行速度
+attribute.name.xat.entityRace=附魔种族
 
-####################################材料####################################
+#################################### Materials ####################################
 
-item.glowing_powder.name=闪耀粉
-item.glowing_powder.tooltip1=1级制造材料
+item.glowing_powder.name=发光粉末
+item.glowing_powder.tooltip1=一级制作材料
 
-item.glowing_ingot.name=§e闪耀锭
-item.glowing_ingot.tooltip1=§e2级制造材料
+item.glowing_ingot.name=§e发光锭
+item.glowing_ingot.tooltip1=§e二级制作材料
 
-item.glowing_gem.name=§6闪耀宝石
-item.glowing_gem.tooltip1=§63级制造材料
+item.glowing_gem.name=§6发光宝石
+item.glowing_gem.tooltip1=§6三级制作材料
 
-####################################Materials End####################################
+#################################### Materials End ####################################
 
-####################################Trinkets####################################
+#################################### Trinkets ####################################
 
-item.glow_ring.0.name=§6魔眼之戒
-item.glow_ring.0.tooltip1=§2获得夜视
+item.arcing_orb.0.name=电弧宝珠
+item.damage_shield.0.name=荣耀之盾
 
-item.dwarf_ring.0.name=矮人之戒
-item.dwarf_ring.0.tooltip1=§6$rsize:正常体型
-item.dwarf_ring.0.tooltip2=@fortune:
-item.dwarf_ring.0.tooltip3=@skilledminer:
-item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=§6伪运
-item.dwarf_ring.0.skilledminer=§2熟练矿工
-item.dwarf_ring.0.staticminer=§2平等挖掘
+item.dragons_eye.0.name=§6龙之眼
+item.dragons_eye.0.fire.name=§c火龙之眼
+item.dragons_eye.0.ice.name=§b冰龙之眼
+item.dragons_eye.0.lightning.name=§d雷龙之眼
+
+item.ender_tiara.0.name=末影女王王冠
+item.ender_tiara.0.tooltip1=§6皇族
+item.faelis_claw.0.name=Faelis之爪
+item.glow_ring.0.name=§6附魔之眼戒指
+item.greater_inertia_stone.0.name=高惯性之石
+item.inertia_null_stone.0.name=惯性虚无之石
+item.poison_stone.0.name=毒石
+item.polarized_stone.0.name=极化石
+item.sea_stone.0.name=海洋之石
+item.teddy_bear.0.name=泰迪熊
+item.weightless_stone.0.name=反重力之石
+item.wither_ring.0.name=凋零戒指
+
+#################################### Trinkets Transformations ####################################
+
+item.dwarf_ring.0.name=§6矮人之戒
+item.dwarf_ring.0.tooltip1=§6实体体型为正常的 $rsize:
 
 item.elf_ring.0.name=§6精灵之戒
-item.elf_ring.0.tooltip1=§6$rsize:正常体型
-item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=§6在森林生物群系中获得移动速度和攻击速度加成
-item.elf_ring.0.chargeshot=§6潜行时增加弓箭伤害
+item.elf_ring.0.tooltip1=§6实体体型为正常的 $rsize:
+item.elf_ring.0.tooltip2=§6在森林中获得移动速度和攻击速度加成
 
-item.fairy_ring.0.name=仙子之戒
-item.fairy_ring.0.tooltip1=§6$rsize:正常体型
-item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=§6创造模式飞行
+item.fairy_ring.0.name=§6妖精之戒
+item.fairy_ring.0.tooltip1=§6实体体型为正常的 $rsize:
 
-item.faelis_ring.0.name=§6猫灵之戒
-item.faelis_ring.0.tooltip1=§6$rsize:正常体型
-item.faelis_ring.0.tooltip2=§a增加空手伤害
-item.faelis_ring.0.tooltip3=§a饮用牛奶时获得加成
-item.faelis_ring.0.tooltip4=§c装备重甲时降低移动速度
+item.faelis_ring.0.name=§6Faelis之戒
+item.faelis_ring.0.tooltip1=§6实体体型为正常的 $rsize:
+item.faelis_ring.0.tooltip2=§a徒手伤害提高
+item.faelis_ring.0.tooltip3=§a饮用牛奶时获得增益
+item.faelis_ring.0.tooltip4=§c穿戴重甲时移动速度降低
 
-item.goblin_ring.0.name=§6地精之戒
-item.goblin_ring.0.tooltip1=§6$rsize:正常体型
-item.goblin_ring.0.tooltip2=§6可以骑乘被驯服的狼
-item.goblin_ring.0.tooltip3=§6骑狼时获得力量和生命恢复
-item.goblin_ring.0.tooltip4=§a获得弱化火焰保护和弱化爆炸保护
-item.goblin_ring.0.tooltip5=§a爬行者会忽视你
+item.goblin_ring.0.name=§6哥布林之戒
+item.goblin_ring.0.tooltip1=§6实体体型为正常的 $rsize:
+item.goblin_ring.0.tooltip2=§6可以骑乘已驯服的狼
+item.goblin_ring.0.tooltip3=§6骑乘狼时获得力量和生命恢复加成
+item.goblin_ring.0.tooltip4=§a轻微爆炸抗性和火焰抗性
+item.goblin_ring.0.tooltip5=§a苦力怕会忽视你
 
-item.titan_ring.0.name=§6巨人之戒
-item.titan_ring.0.tooltip1=§6$rsize:正常体型
-item.titan_ring.0.tooltip2=§63x3x3挖掘范围
-item.titan_ring.0.tooltip3=§c@heavy:
-item.titan_ring.0.tooltip4=§c践踏植物
-item.titan_ring.0.heavy=§c在水中下沉
+item.titan_ring.0.name=§6泰坦之戒
+item.titan_ring.0.tooltip1=§6实体体型为正常的 $rsize:
 
 item.dragon_ring.0.name=§6巨龙之戒
-item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
-item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
-item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
-#item.dragon_ring.0.tooltip1=§6$rsize:标准体型
-#item.dragon_ring.0.tooltip2=§6按住§r<§e*breathkb:§r>§6喷出火焰
-#item.dragon_ring.0.tooltip3=§6获得防火
-#item.dragon_ring.0.tooltip4=§2获得夜视 §r<§e*denvkb:§r>
+item.dragon_ring.0.fire.name=§6§c火焰§6巨龙之戒
+item.dragon_ring.0.ice.name=§6§b寒冰§6巨龙之戒
+item.dragon_ring.0.lightning.name=§6§d闪电§6巨龙之戒
+item.dragon_ring.0.tooltip1=§6实体体型为正常的 $rsize:
 
-item.teddy_bear.0.name=泰迪熊
-item.teddy_bear.0.tooltip1=§6如果在装备时睡眠，提供增益效果
-item.teddy_bear.0.tooltip2=§6如果安装恐怖生物，移除失眠和恐惧
+#################################### Trinkets End ####################################
 
-item.weightless_stone.0.name=零重力之石
-item.weightless_stone.0.tooltip1=§2装备时忽略重力
-item.weightless_stone.0.tooltip2=<§e左击§r>以§2上升
-item.weightless_stone.0.tooltip3=<§e潜行§r>+<§e左击§r>以§2下降
-item.weightless_stone.0.tooltip4=§a持有时获得漂浮
-
-item.inertia_null_stone.0.name=零惯性之石
-item.inertia_null_stone.0.tooltip1=§6降低§3$inertianullfd:§r§6摔落伤害
-item.inertia_null_stone.0.tooltip2=§6降低§3$inertianullfd:§r§6动能伤害
-
-item.greater_inertia_stone.0.name=巨惯性之石
-item.greater_inertia_stone.0.tooltip1=§6降低§r§3$greaterinertiafd:§r§6摔落伤害
-
-item.sea_stone.0.name=海洋之石
-item.sea_stone.0.tooltip1=@bubbles:
-item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=[§3$bubbles:§r]§6个气泡的无限氧气
-item.sea_stone.0.betterswimming=§2增强游泳
-item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=§6免疫脱水
-item.sea_stone.0.compat.enhancedvisuals=禁用水下模糊
-
-item.polarized_stone.0.name=磁石
-item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<§e*magnetkb:§r或§e右击§r>
-item.polarized_stone.0.tooltip3=@repel:
-item.polarized_stone.0.tooltip4=<§e*auxkb:§r + §e*magnetkb:§r 或§e潜行§r+§e右击§r>
-item.polarized_stone.0.collect=§6吸引附近的物品@collectxp:
-item.polarized_stone.0.collectxp=和经验球 $collecttoggle:
-item.polarized_stone.0.repel=§6排斥箭矢 $repeltoggle:
-item.polarized_stone.0.magnetmode=吸引模式 $collecttoggle:
-item.polarized_stone.0.repelmode=斥力模式 $repeltoggle:
-
-item.dragons_eye.0.name=巨龙之眼
-item.dragons_eye.0.fire.name=火龍之眼
-item.dragons_eye.0.ice.name=冰龙之眼
-item.dragons_eye.0.lightning.name=閃電龍之眼
-item.dragons_eye.0.tooltip1=§6获得防火
-item.dragons_eye.0.tooltip2=§2获得夜视 §r<§e*denvkb:§r>
-item.dragons_eye.0.tooltip3=@treasurefinder:
-item.dragons_eye.0.tooltip4=@frostwalker:
-item.dragons_eye.0.treasurefinder=§6当前目标：§3#underline:$target:§r <§e*deofkb:§r>
-item.dragons_eye.0.treasurefinder.on=§6我需要更多的§f $target:§6 作为我的财宝 $looking:
-item.dragons_eye.0.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
-item.dragons_eye.0.treasurefinder.off=我的财富够多了$looking:
-item.dragons_eye.0.compat.tan=$typeimmune:
-item.dragons_eye.0.heatimmune=§6免疫炽热
-item.dragons_eye.0.coldimmune=§6免疫冻伤
-item.dragons_eye.0.paralysisimmune=§6免疫麻痹
-item.dragons_eye.0.compat.enhancedvisuals=
-item.dragons_eye.0.compat.iaf.ice.frostwalker=§6获得§3冰霜行者
-
-item.poison_stone.0.name=剧毒之石
-item.poison_stone.0.tooltip1=§6免疫中毒
-item.poison_stone.0.tooltip2=§6免疫饥饿
-item.poison_stone.0.tooltip3=@poison:
-item.poison_stone.0.tooltip4=@bonusdamage:
-item.poison_stone.0.poison=§3$poisonchance:§2 概率使敌人中毒 §3$poisonduration:
-item.poison_stone.0.bonusdamage=§2敌人中毒时造成 $damagemultiplier: 伤害
-
-item.wither_ring.0.name=枯萎之戒
-item.wither_ring.0.tooltip1=§6免疫凋零
-item.wither_ring.0.tooltip2=@wither:
-item.wither_ring.0.tooltip3=@leech:
-item.wither_ring.0.wither=§3$witherchance:§2 几率使敌人凋零
-item.wither_ring.0.leech=§2敌人凋零时治疗§3$leechamount:§2心
-
-item.ender_tiara.0.name=末影女皇之冠
-item.ender_tiara.0.tooltip1=§6王权
-item.ender_tiara.0.tooltip2=§2末影人为你作战 @endermenfollow:
-item.ender_tiara.0.tooltip3=@damageignored:
-item.ender_tiara.0.tooltip4=@endermenchance:
-item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=§3$chance: §6几率免疫伤害
-item.ender_tiara.0.endermenchance=§3$chance: §6几率生成一个末影人
-item.ender_tiara.0.endermenfollow=且跟随你
-item.ender_tiara.0.waterhurts=§c弱水
-item.ender_tiara.0.compat.tan=@coldimmune:
-item.ender_tiara.0.compat.enhancedvisuals=禁用末影人的静电干扰效果
-item.ender_tiara.0.coldimmune=§6免疫冻伤
-
-item.damage_shield.0.name=荣耀之盾
-item.damage_shield.0.tooltip1=§6装备时免疫$soheffect: 
-item.damage_shield.0.tooltip2=@explosionresist:
-item.damage_shield.0.tooltip3=@damageignored:
-item.damage_shield.0.explosionresist=§6降低§r §3$explosionresistamount: §r§6爆炸伤害
-item.damage_shield.0.damageignored=§6每受到§3$damageignoredhitcount:§6次攻击免疫下一次攻击
-//item.damage_shield.0.damageignored=§6Damage ignored: §3$damageignoredhitcount:/$cfghitcount:
-item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=§3$headshotchance:§6 几率免疫爆头
-item.damage_shield.0.compat.enhancedvisuals=禁用爆炸模糊
-
-item.arcing_orb.0.name=电弧球
-item.arcing_orb.0.tooltip1=§2获得双击闪避的能力 §3$dodgecost:MP
-item.arcing_orb.0.tooltip2=@dodgestun:
-item.arcing_orb.0.tooltip3=§6按住§r<§e*arckb:§r>§6释放一次闪电攻击
-item.arcing_orb.0.tooltip4=每§3$boltcost:MP 造成§3$boltdamage:§6伤害
-item.arcing_orb.0.dodge.stun=§6闪避时击晕周围的敌人
-
-item.faelis_claw.0.name=猫爪
-item.faelis_claw.0.tooltip1=§6攻击敌人使其流血
-item.faelis_claw.0.tooltip2=§a流血会在$clawbleed:刻内每20刻造成1点伤害
-item.faelis_claw.0.tooltip3=§c不由猫灵触发时持续时间减少到1/3
-
-####################################Trinkets End####################################
-
-####################################Food####################################
+#################################### Food ####################################
 
 xat.food.item.tooltip1=
 xat.food.item.tooltip2=
 xat.food.item.tooltip3=
 
-item.mana_candy.food.name=§b魔法糖果
-item.mana_candy.food.tooltip1=§6Restores some Mana
+item.mana_candy.food.name=§b法力糖果
+item.mana_candy.food.tooltip1=§6恢复少量法力
 
-item.mana_crystal.food.name=§6魔法水晶
-item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6魔力值上限
+item.mana_crystal.food.name=§6法力水晶
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 最大法力值
 
-item.mana_reagent.food.name=§6魔法试剂
-item.mana_reagent.food.tooltip1=§c使用时有害
-item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c 魔力值上限
+item.mana_reagent.food.name=§6法力试剂
+item.mana_reagent.food.tooltip1=§c食用时有害
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c 最大法力值
 
-item.restoration_serum.food.name=§6恢复血清
-item.restoration_serum.food.tooltip1=逆转永久的种族变形效果
-item.restoration_serum.food.tooltip2=§c使用时有害
+item.restoration_serum.food.name=§6复原血清
+item.restoration_serum.food.tooltip1=逆转永久变身效果
+item.restoration_serum.food.tooltip2=§c食用时有害
 
-xat.transformation.food.tooltip1=§b我也许能通过饮用某种药水
-xat.transformation.food.tooltip2=§b来移除这种效果
-xat.transformation.food.tooltip3=<§9饮用恢复血清以恢复§r>
+xat.transformation.food.tooltip1=§3我也许可以移除这些效果
+xat.transformation.food.tooltip2=§3通过饮用某种药剂
+xat.transformation.food.tooltip3=§r<§9使用复原血清以撤销§r>
 
 item.dwarf_stout.food.name=矮人烈酒
-item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
-#item.dwarf_stout.tooltip1=§b我也许能通过饮用某种药水
-#item.dwarf_stout.tooltip2=§b来移除这种效果
-#item.dwarf_stout.tooltip3=<§9饮用恢复血清以恢复§r>
+item.dwarf_stout.food.tooltip1=§6变身为矮人
 
-item.fairy_dew.food.name=仙露
-item.fairy_dew.food.tooltip1=§6Transform into a Fairy
-#item.fairy_dew.tooltip1=§b我也许能通过饮用某种药水
-#item.fairy_dew.tooltip2=§b来移除这种效果
-#item.fairy_dew.tooltip3=<§9饮用恢复血清以恢复§r>
+item.fairy_dew.food.name=妖精之露
+item.fairy_dew.food.tooltip1=§6变身为妖精
 
-item.titan_spirit.food.name=巨人之灵
-item.titan_spirit.food.tooltip1=§6Transform into a Titan
-#item.titan_spirit.tooltip1=§b我也许能通过饮用某种药水
-#item.titan_spirit.tooltip2=§b来移除这种效果
-#item.titan_spirit.tooltip3=<§9饮用恢复血清以恢复§r>
+item.titan_spirit.food.name=泰坦之魂
+item.titan_spirit.food.tooltip1=§6变身为泰坦
 
-item.elf_sap.food.name=精灵之息
-item.elf_sap.food.tooltip1=§6Transform into a Elf
-#item.elf_sap.tooltip1=§b我也许能通过饮用某种药水
-#item.elf_sap.tooltip2=§b来移除这种效果
-#item.elf_sap.tooltip3=<§9饮用恢复血清以恢复§r>
+item.elf_sap.food.name=精灵树液
+item.elf_sap.food.tooltip1=§6变身为精灵
 
-item.goblin_soup.food.name=地精之汤
-item.goblin_soup.food.tooltip1=§6Transform into a Goblin
-#item.goblin_soup.tooltip1=§b我也许能通过饮用某种药水
-#item.goblin_soup.tooltip2=§b来移除这种效果
-#item.goblin_soup.tooltip3=<§9饮用恢复血清以恢复§r>
+item.goblin_soup.food.name=哥布林汤
+item.goblin_soup.food.tooltip1=§6变身为哥布林
 
-item.faelis_food.food.name=猫薄荷
-item.faelis_food.food.tooltip1=§6Transform into a Faelis
-#item.faelis_food.tooltip1=§b我也许能通过饮用某种药水
-#item.faelis_food.tooltip2=§b来移除这种效果
-#item.faelis_food.tooltip3=<§9饮用恢复血清以恢复§r>
+item.faelis_food.food.name=Faelis薄荷
+item.faelis_food.food.tooltip1=§6变身为Faelis
 
-item.dragon_gem.food.name=巨龙宝石
-item.dragon_gem.food.tooltip1=Transform into a Dragon.
-item.dragon_gem.food.fire.name=Fire Dragon Gem
-item.dragon_gem.food.fire.tooltip1=Transform into a Fire Dragon.
-item.dragon_gem.food.ice.name=Ice Dragon Gem
-item.dragon_gem.food.ice.tooltip1=Transform into a Ice Dragon.
-item.dragon_gem.food.lightning.name=Lightning Dragon Gem
-item.dragon_gem.food.lightning.tooltip1=Transform into a Lightning Dragon.
-#item.dragon_gem.tooltip1=§b我也许能通过饮用某种药水
-#item.dragon_gem.tooltip2=§b来移除这种效果
-#item.dragon_gem.tooltip3=<§9饮用恢复血清以恢复§r>
+item.dragon_gem.food.name=§6巨龙宝石
+item.dragon_gem.food.tooltip1=§6变身为巨龙。
+item.dragon_gem.food.fire.name=§c火龙宝石
+item.dragon_gem.food.fire.tooltip1=§6变身为§c火焰§6巨龙。
+item.dragon_gem.food.ice.name=§b冰龙宝石
+item.dragon_gem.food.ice.tooltip1=§6变身为§b寒冰§6巨龙。
+item.dragon_gem.food.lightning.name=§d雷龙宝石
+item.dragon_gem.food.lightning.tooltip1=§6变身为§d闪电§6巨龙。
 
-####################################Food End####################################
+#################################### Food End ####################################
 
 
-####################################Potions####################################
+#################################### Potions ####################################
 
-potion.effect.xat.sparkling=闪烁药水
-splash_potion.effect.xat.sparkling=喷溅型闪烁药水
-lingering_potion.effect.xat.sparkling=滞留型闪烁药水
-tipped_arrow.effect.xat.sparkling=闪烁之箭
-xat.effect.sparkling=闪烁
-xat.item.potion.sparkling.tooltip1=§6治疗 25% 最大生命值
-xat.item.potion.sparkling.tooltip2=§6回复 25% 魔力
+potion.effect.xat.sparkling=闪耀药水
+splash_potion.effect.xat.sparkling=喷溅型闪耀药水
+lingering_potion.effect.xat.sparkling=滞留型闪耀药水
+tipped_arrow.effect.xat.sparkling=闪耀药水箭
+xat.effect.sparkling=闪耀
+xat.item.potion.sparkling.tooltip1=§6恢复25%最大生命值
+xat.item.potion.sparkling.tooltip2=§6恢复25%法力值
 
-potion.effect.xat.glittering=闪光药水
-splash_potion.effect.xat.glittering=喷溅型闪光药水
-lingering_potion.effect.xat.glittering=滞留型闪光药水
-tipped_arrow.effect.xat.glittering=闪光之箭
-xat.effect.glittering=闪光
-xat.item.potion.glittering.tooltip1=§6治疗 50% 最大生命值
-xat.item.potion.glittering.tooltip2=§6恢复 50% 魔力
+potion.effect.xat.glittering=辉光药水
+splash_potion.effect.xat.glittering=喷溅型辉光药水
+lingering_potion.effect.xat.glittering=滞留型辉光药水
+tipped_arrow.effect.xat.glittering=辉光药水箭
+xat.effect.glittering=辉光
+xat.item.potion.glittering.tooltip1=§6恢复50%最大生命值
+xat.item.potion.glittering.tooltip2=§6恢复50%法力值
 
-potion.effect.xat.glowing=辉光药水
-splash_potion.effect.xat.glowing=喷溅型辉光药水
-lingering_potion.effect.xat.glowing=滞留型辉光药水
-tipped_arrow.effect.xat.glowing=辉光之箭
-xat.effect.glowing=辉光
-xat.item.potion.glowing.tooltip1=§6治疗 100% 生命值
-xat.item.potion.glowing.tooltip2=§6恢复 100% 魔力
+potion.effect.xat.glowing=光辉药水
+splash_potion.effect.xat.glowing=喷溅型光辉药水
+lingering_potion.effect.xat.glowing=滞留型光辉药水
+tipped_arrow.effect.xat.glowing=光辉药水箭
+xat.effect.glowing=光辉
+xat.item.potion.glowing.tooltip1=§6恢复100%生命值
+xat.item.potion.glowing.tooltip2=§6恢复100%法力值
 
-potion.effect.xat.ice_resistance=抗冻性
-splash_potion.effect.xat.ice_resistance=喷溅型冰霜抗性药水
-lingering_potion.effect.xat.ice_resistance=滞留型冰霜抗性药水
-tipped_arrow.effect.xat.ice_resistance=冰霜抗性之箭
-xat.effect.ice_resistance=冰霜抗性
+potion.effect.xat.ice_resistance=抗寒药水
+splash_potion.effect.xat.ice_resistance=喷溅型抗寒药水
+lingering_potion.effect.xat.ice_resistance=滞留型抗寒药水
+tipped_arrow.effect.xat.ice_resistance=抗寒箭
+xat.effect.ice_resistance=抗寒
 
-potion.effect.xat.lightning_resistance=抗雷击
-splash_potion.effect.xat.lightning_resistance=喷溅型闪电抗性药水
-lingering_potion.effect.xat.lightning_resistance=滞留型闪电抗性药水
-tipped_arrow.effect.xat.lightning_resistance=闪电抗性之箭
-xat.effect.lightning_resistance=抗雷击
+potion.effect.xat.lightning_resistance=抗雷药水
+splash_potion.effect.xat.lightning_resistance=喷溅型抗雷药水
+lingering_potion.effect.xat.lightning_resistance=滞留型抗雷药水
+tipped_arrow.effect.xat.lightning_resistance=抗雷箭
+xat.effect.lightning_resistance=抗雷
 
-potion.effect.xat.restorative=恢复药水
-splash_potion.effect.xat.restorative=喷溅型恢复药水
-lingering_potion.effect.xat.restorative=滞留型恢复药水
-tipped_arrow.effect.xat.restorative=恢复之箭
-xat.effect.restorative=恢复
-xat.item.potion.restorative.tooltip1=§6治疗 100% 生命值
+potion.effect.xat.restorative=复原药水
+splash_potion.effect.xat.restorative=喷溅型复原药水
+lingering_potion.effect.xat.restorative=滞留型复原药水
+tipped_arrow.effect.xat.restorative=复原药水箭
+xat.effect.restorative=复原
+xat.item.potion.restorative.tooltip1=§6恢复100%生命值
 xat.item.potion.restorative.tooltip2=§6移除药水效果
-xat.item.potion.restorative.tooltip3=§6移除魔法食物的变形效果
+xat.item.potion.restorative.tooltip3=§6移除附魔食物带来的变身效果
 
-potion.effect.xat.human=人类变形药水
-splash_potion.effect.xat.human=喷溅型人类变形药水
-lingering_potion.effect.xat.human=滞留型人类变形药水
-tipped_arrow.effect.xat.human=人类变形药水
+potion.effect.xat.human=人类变身药水
+splash_potion.effect.xat.human=喷溅型人类变身药水
+lingering_potion.effect.xat.human=滞留型人类变身药水
+tipped_arrow.effect.xat.human=人类变身药水箭
 xat.effect.human=人类
-xat.item.potion.human.tooltip1=变形为人类 $humanticks: 秒
+xat.item.potion.human.tooltip1=变身为人类，持续 $humanticks: 秒
 
-potion.effect.xat.fairy=仙子变形药水
-splash_potion.effect.xat.fairy=喷溅型仙子变形药水
-lingering_potion.effect.xat.fairy=滞留型仙子变形药水
-tipped_arrow.effect.xat.fairy=仙子变形之箭
-xat.effect.fairy=仙子
-xat.item.potion.fairy.tooltip1=变形为仙子$fairyticks:秒
+potion.effect.xat.fairy=妖精变身药水
+splash_potion.effect.xat.fairy=喷溅型妖精变身药水
+lingering_potion.effect.xat.fairy=滞留型妖精变身药水
+tipped_arrow.effect.xat.fairy=妖精变身药水箭
+xat.effect.fairy=妖精
+xat.item.potion.fairy.tooltip1=变身为妖精，持续 $fairyticks: 秒
 
-potion.effect.xat.dwarf=矮人变形药水
-splash_potion.effect.xat.dwarf=喷溅型矮人变形药水
-lingering_potion.effect.xat.dwarf=滞留型矮人变形药水
-tipped_arrow.effect.xat.dwarf=矮人变形之箭
+potion.effect.xat.dwarf=矮人变身药水
+splash_potion.effect.xat.dwarf=喷溅型矮人变身药水
+lingering_potion.effect.xat.dwarf=滞留型矮人变身药水
+tipped_arrow.effect.xat.dwarf=矮人变身药水箭
 xat.effect.dwarf=矮人
-xat.item.potion.dwarf.tooltip1=变形为矮人$dwarfticks:秒
+xat.item.potion.dwarf.tooltip1=变身为矮人，持续 $dwarfticks: 秒
 
-potion.effect.xat.titan=巨人变形药水
-splash_potion.effect.xat.titan=喷溅型巨人变形药水
-lingering_potion.effect.xat.titan=滞留型巨人变形药水
-tipped_arrow.effect.xat.titan=巨人变形之箭
-xat.effect.titan=巨人
-xat.item.potion.titan.tooltip1=变形为巨人$titanticks:秒
+potion.effect.xat.titan=泰坦变身药水
+splash_potion.effect.xat.titan=喷溅型泰坦变身药水
+lingering_potion.effect.xat.titan=滞留型泰坦变身药水
+tipped_arrow.effect.xat.titan=泰坦变身药水箭
+xat.effect.titan=泰坦
+xat.item.potion.titan.tooltip1=变身为泰坦，持续 $titanticks: 秒
 
-potion.effect.xat.goblin=地精变形药水
-splash_potion.effect.xat.goblin=喷溅型地精变形药水
-lingering_potion.effect.xat.goblin=滞留型地精变形药水
-tipped_arrow.effect.xat.goblin=地精变形之箭
-xat.effect.goblin=地精
-xat.item.potion.goblin.tooltip1=变形为地精$goblinticks:秒
+potion.effect.xat.goblin=哥布林变身药水
+splash_potion.effect.xat.goblin=喷溅型哥布林变身药水
+lingering_potion.effect.xat.goblin=滞留型哥布林变身药水
+tipped_arrow.effect.xat.goblin=哥布林变身药水箭
+xat.effect.goblin=哥布林
+xat.item.potion.goblin.tooltip1=变身为哥布林，持续 $goblinticks: 秒
 
-potion.effect.xat.elf=精灵变形药水
-splash_potion.effect.xat.elf=喷溅型精灵变形药水
-lingering_potion.effect.xat.elf=滞留型精灵变形药水
-tipped_arrow.effect.xat.elf=精灵变形之箭
+potion.effect.xat.elf=精灵变身药水
+splash_potion.effect.xat.elf=喷溅型精灵变身药水
+lingering_potion.effect.xat.elf=滞留型精灵变身药水
+tipped_arrow.effect.xat.elf=精灵变身药水箭
 xat.effect.elf=精灵
-xat.item.potion.elf.tooltip1=变形为精灵$elfticks:秒
+xat.item.potion.elf.tooltip1=变身为精灵，持续 $elfticks: 秒
 
-potion.effect.xat.faelis=猫灵变形药水
-splash_potion.effect.xat.faelis=喷溅型猫灵变形药水
-lingering_potion.effect.xat.faelis=滞留型猫灵变形药水
-tipped_arrow.effect.xat.faelis=猫灵变形之箭
-xat.effect.faelis=猫灵
-xat.item.potion.faelis.tooltip1=变形为猫灵 $faelisticks: 秒
+potion.effect.xat.faelis=Faelis变身药水
+splash_potion.effect.xat.faelis=喷溅型Faelis变身药水
+lingering_potion.effect.xat.faelis=滞留型Faelis变身药水
+tipped_arrow.effect.xat.faelis=Faelis变身药水箭
+xat.effect.faelis=Faelis
+xat.item.potion.faelis.tooltip1=变身为Faelis，持续 $faelisticks: 秒
 
-potion.effect.xat.dragon=巨龙变形药水
-splash_potion.effect.xat.dragon=喷溅型巨龙变形药水
-lingering_potion.effect.xat.dragon=滞留型巨龙变形药水
-tipped_arrow.effect.xat.dragon=巨龙变形之箭
+potion.effect.xat.dragon=巨龙变身药水
+splash_potion.effect.xat.dragon=喷溅型巨龙变身药水
+lingering_potion.effect.xat.dragon=滞留型巨龙变身药水
+tipped_arrow.effect.xat.dragon=巨龙变身药水箭
 xat.effect.dragon=巨龙
-xat.item.potion.dragon.tooltip1=变形为巨龙$dragonticks:秒
+xat.item.potion.dragon.tooltip1=变身为巨龙，持续 $dragonticks: 秒
 
-####################################Potions End####################################
+#################################### Potions End ####################################
 
-####################################Blocks####################################
+#################################### Blocks ####################################
 
-tile.moon_rose.name=月光玫瑰
-tile.moon_rose.tooltip1=§b被施加了魔法的花朵
-tile.moon_rose.tooltip2=§b<你感受到其中散发出强烈的魔法波动>
+tile.moon_rose.name=月之玫瑰
+tile.moon_rose.tooltip1=§b附魔花朵
+tile.moon_rose.tooltip2=§b<你可以感受到其中强烈的魔法波动>
 
-####################################Blocks End####################################
+#################################### Blocks End ####################################
 
-########################################Client Settings##########################################
+####################################[Configuration Begin]####################################
+
+######################################## Client Settings ##########################################
 
 xat.config.client.settings=客户端设置
 xat.config.client.settings.tooltip=仅对视觉效果进行设置。
@@ -646,7 +626,7 @@ xat.config.server.dragons_eye.orefinder.blocks.tooltip=
 xat.config.server.dragons_eye.orefinder.blocks.list=Treasure Finder Block list
 xat.config.server.dragons_eye.orefinder.blocks.list.tooltip=What the Treasure Finding Feature of the Dragon's Eye can Detect
 xat.config.server.dragons_eye.toughasnails.immunity.heat=Immune to Heat
-xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails is Installed Should the player be Immune to Heat
+xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Heat
 xat.config.server.dragons_eye.toughasnails.immunity.cold=Immune to Cold
 xat.config.server.dragons_eye.toughasnails.immunity.cold.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Cold
 
@@ -869,6 +849,7 @@ xat.config.server.faelis_claw.bleeding.chance.tooltip=1 in X Chance to cause ble
 #####################################[Item Configs End]#####################################
 
 #####################################[Magic Configs]#####################################
+
 xat.config.magic=Magic Settings
 xat.config.magic.tooltip=
 
@@ -899,11 +880,16 @@ xat.config.magic.mana.cap.bonus=Bonus Mana Cap
 xat.config.magic.mana.cap.bonus.tooltip=Cap Bonus Mana Obtained from Mana Crystals and Moon Rose, set to 0 to disable
 xat.config.magic.mana.recovery.list=Recovery Items
 xat.config.magic.mana.recovery.list.tooltip=Items that Recover Mana\n modid:item_name;meta;amount
+xat.config.magic.mana.players_only=Only Players
+xat.config.magic.mana.players_only.tooltip=Only players have Mana
 
 #####################################[Magic Configs End]#####################################
 
 #####################################[Race Configs]#####################################
+
 xat.config.races=Race Settings
+xat.config.race.size=Size Settings
+xat.config.race.size.tooltip=Size Configuration
 
 xat.config.races.dwarf=Dwarf Race Settings
 xat.config.races.dwarf.tooltip=
