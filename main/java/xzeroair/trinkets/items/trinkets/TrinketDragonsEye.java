@@ -1,25 +1,18 @@
 package xzeroair.trinkets.items.trinkets;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
-import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.*;
@@ -30,13 +23,7 @@ import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigDragonsEye;
 import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrinketDragonsEye extends AccessoryBase {
@@ -91,46 +78,6 @@ public class TrinketDragonsEye extends AccessoryBase {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-        final TranslationHelper helper = TranslationHelper.INSTANCE;
-        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "treasurefinder", serverConfig.oreFinder);
-        String oreTarget = "NONE";
-        try {
-            final EntityPlayer player = Minecraft.getMinecraft().player;
-            final IAbilityInterface ability = Capabilities.getEntityProperties(player, null, (prop, a) -> prop.getAbilityHandler().getAbility("xat:" + Abilities.blockDetection));
-            if (ability instanceof AbilityBlockFinder) {
-                final AbilityBlockFinder finder = (AbilityBlockFinder) ability;
-                final String target = finder.getTreasure().parseTargetName();
-                if (!target.isEmpty()) {
-                    oreTarget = target;
-                }
-            }
-        } catch (Exception e) {
-            oreTarget = "ERROR";
-        }
-        final KeyEntry key1 = new OptionEntry("target", serverConfig.oreFinder, oreTarget);
-        final KeyEntry keybind1 = new KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
-        final KeyEntry keybind2 = new KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean tan = tanEnabled || sdEnabled;
-        final Element element = this.getPrimaryElement(stack);
-        final boolean isIceVariant = element == Elements.ICE;
-        final boolean isLightningVariant = element == Elements.LIGHTNING;
-        final KeyEntry key2 = new OptionEntry("variantresist", new TextComponentTranslation((element == Elements.FIRE) || ((element == Elements.NEUTRAL) && serverConfig.compat.iaf.DE_FIRE_RESIST) ? "effect.fireResistance" : (element != Elements.NEUTRAL) ? "xat.effect." + element.getName().toLowerCase() + "_resistance" : "ability.block_detection.name"
-
-        ).getFormattedText());
-        final KeyEntry TANHot = new LangEntry(this.getTranslationKey(stack), "heatimmune", tan && serverConfig.compat.tan.immuneToHeat);
-        final KeyEntry TANCold = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToHeat);
-        final KeyEntry IAFParalysis = new LangEntry(this.getTranslationKey(stack), "paralysisimmune", isLightningVariant && serverConfig.compat.iaf.LIGHTNING_VARIANT && serverConfig.compat.iaf.PARALYSIS_IMMUNITY);
-        final KeyEntry key3 = new OptionEntry("typeimmune", new TextComponentTranslation(isIceVariant ? TANCold.option() : isLightningVariant ? "" : TANHot.option()).getFormattedText());
-        final KeyEntry IAFFrostWalker = new LangEntry(this.getTranslationKey(stack) + ".compat.iaf.ice", "frostwalker", isIceVariant && serverConfig.compat.iaf.ICE_VARIANT && serverConfig.compat.iaf.FROST_WALKER);
-        final String output = helper.formatAddVariables(translation, key, key1, keybind1, keybind2, key2, TANHot, TANCold, key3, IAFFrostWalker, IAFParalysis).replace("#underline:", "");
-        return output;
-    }
-
-    @Override
     public String[] getAttributeConfig() {
         return serverConfig.attributes;
     }
@@ -141,27 +88,27 @@ public class TrinketDragonsEye extends AccessoryBase {
         final Element element = this.getPrimaryElement(stack);
         final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
         final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean tan = tanEnabled || sdEnabled;
+        final boolean survival = tanEnabled || sdEnabled;
         if (serverConfig.compat.iaf.FIRE_VARIANT && (element == Elements.FIRE)) {
-            abilities.add(new AbilityFireImmunity());
-            if (tan && serverConfig.compat.tan.immuneToHeat) {
-                abilities.add(new AbilityHeatImmunity());
+            abilities.add(new AbilityFireImmunity().setRequiredElement(Elements.FIRE));
+            if (survival && serverConfig.compat.tan.immuneToHeat) {
+                abilities.add(new AbilityHeatImmunity().setRequiredElement(Elements.FIRE));
             }
         } else if (serverConfig.compat.iaf.ICE_VARIANT && (element == Elements.ICE)) {
-            abilities.add(new AbilityIceImmunity());
-            if (serverConfig.compat.iaf.FROST_WALKER) {
-                abilities.add(new AbilityFrostWalker());
+            abilities.add(new AbilityIceImmunity().setRequiredElement(Elements.ICE));
+            if (survival && serverConfig.compat.tan.immuneToCold) {
+                abilities.add(new AbilityColdImmunity().setRequiredElement(Elements.ICE));
             }
-            if (tan && serverConfig.compat.tan.immuneToCold) {
-                abilities.add(new AbilityColdImmunity());
+            if (serverConfig.compat.iaf.FROST_WALKER) {
+                abilities.add(new AbilityFrostWalker().setRequiredElement(Elements.ICE));
             }
         } else if (serverConfig.compat.iaf.LIGHTNING_VARIANT && (element == Elements.LIGHTNING)) {
-            abilities.add(new AbilityLightningImmunity());
+            abilities.add(new AbilityLightningImmunity().setRequiredElement(Elements.LIGHTNING));
         } else {
             if (serverConfig.compat.iaf.DE_FIRE_RESIST) {
-                abilities.add(new AbilityFireImmunity());
-                if (tan && serverConfig.compat.tan.immuneToHeat) {
-                    abilities.add(new AbilityHeatImmunity());
+                abilities.add(new AbilityFireImmunity().setRequiredElement(Elements.NEUTRAL));
+                if (survival && serverConfig.compat.tan.immuneToHeat) {
+                    abilities.add(new AbilityHeatImmunity().setRequiredElement(Elements.NEUTRAL));
                 }
             }
         }
@@ -171,12 +118,9 @@ public class TrinketDragonsEye extends AccessoryBase {
     }
 
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        final Element element = this.getPrimaryElement(stack);
-        if (element != Elements.NEUTRAL) {
-            return new TextComponentTranslation(this.getTranslationKey(stack) + "." + element.getName().toLowerCase() + ".name").getFormattedText().trim();
-        }
-        return super.getItemStackDisplayName(stack).trim();
+    public Element getPrimaryElement() {
+//        return Elements.VOID;
+        return super.getPrimaryElement();
     }
 
     @Override

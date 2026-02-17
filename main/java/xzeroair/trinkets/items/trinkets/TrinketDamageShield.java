@@ -6,33 +6,25 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityResistance;
 import xzeroair.trinkets.traits.abilities.compat.firstaid.AbilityIgnoreHeadshot;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigDamageShield;
 import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -48,40 +40,6 @@ public class TrinketDamageShield extends AccessoryBase {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-        final TranslationHelper helper = TranslationHelper.INSTANCE;
-        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "explosionresist", serverConfig.explosion_resist);
-        final KeyEntry key1 = new OptionEntry("explosionresistamount", serverConfig.explosion_resist, ((100F - (serverConfig.explosion_amount * 100F)) + "%"));
-        final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "damageignored", serverConfig.damage_ignore);
-        String hits = "0";
-        try {
-            final EntityPlayer player = Minecraft.getMinecraft().player;
-            final IAbilityInterface ability = Capabilities.getEntityProperties(player, null, (prop, a) -> prop.getAbilityHandler().getAbility("xat:" + Abilities.safeGuard));
-            if (ability instanceof AbilityResistance) {
-                final AbilityResistance safeGuard = (AbilityResistance) ability;
-                hits = safeGuard.getHitCount() + "";
-            }
-        } catch (Exception e) {
-            hits = "ERROR";
-        }
-        final KeyEntry key3 = new OptionEntry("damageignoredhitcount", serverConfig.damage_ignore, hits);
-        final KeyEntry key4 = new OptionEntry("cfghitcount", serverConfig.damage_ignore, serverConfig.hits);
-        String effect = "ERROR";
-        try {
-            final Potion peffect = Potion.getPotionFromResourceLocation(serverConfig.potionEffect);
-            if (peffect != null) {
-                effect = new TextComponentTranslation(peffect.getName()).getUnformattedText();
-            }
-        } catch (Exception e) {
-        }
-        final KeyEntry key5 = new OptionEntry("soheffect", true, effect);
-        final KeyEntry FirstAid = new LangEntry(this.getTranslationKey(stack), "headshots", serverConfig.compat.firstaid.chance_ignore);
-        final KeyEntry key6 = new OptionEntry("headshotchance", serverConfig.compat.firstaid.chance_ignore, MathHelper.clamp((1F / serverConfig.compat.firstaid.chance_headshots) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
-        return helper.formatAddVariables(translation, key, key1, key2, key3, key4, FirstAid, key5, key6);
-    }
-
-    @Override
     public String[] getAttributeConfig() {
         return serverConfig.attributes;
     }
@@ -92,6 +50,11 @@ public class TrinketDamageShield extends AccessoryBase {
         if (Trinkets.MOD_COMPAT.FirstAid && serverConfig.compat.firstaid.chance_ignore) {
             abilities.add(new AbilityIgnoreHeadshot());
         }
+    }
+
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.LIGHT;
     }
 
     @Override

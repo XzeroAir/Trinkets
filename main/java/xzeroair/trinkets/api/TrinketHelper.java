@@ -9,7 +9,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.items.IItemHandler;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -25,6 +24,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class TrinketHelper {
+
+    public static ItemStack getTrinketInSlot(EntityLivingBase entity, final int slot) {
+        return getTrinketHandler(entity, ItemStack.EMPTY, (handler, rtn) -> {
+            return handler.getStackInSlot(slot);
+        });
+    }
 
     /**
      * @param entity
@@ -58,6 +63,13 @@ public class TrinketHelper {
         protected int Slot = -1;
         protected String handler;
         protected ItemStack stack;
+        protected boolean hasChanged;
+
+        public static SlotInformation EMPTY = new SlotInformation();
+
+        public SlotInformation() {
+            this(ItemStack.EMPTY, ItemHandlerType.NONE, -1);
+        }
 
         public SlotInformation(ItemHandlerType handler) {
             this(handler.getName(), -1);
@@ -80,8 +92,9 @@ public class TrinketHelper {
                 stack = ItemStack.EMPTY;
             }
             this.stack = stack;
+            setChanged(false);
             setSlot(slot);
-            this.handler = handler;
+            setHandler(handler);
         }
 
         public void setSlot(int slot) {
@@ -98,6 +111,18 @@ public class TrinketHelper {
 
         public void setHandler(String handler) {
             this.handler = handler;
+        }
+
+        public boolean changed() {
+            return hasChanged;
+        }
+
+        public void setChanged() {
+            setChanged(true);
+        }
+
+        public void setChanged(boolean bool) {
+            this.hasChanged = bool;
         }
 
         public String getItemID() {
@@ -122,14 +147,10 @@ public class TrinketHelper {
             }
             switch (this.getHandlerType()) {
                 case TRINKETS:
-                    final ITrinketContainerHandler TrinketHandler = getTrinketHandler(entity);
-                    return TrinketHandler != null ? getTrinketHandler(entity).getStackInSlot(this.getSlot()) : ItemStack.EMPTY;
+                    return getTrinketInSlot(entity, getSlot());
                 case BAUBLES:
                     if (Trinkets.MOD_COMPAT.Baubles) {
-                        IItemHandler BaublesHandler = BaublesHelper.getBaublesHandler(entity);
-                        if (BaublesHandler != null) {
-                            return BaublesHandler.getStackInSlot(this.getSlot());
-                        }
+                        return BaublesHelper.getBaubleInSlot(entity, getSlot());
                     }
                     return ItemStack.EMPTY;
                 case HEAD:

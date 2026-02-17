@@ -4,10 +4,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.enums.EnumModCompat;
+import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.handlers.TickHandler;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
@@ -113,16 +119,89 @@ public class Ability implements IAbilityInterface {
         return new TextComponentTranslation(this.getTranslationKey() + ".name").getFormattedText();
     }
 
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        return helper.formatAddVariables(key, renderID);
+    }
+
     @Override
-    public void getDescription(List<String> tooltips) {
+    @SideOnly(Side.CLIENT)
+    public void getDescription(List<String> tooltips, int rendMod, int rendID) {
         final TranslationHelper helper = TranslationHelper.INSTANCE;
-        for (int i = 1; i < 10; i++) {
-            final int index = i;
-            final String string = helper.getLangTranslation(this.getTranslationKey() + ".tooltip" + i);
-            //			final String string = helper.getLangTranslation(this.getTranslationKey() + ".tooltip" + i,
-            //					lang -> this.customItemInformation(stack, world, flagIn, index, lang));
+
+        if (rendID == EnumRenderLocation.ITEM.getId()) {
+            String before_item = addCustomDescriptionTags(helper, "", rendMod, EnumRenderLocation.ITEM_BEFORE.getId(), EnumModCompat.NONE.getId());
+            if (!before_item.isEmpty()) {
+                tooltips.add(before_item);
+            }
+        } else if (rendID == EnumRenderLocation.GUI.getId()) {
+            String before = addCustomDescriptionTags(helper, "", rendMod, EnumRenderLocation.GUI_BEFORE.getId(), EnumModCompat.NONE.getId());
+            if (!before.isEmpty()) {
+                tooltips.add(before);
+            }
+        } else {
+
+        }
+
+        for (int i = 1; i <= 10; i++) {
+            final String string = helper.getLangTranslation(this.getTranslationKey() + ".tooltip" + i, (lang) -> {
+                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.NONE.getId());
+            });
             if (!helper.isStringEmpty(string)) {
                 tooltips.add(string);
+            }
+        }
+
+        if (rendID == EnumRenderLocation.ITEM.getId()) {
+            String after_item = addCustomDescriptionTags(helper, "", rendMod, EnumRenderLocation.ITEM_AFTER.getId(), EnumModCompat.NONE.getId());
+            if (!after_item.isEmpty()) {
+                tooltips.add(after_item);
+            }
+        } else if (rendID == EnumRenderLocation.GUI.getId()) {
+            String after_gui = addCustomDescriptionTags(helper, "", rendMod, EnumRenderLocation.GUI_AFTER.getId(), EnumModCompat.NONE.getId());
+            if (!after_gui.isEmpty()) {
+                tooltips.add(after_gui);
+            }
+        } else {
+
+        }
+
+        if (Trinkets.MOD_COMPAT.IceAndFire) {
+            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.iaf", (lang) -> {
+                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.IceAndFire.getId());
+            });
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
+                tooltips.add(helper.gold + "(" + helper.getLangTranslation("itemGroup.iceandfire") + helper.gold + ")");
+//                }
+            }
+        }
+        if (Trinkets.MOD_COMPAT.LycanitesMobs) {
+            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.lycanites", (lang) -> {
+                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.Lycanites.getId());
+            });
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
+                tooltips.add(helper.gold + "(" + helper.getLangTranslation("lycanitesmobs.name") + helper.gold + ")");
+//                }
+            }
+        }
+
+        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
+        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
+        final boolean survival = tanEnabled || sdEnabled;
+        if (survival) {
+            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.survival", (lang) -> {
+                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.SURVIVAL.getId());
+            });
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
+                final String modifier = sdEnabled ? "itemGroup.tabSimpleDifficulty" : tanEnabled ? "itemGroup.tabToughAsNails" : "";
+                tooltips.add(helper.gold + "(" + helper.getLangTranslation(modifier) + helper.gold + ")");
+//                }
             }
         }
     }

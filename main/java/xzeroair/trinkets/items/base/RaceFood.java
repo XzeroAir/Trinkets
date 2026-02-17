@@ -20,6 +20,8 @@ import xzeroair.trinkets.races.IRaceProvider;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 
+import javax.annotation.Nonnull;
+
 public class RaceFood extends FoodBase implements IRaceProvider {
 
     private int useDuration;
@@ -30,13 +32,27 @@ public class RaceFood extends FoodBase implements IRaceProvider {
         super(name, 2, 4F);
         this.setAlwaysEdible();
         this.action = action;
-        useDuration = useDur;
+        this.useDuration = useDur;
         this.race = race;
         this.setUUID(uuid);
     }
 
     public RaceFood(String name, int useDur, EnumAction action, EntityRace race) {
         this(name, useDur, action, race, "");
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return super.getItemStackDisplayName(stack);
+    }
+
+    @Override
+    public String getTranslationKey(@Nonnull ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element != Elements.NEUTRAL) {
+            return super.getTranslationKey() + "." + element.getName().toLowerCase();
+        }
+        return super.getTranslationKey();
     }
 
     @Override

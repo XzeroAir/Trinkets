@@ -4,7 +4,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
@@ -15,6 +18,9 @@ import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
+import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 public class AbilityViciousStrike extends Ability implements IAttackAbility {
 
@@ -25,19 +31,27 @@ public class AbilityViciousStrike extends Ability implements IAttackAbility {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        final KeyEntry key1 = new OptionEntry("chance", serverConfig.bleed, MathHelper.clamp((1F / serverConfig.chance) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
+        final KeyEntry key2 = new OptionEntry("duration", serverConfig.bleed, (serverConfig.bleedDuration / 20F));
+        final KeyEntry key3 = new OptionEntry("reduceddur", serverConfig.bleed, ((int) serverConfig.bleedDuration / 3) / 20F);
+        return helper.formatAddVariables(key, renderID, key1, key2, key3);
+    }
+
+    @Override
     public float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
         if (this.isIndirectDamage(source)) return dmg;
         boolean faelis = false;
         int chance = serverConfig.chance > 0 ? random.nextInt(serverConfig.chance) : 0;
         if (source.getTrueSource() instanceof EntityLivingBase) {
-            boolean isFaelis = Capabilities.getEntityProperties(source.getTrueSource(), faelis, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
+            boolean isFaelis = Capabilities.getEntityProperties(source.getTrueSource(), false, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
             if (isFaelis) {
-                chance /= 2;
                 faelis = true;
             }
         }
         if (chance == 0) {
-            final int duration = (int) (faelis ? serverConfig.bleedDuration : serverConfig.bleedDuration * 0.33);
+            final int duration = (int) (faelis ? serverConfig.bleedDuration : serverConfig.bleedDuration / 3);
             final int amplifier = 1;//faelis ? 2 : 1;
             if (Loader.isModLoaded("lycanitesmobs") && TrinketsConfig.compat.lycanites && serverConfig.compat.lycanites.useLycaniteBleed) {
                 LycanitesCompat.applyEffect(target, "bleed", duration, 0);

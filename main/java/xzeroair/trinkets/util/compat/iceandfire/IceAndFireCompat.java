@@ -5,14 +5,16 @@ import xzeroair.trinkets.Trinkets;
 
 public class IceAndFireCompat {
 
-	public static Potion getPotionEffectByName(String name) {
-		if (Trinkets.MOD_COMPAT.IceAndFire) {
-			try {
-				return Potion.getPotionFromResourceLocation("iceandfire:" + name);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		return null;
-	}
+    public static Potion PARALYSIS = getPotionEffectByName("paralysis");
+
+    public static Potion getPotionEffectByName(String name) {
+        if (Trinkets.MOD_COMPAT.IceAndFire) {
+            try {
+                return Potion.getPotionFromResourceLocation("iceandfire:" + name);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
 }

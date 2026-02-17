@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.init.Abilities;
@@ -15,6 +17,7 @@ import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.PotionHelper;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilityFlying extends Ability implements ITickableAbility, IPotionAbility, IMiningAbility {
 
@@ -23,6 +26,12 @@ public class AbilityFlying extends Ability implements ITickableAbility, IPotionA
 
     public AbilityFlying() {
         super(Abilities.creativeFlight);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
     }
 
     public AbilityFlying setFlightCost(float cost) {

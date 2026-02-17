@@ -25,10 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.blocks.BlockTeddyBear;
 import xzeroair.trinkets.blocks.tileentities.TileEntityTeddyBear;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.ModBlocks;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityWellRested;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigTeddyBear;
 
@@ -193,6 +195,11 @@ public class TrinketTeddyBear extends AccessoryBase {
         }
 
         return true;
+    }
+
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.LIGHT;
     }
 
     @Override

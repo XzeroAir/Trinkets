@@ -28,6 +28,7 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.Reference;
@@ -389,7 +390,7 @@ public class GuiAttributesScreen extends GuiScreen {
             //						source = properties.getAbilityHandler().getAbilitySource(selectedMod);
             //		lines.add(selectedAbility. + " - " + source);
             lines.add(null);
-            abilityInstance.getDescription(lines);
+            abilityInstance.getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
         } catch (final Exception e) {
             e.printStackTrace();
         }

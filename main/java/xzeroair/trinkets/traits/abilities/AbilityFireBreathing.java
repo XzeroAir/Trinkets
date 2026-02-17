@@ -16,6 +16,7 @@ import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 
@@ -23,6 +24,15 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
 
     public AbilityFireBreathing() {
         super(Abilities.fireBreathing);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = getTranslationKey();
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("fbcost", true, TrinketsConfig.SERVER.races.dragon.breath_cost);
+        final TranslationHelper.KeyEntry keybind1 = new TranslationHelper.KeyBindEntry("breathkb", ModKeyBindings.RACE_ABILITY.getDisplayName());
+        return helper.formatAddVariables(key, renderID, key1, keybind1);
     }
 
     protected boolean DragonBreath(Entity entity) {

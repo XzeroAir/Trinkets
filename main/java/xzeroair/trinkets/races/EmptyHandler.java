@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
@@ -19,6 +20,11 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
     public EmptyHandler(EntityLivingBase e, EntityRace race) {
         super(e, race);
+        setMaxTraitVariant(0);
+    }
+
+    public EmptyHandler(EntityLivingBase e, EntityRace race, Element element) {
+        super(e, race, element);
         setMaxTraitVariant(0);
     }
 

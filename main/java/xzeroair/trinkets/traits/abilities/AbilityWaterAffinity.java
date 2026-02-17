@@ -19,12 +19,15 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IMiningAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigSeaStone;
 import xzeroair.trinkets.util.config.trinkets.ConfigSeaStone;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilityWaterAffinity extends Ability implements ITickableAbility, IMiningAbility {
 
@@ -33,6 +36,27 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
 
     public AbilityWaterAffinity() {
         super(Abilities.waterAffinity);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = getTranslationKey();
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.LangEntry(langKey, "bubbles", serverConfig.underwater_breathing);
+        final TranslationHelper.KeyEntry key2 = new TranslationHelper.OptionEntry("bubbles", true, serverConfig.underwater_breathing ? 10 + "" : 1 + "");
+        final TranslationHelper.KeyEntry key3 = new TranslationHelper.LangEntry(langKey, "betterswimming", serverConfig.Swim_Tweaks);
+        return helper.formatAddVariables(key, renderID, key1, key2, key3);
+
+//        final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS;
+//        final String EV = !evEnabled ? "" : helper.getLangTranslation(langKey + ".compat.enhancedvisuals", (lang) -> {
+//            return helper.formatAddVariables(lang);
+//        });
+//        if (!helper.isStringEmpty(EV)) {
+//            tooltips.add(EV);
+//            if (id == 0 || id == 2 || GuiScreen.isCtrlKeyDown()) {
+//                tooltips.add(helper.gold + "(Enhanced Visuals)");
+//            }
+//        }
     }
 
     @Override

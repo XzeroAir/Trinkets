@@ -5,6 +5,9 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
@@ -14,13 +17,25 @@ import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
+import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilityFireImmunity extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility {
 
+    public static ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
     protected int amplifier = 0;
 
     public AbilityFireImmunity() {
         super(Abilities.fireImmunity);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = getTranslationKey();
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("potion", new TextComponentTranslation("effect.fireResistance").getFormattedText());
+        final TranslationHelper.KeyEntry key2 = new TranslationHelper.OptionEntry("smouldering", Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.lycanites, new TextComponentTranslation("effect.smouldering").getFormattedText());
+        return helper.formatAddVariables(key, renderID, key1, key2);
     }
 
     public int getAmplifier() {
@@ -82,10 +97,12 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
      */
     @Override
     public boolean potionApplied(EntityLivingBase entity, PotionEffect effect, boolean cancel) {
-        final String e = effect.getPotion().getRegistryName().toString();
-        final Potion smouldering = LycanitesCompat.getPotionEffectByName("smouldering");
-        if ((smouldering != null) && e.contentEquals(smouldering.getRegistryName().toString())) {
-            return true;
+        if (Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.lycanites) {
+            final String e = effect.getPotion().getRegistryName().toString();
+            final Potion smouldering = LycanitesCompat.getPotionEffectByName("smouldering");
+            if ((smouldering != null) && e.contentEquals(smouldering.getRegistryName().toString())) {
+                return true;
+            }
         }
         return cancel;
     }

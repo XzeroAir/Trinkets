@@ -21,6 +21,7 @@ import xzeroair.trinkets.races.goblin.RaceGoblinAttributes;
 import xzeroair.trinkets.races.human.RaceHuman;
 import xzeroair.trinkets.races.titan.RaceTitan;
 import xzeroair.trinkets.races.titan.RaceTitanAttributes;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.traits.elements.IElementProvider;
 import xzeroair.trinkets.util.TrinketsConfig;
 
@@ -77,7 +78,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
     }
 
     /**
-     * Tries to get an race by it's name (e.g. human) or a String representation of
+     * Tries to get a race by its name (e.g. human) or a String representation of
      * a numerical ID. If both fail, null is returned.
      */
     @Nullable
@@ -175,6 +176,32 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
         }
     }
 
+    public EntityRacePropertiesHandler getRaceHandler(EntityLivingBase e, Element element) {
+        if (element == null) {
+            return getRaceHandler(e);
+        }
+        switch (name) {
+            case "Fairy":
+                return new RaceFairy(e, element);
+            case "Dwarf":
+                return new RaceDwarf(e, element);
+            case "Titan":
+                return new RaceTitan(e, element);
+            case "Goblin":
+                return new RaceGoblin(e, element);
+            case "Elf":
+                return new RaceElf(e, element);
+            case "Faelis":
+                return new RaceFaelis(e, element);
+            case "Dragon":
+                return new RaceDragon(e, element);
+            case "Human":
+                return new RaceHuman(e, element);
+            default:
+                return new EmptyHandler(e);
+        }
+    }
+
     public RaceAttributesWrapper getRaceAttributes() {
         switch (name) {
             case "Fairy":
@@ -199,7 +226,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
     }
 
     public boolean isNone() {
-        return name.contentEquals("None");
+        return name.compareTo("None") == 0;
     }
 
     /*------------------------------------------Register Races--------------------------------------------*/

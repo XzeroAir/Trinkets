@@ -2,17 +2,17 @@ package xzeroair.trinkets.util.helpers;
 
 public class ColorHelper {
 
-    public static String getHexColorFromRGB(int r, int g, int b) {
+    public static String getHexFromRGB(int r, int g, int b) {
         final int decimal = getDecimalFromRGB(r, g, b);
         final String hex = convertDecimalColorToHexadecimal(decimal);
         return hex;
     }
 
-    public static String getHexColorFromRGB(float r, float g, float b) {
+    public static String getHexFromRGB(float r, float g, float b) {
         final int rR = (int) (r * 255);
         final int rG = (int) (g * 255);
         final int rB = (int) (b * 255);
-        return getHexColorFromRGB(rR, rG, rB);
+        return getHexFromRGB(rR, rG, rB);
     }
 
     public static int getDecimalFromRGB(int r, int g, int b) {
@@ -34,17 +34,17 @@ public class ColorHelper {
         return getDecimalFromRGB(rR, rG, rB);
     }
 
-//    /**
-//     * Experimental
-//     */
-//    @Deprecated
-//    public static int getDecimalFromRGBA(float r, float g, float b, float a) {
-//        final int rR = (int) (r * 255);
-//        final int rG = (int) (g * 255);
-//        final int rB = (int) (b * 255);
-//        final int rA = (int) (a * 255);
-//        return getDecimalFromRGBA(rR, rG, rB, rA);
-//    }
+    /**
+     * Experimental
+     */
+    @Deprecated
+    public static int getDecimalFromRGBA(float r, float g, float b, float a) {
+        final int rR = (int) (r * 255);
+        final int rG = (int) (g * 255);
+        final int rB = (int) (b * 255);
+        final int rA = (int) (a * 255);
+        return getDecimalFromRGBA(rR, rG, rB, rA);
+    }
 
     public static float[] getRGBColor(String hex) {
         return getRGBColor(getColorFromString(hex));
@@ -74,7 +74,7 @@ public class ColorHelper {
         return hex;
     }
 
-    public static int convertHexadecimalToDecimal(String color) {
+    public static int convertHexToDecimal(String color) {
         try {
             color = color.toLowerCase().replaceAll("[^#0-9a-f]", "");
             String hexColor;// = color.toLowerCase().replaceAll("[^#0-9a-f]", "");
@@ -99,7 +99,7 @@ public class ColorHelper {
             if (!color.isEmpty()) {
                 final boolean CheckforHash = color.startsWith("#");
                 if (CheckforHash) {
-                    return convertHexadecimalToDecimal(color);
+                    return convertHexToDecimal(color);
                 } else {
                     color = color.toLowerCase().replaceAll("[^0-9]", "");
                     if (!color.isEmpty()) {
@@ -134,7 +134,7 @@ public class ColorHelper {
         public ColorObject(String hexadecimal) {
             final float[] rgb = getRGBColor(hexadecimal);
             this.hexadecimal = hexadecimal;
-            decimal = convertHexadecimalToDecimal(hexadecimal);
+            decimal = convertHexToDecimal(hexadecimal);
             r = rgb[0];
             g = rgb[1];
             b = rgb[2];

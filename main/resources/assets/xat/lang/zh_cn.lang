@@ -5,10 +5,6 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= 这些信息是示例文本,它们不会在游戏中显示。
 xat.exampletext.1= 物品提示最多 10 条
 xat.exampletext.2= item.item.glow_ring.0.tooltip1，item.glow_ring.0.tooltip2，等。
-xat.exampletext.3= 每个物品可以有 3 条联动其他 mod 的文本，比如
-xat.exampletext.4= item.item.glow_ring.0.compat.tan= 与 Tough as Nails 联动
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= 与 First Aid 联动
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= 与 EnhancedVisuals 联动
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<按住 Shift>
@@ -51,7 +47,9 @@ gui.xat.button.close=关闭
 
 attribute.name.xat.entityRace=魔法种族
 
+#################################### Entities ####################################
 entity.AlphaWolf.name=狼王
+#################################### Abilities ####################################
 
 ability.block_detection.name=§a贪婪之眼
 ability.block_detection.tooltip1=给与使用者发现附近宝藏的能力
@@ -173,19 +171,6 @@ item.glowing_ingot.tooltip1=§e2级制造材料
 item.glowing_gem.name=§6闪耀宝石
 item.glowing_gem.tooltip1=§63级制造材料
 
-item.mana_candy.name=§b魔法糖果
-
-item.mana_crystal.name=§6魔法水晶
-item.mana_crystal.tooltip1=§6+§b$mpmax:§6魔力值上限
-
-item.mana_reagent.name=§6魔法试剂
-item.mana_reagent.tooltip1=§c使用时有害
-item.mana_reagent.tooltip2=§c-§b$mpmax:§c 魔力值上限
-
-item.restoration_serum.name=§6恢复血清
-item.restoration_serum.tooltip1=逆转永久的种族变形效果
-item.restoration_serum.tooltip2=§c使用时有害
-
 ####################################Materials End####################################
 
 ####################################Trinkets####################################
@@ -234,6 +219,9 @@ item.titan_ring.0.tooltip4=§c践踏植物
 item.titan_ring.0.heavy=§c在水中下沉
 
 item.dragon_ring.0.name=§6巨龙之戒
+item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
+item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
+item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
 #item.dragon_ring.0.tooltip1=§6$rsize:标准体型
 #item.dragon_ring.0.tooltip2=§6按住§r<§e*breathkb:§r>§6喷出火焰
 #item.dragon_ring.0.tooltip3=§6获得防火
@@ -351,40 +339,75 @@ item.faelis_claw.0.tooltip3=§c不由猫灵触发时持续时间减少到1/3
 
 ####################################Food####################################
 
-item.dwarf_stout.name=矮人烈酒
-item.dwarf_stout.tooltip1=§b我也许能通过饮用某种药水
-item.dwarf_stout.tooltip2=§b来移除这种效果
-item.dwarf_stout.tooltip3=<§9饮用恢复血清以恢复§r>
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
 
-item.fairy_dew.name=仙露
-item.fairy_dew.tooltip1=§b我也许能通过饮用某种药水
-item.fairy_dew.tooltip2=§b来移除这种效果
-item.fairy_dew.tooltip3=<§9饮用恢复血清以恢复§r>
+item.mana_candy.food.name=§b魔法糖果
+item.mana_candy.food.tooltip1=§6Restores some Mana
 
-item.titan_spirit.name=巨人之灵
-item.titan_spirit.tooltip1=§b我也许能通过饮用某种药水
-item.titan_spirit.tooltip2=§b来移除这种效果
-item.titan_spirit.tooltip3=<§9饮用恢复血清以恢复§r>
+item.mana_crystal.food.name=§6魔法水晶
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6魔力值上限
 
-item.elf_sap.name=精灵之息
-item.elf_sap.tooltip1=§b我也许能通过饮用某种药水
-item.elf_sap.tooltip2=§b来移除这种效果
-item.elf_sap.tooltip3=<§9饮用恢复血清以恢复§r>
+item.mana_reagent.food.name=§6魔法试剂
+item.mana_reagent.food.tooltip1=§c使用时有害
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c 魔力值上限
 
-item.goblin_soup.name=地精之汤
-item.goblin_soup.tooltip1=§b我也许能通过饮用某种药水
-item.goblin_soup.tooltip2=§b来移除这种效果
-item.goblin_soup.tooltip3=<§9饮用恢复血清以恢复§r>
+item.restoration_serum.food.name=§6恢复血清
+item.restoration_serum.food.tooltip1=逆转永久的种族变形效果
+item.restoration_serum.food.tooltip2=§c使用时有害
 
-item.faelis_food.name=猫薄荷
-item.faelis_food.tooltip1=§b我也许能通过饮用某种药水
-item.faelis_food.tooltip2=§b来移除这种效果
-item.faelis_food.tooltip3=<§9饮用恢复血清以恢复§r>
+xat.transformation.food.tooltip1=§b我也许能通过饮用某种药水
+xat.transformation.food.tooltip2=§b来移除这种效果
+xat.transformation.food.tooltip3=<§9饮用恢复血清以恢复§r>
 
-item.dragon_gem.name=巨龙宝石
-item.dragon_gem.tooltip1=§b我也许能通过饮用某种药水
-item.dragon_gem.tooltip2=§b来移除这种效果
-item.dragon_gem.tooltip3=<§9饮用恢复血清以恢复§r>
+item.dwarf_stout.food.name=矮人烈酒
+item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
+#item.dwarf_stout.tooltip1=§b我也许能通过饮用某种药水
+#item.dwarf_stout.tooltip2=§b来移除这种效果
+#item.dwarf_stout.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.fairy_dew.food.name=仙露
+item.fairy_dew.food.tooltip1=§6Transform into a Fairy
+#item.fairy_dew.tooltip1=§b我也许能通过饮用某种药水
+#item.fairy_dew.tooltip2=§b来移除这种效果
+#item.fairy_dew.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.titan_spirit.food.name=巨人之灵
+item.titan_spirit.food.tooltip1=§6Transform into a Titan
+#item.titan_spirit.tooltip1=§b我也许能通过饮用某种药水
+#item.titan_spirit.tooltip2=§b来移除这种效果
+#item.titan_spirit.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.elf_sap.food.name=精灵之息
+item.elf_sap.food.tooltip1=§6Transform into a Elf
+#item.elf_sap.tooltip1=§b我也许能通过饮用某种药水
+#item.elf_sap.tooltip2=§b来移除这种效果
+#item.elf_sap.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.goblin_soup.food.name=地精之汤
+item.goblin_soup.food.tooltip1=§6Transform into a Goblin
+#item.goblin_soup.tooltip1=§b我也许能通过饮用某种药水
+#item.goblin_soup.tooltip2=§b来移除这种效果
+#item.goblin_soup.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.faelis_food.food.name=猫薄荷
+item.faelis_food.food.tooltip1=§6Transform into a Faelis
+#item.faelis_food.tooltip1=§b我也许能通过饮用某种药水
+#item.faelis_food.tooltip2=§b来移除这种效果
+#item.faelis_food.tooltip3=<§9饮用恢复血清以恢复§r>
+
+item.dragon_gem.food.name=巨龙宝石
+item.dragon_gem.food.tooltip1=Transform into a Dragon.
+item.dragon_gem.food.fire.name=Fire Dragon Gem
+item.dragon_gem.food.fire.tooltip1=Transform into a Fire Dragon.
+item.dragon_gem.food.ice.name=Ice Dragon Gem
+item.dragon_gem.food.ice.tooltip1=Transform into a Ice Dragon.
+item.dragon_gem.food.lightning.name=Lightning Dragon Gem
+item.dragon_gem.food.lightning.tooltip1=Transform into a Lightning Dragon.
+#item.dragon_gem.tooltip1=§b我也许能通过饮用某种药水
+#item.dragon_gem.tooltip2=§b来移除这种效果
+#item.dragon_gem.tooltip3=<§9饮用恢复血清以恢复§r>
 
 ####################################Food End####################################
 

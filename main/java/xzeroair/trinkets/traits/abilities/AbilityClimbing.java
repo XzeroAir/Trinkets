@@ -12,6 +12,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.network.AbilityCacheSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
@@ -19,6 +21,7 @@ import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.ConfigObject;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,6 +41,12 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         sync = true;
         useWhitelist = false;
         initClimbBlocks();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
     }
 
     @Override

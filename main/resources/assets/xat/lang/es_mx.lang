@@ -5,10 +5,6 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= Estos son textos informativos, no se muestran en el juego.
 xat.exampletext.1= Las descripciones de los items llegan hasta 10 lineas
 xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= Cada item tiene 3 textos de compatibilidad, por ejemplo:
-xat.exampletext.4= item.item.glow_ring.0.compat.tan= Para Tough as Nails
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= Para First Aid
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= Para EnhancedVisuals
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Presiona Shift>
@@ -49,108 +45,202 @@ key.xat.race_ability.desc=Habilidad de raza
 gui.xat.button.open=Abrir
 gui.xat.button.close=Cerrar
 
-attribute.name.xat.entityRace=Raza encantada
-
+#################################### Entities ####################################
 entity.AlphaWolf.name=Lobo rey
+#################################### Abilities ####################################
+ability.creative_flight.name=§6Vuelo
+ability.creative_flight.tooltip1=Da vuelo creativo
+ability.creative_flight.tooltip2=Brinca dos veces para comenzar a volar, brinca dos veces de nuevo para dejar de volar
+ability.creative_flight.tooltip3=Te vuelve inmune al daño por caidas
 
 ability.block_detection.name=§aOjo avaro
 ability.block_detection.tooltip1=Da al usuario la habilidad de encontrar tesoros cercanos
 ability.block_detection.tooltip2=Presiona *deofkb: = Objetivo siguiente
 ability.block_detection.tooltip3=Presiona *auxkb:+*deofkb: = Objetivo anterior
+ability.block_detection.tooltip4=$gui:Press *auxkb:+*deofkb: = Previous Target
+ability.block_detection.treasurefinder=§6Current Target: §3§n$target:§r <§e*deofkb:§r>
+ability.block_detection.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
+ability.block_detection.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
+ability.block_detection.treasurefinder.off=I think my Treasury is sufficiently full $looking:
+
 ability.night_vision.name=§eVision nocturna
 ability.night_vision.tooltip1=§2Da Vision nocturna
 ability.night_vision.tooltip2=Presiona *denvkb: para alternar la Vision nocturna
-ability.creative_flight.name=§6Vuelo
-ability.creative_flight.tooltip1=Da vuelo creativo
-ability.creative_flight.tooltip2=Brinca dos veces para comenzar a volar, brinca dos veces de nuevo para dejar de volar
-ability.creative_flight.tooltip3=Te vuelve inmune al daño por caidas
+
+ability.fire_breath.name=§cAliento de fuego
+ability.fire_breath.tooltip1=Da Aliento de fuego
+ability.fire_breath.tooltip2=Presiona *breathkb: para escupir fuego, con un costo de $fbCost: MP
+ability.ice_breath.name=§Ice Breath
+ability.ice_breath.tooltip1=$gui:§6Grants Ice Breath
+ability.ice_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Ice §3$fbcost: MP
+#ability.lightning_breath.name=§cLightning Breath
+#ability.lightning_breath.tooltip1=Grants Lightning Breath
+#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+
 ability.fire_immunity.name=§cInmunidad al fuego
 ability.fire_immunity.tooltip1=§6Inmune a Fuego y Lava
 ability.fire_immunity.tooltip2=§6No puedes incendiarte
 ability.fire_immunity.tooltip3=§6No recibes daño por ataques de fuego
-ability.fire_breathing.name=§cAliento de fuego
-ability.fire_breathing.tooltip1=Da Aliento de fuego
-ability.fire_breathing.tooltip2=Presiona *firebreath: para escupir fuego, con un costo de $fbCost: MP
+ability.fire_immunity.tooltip4=$gui:Cannot be Harmed by most Fire based attacks
+ability.fire_immunity.tooltip5=$gui:§6Immune to §c$smouldering:
+ability.heat_immunity.name=§cInmunidad al calor
+ability.heat_immunity.tooltip1=§6Inmunidad al calor y fuentes igneas
+
+ability.ice_immunity.name=Ice Immunity
+ability.ice_immunity.tooltip1=§2Grants §b$potion:
+ability.ice_immunity.tooltip2=$gui:§6Cannot be Harmed by most Ice based attacks
+ability.cold_immunity.name=§bInmunidad al frio
+ability.cold_immunity.tooltip1=§6Inmunidad al frio y a fuentes gelidas
+ability.frost_walker.name=Frost Walker
+ability.frost_walker.tooltip1=§6Grants §bFrost Walker
+
+ability.lightning_immunity.name=Lightning Immunity
+ability.lightning_immunity.tooltip1=§2Grants §d$potion1:
+ability.lightning_immunity.tooltip2=@paralysis:
+ability.lightning_immunity.paralysis=§6Immunity to §dparalysis
+ability.lightning_immunity.compat.lycanites=$gui:Removes $potion2:
+
+ability.lightning_bolt.name=§3Afinidad electrica
+ability.lightning_bolt.tooltip1=Puedes disparar rayos al costo de MP
+ability.lightning_bolt.tooltip2=§6Hold §r<§e*arckb:§r>§6 to cast a bolt attack §3$boltcost: MP
+ability.lightning_bolt.tooltip3=§3$boltdamage:§6 damage based on MP spent
+
+ability.dodging.name=Esquivar
+ability.dodging.tooltip1=Puedes esquivar presionando dos veces el boton correspondiente, aturdiendo enemigos cercanos
+ability.dodging.tooltip2=Si Elenai Dodge esta instalado, se usara ese esquivado
+ability.dodging.dodge=§2Grants double tap dodge
+ability.dodging.dodge.stun=§6Stun nearby enemies on dodge §3$dodgecost: MP
+
 ability.block_climbing.name=Escalar
 ability.block_climbing.tooltip1=Puedes escalar algunos bloques
+
 ability.wither_immunity.name=Inmunidad a Wither
 ability.wither_immunity.tooltip1=Inmunidad a Descomposicion
 ability.wither_immunity.tooltip2=Tus ataques tienen una prob. de 1 en $witherchance: de aplicar Descomposicion al enemigo
 ability.wither_immunity.tooltip3=Si atacas a enemigos con Descomposicion, tus ataques te curaran
-ability.weightless.name=§dSin peso
-ability.weightless.tooltip1=Te vuelves sin peso
-ability.weightless.tooltip2=Ataca para elevarte, agachate y ataca para descender
-ability.well_rested.name=§bBien descansado
-ability.well_rested.tooltip1=Da varios efectos positivos cuando duermes
-ability.well_rested.tooltip2=@LycanitesFear:
-ability.well_rested.tooltip3=@LycanitesInsomnia:
+
 ability.poison_affinity.name=§2Afinidad a Veneno
 ability.poison_affinity.tooltip1=Inmunidad a Veneno
 ability.poison_affinity.tooltip2=Tus ataques tienen una prob. de 1 en $poisonchance: de aplicar Veneno al enemigo
 ability.poison_affinity.tooltip3=Si atacas a enemigos con Veneno, aplicaras daño adicional: $poisonbonus:
+ability.poison_affinity.tooltip4=§6If Attacking a Poisoned Enemy does $bonus: damage.
+
 ability.water_affinity.name=§9Afinidad acuatica
 ability.water_affinity.tooltip1=@SurvivalThirst:
 ability.water_affinity.tooltip2=Aumenta tu velocidad de nado
-ability.fall_resistance.name=Resistencia a caidas
-ability.fall_resistance.tooltip1=Resistencia a caidas: $fallResist:
-ability.nullify_kinetic.name=Nulificacion cinetica
-ability.nullify_kinetic.tooltip1=Da inmunidad al daño por caida y a la energia cinetica
-ability.cold_immunity.name=§bInmunidad al frio
-ability.cold_immunity.tooltip1=§6Inmunidad al frio y a fuentes gelidas
-ability.heat_immunity.name=§cInmunidad al calor
-ability.heat_immunity.tooltip1=§6Inmunidad al calor y fuentes igneas
+ability.water_affinity.bubbles=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
+ability.water_affinity.betterswimming=§2Grants enhanced swimming
+ability.water_affinity.compat.enhancedvisuals=Disables blurred vision when entering the water
 ability.thirst_immunity.name=Inmunidad al agua contaminada
 ability.thirst_immunity.tooltip1=Inmunidad al efecto Sediento
+ability.thirst_immunity.tooltip2=$gui:Immunity to Thirst Poison Effect
 ability.parasites_immunity.name=Inmunidad al agua contaminada
 ability.parasites_immunity.tooltip1=Inmunidad al efecto Lombrices por beber agua contaminada
+ability.parasites_immunity.tooltip2=$gui:Immune to the Parasites Effect from drinking dirty water
+
+ability.reduce_kinetic.name=Resistencia a caidas
+ability.reduce_kinetic.tooltip1=Resistencia a caidas: $fallResist:
+ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
+ability.nullify_kinetic.name=Nulificacion cinetica
+ability.nullify_kinetic.tooltip1=Da inmunidad al daño por caida y a la energia cinetica
+ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
+
 ability.ender_queen.name=§5Realeza de ender
 ability.ender_queen.tooltip1=Los Enderman te defenderan
 ability.ender_queen.tooltip2=Si recibes daño indirecto, te teletransportaras al costo de MP
 ability.ender_queen.tooltip3=el agua te hace daño
 ability.ender_queen.tooltip4=probabilidad de ignorar daño e invocar un Enderman
+ability.ender_queen.tooltip5=§3$tpchance: §5to Teleport if attacked by indirect damage §3$tpcost: MP
+ability.ender_queen.tooltip6=@waterhurts:
+ability.ender_queen.damageignored=§3$chance: §6Chance to ignore damage
+ability.ender_queen.endermenchance=§3$chance: §6Chance to spawn an Enderman
+ability.ender_queen.endermenfollow=and follow you
+ability.ender_queen.waterhurts=§cWeakness to water
+ability.ender_queen.compat.enhancedvisuals=Disabled endermen static effect
+
 ability.vicious_strike.name=§4Golpe cruel
 ability.vicious_strike.tooltip1=Tus golpes aplicaran Sangrado al enemigo
+ability.vicious_strike.tooltip2=§aBleed deals 1 damage every second for §3$duration:§a seconds
+ability.vicious_strike.tooltip3=§cDuration reduced to §3$reduceddur: §cseconds when used by Non-Faelis
+
 ability.magnetic.name=Magnetico
+ability.magnetic.tooltip1=@collect:
+ability.magnetic.tooltip2=§r<§e*magnetkb:§r or §eRight-Click§r>
+ability.magnetic.collect=§6Pulls nearby items @collectxp:
+ability.magnetic.collectxp=and XP Orbs $collecttoggle:
+ability.magnetic.magnetmode=Collection mode $collecttoggle:
 ability.repel.name=Fuerza repelente
+ability.repel.tooltip1=@repel:
+ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r or §eSneak§r + §eRight-Click§r>
+ability.repel.repel=§6Repels arrows $repeltoggle:
+ability.repel.repelmode=Repel mode $repeltoggle:
+
 ability.skilled_miner.name=Minero habil
 ability.skilled_miner.tooltip1=Recibes mas EXP cuando minas
 ability.skilled_miner.tooltip2=La Vel. de minado se aplica a la Dureza de bloque * 4
 ability.psudo_fortune.name=§6Pseudo Fortuna
 ability.psudo_fortune.tooltip1=Tienes Fortuna sin necesidad del encantamiento
+
 ability.charged_shot.name=Arquero habil
 ability.charged_shot.tooltip1=Usas mana para darle poder a tus flechas
 ability.charged_shot.tooltip2=Agachate antes de abrir tu arco para activarlo
 ability.charged_shot.tooltip3=se cancelara si dejas de agacharte
 ability.charged_shot.tooltip4=Provoca una pequeña explosion al impactar con una carga completa, haciendo un daño de area
-ability.lightning_bolt.name=§3Afinidad electrica
-ability.lightning_bolt.tooltip1=Puedes disparar rayos al costo de MP
-ability.dodging.name=Esquivar
-ability.dodging.tooltip1=Puedes esquivar presionando dos veces el boton correspondiente, aturdiendo enemigos cercanos
-ability.dodging.tooltip2=Si Elenai Dodge esta instalado, se usara ese esquivado
+ability.charged_shot.tooltip5=$gui:Causes a small explosion on impact with a full charge dealing aoe damage
+
 ability.large_hands.name=Manos grandes
 ability.large_hands.tooltip1=puedes minar en un radio de 3x3x3
 ability.large_hands.tooltip2=Agachate mientras minas para deshabilitarlo
 ability.heavy.name=§cPesado
 ability.heavy.tooltip1=§cTe hundes en el agua
 ability.heavy.tooltip2=§cRompes plantas y cultivos al caminar por ellos
+
+ability.weightless.name=§dSin peso
+ability.weightless.tooltip1=Te vuelves sin peso
+ability.weightless.tooltip2=Ataca para elevarte, agachate y ataca para descender
+#ability.weightless.tooltip4=§aGrants Levitation while held
+
 ability.safe_guard.name=§6Guardia segura
 ability.safe_guard.tooltip1=Da el efecto Resistencia
-ability.safe_guard.tooltip2=Puede ignorar daño cada $sohcount: golpes
+ability.safe_guard.tooltip2=Puede ignorar daño cada $hitcount: golpes
+ability.safe_guard.tooltip3=§6Can Ignore Damage every §3$cfghitcount: §6Hits
+ability.safe_guard.tooltip4=@damageignored:
+ability.safe_guard.damageignored=§6Hits Taken: §3$hitcount:/$cfghitcount:
+ability.safe_guard.explosionresist=§3$explosionresistamount: §6Explosion damage resistance
+ability.safe_guard.compat.enhancedvisuals=Disables explosion blur
 
-ability.frost_walker.name=Frost Walker
-ability.ice_immunity.name=Ice Immunity
+ability.well_rested.name=§bBien descansado
+ability.well_rested.tooltip1=Da varios efectos positivos cuando duermes
+ability.well_rested.tooltip2=@LycanitesFear:
+ability.well_rested.tooltip3=@LycanitesInsomnia:
 
 ability.firstaid_reflex.name=Reflejos rapidos
 ability.firstaid_reflex.tooltip1=Probabilidad de ignorar tiros a la cabeza fatales
 
-xat.element.neutral.name=Neutral
-xat.element.fire.name=Fire
-xat.element.ice.name=Ice
-xat.element.lightning.name=Lightning
+#################################### Elements ####################################
+
+xat.element.neutral.name=§fNeutral
+xat.element.air.name=§3Air
+xat.element.dark.name=§8Dark
+xat.element.earth.name=§2Earth
+xat.element.fire.name=§cFire
+xat.element.ice.name=§bIce
+xat.element.light.name=§eLight
+xat.element.lightning.name=§dLightning
+xat.element.poison.name=§2Poison
+xat.element.void.name=§5Void
+xat.element.water.name=§9Water
+
+#################################### Races ####################################
+
+
+
+#################################### Damage Types ####################################
 
 damagetype.xat.water=agua
 death.attack.xat.water=%1$s murio %2$s mientras llevaba puesta la Corona de Reina ender
 
+#################################### Attributes ####################################
 xat.jump=Salto
 xat.stepheight=Altura de paso
 xat.entityMagic.maxMana=Mana max.
@@ -161,7 +251,7 @@ attribute.name.xat.stepheight=Altura de paso
 attribute.name.xat.entityMagic.maxMana=Mana max.
 attribute.name.xat.entityMagic.regen=Regen. MP
 attribute.name.xat.flyspeed=Fly Speed
-
+attribute.name.xat.entityRace=Raza encantada
 ####################################Materials####################################
 
 item.glowing_powder.name=Polvo brillante
@@ -173,71 +263,12 @@ item.glowing_ingot.tooltip1=§eComponente de crafteos Clase 2
 item.glowing_gem.name=§6Gema brillante
 item.glowing_gem.tooltip1=§6Componente de crafteos Clase 3
 
-item.mana_candy.name=§bDulce de mana
-
-item.mana_crystal.name=§6Cristal de mana
-item.mana_crystal.tooltip1=§6Mana max:§b +$mpmax:
-
-item.mana_reagent.name=§6Reactivo de mana
-item.mana_reagent.tooltip1=§cDañino al consumirlo
-item.mana_reagent.tooltip2=§cMana max:§b -$mpmax:
-
-item.restoration_serum.name=§6Suero de restauracion
-item.restoration_serum.tooltip1=Revierte los efectos de transformacion permanentes
-item.restoration_serum.tooltip2=§cDañino al consumirlo
-
 ####################################Materials End####################################
 
 ####################################Trinkets####################################
 
 item.glow_ring.0.name=§6Anillo de ojos encantados
 item.glow_ring.0.tooltip1=§2Da Vision nocturna
-
-item.dwarf_ring.0.name=§6Anillo de los Enanos
-item.dwarf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.dwarf_ring.0.tooltip2=@fortune:
-item.dwarf_ring.0.tooltip3=@skilledminer:
-item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=§6Pseudo-fortuna
-item.dwarf_ring.0.skilledminer=§2Minero habil
-item.dwarf_ring.0.staticminer=§2Vel. estatica de minado
-
-item.elf_ring.0.name=§6Anillo de los Elfos
-item.elf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=§6Ganas Vel. de movimiento y de ataque en los bosques
-item.elf_ring.0.chargeshot=§6Agacharte mientras abres tu arco activa el Disparo de Poder
-
-item.fairy_ring.0.name=§6Anillo de las Hadas
-item.fairy_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=§6Da Vuelo creativo
-
-item.faelis_ring.0.name=§6Anillo de los Felinos
-item.faelis_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.faelis_ring.0.tooltip2=§aDaño aumentado de puñetazos
-item.faelis_ring.0.tooltip3=§aEfectos positivos al beber leche
-item.faelis_ring.0.tooltip4=§cVelocidad reducida al usar armaduras pesadas
-
-item.goblin_ring.0.name=§6Anillo de los Goblins
-item.goblin_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.goblin_ring.0.tooltip2=§6Puedes montar lobos domesticados
-item.goblin_ring.0.tooltip3=§6Da Fuerza y Regeneracion al montar un lobo
-item.goblin_ring.0.tooltip4=§aResis. menor a explosiones y fuego
-item.goblin_ring.0.tooltip5=§aLos Creepers te ignoraran
-
-item.titan_ring.0.name=§6Anillo de los Titanes
-item.titan_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.titan_ring.0.tooltip2=§6Minas en un area de 3x3x3
-item.titan_ring.0.tooltip3=§c@heavy:
-item.titan_ring.0.tooltip4=§cRompes plantas al caminar
-item.titan_ring.0.heavy=§cTe hundes en el agua
-
-item.dragon_ring.0.name=§6Anillo de los Dragones
-#item.dragon_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-#item.dragon_ring.0.tooltip2=§6Presiona §r<§e*breathkb:§r>§6 para escupir fuego
-#item.dragon_ring.0.tooltip3=§6Da Resistencia al fuego
-#item.dragon_ring.0.tooltip4=§2Da Vision nocturna §r<§e*denvkb:§r>
 
 item.teddy_bear.0.name=Osito de peluche
 item.teddy_bear.0.tooltip1=§6Si lo sostienes al dormir, te dara efectos positivos
@@ -348,44 +379,130 @@ item.faelis_claw.0.tooltip1=§6Atacar enemigos los hace sangrar
 item.faelis_claw.0.tooltip2=§aSangrado inflige 1 de daño cada 20 ticks por $clawbleed: ticks
 item.faelis_claw.0.tooltip3=§cLa duracion se reduce a 1/3 cuando es usado por un no-felino
 
+#################################### Trinkets Transformations ####################################
+
+item.dwarf_ring.0.name=§6Anillo de los Enanos
+item.dwarf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.dwarf_ring.0.tooltip2=@fortune:
+item.dwarf_ring.0.tooltip3=@skilledminer:
+item.dwarf_ring.0.tooltip4=@staticminer:
+item.dwarf_ring.0.fortune=§6Pseudo-fortuna
+item.dwarf_ring.0.skilledminer=§2Minero habil
+item.dwarf_ring.0.staticminer=§2Vel. estatica de minado
+
+item.elf_ring.0.name=§6Anillo de los Elfos
+item.elf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.elf_ring.0.tooltip2=@chargeshot:
+item.elf_ring.0.tooltip3=§6Ganas Vel. de movimiento y de ataque en los bosques
+item.elf_ring.0.chargeshot=§6Agacharte mientras abres tu arco activa el Disparo de Poder
+
+item.fairy_ring.0.name=§6Anillo de las Hadas
+item.fairy_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.fairy_ring.0.tooltip2=@creativeflight:
+item.fairy_ring.0.creativeflight=§6Da Vuelo creativo
+
+item.faelis_ring.0.name=§6Anillo de los Felinos
+item.faelis_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.faelis_ring.0.tooltip2=§aDaño aumentado de puñetazos
+item.faelis_ring.0.tooltip3=§aEfectos positivos al beber leche
+item.faelis_ring.0.tooltip4=§cVelocidad reducida al usar armaduras pesadas
+
+item.goblin_ring.0.name=§6Anillo de los Goblins
+item.goblin_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.goblin_ring.0.tooltip2=§6Puedes montar lobos domesticados
+item.goblin_ring.0.tooltip3=§6Da Fuerza y Regeneracion al montar un lobo
+item.goblin_ring.0.tooltip4=§aResis. menor a explosiones y fuego
+item.goblin_ring.0.tooltip5=§aLos Creepers te ignoraran
+
+item.titan_ring.0.name=§6Anillo de los Titanes
+item.titan_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+item.titan_ring.0.tooltip2=§6Minas en un area de 3x3x3
+item.titan_ring.0.tooltip3=§c@heavy:
+item.titan_ring.0.tooltip4=§cRompes plantas al caminar
+item.titan_ring.0.heavy=§cTe hundes en el agua
+
+item.dragon_ring.0.name=§6Anillo de los Dragones
+item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
+item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
+item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
+item.dragon_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
+#item.dragon_ring.0.tooltip2=§6Presiona §r<§e*breathkb:§r>§6 para escupir fuego
+#item.dragon_ring.0.tooltip3=§6Da Resistencia al fuego
+#item.dragon_ring.0.tooltip4=§2Da Vision nocturna §r<§e*denvkb:§r>
+
 ####################################Trinkets End####################################
 
 ####################################Food####################################
 
-item.dwarf_stout.name=Stout de Enano
-item.dwarf_stout.tooltip1=§bTal vez pueda remover sus efectos
-item.dwarf_stout.tooltip2=§bbebiendo algun tipo de pocion
-item.dwarf_stout.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
 
-item.fairy_dew.name=Rocio de Hada
-item.fairy_dew.tooltip1=§bTal vez pueda remover sus efectos
-item.fairy_dew.tooltip2=§bbebiendo algun tipo de pocion
-item.fairy_dew.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+item.mana_candy.food.name=§bDulce de mana
+item.mana_candy.food.tooltip1=§6Restores some Mana
 
-item.titan_spirit.name=Espiritu de Titan
-item.titan_spirit.tooltip1=§bTal vez pueda remover sus efectos
-item.titan_spirit.tooltip2=§bbebiendo algun tipo de pocion
-item.titan_spirit.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+item.mana_crystal.food.name=§6Cristal de mana
+item.mana_crystal.food.tooltip1=§6Mana max:§b +$mpmax:
 
-item.elf_sap.name=Savia de Elfo
-item.elf_sap.tooltip1=§bTal vez pueda remover sus efectos
-item.elf_sap.tooltip2=§bbebiendo algun tipo de pocion
-item.elf_sap.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+item.mana_reagent.food.name=§6Reactivo de mana
+item.mana_reagent.food.tooltip1=§cDañino al consumirlo
+item.mana_reagent.food.tooltip2=§cMana max:§b -$mpmax:
 
-item.goblin_soup.name=Sopa de Goblin
-item.goblin_soup.tooltip1=§bTal vez pueda remover sus efectos
-item.goblin_soup.tooltip2=§bbebiendo algun tipo de pocion
-item.goblin_soup.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+item.restoration_serum.food.name=§6Suero de restauracion
+item.restoration_serum.food.tooltip1=Revierte los efectos de transformacion permanentes
+item.restoration_serum.food.tooltip2=§cDañino al consumirlo
 
-item.faelis_food.name=Menta Felina
-item.faelis_food.tooltip1=§bTal vez pueda remover sus efectos
-item.faelis_food.tooltip2=§bbebiendo algun tipo de pocion
-item.faelis_food.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+xat.transformation.food.tooltip1=§bTal vez pueda remover sus efectos
+xat.transformation.food.tooltip2=§bbebiendo algun tipo de pocion
+xat.transformation.food.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
 
-item.dragon_gem.name=Gema de Dragon
-item.dragon_gem.tooltip1=§bTal vez pueda remover sus efectos
-item.dragon_gem.tooltip2=§bbebiendo algun tipo de pocion
-item.dragon_gem.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+item.dwarf_stout.food.name=Stout de Enano
+item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
+#item.dwarf_stout.tooltip1=§bTal vez pueda remover sus efectos
+#item.dwarf_stout.tooltip2=§bbebiendo algun tipo de pocion
+#item.dwarf_stout.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.fairy_dew.food.name=Rocio de Hada
+item.fairy_dew.food.tooltip1=§6Transform into a Fairy
+#item.fairy_dew.tooltip1=§bTal vez pueda remover sus efectos
+#item.fairy_dew.tooltip2=§bbebiendo algun tipo de pocion
+#item.fairy_dew.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.titan_spirit.food.name=Espiritu de Titan
+item.titan_spirit.food.tooltip1=§6Transform into a Titan
+#item.titan_spirit.tooltip1=§bTal vez pueda remover sus efectos
+#item.titan_spirit.tooltip2=§bbebiendo algun tipo de pocion
+#item.titan_spirit.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.elf_sap.food.name=Savia de Elfo
+item.elf_sap.food.tooltip1=§6Transform into a Elf
+#item.elf_sap.tooltip1=§bTal vez pueda remover sus efectos
+#item.elf_sap.tooltip2=§bbebiendo algun tipo de pocion
+#item.elf_sap.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.goblin_soup.food.name=Sopa de Goblin
+item.goblin_soup.food.tooltip1=§6Transform into a Goblin
+#item.goblin_soup.tooltip1=§bTal vez pueda remover sus efectos
+#item.goblin_soup.tooltip2=§bbebiendo algun tipo de pocion
+#item.goblin_soup.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.faelis_food.food.name=Menta Felina
+item.faelis_food.food.tooltip1=§6Transform into a Faelis
+#item.faelis_food.tooltip1=§bTal vez pueda remover sus efectos
+#item.faelis_food.tooltip2=§bbebiendo algun tipo de pocion
+#item.faelis_food.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
+
+item.dragon_gem.food.name=Gema de Dragon
+item.dragon_gem.food.tooltip1=§6Transform into a Dragon.
+item.dragon_gem.food.fire.name=Fire Dragon Gem
+item.dragon_gem.food.fire.tooltip1=§6Transform into a Fire Dragon.
+item.dragon_gem.food.ice.name=Ice Dragon Gem
+item.dragon_gem.food.ice.tooltip1=§6Transform into a Ice Dragon.
+item.dragon_gem.food.lightning.name=Lightning Dragon Gem
+item.dragon_gem.food.lightning.tooltip1=§6Transform into a Lightning Dragon.
+#item.dragon_gem.tooltip1=§bTal vez pueda remover sus efectos
+#item.dragon_gem.tooltip2=§bbebiendo algun tipo de pocion
+#item.dragon_gem.tooltip3=<§9Bebe Suero de restauracion para revertir§r>
 
 ####################################Food End####################################
 

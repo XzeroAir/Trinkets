@@ -1,16 +1,19 @@
 package xzeroair.trinkets.init;
 
-import javax.annotation.Nullable;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.Reference;
 
+import javax.annotation.Nullable;
+
 public class Abilities {
 
-	//@formatter:off
+    //@formatter:off
 	public static final String nightVision 					="night_vision";
 	public static final String creativeFlight				="creative_flight";
-	public static final String fireBreathing				="fire_breathing";
+	public static final String fireBreathing				="fire_breath";
+	public static final String iceBreathing					="ice_breath";
+	public static final String lightningBreathing			="lightning_breath";
 
 	public static final String fireImmunity					="fire_immunity";
 	public static final String iceImmunity					="ice_immunity";
@@ -23,7 +26,7 @@ public class Abilities {
 	public static final String wellRested					="well_rested";
 	public static final String poisonAffinity				="poison_affinity";
 	public static final String waterAffinity				="water_affinity";
-	public static final String fallResistance				="fall_resistance";
+//	public static final String fallResistance				="fall_resistance";
 	public static final String nullKinetic					="nullify_kinetic";
 	public static final String reduceKinetic				="reduce_kinetic";
 	public static final String safeGuard					="safe_guard";
@@ -99,16 +102,16 @@ public class Abilities {
 //	}
 	//@formatter:on
 
-	@Nullable
-	public static final IAbilityInterface getAbility(String ability) {
-		switch (ability) {
-		case Reference.MODID + ":" + nightVision:
-			return new AbilityNightVision();
-		//		case creativeFlight:
-		//			return new AbilityFlying();
-		default:
-			return null;
-		}
-	}
+    @Nullable
+    public static final IAbilityInterface getAbility(String ability) {
+        switch (ability) {
+            case Reference.MODID + ":" + nightVision:
+                return new AbilityNightVision();
+            //		case creativeFlight:
+            //			return new AbilityFlying();
+            default:
+                return null;
+        }
+    }
 
 }

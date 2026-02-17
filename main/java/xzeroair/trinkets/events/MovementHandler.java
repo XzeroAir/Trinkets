@@ -3,6 +3,8 @@ package xzeroair.trinkets.events;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -15,6 +17,7 @@ import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IJumpAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.StringUtils;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,10 +40,20 @@ public class MovementHandler extends EventBaseHandler {
         // TODO Add Config to disable attribute
         final IAttributeInstance attribute = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
         if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
-            entity.motionY += (attribute.getAttributeValue() - 0.42F);
+            double motionBase = attribute.getBaseValue();
+            if (motionBase != 1.0D) {
+                attribute.setBaseValue(1.0D);
+            }
+            double motion = attribute.getAttributeValue();
+            if (entity.isPotionActive(MobEffects.JUMP_BOOST)) {
+                motion -= entity.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1;
+            }
+            double motionXZ = Math.max(0.0D, ((0.42D * (motion - 1D)) / 0.42D));
+            motion = (motion / 10.0D);
+            entity.motionY += motion;
             if (entity.isSprinting()) {
-                entity.motionX *= attribute.getAttributeValue() / 0.42F;
-                entity.motionZ *= attribute.getAttributeValue() / 0.42F;
+                entity.motionX *= (motionXZ);
+                entity.motionZ *= (motionXZ);
             }
         }
         //				entity.motionY = 0.368129F;
@@ -72,16 +85,23 @@ public class MovementHandler extends EventBaseHandler {
     @SubscribeEvent
     public void livingFall(LivingFallEvent event) {
         final EntityLivingBase entity = event.getEntityLiving();
+        if (entity.world.isRemote) {
+            return;
+        }
         final float baseDistance = event.getDistance();
         final float baseMultiplier = event.getDamageMultiplier();
 
         // ATTRIBUTE
         final IAttributeInstance attribute = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
-        if ((attribute != null)) {
-            final double value = attribute.getAttributeValue();
-            final float multi = (float) (value / 0.42F);
-            final float distance = (3F * (multi - 1));//(3F * 2F);
-            event.setDistance(baseDistance - distance);
+        if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
+            double value = attribute.getAttributeValue();
+            PotionEffect potioneffect = entity.getActivePotionEffect(MobEffects.JUMP_BOOST);
+            float jumpboost = potioneffect == null ? 0.0F : (float) (potioneffect.getAmplifier() + 1);
+            value -= jumpboost;
+            value = StringUtils.getAccurateDouble(value);
+            if (value > 0.0F) {
+                event.setDistance((float) (baseDistance - value));
+            }
         }
         // END ATTRIBUTE
 

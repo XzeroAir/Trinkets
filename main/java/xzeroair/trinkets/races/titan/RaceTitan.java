@@ -1,18 +1,19 @@
 package xzeroair.trinkets.races.titan;
 
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.client.races.IRenderRaceHandler;
+import xzeroair.trinkets.client.races.titan.RaceTitanRenderer;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.traits.abilities.other.AbilityHeavy;
 import xzeroair.trinkets.traits.abilities.other.AbilityLargeHands;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.EntityHelper;
 
@@ -28,6 +29,10 @@ public class RaceTitan extends EntityRacePropertiesHandler {
 
     public RaceTitan(@Nonnull EntityLivingBase e) {
         super(e, EntityRaces.titan);
+    }
+
+    public RaceTitan(@Nonnull EntityLivingBase e, Element element) {
+        super(e, EntityRaces.titan, element);
     }
 
     @Override
@@ -77,11 +82,11 @@ public class RaceTitan extends EntityRacePropertiesHandler {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-        super.doRenderPlayerPre(entity, x, y, z, renderer, partialTick);
-        if (entity.limbSwingAmount > 0) {
-            entity.limbSwingAmount -= 0.04F;
+    public IRenderRaceHandler<? super IRenderRaceHandler> getRaceRenderer() {
+        if (this.RendererRace == null) {
+            this.RendererRace = new RaceTitanRenderer(entity, this);
         }
+        return RendererRace;
     }
 
 }

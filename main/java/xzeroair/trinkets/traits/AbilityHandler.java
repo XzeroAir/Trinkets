@@ -11,7 +11,6 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
 
@@ -136,15 +135,31 @@ public class AbilityHandler {
             String source = cache.getSourceID();
             SlotInformation sourceInfo = cache.getInfo();
             IAbilityInterface ability = cache.getAbility();
-            EntityProperties test = Capabilities.getEntityProperties(entity);
-            boolean remove = Capabilities.getEntityProperties(entity, this.shouldRemove(sourceInfo, source, entity), (prop, bool) -> {
-                if (ability.getRequiredElement() != null) {
-                    if (!prop.getCurrentRace().compareElement(ability.getRequiredElement())) {
-                        return true;
-                    }
+//            Capabilities.getTrinketProperties(sourceInfo.getSourceStack())
+//            System.out.println(sourceInfo.getSourceStack().getItem().getRegistryName() + "|" + sourceInfo.getSourceStack().get);
+            boolean remove = this.shouldRemove(sourceInfo, source, entity);
+            if (!remove) {
+                if (sourceInfo.getHandlerType().compareTo(ItemHandlerType.RACE) == 0) {
+                    remove = Capabilities.getEntityProperties(entity, this.shouldRemove(sourceInfo, source, entity), (prop, bool) -> {
+                        if (ability.getRequiredElement() != null) {
+                            if (!prop.getCurrentRace().compareElement(ability.getRequiredElement())) {
+                                return true;
+                            }
+                        }
+                        return bool;
+                    });
+                } else {
+//                    remove = Capabilities.getTrinketProperties(sourceInfo.getSourceStack(), this.shouldRemove(sourceInfo, source, entity), (prop, bool) -> {
+//                        System.out.println(prop.getElementAttributes().getPrimaryElement().getName() + "|" + ability.getRequiredElement());
+//                        if (ability.getRequiredElement() != null) {
+//                            if (prop.getElementAttributes().getPrimaryElement() != ability.getRequiredElement()) {
+//                                return true;
+//                            }
+//                        }
+//                        return bool;
+//                    });
                 }
-                return bool;
-            });
+            }
             if (hasChanged) {
                 NBTTagCompound data = Capabilities.getEntityProperties(entity, new NBTTagCompound(), (prop, rtn) -> prop.getTag());
                 if (data.hasKey("Abilities")) {
@@ -271,7 +286,9 @@ public class AbilityHandler {
                 return potion == null ? true : !entity.isPotionActive(potion);
             default:
                 ItemStack s = info.getStackFromHandler(entity);
-                boolean remove = s.isEmpty() || !s.getItem().getRegistryName().toString().contentEquals(source);
+                boolean remove = Capabilities.getTrinketProperties(s, (s.isEmpty() || s.getItem().getRegistryName().toString().compareTo(source) != 0), (prop, bool) -> {
+                    return bool;
+                });
                 return remove;
         }
     }

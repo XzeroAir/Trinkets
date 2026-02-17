@@ -6,17 +6,22 @@ import xzeroair.trinkets.util.TrinketsConfig;
 
 public class RaceFairyAttributes extends RaceAttributesWrapper {
 
-	public static final FairyConfig serverConfig = TrinketsConfig.SERVER.races.fairy;
+    public static final FairyConfig serverConfig = TrinketsConfig.SERVER.races.fairy;
 
-	public RaceFairyAttributes() {
-		size = 25;
-		width = size;
-		height = size;
-		color1 = 12514535;
-		color2 = 962222;
-		color3 = color1;
-		opacity = 1f;
-		trait_opacity = 1F;
-		attributes = serverConfig.attributes;
-	}
+    public RaceFairyAttributes() {
+        size = 25;
+        width = size;
+        height = size;
+        color1 = 12514535;
+        color2 = 962222;
+        color3 = color1;
+        opacity = 1f;
+        trait_opacity = 1F;
+    }
+
+    @Override
+    public String[] getAttributes() {
+        return serverConfig.attributes;
+    }
+	
 }

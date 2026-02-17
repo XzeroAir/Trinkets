@@ -8,6 +8,8 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
@@ -21,6 +23,7 @@ import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigArcingOrb;
 import xzeroair.trinkets.util.handlers.Counter;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import java.util.List;
 
@@ -36,6 +39,16 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
 
     public AbilityDodge() {
         super(Abilities.dodging);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String lang = getTranslationKey();
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.LangEntry(lang, "dodge", serverConfig.dodgeAbility && !(TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE));
+        final TranslationHelper.KeyEntry key2 = new TranslationHelper.LangEntry(lang, "dodge.stun", serverConfig.dodgeStuns);
+        final TranslationHelper.KeyEntry key3 = new TranslationHelper.OptionEntry("dodgecost", serverConfig.dodgeAbility, serverConfig.dodgeCost);
+        return helper.formatAddVariables(key, renderID, key1, key2, key3);
     }
 
     @Override
@@ -153,8 +166,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
             if (Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE) {
                 return false;
             }
-            final float cost = serverConfig.dodgeCost;
-            return Capabilities.getMagicStats(entity, true, (magic, rtn) -> magic.spendMana(cost));
+            return Capabilities.getMagicStats(entity, true, (magic, rtn) -> magic.spendMana(serverConfig.dodgeCost));
         } else {
             return false;
         }

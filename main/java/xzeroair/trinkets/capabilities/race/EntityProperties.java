@@ -1,7 +1,6 @@
 package xzeroair.trinkets.capabilities.race;
 
 import com.google.common.base.Objects;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -18,8 +17,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.api.events.TransformationEvent;
@@ -98,7 +95,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
         currentRace = originalRace;
         abilities = new AbilityHandler(object);
 //        elementalAttributes = new ElementalAttributes();
-        properties = currentRace.getRace().getRaceHandler(object).setEntityProperties(this);
+        properties = currentRace.getRace().getRaceHandler(object);
     }
 
     @Override
@@ -133,24 +130,6 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 //    }
 
     // ABILITIES END
-
-    /**
-     * Probably should do a better way of setting up custom rendering.
-     *
-     * @param renderer
-     * @param isSlim
-     * @param limbSwing
-     * @param limbSwingAmount
-     * @param partialTicks
-     * @param ageInTicks
-     * @param netHeadYaw
-     * @param headPitch
-     * @param scale
-     */
-    @SideOnly(Side.CLIENT)
-    public void onRender(RenderLivingBase renderer, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        this.getRaceHandler().doRenderLayer(renderer, this.isFake(), isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
-    }
 
     public void onUpdatePre() {
         final World world = object.getEntityWorld();
@@ -348,7 +327,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
                     }
                 }
                 // officially start new transformation.
-                properties = newRace.getRaceHandler(object).setEntityProperties(this);
+                properties = newRace.getRaceHandler(object, newElement);
                 try {
                     properties.loadNBTData(this.getTag());
                 } catch (Exception e) {
@@ -599,7 +578,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Get the Entity Race Handler
      */
     public EntityRacePropertiesHandler getRaceHandler() {
-        return properties.setEntityProperties(this);
+        return properties;
     }
 
     public RaceCache getPreviousRace() {
@@ -827,7 +806,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
             widthValue = source.widthValue;
         }
 
-        properties = currentRace.getRace().getRaceHandler(object).setEntityProperties(this);
+        properties = currentRace.getRace().getRaceHandler(object, currentRace.getElement());
         properties.onTransform();
 
         try {
@@ -890,7 +869,7 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
         if (compound.hasKey("CurrentRace")) {
             currentRace = RaceCache.loadFromNBT(compound.getCompoundTag("CurrentRace"));
-            properties = currentRace.getRace().getRaceHandler(object).setEntityProperties(this);
+            properties = currentRace.getRace().getRaceHandler(object, currentRace.getElement());
             this.getRaceHandler().loadNBTData(compound);
             properties.onTransform();
         }

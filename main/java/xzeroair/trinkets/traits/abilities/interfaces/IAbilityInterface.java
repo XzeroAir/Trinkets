@@ -22,7 +22,7 @@ public interface IAbilityInterface {
     String getUUID();
 
     @SideOnly(Side.CLIENT)
-    void getDescription(List<String> tooltips);
+    void getDescription(List<String> tooltips, int rendModifier, int rendID);
 
     /**
      * called when the ability is added to an entity

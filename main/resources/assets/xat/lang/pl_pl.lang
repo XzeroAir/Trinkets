@@ -4,10 +4,6 @@ xat.config.title=Trinkets and Baubles
 xat.exampletext.start= These are informational example text, they do not show up in game.
 xat.exampletext.1= Tooltips for Items go up to 10
 xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 compatibility Texts per Item, examples are
-xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Przytrzymaj Shift>
@@ -50,7 +46,9 @@ gui.xat.button.close=Zamknij
 
 attribute.name.xat.entityRace=Zaklęta rasa
 
+#################################### Entities ####################################
 entity.AlphaWolf.name=Król wilków
+#################################### Abilities ####################################
 
 ability.block_detection.name=§aChciwe oczy
 ability.block_detection.tooltip1=Daje użytkownikowi umiejętność znajdowania pobliskich skarbów
@@ -169,19 +167,6 @@ item.glowing_ingot.tooltip1=§eMateriał rzemieślniczy szczebla 2
 item.glowing_gem.name=§6Jaskrawy klejnot
 item.glowing_gem.tooltip1=§6Materiał rzemieślniczy szczebla 3
 
-item.mana_candy.name=§bCukierek many
-
-item.mana_crystal.name=§6Kryształ many
-item.mana_crystal.tooltip1=§6+§b$mpmax:§6 Maksymalnej many
-
-item.mana_reagent.name=§6Odczynnik many
-item.mana_reagent.tooltip1=§cSzkodliwy po zjedzeniu
-item.mana_reagent.tooltip2=§c-§b$mpmax:§c Maksymalnej many
-
-item.restoration_serum.name=§6Serum przywrócenia
-item.restoration_serum.tooltip1=Odwraca permanentne przemiany
-item.restoration_serum.tooltip2=§cSzkodliwy po zjedzeniu
-
 ####################################Materials End####################################
 
 ####################################Trinkets####################################
@@ -230,6 +215,9 @@ item.titan_ring.0.tooltip4=§cNiszczysz rośliny
 item.titan_ring.0.heavy=§cToniesz w wodzie
 
 item.dragon_ring.0.name=§6Pierścień smoków
+item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
+item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
+item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
 #item.dragon_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
 #item.dragon_ring.0.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6 aby zionąć ogniem
 #item.dragon_ring.0.tooltip3=§6Daje niewrażliwość na ogień
@@ -348,40 +336,75 @@ item.faelis_claw.0.tooltip3=§cDługość krwawienia skrócona do 1/3 kiedy uży
 
 ####################################Food####################################
 
-item.dwarf_stout.name=Krasnoludzki stout
-item.dwarf_stout.tooltip1=§bMogę być w stanie odwrócić efekty
-item.dwarf_stout.tooltip2=§bwypijając jakąś miksturę
-item.dwarf_stout.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
 
-item.fairy_dew.name=Wróżkowa rosa
-item.fairy_dew.tooltip1=§bMogę być w stanie odwrócić efekty
-item.fairy_dew.tooltip2=§bwypijając jakąś miksturę
-item.fairy_dew.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+item.mana_candy.food.name=§bCukierek many
+item.mana_candy.food.tooltip1=§6Restores some Mana
 
-item.titan_spirit.name=Duch tytana
-item.titan_spirit.tooltip1=§bMogę być w stanie odwrócić efekty
-item.titan_spirit.tooltip2=§bwypijając jakąś miksturę
-item.titan_spirit.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+item.mana_crystal.food.name=§6Kryształ many
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 Maksymalnej many
 
-item.elf_sap.name=Eflicki sok
-item.elf_sap.tooltip1=§bMogę być w stanie odwrócić efekty
-item.elf_sap.tooltip2=§bwypijając jakąś miksturę
-item.elf_sap.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+item.mana_reagent.food.name=§6Odczynnik many
+item.mana_reagent.food.tooltip1=§cSzkodliwy po zjedzeniu
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c Maksymalnej many
 
-item.goblin_soup.name=Goblińska zupa
-item.goblin_soup.tooltip1=§bMogę być w stanie odwrócić efekty
-item.goblin_soup.tooltip2=§bwypijając jakąś miksturę
-item.goblin_soup.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+item.restoration_serum.food.name=§6Serum przywrócenia
+item.restoration_serum.food.tooltip1=Odwraca permanentne przemiany
+item.restoration_serum.food.tooltip2=§cSzkodliwy po zjedzeniu
 
-item.faelis_food.name=Kocimiętka kotowatych
-item.faelis_food.tooltip1=§bMogę być w stanie odwrócić efekty
-item.faelis_food.tooltip2=§bwypijając jakąś miksturę
-item.faelis_food.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+xat.transformation.food.tooltip1=§bMogę być w stanie odwrócić efekty
+xat.transformation.food.tooltip2=§bwypijając jakąś miksturę
+xat.transformation.food.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
 
-item.dragon_gem.name=Smoczy klejnot
-item.dragon_gem.tooltip1=§bMogę być w stanie odwrócić efekty
-item.dragon_gem.tooltip2=§bwypijając jakąś miksturę
-item.dragon_gem.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+item.dwarf_stout.food.name=Krasnoludzki stout
+item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
+#item.dwarf_stout.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.dwarf_stout.tooltip2=§bwypijając jakąś miksturę
+#item.dwarf_stout.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.fairy_dew.food.name=Wróżkowa rosa
+item.fairy_dew.food.tooltip1=§6Transform into a Fairy
+#item.fairy_dew.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.fairy_dew.tooltip2=§bwypijając jakąś miksturę
+#item.fairy_dew.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.titan_spirit.food.name=Duch tytana
+item.titan_spirit.food.tooltip1=§6Transform into a Titan
+#item.titan_spirit.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.titan_spirit.tooltip2=§bwypijając jakąś miksturę
+#item.titan_spirit.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.elf_sap.food.name=Eflicki sok
+item.elf_sap.food.tooltip1=§6Transform into a Elf
+#item.elf_sap.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.elf_sap.tooltip2=§bwypijając jakąś miksturę
+#item.elf_sap.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.goblin_soup.food.name=Goblińska zupa
+item.goblin_soup.food.tooltip1=§6Transform into a Goblin
+#item.goblin_soup.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.goblin_soup.tooltip2=§bwypijając jakąś miksturę
+#item.goblin_soup.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.faelis_food.food.name=Kocimiętka kotowatych
+item.faelis_food.food.tooltip1=§6Transform into a Faelis
+#item.faelis_food.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.faelis_food.tooltip2=§bwypijając jakąś miksturę
+#item.faelis_food.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+
+item.dragon_gem.food.name=Smoczy klejnot
+item.dragon_gem.food.tooltip1=Transform into a Dragon.
+item.dragon_gem.food.fire.name=Fire Dragon Gem
+item.dragon_gem.food.fire.tooltip1=Transform into a Fire Dragon.
+item.dragon_gem.food.ice.name=Ice Dragon Gem
+item.dragon_gem.food.ice.tooltip1=Transform into a Ice Dragon.
+item.dragon_gem.food.lightning.name=Lightning Dragon Gem
+item.dragon_gem.food.lightning.tooltip1=Transform into a Lightning Dragon.
+#item.dragon_gem.tooltip1=§bMogę być w stanie odwrócić efekty
+#item.dragon_gem.tooltip2=§bwypijając jakąś miksturę
+#item.dragon_gem.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
 
 ####################################Food End####################################
 

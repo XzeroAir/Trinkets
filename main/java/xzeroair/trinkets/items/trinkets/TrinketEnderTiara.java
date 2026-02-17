@@ -7,15 +7,12 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,17 +21,15 @@ import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.client.model.BipedJsonModel;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityEnderQueen;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigEnderCrown;
 import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -47,22 +42,6 @@ public class TrinketEnderTiara extends AccessoryBase {
     public TrinketEnderTiara(String name) {
         super(name);
         this.setUUID("a45dbc1c-17e9-40b4-b6a3-09dea74355b7");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-        final TranslationHelper helper = TranslationHelper.INSTANCE;
-        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "damageignored", serverConfig.dmgChance);
-        final KeyEntry key1 = new LangEntry(this.getTranslationKey(stack), "endermenchance", serverConfig.spawnChance);
-        final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "endermenfollow", serverConfig.Follow);
-        final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "waterhurts", serverConfig.water_hurts);
-        final KeyEntry key4 = new OptionEntry("chance", serverConfig.dmgChance || serverConfig.spawnChance, MathHelper.clamp((1F / serverConfig.chance) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean tan = tanEnabled || sdEnabled;
-        final KeyEntry TAN = new LangEntry(this.getTranslationKey(stack), "coldimmune", tan && serverConfig.compat.tan.immuneToCold);
-        return helper.formatAddVariables(translation, key, key1, key2, key3, key4, TAN);
     }
 
     @Override
@@ -157,6 +136,11 @@ public class TrinketEnderTiara extends AccessoryBase {
         GlStateManager.scale(hScale, hScale, hScale);
         model.render(player, player.limbSwing, player.limbSwingAmount, player.ticksExisted, player.rotationYaw, player.rotationPitch, scale);
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.VOID;
     }
 
     @Override

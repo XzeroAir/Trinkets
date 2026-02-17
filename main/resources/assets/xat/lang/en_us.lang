@@ -1,14 +1,11 @@
+xat.mod.name=Trinkets and Baubles
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
 
-xat.exampletext.start= These are informational example text, they do not show up in game.
-xat.exampletext.1= Tooltips for Items go up to 10
-xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
-xat.exampletext.3= There are 3 compatibility Texts per Item, examples are
-xat.exampletext.4= item.item.glow_ring.0.compat.tan= For Tough as Nails
-xat.exampletext.5= item.item.glow_ring.0.compat.firstaid= For First Aid
-xat.exampletext.6= item.item.glow_ring.0.compat.enhancedvisuals= For EnhancedVisuals
-xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#xat.exampletext.start= These are informational example text, they do not show up in game.
+#xat.exampletext.1= Tooltips for Items go up to 10
+#xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
+#xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Hold Shift>
 xat.holdctrl=<Hold Ctrl>
@@ -32,9 +29,6 @@ xat.tooltip.enabled=§r[§aEnabled§r]
 xat.tooltip.disabled=§r[§cDisabled§r]
 xat.tooltip.weight=Weight:
 
-xat.config.race.size=Size Settings
-xat.config.race.size.tooltip=Size Configuration
-
 key.xat.category=Trinkets and Baubles
 key.xat.trinket_target.desc=Dragons Eye: Cycle
 key.xat.trinket_toggle_effect.desc=Dragons Eye: Night Vision
@@ -48,108 +42,201 @@ key.xat.race_ability.desc=Race Ability
 gui.xat.button.open=Open
 gui.xat.button.close=Close
 
-attribute.name.xat.entityRace=Enchanted Race
-
+#################################### Entities ####################################
 entity.AlphaWolf.name=Wolf King
+#################################### Abilities ####################################
+ability.creative_flight.name=§6Flying
+ability.creative_flight.tooltip1=§6Grants Creative Flight
+ability.creative_flight.tooltip2=$gui:Double tap jump to start flying, double tap jump again to stop
+ability.creative_flight.tooltip3=$gui:Makes you Immune to fall damage
 
 ability.block_detection.name=§aGreedy Eyes
-ability.block_detection.tooltip1=Grants the User the Ability to Find Nearby Treasure
-ability.block_detection.tooltip2=Press *deofkb: = Next Target
-ability.block_detection.tooltip3=Press *auxkb:+*deofkb: = Previous Target
+ability.block_detection.tooltip1=§6Grants the Ability to Find Nearby Treasure
+ability.block_detection.tooltip2=@treasurefinder:
+ability.block_detection.tooltip3=$gui:Press *deofkb: = Next Target
+ability.block_detection.tooltip4=$gui:Press *auxkb:+*deofkb: = Previous Target
+ability.block_detection.treasurefinder=§6Current Target: §3§n$target:§r <§e*deofkb:§r>
+ability.block_detection.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
+ability.block_detection.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
+ability.block_detection.treasurefinder.off=I think my Treasury is sufficiently full $looking:
+
 ability.night_vision.name=§eNight Vision
-ability.night_vision.tooltip1=§2Grants Night Vision
-ability.night_vision.tooltip2=Press *denvkb: To toggle Night Vision
-ability.creative_flight.name=§6Flying
-ability.creative_flight.tooltip1=Grants Creative Flight
-ability.creative_flight.tooltip2=Double tap jump to start flying, double tap jump again to stop
-ability.creative_flight.tooltip3=Makes you Immune to fall damage
+ability.night_vision.tooltip1=§2Grants Night Vision§r <§e*denvkb:§r>
+
+ability.fire_breath.name=§cFire Breath
+ability.fire_breath.tooltip1=$gui:§6Grants Fire Breath
+ability.fire_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Fire §3$fbcost: MP
+ability.ice_breath.name=§Ice Breath
+ability.ice_breath.tooltip1=$gui:§6Grants Ice Breath
+ability.ice_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Ice §3$fbcost: MP
+#ability.lightning_breath.name=§cLightning Breath
+#ability.lightning_breath.tooltip1=Grants Lightning Breath
+#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+
 ability.fire_immunity.name=§cFire Immunity
-ability.fire_immunity.tooltip1=§6Immune to Fire and Lava
-ability.fire_immunity.tooltip2=§6Cannot be set on Fire
-ability.fire_immunity.tooltip3=§6Cannot be Harmed by Fire based attacks
-ability.fire_breathing.name=§cFire Breathing
-ability.fire_breathing.tooltip1=Grants Fire Breathing
-ability.fire_breathing.tooltip2=Press *firebreath: to breath fire at the cost of $fbCost: MP
-ability.block_climbing.name=Climbing
-ability.block_climbing.tooltip1=Can climb some blocks
-ability.wither_immunity.name=Wither Immunity
-ability.wither_immunity.tooltip1=Immune to Wither
-ability.wither_immunity.tooltip2=When Attacking has a 1 in $witherchance: to wither the target
-ability.wither_immunity.tooltip3=Heals when Attacking when the target has wither
-ability.weightless.name=§dWeightless
-ability.weightless.tooltip1=Become Weightless
-ability.weightless.tooltip2=Attack to move up, Sneak + Attack to move down
-ability.well_rested.name=§bWell Rested
-ability.well_rested.tooltip1=Grants several buffs when sleeping
-ability.well_rested.tooltip2=@LycanitesFear:
-ability.well_rested.tooltip3=@LycanitesInsomnia:
-ability.poison_affinity.name=§2Poison Affinity
-ability.poison_affinity.tooltip1=Immune to Poison
-ability.poison_affinity.tooltip2=When Attacking has a 1 in $poisonchance: to poison the target
-ability.poison_affinity.tooltip3=If Attacking a Poisoned Enemy does $poisonbonus: damage.
-ability.water_affinity.name=§9Water Affinity
-ability.water_affinity.tooltip1=@SurvivalThirst:
-ability.water_affinity.tooltip2=Grants enhanced swimming
-ability.fall_resistance.name=Fall Resistance
-ability.fall_resistance.tooltip1=Grants $fallResist: resistance to fall damage
-ability.nullify_kinetic.name=Kinetic Nullification
-ability.nullify_kinetic.tooltip1=Grants Immunity to Fall Damage and Kinetic Energy
-ability.cold_immunity.name=§bCold Immunity
-ability.cold_immunity.tooltip1=§6Immune to Cold and most chilling sources
+ability.fire_immunity.tooltip1=§2Grants §c$potion:
+ability.fire_immunity.tooltip2=$gui:§6Immune to Fire and Lava
+ability.fire_immunity.tooltip3=$gui:Cannot be set on Fire
+ability.fire_immunity.tooltip4=$gui:Cannot be Harmed by most Fire based attacks
+ability.fire_immunity.tooltip5=$gui:§6Immune to §c$smouldering:
 ability.heat_immunity.name=§cHeat Immunity
-ability.heat_immunity.tooltip1=§6Immune to Heat and most heating sources
+ability.heat_immunity.tooltip1=§6Immunity to §cHyperthermia
+
+ability.ice_immunity.name=§bIce Immunity
+ability.ice_immunity.tooltip1=§2Grants §b$potion:
+ability.ice_immunity.tooltip2=$gui:§6Cannot be Harmed by most Ice based attacks
+ability.cold_immunity.name=§bCold Immunity
+ability.cold_immunity.tooltip1=§6Immunity to §bHypothermia
+ability.frost_walker.name=Frost Walker
+ability.frost_walker.tooltip1=§6Grants §bFrost Walker
+
+ability.lightning_immunity.name=Lightning Immunity
+ability.lightning_immunity.tooltip1=§2Grants §d$potion1:
+ability.lightning_immunity.tooltip2=@paralysis:
+ability.lightning_immunity.paralysis=§6Immunity to §dparalysis
+ability.lightning_immunity.compat.lycanites=$gui:Removes $potion2:
+
+ability.lightning_bolt.name=§3Lightning Affinity
+ability.lightning_bolt.tooltip1=§6Can Shoot Lightning at the Cost of MP
+ability.lightning_bolt.tooltip2=§6Hold §r<§e*arckb:§r>§6 to cast a bolt attack §3$boltcost: MP
+ability.lightning_bolt.tooltip3=§3$boltdamage:§6 damage based on MP spent
+
+ability.dodging.name=Dodging
+ability.dodging.tooltip1=@dodge:
+ability.dodging.tooltip2=@dodge.stun:
+ability.dodging.dodge=§2Grants double tap dodge
+ability.dodging.dodge.stun=§6Stun nearby enemies on dodge §3$dodgecost: MP
+
+ability.block_climbing.name=Climbing
+ability.block_climbing.tooltip1=§6Can climb blocks
+
+ability.wither_immunity.name=Wither Immunity
+ability.wither_immunity.tooltip1=§6Immune to Wither
+ability.wither_immunity.tooltip2=§6When Attacking has a §3$chance: §6chance to wither the target
+ability.wither_immunity.tooltip3=§6Heals §3$amount: §6heart when Attacking a target with wither
+
+ability.poison_affinity.name=§2Poison Affinity
+ability.poison_affinity.tooltip1=§6Immune to Poison
+ability.poison_affinity.tooltip2=$gui:§6Immune to Hunger
+ability.poison_affinity.tooltip3=§6When Attacking has a §3$chance: §6chance to poison the target
+ability.poison_affinity.tooltip4=§6If Attacking a Poisoned Enemy does $bonus: damage.
+
+ability.water_affinity.name=§9Water Affinity
+ability.water_affinity.tooltip1=@bubbles:
+ability.water_affinity.tooltip2=@betterswimming:
+ability.water_affinity.bubbles=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
+ability.water_affinity.betterswimming=§2Grants enhanced swimming
+ability.water_affinity.compat.enhancedvisuals=Disables blurred vision when entering the water
 ability.thirst_immunity.name=Thirst Poison Immunity
-ability.thirst_immunity.tooltip1=Immune to The Thirst Poison Effect
+ability.thirst_immunity.tooltip1=$item:§6Immunity to Thirst Poison Effect
+ability.thirst_immunity.tooltip2=$gui:Immunity to Thirst Poison Effect
 ability.parasites_immunity.name=Parasites Immunity
-ability.parasites_immunity.tooltip1=Immune to the Parasites Effect from drinking
+ability.parasites_immunity.tooltip1=$item:§6Immune to the Parasites
+ability.parasites_immunity.tooltip2=$gui:Immune to the Parasites Effect from drinking dirty water
+
+ability.reduce_kinetic.name=Fall Resistance
+ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 Resistance to fall damage
+ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
+ability.nullify_kinetic.name=Kinetic Nullification
+ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 Resistance to fall damage
+ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic damage
+
 ability.ender_queen.name=§5Ender Royalty
-ability.ender_queen.tooltip1=Endermen will defend you
-ability.ender_queen.tooltip2=Will Teleport if attacked by indirect damage at the cost of MP
-ability.ender_queen.tooltip3=water hurts you
-ability.ender_queen.tooltip4=chance to ignore damage and summon an Enderman
+ability.ender_queen.tooltip1=§6Royalty
+ability.ender_queen.tooltip2=§2Endermen fight for you @endermenfollow:
+ability.ender_queen.tooltip3=@damageignored:
+ability.ender_queen.tooltip4=@endermenchance:
+ability.ender_queen.tooltip5=§3$tpchance: §5to Teleport if attacked by indirect damage §3$tpcost: MP
+ability.ender_queen.tooltip6=@waterhurts:
+ability.ender_queen.damageignored=§3$chance: §6Chance to ignore damage
+ability.ender_queen.endermenchance=§3$chance: §6Chance to spawn an Enderman
+ability.ender_queen.endermenfollow=and follow you
+ability.ender_queen.waterhurts=§cWeakness to water
+ability.ender_queen.compat.enhancedvisuals=Disabled endermen static effect
+
 ability.vicious_strike.name=§4Vicious Strike
-ability.vicious_strike.tooltip1=Cause Bleed when performing a melee attack
+ability.vicious_strike.tooltip1=§6$chance: chance to cause Bleed on melee
+ability.vicious_strike.tooltip2=§aBleed deals 1 damage every second for §3$duration:§a seconds
+ability.vicious_strike.tooltip3=§cDuration reduced to §3$reduceddur: §cseconds when used by Non-Faelis
+
 ability.magnetic.name=Magnetic
+ability.magnetic.tooltip1=@collect:
+ability.magnetic.tooltip2=§r<§e*magnetkb:§r or §eRight-Click§r>
+ability.magnetic.collect=§6Pulls nearby items @collectxp:
+ability.magnetic.collectxp=and XP Orbs $collecttoggle:
+ability.magnetic.magnetmode=Collection mode $collecttoggle:
 ability.repel.name=Repelling Force
+ability.repel.tooltip1=@repel:
+ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r or §eSneak§r + §eRight-Click§r>
+ability.repel.repel=§6Repels arrows $repeltoggle:
+ability.repel.repelmode=Repel mode $repeltoggle:
+
 ability.skilled_miner.name=Skilled Miner
-ability.skilled_miner.tooltip1=Bonus XP when mining
-ability.skilled_miner.tooltip2=Mining speed is set to Block Hardness * 4
+ability.skilled_miner.tooltip1=§6Bonus XP when mining
+ability.skilled_miner.tooltip2=$gui:Mining speed is set to Block Hardness * 4
 ability.psudo_fortune.name=§6Psudo Fortune
 ability.psudo_fortune.tooltip1=You gain fortune without needing the enchantment
+
 ability.charged_shot.name=Skilled Archer
-ability.charged_shot.tooltip1=Able to use Mana to imbue an arrow with power
-ability.charged_shot.tooltip2=Sneak before drawing your bow to trigger
-ability.charged_shot.tooltip3=canceled if you stop sneaking
-ability.charged_shot.tooltip4=Causes a small explosion on impact with a full charge dealing aoe damage
-ability.lightning_bolt.name=§3Lightning Affinity
-ability.lightning_bolt.tooltip1=Can Shoot Lightning at the Cost of MP
-ability.dodging.name=Dodging
-ability.dodging.tooltip1=Able to Double Tap Dodge and Stun nearby enemies
-ability.dodging.tooltip2=Uses Elenai Dodging instead if installed
+ability.charged_shot.tooltip1=§6Sneaking while using a Bow activates a Power Shot
+ability.charged_shot.tooltip2=$gui:Able to use Mana to imbue an arrow with power
+ability.charged_shot.tooltip3=$gui:Sneak before drawing your bow to trigger
+ability.charged_shot.tooltip4=$gui:canceled if you stop sneaking
+ability.charged_shot.tooltip5=$gui:Causes a small explosion on impact with a full charge dealing aoe damage
+
 ability.large_hands.name=Large Hands
-ability.large_hands.tooltip1=able to mine a 3x3x3 radius
-ability.large_hands.tooltip2=Sneak when mining to disable
+ability.large_hands.tooltip1=§6Mine a 3x3x3 radius
+ability.large_hands.tooltip2=§eSneak §2when mining to disable
 ability.heavy.name=§cHeavy
 ability.heavy.tooltip1=§cYou Sink in water
 ability.heavy.tooltip2=§cYou Trample plants when walking over them
-ability.safe_guard.name=§6Safe Guard
-ability.safe_guard.tooltip1=Gains the Resistance Potion Effect
-ability.safe_guard.tooltip2=Can Ignore Damage every $sohcount: Hits
 
-ability.frost_walker.name=Frost Walker
-ability.ice_immunity.name=Ice Immunity
+ability.weightless.name=§dWeightless
+ability.weightless.tooltip1=§6Become Weightless
+ability.weightless.tooltip2=<§eLeft Click§r> to go §2up
+ability.weightless.tooltip3=<§eSneak§r> + <§eLeft Click§r> to go §2down
+#ability.weightless.tooltip4=§aGrants Levitation while held
+
+ability.safe_guard.name=§6Safe Guard
+ability.safe_guard.tooltip1=§6Gains the $soheffect: Potion Effect
+ability.safe_guard.tooltip2=@explosionresist:
+ability.safe_guard.tooltip3=§6Can Ignore Damage every §3$cfghitcount: §6Hits
+ability.safe_guard.tooltip4=@damageignored:
+ability.safe_guard.damageignored=§6Hits Taken: §3$hitcount:/$cfghitcount:
+ability.safe_guard.explosionresist=§3$explosionresistamount: §6Explosion damage resistance
+ability.safe_guard.compat.enhancedvisuals=Disables explosion blur
+
+ability.well_rested.name=§bWell Rested
+ability.well_rested.tooltip1=§6Grants buffs if held while sleeping
+ability.well_rested.tooltip2=§6Removes $fear: §6and Removes $insomnia:
 
 ability.firstaid_reflex.name=Fast Reflexes
-ability.firstaid_reflex.tooltip1=Chance to Ignore Fatal Headshots
+ability.firstaid_reflex.tooltip1=§3$headshotchance:§6 Chance to ignore headshot
 
-xat.element.neutral.name=Neutral
-xat.element.fire.name=Fire
-xat.element.ice.name=Ice
-xat.element.lightning.name=Lightning
+#################################### Elements ####################################
+
+xat.element.neutral.name=§fNeutral
+xat.element.air.name=§3Air
+xat.element.dark.name=§8Dark
+xat.element.earth.name=§2Earth
+xat.element.fire.name=§cFire
+xat.element.ice.name=§bIce
+xat.element.light.name=§eLight
+xat.element.lightning.name=§dLightning
+xat.element.poison.name=§2Poison
+xat.element.void.name=§5Void
+xat.element.water.name=§9Water
+
+#################################### Races ####################################
+
+
+
+#################################### Damage Types ####################################
 
 damagetype.xat.water=water
 death.attack.xat.water=%1$s died to %2$s while wearing an Ender Queen's Crown
 
+#################################### Attributes ####################################
 xat.jump=Jump
 xat.stepheight=Step Height
 xat.entityMagic.maxMana=Max Mana
@@ -160,8 +247,8 @@ attribute.name.xat.stepheight=Step Height
 attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=MP Regen
 attribute.name.xat.flyspeed=Fly Speed
-
-####################################Materials####################################
+attribute.name.xat.entityRace=Enchanted Race
+#################################### Materials ####################################
 
 item.glowing_powder.name=Glowing Powder
 item.glowing_powder.tooltip1=Tier 1 Crafting Material
@@ -172,45 +259,42 @@ item.glowing_ingot.tooltip1=§eTier 2 Crafting Material
 item.glowing_gem.name=§6Glowing Gem
 item.glowing_gem.tooltip1=§6Tier 3 Crafting Material
 
-item.mana_candy.name=§bMana Candy
+#################################### Materials End ####################################
 
-item.mana_crystal.name=§6Mana Crystal
-item.mana_crystal.tooltip1=§6+§b$mpmax:§6 Max Mana
+#################################### Trinkets ####################################
 
-item.mana_reagent.name=§6Mana Reagent
-item.mana_reagent.tooltip1=§cHarmful when consumed
-item.mana_reagent.tooltip2=§c-§b$mpmax:§c Max Mana
+item.arcing_orb.0.name=Arcing Orb
+item.damage_shield.0.name=Shield of Honor
 
-item.restoration_serum.name=§6Restoration Serum
-item.restoration_serum.tooltip1=Reverses Permanent Transformation Effects
-item.restoration_serum.tooltip2=§cHarmful when consumed
+item.dragons_eye.0.name=§6Dragon's Eye
+item.dragons_eye.0.fire.name=§cFire Dragon's Eye
+item.dragons_eye.0.ice.name=§bIce Dragon's Eye
+item.dragons_eye.0.lightning.name=§dLightning Dragon's Eye
 
-####################################Materials End####################################
-
-####################################Trinkets####################################
-
+item.ender_tiara.0.name=Ender Queen's Crown
+item.ender_tiara.0.tooltip1=§6Royalty
+item.faelis_claw.0.name=Faelis Claw
 item.glow_ring.0.name=§6Ring of Enchanted Eyes
-item.glow_ring.0.tooltip1=§2Grants Night Vision
+item.greater_inertia_stone.0.name=Stone of Greater Inertia
+item.inertia_null_stone.0.name=Stone of Inertia Null
+item.poison_stone.0.name=Poison Stone
+item.polarized_stone.0.name=Polarized Stone
+item.sea_stone.0.name=Stone of the Sea
+item.teddy_bear.0.name=Teddy Bear
+item.weightless_stone.0.name=Stone of Negative Gravity
+item.wither_ring.0.name=Wither Ring
+
+#################################### Trinkets Transformations ####################################
 
 item.dwarf_ring.0.name=§6Ring of the Dwarves
 item.dwarf_ring.0.tooltip1=§6Entity Size $rsize: of normal
-item.dwarf_ring.0.tooltip2=@fortune:
-item.dwarf_ring.0.tooltip3=@skilledminer:
-item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=§6Pseudo-Fortune
-item.dwarf_ring.0.skilledminer=§2Skilled miner
-item.dwarf_ring.0.staticminer=§2Static mining speed
 
 item.elf_ring.0.name=§6Ring of the Elves
 item.elf_ring.0.tooltip1=§6Entity Size $rsize: of normal
-item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=§6Gains Movement and Attack Speed in Forests
-item.elf_ring.0.chargeshot=§6Sneaking while using a Bow activates a Power Shot
+item.elf_ring.0.tooltip2=§6Gains Movement and Attack Speed in Forests
 
 item.fairy_ring.0.name=§6Ring of the Fairies
 item.fairy_ring.0.tooltip1=§6Entity Size $rsize: of normal
-item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=§6Grants Creative flight
 
 item.faelis_ring.0.name=§6Ring of the Faeles
 item.faelis_ring.0.tooltip1=§6Entity Size $rsize: of normal
@@ -227,169 +311,70 @@ item.goblin_ring.0.tooltip5=§aCreepers will ignore you
 
 item.titan_ring.0.name=§6Ring of the Titans
 item.titan_ring.0.tooltip1=§6Entity size $rsize: of normal
-item.titan_ring.0.tooltip2=§6Grants 3x3x3 Mining Range
-item.titan_ring.0.tooltip3=§c@heavy:
-item.titan_ring.0.tooltip4=§cTramples plants
-item.titan_ring.0.heavy=§cSinks in water
 
 item.dragon_ring.0.name=§6Ring of the Dragons
-#item.dragon_ring.0.tooltip1=§6Entity size $rsize: of normal
-#item.dragon_ring.0.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Fire
-#item.dragon_ring.0.tooltip3=§6Grants Fire Resistance
-#item.dragon_ring.0.tooltip4=§2Grants Night Vision §r<§e*denvkb:§r>
+item.dragon_ring.0.fire.name=§6Ring of the §cFire §6Dragons
+item.dragon_ring.0.ice.name=§6Ring of the §bIce §6Dragons
+item.dragon_ring.0.lightning.name=§6Ring of the §dLightning §6Dragons
+item.dragon_ring.0.tooltip1=§6Entity size $rsize: of normal
 
-item.teddy_bear.0.name=Teddy Bear
-item.teddy_bear.0.tooltip1=§6If held when sleeping, provides a buff
-item.teddy_bear.0.tooltip2=§6Removes Fear and Insomnia if Lycanites is installed
+#################################### Trinkets End ####################################
 
-item.weightless_stone.0.name=Stone of Negative Gravity
-item.weightless_stone.0.tooltip1=§2Makes gravity not affect you when worn
-item.weightless_stone.0.tooltip2=<§eLeft Click§r> to go §2up
-item.weightless_stone.0.tooltip3=<§eSneak§r> + <§eLeft Click§r> to go §2down
-item.weightless_stone.0.tooltip4=§aGrants Levitation while held
+#################################### Food ####################################
 
-item.inertia_null_stone.0.name=Stone of Inertia Null
-item.inertia_null_stone.0.tooltip1=§3$inertianullfd:§r§6 Resistance to fall damage
-item.inertia_null_stone.0.tooltip2=§3$inertianullfd:§r§6 Resistance to kinetic damage
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
 
-item.greater_inertia_stone.0.name=Stone of Greater Inertia
-item.greater_inertia_stone.0.tooltip1=§3$greaterinertiafd:§r§6 Resistance to fall damage
+item.mana_candy.food.name=§bMana Candy
+item.mana_candy.food.tooltip1=§6Restores some Mana
 
-item.sea_stone.0.name=Stone of the Sea
-item.sea_stone.0.tooltip1=@bubbles:
-item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
-item.sea_stone.0.betterswimming=§2Enhanced Swimming
-item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=§6Immunity to Thirst
-item.sea_stone.0.compat.enhancedvisuals=Disables blurred vision when entering the water
+item.mana_crystal.food.name=§6Mana Crystal
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 Max Mana
 
-item.polarized_stone.0.name=Polarized Stone
-item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<§e*magnetkb:§r or §eRight-Click§r>
-item.polarized_stone.0.tooltip3=@repel:
-item.polarized_stone.0.tooltip4=<§e*auxkb:§r + §e*magnetkb:§r or §eSneak§r + §eRight-Click§r>
-item.polarized_stone.0.collect=§6Pulls nearby items @collectxp:
-item.polarized_stone.0.collectxp=and XP Orbs $collecttoggle:
-item.polarized_stone.0.repel=§6Repels arrows $repeltoggle:
-item.polarized_stone.0.magnetmode=Collection mode $collecttoggle:
-item.polarized_stone.0.repelmode=Repel mode $repeltoggle:
+item.mana_reagent.food.name=§6Mana Reagent
+item.mana_reagent.food.tooltip1=§cHarmful when consumed
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c Max Mana
 
-item.dragons_eye.0.name=Dragon's Eye
-item.dragons_eye.0.fire.name=Fire Dragon's Eye
-item.dragons_eye.0.ice.name=Ice Dragon's Eye
-item.dragons_eye.0.lightning.name=Lightning Dragon's Eye
-item.dragons_eye.0.tooltip1=§6Grants $variantresist:
-item.dragons_eye.0.tooltip2=§2Grants Night Vision §r<§e*denvkb:§r>
-item.dragons_eye.0.tooltip3=@treasurefinder:
-item.dragons_eye.0.tooltip4=@frostwalker:
-item.dragons_eye.0.treasurefinder=§6Current Target: §3#underline:$target:§r <§e*deofkb:§r>
-item.dragons_eye.0.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
-item.dragons_eye.0.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
-item.dragons_eye.0.treasurefinder.off=I think my Treasury is sufficiently full $looking:
-item.dragons_eye.0.compat.tan=$typeimmune:
-item.dragons_eye.0.heatimmune=§6Immunity to hyperthermia
-item.dragons_eye.0.coldimmune=§6Immunity to hypothermia
-item.dragons_eye.0.paralysisimmune=§6Immunity to paralysis
-item.dragons_eye.0.compat.enhancedvisuals=
-item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Grants §3Frost Walker
+item.restoration_serum.food.name=§6Restoration Serum
+item.restoration_serum.food.tooltip1=Reverses Permanent Transformation Effects
+item.restoration_serum.food.tooltip2=§cHarmful when consumed
 
-item.poison_stone.0.name=Poison Stone
-item.poison_stone.0.tooltip1=§6Immunity To Poison
-item.poison_stone.0.tooltip2=§6Immunity to Hunger
-item.poison_stone.0.tooltip3=@poison:
-item.poison_stone.0.tooltip4=@bonusdamage:
-item.poison_stone.0.poison=§3$poisonchance:§2 Chance to poison enemies for §3$poisonduration:
-item.poison_stone.0.bonusdamage=§2Deals $damagemultiplier:§2 Damage to poisoned enemies
+xat.transformation.food.tooltip1=§3I might be able to remove the effects
+xat.transformation.food.tooltip2=§3by drinking some sort of potion
+xat.transformation.food.tooltip3=§r<§9Use a Restoration Serum to undo§r>
 
-item.wither_ring.0.name=Wither Ring
-item.wither_ring.0.tooltip1=§6Immunity to Wither
-item.wither_ring.0.tooltip2=@wither:
-item.wither_ring.0.tooltip3=@leech:
-item.wither_ring.0.wither=§3$witherchance:§2 Chance to wither enemies
-item.wither_ring.0.leech=§2Heals §3$leechamount:§2 hearts when attacking withered enemies
+item.dwarf_stout.food.name=Dwarf Stout
+item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
 
-item.ender_tiara.0.name=Ender Queen's Crown
-item.ender_tiara.0.tooltip1=§6Royalty
-item.ender_tiara.0.tooltip2=§2Endermen fight for you @endermenfollow:
-item.ender_tiara.0.tooltip3=@damageignored:
-item.ender_tiara.0.tooltip4=@endermenchance:
-item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=§3$chance: §6Chance to ignore damage
-item.ender_tiara.0.endermenchance=§3$chance: §6Chance to spawn an Enderman
-item.ender_tiara.0.endermenfollow=and follow you
-item.ender_tiara.0.waterhurts=§cWeakness to water
-item.ender_tiara.0.compat.tan=@coldimmune:
-item.ender_tiara.0.compat.enhancedvisuals=Disabled endermen static effect
-item.ender_tiara.0.coldimmune=§6Immunity to hypothermia
+item.fairy_dew.food.name=Fairy Dew
+item.fairy_dew.food.tooltip1=§6Transform into a Fairy
 
-item.damage_shield.0.name=Shield of Honor
-item.damage_shield.0.tooltip1=§6Grants $soheffect: while equipped
-item.damage_shield.0.tooltip2=@explosionresist:
-item.damage_shield.0.tooltip3=@damageignored:
-item.damage_shield.0.explosionresist=§3$explosionresistamount: §6Explosion damage resistance 
-item.damage_shield.0.damageignored=§6Every §3$cfghitcount: §6hits ignore the next attack
-//item.damage_shield.0.damageignored=§6Damage ignored: §3$damageignoredhitcount:/$cfghitcount:
-item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=§3$headshotchance:§6 Chance to ignore headshot
-item.damage_shield.0.compat.enhancedvisuals=Disables explosion blur
+item.titan_spirit.food.name=Titan's Spirit
+item.titan_spirit.food.tooltip1=§6Transform into a Titan
 
-item.arcing_orb.0.name=Arcing Orb
-item.arcing_orb.0.tooltip1=@dodge:
-item.arcing_orb.0.tooltip2=@dodge.stun:
-item.arcing_orb.0.tooltip3=§6Hold §r<§e*arckb:§r>§6 to cast a bolt attack §3$boltcost:MP
-item.arcing_orb.0.tooltip4=§3$boltdamage:§6 damage based on MP spent
-item.arcing_orb.0.dodge=§2Grants double tap dodge ability
-item.arcing_orb.0.dodge.stun=§6Stun nearby enemies on dodge §3$dodgecost:MP
+item.elf_sap.food.name=Elf Sap
+item.elf_sap.food.tooltip1=§6Transform into a Elf
 
-item.faelis_claw.0.name=Faelis Claw
-item.faelis_claw.0.tooltip1=§6Attacking enemies causes them to bleed
-item.faelis_claw.0.tooltip2=§aBleeding causes 1 damage every 20 ticks for $clawbleed: ticks
-item.faelis_claw.0.tooltip3=§cDuration reduced to 1/3 when used by Non-Faeles
+item.goblin_soup.food.name=Goblin Soup
+item.goblin_soup.food.tooltip1=§6Transform into a Goblin
 
-####################################Trinkets End####################################
+item.faelis_food.food.name=Faelis Nip
+item.faelis_food.food.tooltip1=§6Transform into a Faelis
 
-####################################Food####################################
+item.dragon_gem.food.name=§6Dragon Gem
+item.dragon_gem.food.tooltip1=§6Transform into a Dragon.
+item.dragon_gem.food.fire.name=§cFire Dragon Gem
+item.dragon_gem.food.fire.tooltip1=§6Transform into a §cFire §6Dragon.
+item.dragon_gem.food.ice.name=§bIce Dragon Gem
+item.dragon_gem.food.ice.tooltip1=§6Transform into a §bIce §6Dragon.
+item.dragon_gem.food.lightning.name=§dLightning Dragon Gem
+item.dragon_gem.food.lightning.tooltip1=§6Transform into a §dLightning §6Dragon.
 
-item.dwarf_stout.name=Dwarf Stout
-item.dwarf_stout.tooltip1=§bI might be able to remove the effects
-item.dwarf_stout.tooltip2=§bby drinking some sort of potion
-item.dwarf_stout.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.fairy_dew.name=Fairy Dew
-item.fairy_dew.tooltip1=§bI might be able to remove the effects
-item.fairy_dew.tooltip2=§bby drinking some sort of potion
-item.fairy_dew.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.titan_spirit.name=Titan's Spirit
-item.titan_spirit.tooltip1=§bI might be able to remove the effects
-item.titan_spirit.tooltip2=§bby drinking some sort of potion
-item.titan_spirit.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.elf_sap.name=Elf Sap
-item.elf_sap.tooltip1=§bI might be able to remove the effects
-item.elf_sap.tooltip2=§bby drinking some sort of potion
-item.elf_sap.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.goblin_soup.name=Goblin Soup
-item.goblin_soup.tooltip1=§bI might be able to remove the effects
-item.goblin_soup.tooltip2=§bby drinking some sort of potion
-item.goblin_soup.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.faelis_food.name=Faelis Nip
-item.faelis_food.tooltip1=§bI might be able to remove the effects
-item.faelis_food.tooltip2=§bby drinking some sort of potion
-item.faelis_food.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-item.dragon_gem.name=Dragon Gem
-item.dragon_gem.tooltip1=§bI might be able to remove the effects
-item.dragon_gem.tooltip2=§bby drinking some sort of potion
-item.dragon_gem.tooltip3=<§9Use a Restoration Serum to undo§r>
-
-####################################Food End####################################
+#################################### Food End ####################################
 
 
-####################################Potions####################################
+#################################### Potions ####################################
 
 potion.effect.xat.sparkling=Sparkling Potion
 splash_potion.effect.xat.sparkling=Sparkling Splash Potion
@@ -492,17 +477,19 @@ tipped_arrow.effect.xat.dragon=Tipped Arrow of Dragon Transformation
 xat.effect.dragon=Dragon
 xat.item.potion.dragon.tooltip1=Become a Dragon for $dragonticks: seconds
 
-####################################Potions End####################################
+#################################### Potions End ####################################
 
-####################################Blocks####################################
+#################################### Blocks ####################################
 
 tile.moon_rose.name=Moon Rose
 tile.moon_rose.tooltip1=§bEnchanted Flower
 tile.moon_rose.tooltip2=§b<You can feel strong magical fluctuations coming from this>
 
-####################################Blocks End####################################
+#################################### Blocks End ####################################
 
-########################################Client Settings##########################################
+####################################[Configuration Begin]####################################
+
+######################################## Client Settings ##########################################
 
 xat.config.client.settings=Client Settings
 xat.config.client.settings.tooltip=Settings with only visual effects.
@@ -883,6 +870,8 @@ xat.config.magic.mana.players_only.tooltip=Only players have Mana
 
 #####################################[Race Configs]#####################################
 xat.config.races=Race Settings
+xat.config.race.size=Size Settings
+xat.config.race.size.tooltip=Size Configuration
 
 xat.config.races.dwarf=Dwarf Race Settings
 xat.config.races.dwarf.tooltip=

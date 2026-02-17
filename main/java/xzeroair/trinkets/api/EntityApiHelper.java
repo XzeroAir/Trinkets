@@ -3,7 +3,7 @@ package xzeroair.trinkets.api;
 import net.minecraft.entity.Entity;
 import xzeroair.trinkets.capabilities.Capabilities;
 
-/*
+/**
  * Self Note
  * Do not Remove, Change or Rename this method, or Class
  */

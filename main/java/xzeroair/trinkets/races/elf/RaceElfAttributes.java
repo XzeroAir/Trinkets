@@ -6,17 +6,22 @@ import xzeroair.trinkets.util.TrinketsConfig;
 
 public class RaceElfAttributes extends RaceAttributesWrapper {
 
-	public static final ElfConfig serverConfig = TrinketsConfig.SERVER.races.elf;
+    public static final ElfConfig serverConfig = TrinketsConfig.SERVER.races.elf;
 
-	public RaceElfAttributes() {
-		size = 100;
-		width = size;
-		height = size;
-		color1 = 16374701;
-		color2 = 11107684;
-		color3 = color1;
-		opacity = 1f;
-		trait_opacity = 1F;
-		attributes = serverConfig.attributes;
-	}
+    public RaceElfAttributes() {
+        size = 100;
+        width = size;
+        height = size;
+        color1 = 16374701;
+        color2 = 11107684;
+        color3 = color1;
+        opacity = 1f;
+        trait_opacity = 1F;
+    }
+
+    @Override
+    public String[] getAttributes() {
+        return serverConfig.attributes;
+    }
+
 }

@@ -76,7 +76,6 @@ minecraft {
                 Trinkets { source sourceSets.main }
             }
         }
-
         server {
             workingDirectory 'runServer'
             ideaModule "${project.name}.main"
@@ -164,7 +163,7 @@ jar {
                 'Built-On-Minecraft'         : minecraft_version,
 //                'FMLCorePlugin': mixin_loader_class,
                 'FMLCorePluginContainsFMLMod': 'true',
-//                'ForceLoadAsMod'             : 'true', //Comment out in dev environment, uncomment for building
+                'ForceLoadAsMod'             : 'true', //Comment out in dev environment, uncomment for building
 //                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
         ])
     }

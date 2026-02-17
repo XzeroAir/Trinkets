@@ -2,7 +2,6 @@ package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,20 +17,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.AbilityMagnetic;
 import xzeroair.trinkets.traits.abilities.AbilityRepel;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 import java.util.List;
@@ -44,25 +42,7 @@ public class TrinketPolarized extends AccessoryBase {
         super(name);
         this.setUUID("1ed98d9e-3075-45e0-b6f7-fcdff24caed4");
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-        final TranslationHelper helper = TranslationHelper.INSTANCE;
-        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "collect");
-        final KeyEntry key1 = new LangEntry(this.getTranslationKey(stack), "collectxp", serverConfig.collectXP);
-        final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "repel", serverConfig.repell);
-        final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
-        final boolean main = prop == null ? false : prop.mainAbility();
-        final boolean alt = prop == null ? false : prop.altAbility();
-        final KeyEntry key3 = new OptionEntry("collecttoggle", serverConfig.collectXP, helper.toggleCheckTranslation(main));
-        final KeyEntry key4 = new OptionEntry("repeltoggle", serverConfig.repell, helper.toggleCheckTranslation(alt));
-        final KeyEntry key5 = new KeyBindEntry("magnetkb", ModKeyBindings.POLARIZED_STONE_ABILITY.getDisplayName());
-        final KeyEntry key6 = new KeyBindEntry("auxkb", ModKeyBindings.AUX_KEY.getDisplayName());
-        return helper.formatAddVariables(translation, key, key1, key2, key3, key4, key5, key6);
-//        return translation;
-    }
-
+    
     @Override
     public String[] getAttributeConfig() {
         return serverConfig.attributes;
@@ -81,6 +61,9 @@ public class TrinketPolarized extends AccessoryBase {
         final ItemStack stack = player.getHeldItem(handIn);
         final boolean client = player.world.isRemote;
         final boolean sneak = player.isSneaking();
+        if (true) {
+            return super.onItemRightClick(worldIn, player, handIn);
+        }
 
         final TrinketProperties prop = Capabilities.getTrinketProperties(stack);
         if ((prop != null)) {
@@ -138,6 +121,16 @@ public class TrinketPolarized extends AccessoryBase {
     }
 
     @Override
+    public Element getPrimaryElement() {
+        return Elements.EARTH;
+    }
+
+    @Override
+    public boolean ItemEnabled() {
+        return serverConfig.enabled;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
         final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
@@ -159,10 +152,5 @@ public class TrinketPolarized extends AccessoryBase {
                 return normal;
             }
         });
-    }
-
-    @Override
-    public boolean ItemEnabled() {
-        return serverConfig.enabled;
     }
 }

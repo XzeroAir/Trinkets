@@ -5,6 +5,11 @@ import xzeroair.trinkets.util.TrinketsConfig;
 public class ClientConfigStore {
 
     public static final ClientConfigStore INSTANCE = new ClientConfigStore();
+
+    /**
+     * Trinket Container
+     */
+    public boolean TRINKET_CONTAINER_ENABLED = TrinketsConfig.SERVER.GUI.guiEnabled;
     /**
      * Race Selection
      */

@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.client.particles.ParticleGreed;
 import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.network.AbilityCacheSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
@@ -64,6 +62,19 @@ public class AbilityBlockFinder extends Ability implements ITickableAbility, ITo
         firstTick = true;
         targetTreasure = new TreasureEntry("");
         initTreasureBlocks();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = getTranslationKey();
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.LangEntry(langKey, "treasurefinder", serverConfig.oreFinder);
+        String oreTarget = getTreasure().isEmpty() ? "NONE" : getTreasure().parseTargetName();
+        final TranslationHelper.KeyEntry key2 = new TranslationHelper.OptionEntry("target", serverConfig.oreFinder, oreTarget);
+        final TranslationHelper.KeyEntry keybind1 = new TranslationHelper.KeyBindEntry("denvkb", ModKeyBindings.DRAGONS_EYE_ABILITY.getDisplayName());
+        final TranslationHelper.KeyEntry keybind2 = new TranslationHelper.KeyBindEntry("deofkb", ModKeyBindings.DRAGONS_EYE_TARGET.getDisplayName());
+        final TranslationHelper.KeyEntry keybind3 = new TranslationHelper.KeyBindEntry("auxkb", ModKeyBindings.AUX_KEY.getDisplayName());
+        return helper.formatAddVariables(key, renderID, key1, key2, keybind1, keybind2, keybind3);
     }
 
     private int targetValue = -1;
@@ -296,20 +307,19 @@ public class AbilityBlockFinder extends Ability implements ITickableAbility, ITo
                 }
                 firstTick = true;
                 TranslationHelper helper = TranslationHelper.INSTANCE;
-                final ItemStack stack = new ItemStack(ModItems.trinkets.TrinketDragonsEye);
                 if ((targetValue != -1)) {
                     final ConfigHelper.TreasureEntry entry = getTreasure(targetValue);
                     targetTreasure = entry;
                     final String target = entry.parseTargetName().trim();
                     final String entryRegName = entry == null ? "NULL" : entry.getObjectRegistryName();
-                    final String NotFound = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.notfound").getFormattedText(), new TranslationHelper.OptionEntry("target", true, entryRegName), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
-                    final String FoundTarget = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.on").getFormattedText(), new TranslationHelper.OptionEntry("target", true, target), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
+                    final String NotFound = helper.formatAddVariables(new TextComponentTranslation(getTranslationKey() + ".treasurefinder.notfound").getFormattedText(), new TranslationHelper.OptionEntry("target", true, entryRegName), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
+                    final String FoundTarget = helper.formatAddVariables(new TextComponentTranslation(getTranslationKey() + ".treasurefinder.on").getFormattedText(), new TranslationHelper.OptionEntry("target", true, target), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(true)));
                     final String message = target.isEmpty() ? NotFound : FoundTarget;
                     StringUtils.sendStatusMessageToPlayer(entity, message, true);
                 } else { // Is On
                     targetTreasure = TreasureEntry.EMPTY;
                     sendBlockCacheToPlayer(entity, collectBlocks(null));
-                    final String message = helper.formatAddVariables(new TextComponentTranslation(stack.getTranslationKey() + ".treasurefinder.off").getFormattedText(), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(false)));
+                    final String message = helper.formatAddVariables(new TextComponentTranslation(getTranslationKey() + ".treasurefinder.off").getFormattedText(), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(false)));
                     StringUtils.sendStatusMessageToPlayer(entity, message, true);
                 }
             } else {

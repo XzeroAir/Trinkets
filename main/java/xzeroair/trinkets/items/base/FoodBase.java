@@ -59,10 +59,20 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
         if (world == null) {
             return;
         }
+
+        for (int i = 1; i < 4; i++) {
+            String key = stack.getItem() instanceof RaceFood ? (Reference.MODID + ".transformation.food.tooltip" + i) : (Reference.MODID + ".food.item.tooltip" + i);
+            String food = new TextComponentTranslation(key).getFormattedText().trim();
+            if (!food.isEmpty()) {
+                tooltips.add(food);
+            }
+        }
+
         final TranslationHelper helper = TranslationHelper.INSTANCE;
+        String translationKey = stack.getTranslationKey();
         for (int i = 1; i < 10; i++) {
             final int index = i;
-            final String string = helper.getLangTranslation(stack.getTranslationKey() + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
+            final String string = helper.getLangTranslation(translationKey + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
             if (!helper.isStringEmpty(string)) {
                 tooltips.add(string);
             }
@@ -72,9 +82,9 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
         final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
         final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
         final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS;
-        final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
-        final String FA = !faEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
-        final String EV = !evEnabled ? "" : helper.getLangTranslation(stack.getTranslationKey() + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));
+        final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(translationKey + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
+        final String FA = !faEnabled ? "" : helper.getLangTranslation(translationKey + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
+        final String EV = !evEnabled ? "" : helper.getLangTranslation(translationKey + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));
         if (GuiScreen.isCtrlKeyDown()) {
             if (!helper.isStringEmpty(TAN)) {
                 final String modifier = sdEnabled ? " (Simple Difficulty)" : tanEnabled ? " (Tough as Nails)" : "";
@@ -101,6 +111,16 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         return super.getItemStackDisplayName(stack);
+    }
+
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        return this.getTranslationKey();
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return super.getTranslationKey() + ".food";
     }
 
     public UUID getUUID() {

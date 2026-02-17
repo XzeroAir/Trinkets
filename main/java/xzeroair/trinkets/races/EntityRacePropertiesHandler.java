@@ -1,11 +1,6 @@
 package xzeroair.trinkets.races;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,16 +14,21 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.capabilities.race.EntityProperties.RaceCache;
-import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiEntityProperties;
-import xzeroair.trinkets.client.gui.hud.mana.ManaHud;
+import xzeroair.trinkets.client.races.IRenderRaceHandler;
+import xzeroair.trinkets.client.races.RaceEmptyRenderer;
+import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.IncreasedReachPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
@@ -41,6 +41,9 @@ import xzeroair.trinkets.util.helpers.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 
 public abstract class EntityRacePropertiesHandler implements IRaceHandler {
@@ -54,6 +57,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     protected int targetHeight = 100;
 
     protected RaceCache raceCache;
+    protected RaceAttributesWrapper attributes;
 
     protected boolean showTraits;
     protected int traitPrimaryColor;
@@ -61,29 +65,46 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     protected int traitVariant;
     protected int traitVariantMax;
 
-    protected EntityProperties properties;
-
     protected float healthBeforeTransformation; // TODO Store the Health before, then calculate the health afterwards
     protected float maxHealthBeforeTranformation;
 
     protected double progress = 0D;
 
-    public EntityRacePropertiesHandler(@Nonnull EntityLivingBase e, @Nonnull RaceCache cache) {
-        entity = e;
-        firstUpdate = true;
-        firstTransformUpdate = true;
-        showTraits = true;
+    @SideOnly(Side.CLIENT)
+    protected IRenderRaceHandler RendererRace;
+
+    protected Map<Integer, IAbilityInterface> raceAbilities;
+    private int index = 0;
+    protected Map<String, IAbilityInterface> activeAbilities;
+
+    public EntityRacePropertiesHandler(@Nonnull EntityLivingBase e, @Nonnull EntityRace race, Element element) {
+        this.entity = e;
+        this.firstUpdate = true;
+        this.firstTransformUpdate = true;
+        this.showTraits = true;
+        this.raceCache = new RaceCache(race, element);
+        this.attributes = race.getRaceAttributes();
+        this.traitPrimaryColor = race.getPrimaryColor();
+        this.traitSecondaryColor = race.getSecondaryColor();
+        this.traitVariant = 0;
+        this.traitVariantMax = 3;
+        this.setTargetHeight(race.getRaceHeight());
+        this.setTargetWidth(race.getRaceWidth());
+        this.raceAbilities = new TreeMap<>();
+        this.activeAbilities = new TreeMap<>();
+    }
+
+    public EntityRacePropertiesHandler(EntityLivingBase e, RaceCache cache) {
+        this(e, cache.getRace(), cache.getElement());
         this.raceCache = cache;
-        traitPrimaryColor = cache.getRace().getPrimaryColor();
-        traitSecondaryColor = cache.getRace().getSecondaryColor();
-        traitVariant = 0;
-        traitVariantMax = 3;
-        this.setTargetHeight(cache.getRace().getRaceHeight());
-        this.setTargetWidth(cache.getRace().getRaceWidth());
     }
 
     public EntityRacePropertiesHandler(EntityLivingBase e, EntityRace race) {
-        this(e, new RaceCache(race));
+        this(e, race, Elements.NEUTRAL);
+    }
+
+    public EntityRacePropertiesHandler(EntityLivingBase e) {
+        this(e, EntityRaces.none, Elements.NEUTRAL);
     }
 
     protected void initAttributes() {
@@ -107,26 +128,11 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         }
     }
 
-    public EntityRacePropertiesHandler setEntityProperties(EntityProperties properties) {
-        this.properties = properties;
-        return this;
-    }
-
-    protected EntityProperties getEntityProperties() {
-        if (properties != null) {
-            return properties;
-        } else {
-            EntityProperties tmp = Capabilities.getEntityProperties(entity);
-            if (tmp == null) {
-                tmp = new EntityProperties(entity);
-            }
-            return tmp;
+    public RaceAttributesWrapper getRaceAttributes() {
+        if (attributes == null) {
+            attributes = getRace().getRaceAttributes();
         }
-    }
-
-    public EntityRacePropertiesHandler setFirstUpdate(boolean firstUpdate) {
-        this.firstUpdate = firstUpdate;
-        return this;
+        return attributes;
     }
 
     public EntityRace getRace() {
@@ -139,11 +145,18 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
     public void addAbility(IAbilityInterface ability) {
         if (ability.getRequiredElement() != null) {
-            if (!getEntityProperties().getCurrentRace().compareElement(ability.getRequiredElement())) {
+            if (!getRaceCache().compareElement(ability.getRequiredElement())) {
                 return;
             }
         }
-        this.getEntityProperties().getAbilityHandler().registerRaceAbility(this.getRace().getRegistryName().toString(), ability);
+        String key = ability.getRegistryName().toString();
+        if (!getActiveAbilities().containsKey(key)) {
+            if (!getRaceAbilities().containsKey(this.index)) {
+                activeAbilities.put(key, ability);
+                raceAbilities.put(this.index, ability);
+                index++;
+            }
+        }
     }
 
     @Nullable
@@ -155,6 +168,32 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         this.getEntityProperties().getAbilityHandler().removeAbility(ability);
     }
 
+
+    public EntityProperties getEntityProperties() {
+        return Capabilities.getEntityProperties(entity, new EntityProperties(entity), (prop, prop2) -> {
+            return prop;
+        });
+    }
+
+    public EntityRacePropertiesHandler setFirstUpdate(boolean firstUpdate) {
+        this.firstUpdate = firstUpdate;
+        return this;
+    }
+
+    public Map<Integer, IAbilityInterface> getRaceAbilities() {
+        if (raceAbilities == null) {
+            raceAbilities = new TreeMap<>();
+        }
+        return raceAbilities;
+    }
+
+    protected Map<String, IAbilityInterface> getActiveAbilities() {
+        if (activeAbilities == null) {
+            activeAbilities = new TreeMap<>();
+        }
+        return activeAbilities;
+    }
+
     /**
      * Use {@link #startTransformation()} instead
      */
@@ -162,7 +201,19 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         firstTransformUpdate = true;
         healthBeforeTransformation = entity.getHealth();
         maxHealthBeforeTranformation = entity.getMaxHealth();
+        index = 0;
+        if (!getRaceAbilities().isEmpty()) {
+            raceAbilities.clear();
+        }
+        if (!getActiveAbilities().isEmpty()) {
+            activeAbilities.clear();
+        }
         this.startTransformation();
+        if (!getActiveAbilities().isEmpty()) {
+            for (IAbilityInterface ability : activeAbilities.values()) {
+                this.getEntityProperties().getAbilityHandler().registerRaceAbility(this.getRace().getRegistryName().toString(), ability);
+            }
+        }
     }
 
     /**
@@ -179,6 +230,12 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (!getActiveAbilities().isEmpty()) {
+            raceAbilities.clear();
+        }
+        if (!getRaceAbilities().isEmpty()) {
+            activeAbilities.clear();
+        }
     }
 
     public void onTick() {
@@ -186,7 +243,9 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
         this.initAttributes();
         this.eyeHeightHandler();
-        if (this.isTransformed()) {
+        if (this.isTransforming()) {
+            this.whileTranforming();
+        } else if (this.isTransformed()) {
             if (firstTransformUpdate && !entity.world.isRemote) {
                 float newMaxHealth = entity.getMaxHealth();
                 float difference = healthBeforeTransformation - maxHealthBeforeTranformation;
@@ -206,6 +265,28 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
             cooldown--;
         } else {
             cooldown = 0;
+        }
+    }
+
+    @Override
+    public void whileTranforming() {
+        try {
+            if (entity.world.isRemote) {
+                getRaceRenderer().whileTransforming(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void whileTransformed() {
+        try {
+            if (entity.world.isRemote) {
+                getRaceRenderer().whileTransformed(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -243,7 +324,6 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
 
     public boolean isTransforming() {
         return (this.getEntityProperties().getHeightValue() != this.getTargetHeight()) || (this.getEntityProperties().getWidthValue() != this.getTargetWidth());
-        //false;//this.getSize() != this.getTargetSize();
     }
 
     public boolean isTransformed() {
@@ -413,11 +493,11 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         if (!getRace().isNone()) {
             final String key = getRace().getRegistryName().toString();
             final NBTTagCompound tag = new NBTTagCompound();
-            tag.setBoolean("trait_shown", showTraits);
+            tag.setBoolean("ShowTrait", showTraits);
             tag.setInteger("ColorPrimary", traitPrimaryColor);
             tag.setInteger("ColorSecondary", traitSecondaryColor);
-            tag.setInteger("trait_variant", traitVariant);
-            tag.setDouble("transformation_progress", progress);
+            tag.setInteger("TraitVariant", traitVariant);
+            tag.setDouble("TransformationProgress", progress);
             compound.setTag(key, tag);
         }
         return compound;
@@ -428,37 +508,22 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         if (!getRace().isNone()) {
             final String key = getRace().getRegistryName().toString();
             if (compound.hasKey(key)) {
-                final NBTTagCompound rTag = compound.getCompoundTag(key);
-                NBTHelper.hasBoolean(rTag, "trait_shown", (bool) -> {
+                final NBTTagCompound tag = compound.getCompoundTag(key);
+                NBTHelper.hasBoolean(tag, "ShowTrait", (bool) -> {
                     showTraits = bool;
                 });
-//                if (rTag.hasKey("trait_shown")) {
-//                    showTraits = rTag.getBoolean("trait_shown");
-//                }
-                NBTHelper.hasInteger(rTag, "ColorPrimary", (color) -> {
+                NBTHelper.hasInteger(tag, "ColorPrimary", (color) -> {
                     traitPrimaryColor = color;
                 });
-                NBTHelper.hasInteger(rTag, "ColorSecondary", (color) -> {
+                NBTHelper.hasInteger(tag, "ColorSecondary", (color) -> {
                     traitSecondaryColor = color;
                 });
-//                if (rTag.hasKey("trait_color")) {
-//                    traitColor = rTag.getString("trait_color");
-//                }
-//                if (rTag.hasKey("trait_color_alt")) {
-//                    traitColorAlt = rTag.getString("trait_color_alt");
-//                }
-                NBTHelper.hasInteger(rTag, "TraitVariant", (variant) -> {
+                NBTHelper.hasInteger(tag, "TraitVariant", (variant) -> {
                     traitVariant = variant;
                 });
-//                if (rTag.hasKey("trait_variant")) {
-//                    traitVariant = rTag.getInteger("trait_variant");
-//                }
-                NBTHelper.hasInteger(rTag, "TransformationProgress", (progress) -> {
-                    progress = progress;
+                NBTHelper.hasInteger(tag, "TransformationProgress", (prog) -> {
+                    this.progress = prog;
                 });
-//                if (rTag.hasKey("transformation_progress")) {
-//                    progress = rTag.getDouble("transformation_progress");
-//                }
             }
         }
     }
@@ -511,126 +576,38 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         traitVariantMax = variant;
     }
 
-    /*
-     * Player Entities Only
-     */
     @Override
-    public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-        final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        if ((entity == Minecraft.getMinecraft().player) && (screen != null) && !((screen instanceof GuiChat) || (screen instanceof GuiEntityProperties) || (screen instanceof ManaHud))) {
-            return;
-        }
-        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-            final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
-            final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
-            final double xLoc = (x / wScale) - x;
-            final double yLoc = (y / hScale) - y;
-            final double zLoc = (z / wScale) - z;
-
-            final double yOffset = entity.getYOffset();
-            final Entity mount = entity.getRidingEntity();
-            //			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
-            final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
-            //			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
-            //						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
-            final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
-            if (entity.isRiding()) {
-                GlStateManager.translate(0, mountedOffset, 0);
-                GlStateManager.translate(0, -yOffset, 0);
-                GlStateManager.translate(0, retMountedOffset, 0);
-            }
-            GlStateManager.scale(wScale, hScale, wScale);
-            if (entity.isRiding()) {
-                GlStateManager.translate(0, -retMountedOffset, 0);
-                GlStateManager.translate(0, yOffset, 0);
-                GlStateManager.translate(0, -mountedOffset, 0);
-            }
-            GlStateManager.translate(xLoc, yLoc, zLoc);
-        }
+    @SideOnly(Side.CLIENT)
+    public void getDescription(List<String> tooltips, int rendMod, int rendID) {
+//        try {
+//            final TranslationHelper helper = TranslationHelper.INSTANCE;
+//            String langKey = "xat." + getRace().getName().toLowerCase();
+//            for (int i = 1; i < 10; i++) {
+//                final String string = helper.getLangTranslation(langKey + ".tooltip" + i, (lang) -> {
+////                    final TranslationHelper.KeyEntry key = new TranslationHelper.LangEntry(langKey, "explosionresist", serverConfig.explosion_resist);
+////                    final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("explosionresistamount", serverConfig.explosion_resist, ((100F - (serverConfig.explosion_amount * 100F)) + "%"));
+//                    String output = helper.formatAddVariables(lang);
+//                    return output.startsWith("$advanced:") ? show ? output.replace("$advanced:", "") : "" : output;
+//                });
+//                if (!helper.isStringEmpty(string)) {
+//                    tooltips.add(string);
+//                }
+//            }
+//            for (IAbilityInterface ability : getRaceAbilities().values()) {
+////                ability.getDescription(tooltips, show);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
-    /*
-     * Player Entities Only
-     */
+    @SideOnly(Side.CLIENT)
     @Override
-    public void doRenderPlayerPost(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-    }
-
-    /*
-     * Both Player and Non Player Entities
-     */
-    @Override
-    public <T extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-        if (entity instanceof EntityPlayer) {
-            if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-                GlStateManager.pushMatrix();
-                final float t2 = this.getEntityProperties().getDefaultHeight() - (entity.height);
-                GlStateManager.translate(0, t2, 0);
-            }
+    public IRenderRaceHandler getRaceRenderer() {
+        if (this.RendererRace == null) {
+            this.RendererRace = new RaceEmptyRenderer(entity, new EmptyHandler(entity));
         }
+        return RendererRace;
     }
-
-    /*
-     * Both Player and Non Player Entities
-     */
-    @Override
-    public <T extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-        if (entity instanceof EntityPlayer) {
-            if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-                GlStateManager.popMatrix();
-            }
-        }
-    }
-
-    /*
-     * Non Player Entities Only
-     */
-    @Override
-    public <T extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-            GlStateManager.pushMatrix();
-            final double hScale = this.getEntityProperties().getHeightValue() * 0.01D;
-            final double wScale = this.getEntityProperties().getWidthValue() * 0.01D;
-            final double xLoc = (x / wScale) - x;
-            final double yLoc = (y / hScale) - y;
-            final double zLoc = (z / wScale) - z;
-
-            final double yOffset = entity.getYOffset();
-            final Entity mount = entity.getRidingEntity();
-            //			double vanillaOffset = mount.posY + mount.getMountedYOffset() + entity.getYOffset();// + 0.15 * prevRearingAmount
-            final double mountedOffset = entity.isRiding() && (mount != null) ? (mount.getMountedYOffset()) : 0;
-            //			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
-            //						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
-            final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
-            //			GlStateManager.translate(-xLoc, -yLoc, -zLoc);
-            if (entity.isRiding()) {
-                GlStateManager.translate(0, mountedOffset, 0);
-                GlStateManager.translate(0, -yOffset, 0);
-                GlStateManager.translate(0, retMountedOffset, 0);
-            }
-            GlStateManager.scale(wScale, hScale, wScale);
-            if (entity.isRiding()) {
-                GlStateManager.translate(0, -retMountedOffset, 0);
-                GlStateManager.translate(0, yOffset, 0);
-                GlStateManager.translate(0, -mountedOffset, 0);
-            }
-            GlStateManager.translate(xLoc, yLoc, zLoc);
-            //			System.out.println(hScale + "|" + wScale + "| X:" + xLoc + "| Y:" + yLoc + "| Z:" + zLoc);
-        }
-    }
-
-    /*
-     * Non Player Entities Only
-     */
-    @Override
-    public <T extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
-        if ((this.isTransforming() || this.isTransformed()) && !this.getEntityProperties().isNormalSize()) {
-            GlStateManager.popMatrix();
-        }
-    }
-
-    //	@Override
-    //	public void doRenderHand(EnumHand hand, ItemStack itemStack, float swingProgress, float interpolatedPitch, float equipProgress, float partialTicks) {
-    //	}
 
 }

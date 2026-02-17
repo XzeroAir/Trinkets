@@ -65,7 +65,7 @@ public class EventHandlerClient {
         if ((event.side == Side.CLIENT) && (event.phase == Phase.START)) {
             final EntityPlayerSP player = Minecraft.getMinecraft().player;
             if ((player != null)) {
-                if (TrinketsConfig.SERVER.GUI.guiEnabled && ModKeyBindings.TRINKET_GUI.isPressed()) {
+                if (TrinketsConfig.getClientStore().TRINKET_CONTAINER_ENABLED && ModKeyBindings.TRINKET_GUI.isPressed()) {
                     NetworkHandler.sendToServer(new OpenTrinketGui(Reference.GUI));
                 }
             }

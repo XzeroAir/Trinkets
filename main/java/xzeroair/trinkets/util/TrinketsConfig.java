@@ -11,6 +11,7 @@ import xzeroair.trinkets.util.config.ClientConfig;
 import xzeroair.trinkets.util.config.ClientConfigStore;
 import xzeroair.trinkets.util.config.ServerConfig;
 import xzeroair.trinkets.util.config.compat.CompatabilityConfigs;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 
 @Config(name = Reference.configPath, modid = Reference.MODID)
 @LangKey("xat.config.title")
@@ -37,10 +38,13 @@ public class TrinketsConfig {
     public static NBTTagCompound writeConfigMap() {
         final NBTTagCompound tag = new NBTTagCompound();
         // Needs Synced because it effects client rendering
+        tag.setBoolean("TRINKET_CONTAINER", TrinketsConfig.SERVER.GUI.guiEnabled);
         tag.setBoolean("OF_ENABLED", TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder);
 
         // Climbable blocks sync.
-        tag.setBoolean("CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
+        tag.setBoolean("FAIRY_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
+        tag.setBoolean("GOBLIN_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
+        tag.setBoolean("FAELIS_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
 
         // Most of these are probably not needed.
         if (Trinkets.MOD_COMPAT.ToughAsNails) {
@@ -72,42 +76,45 @@ public class TrinketsConfig {
         if ((tag != null) && !tag.isEmpty()) {
             Trinkets.log.info("Found Server Config");
             try {
-                if (tag.hasKey("OF_ENABLED")) {
-                    ClientConfigStore.INSTANCE.DRAGON_EYE_OF_ENABLED = tag.getBoolean("OF_ENABLED");
-                }
-                if (tag.hasKey("CLIMBING_ENABLED")) {
-                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = tag.getBoolean("CLIMBING_ENABLED");
-                }
-                if (tag.hasKey("COMPAT_TAN")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = tag.getBoolean("COMPAT_TAN");
-                }
-                if (tag.hasKey("COMPAT_SD")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = tag.getBoolean("COMPAT_SD");
-                }
-                if (tag.hasKey("COMPAT_ELENAI1")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = tag.getBoolean("COMPAT_ELENAI1");
-                }
-                if (tag.hasKey("COMPAT_ELENAI2")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = tag.getBoolean("COMPAT_ELENAI2");
-                }
-                if (tag.hasKey("COMPAT_EV")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ENHANCED_VISUALS = tag.getBoolean("COMPAT_EV");
-                }
-//                    if (config.getKey().contentEquals("compatLycanites")) {
-//                        TrinketsConfig.compat.lycanites = Boolean.parseBoolean(config.getValue());
-//                    }
-//                    if (config.getKey().contentEquals("compatDefiledLands")) {
-//                        TrinketsConfig.compat.defiledlands = Boolean.parseBoolean(config.getValue());
-//                    }
-                if (tag.hasKey("COMPAT_BD")) {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_BETTER_DIVING = tag.getBoolean("COMPAT_BD");
-                }
-                if (tag.hasKey("MISC_MOVEMENT")) {
-                    ClientConfigStore.INSTANCE.BLOCK_MOVEMENT = tag.getBoolean("MISC_MOVEMENT");
-                }
-                if (tag.hasKey("MISC_REACH_FIX")) {
-                    ClientConfigStore.INSTANCE.REACH_FIX = tag.getBoolean("MISC_REACH_FIX");
-                }
+                NBTHelper.hasBoolean(tag, "TRINKET_CONTAINER", (bool) -> {
+                    ClientConfigStore.INSTANCE.TRINKET_CONTAINER_ENABLED = bool;
+                });
+                NBTHelper.hasBoolean(tag, "OF_ENABLED", (bool) -> {
+                    ClientConfigStore.INSTANCE.DRAGON_EYE_OF_ENABLED = bool;
+                });
+                NBTHelper.hasBoolean(tag, "FAIRY_CLIMBING_ENABLED", (bool) -> {
+                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
+                });
+                NBTHelper.hasBoolean(tag, "GOBLIN_CLIMBING_ENABLED", (bool) -> {
+                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
+                });
+                NBTHelper.hasBoolean(tag, "FAELIS_CLIMBING_ENABLED", (bool) -> {
+                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_SD", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_ELENAI1", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_ELENAI2", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_EV", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_ENHANCED_VISUALS = bool;
+                });
+                NBTHelper.hasBoolean(tag, "COMPAT_BD", (bool) -> {
+                    ClientConfigStore.INSTANCE.MOD_COMPAT_BETTER_DIVING = bool;
+                });
+                NBTHelper.hasBoolean(tag, "MISC_MOVEMENT", (bool) -> {
+                    ClientConfigStore.INSTANCE.BLOCK_MOVEMENT = bool;
+                });
+                NBTHelper.hasBoolean(tag, "MISC_REACH_FIX", (bool) -> {
+                    ClientConfigStore.INSTANCE.REACH_FIX = bool;
+                });
             } catch (final Exception e) {
                 e.printStackTrace();
             }

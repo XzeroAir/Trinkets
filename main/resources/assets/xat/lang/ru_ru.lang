@@ -5,10 +5,6 @@ xat.config.title=Trinkets & Baubles
 xat.exampletext.start=Пример информативного текста, он не отобразится в игре.
 xat.exampletext.1=Подсказки для Предметов до 10
 xat.exampletext.2=item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, и т. д.
-xat.exampletext.3=3 текста совместимости для каждого Предмета, примеры:
-xat.exampletext.4=item.item.glow_ring.0.compat.tan=Для Tough as Nails
-xat.exampletext.5=item.item.glow_ring.0.compat.firstaid=Для First Aid
-xat.exampletext.6=item.item.glow_ring.0.compat.enhancedvisuals=Для EnhancedVisuals
 xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Удерживайте Shift>
@@ -51,7 +47,9 @@ gui.xat.button.close=Закрыть
 
 attribute.name.xat.entityRace=Зачарованная раса
 
+#################################### Entities ####################################
 entity.AlphaWolf.name=Король волк
+#################################### Abilities ####################################
 
 ability.block_detection.name=§aАлчные глаза
 ability.block_detection.tooltip1=Дают пользователю способность находить сокровища по близости.
@@ -173,19 +171,6 @@ item.glowing_ingot.tooltip1=§eМатериал для создания 2-го �
 item.glowing_gem.name=§6Пылающий самоцвет
 item.glowing_gem.tooltip1=§6Материал для создания 3-го уровня.
 
-item.mana_candy.name=§bМана-конфета
-
-item.mana_crystal.name=§6Мана-кристалл
-item.mana_crystal.tooltip1=§6+§b$mpmax:§6 Макс. мана
-
-item.mana_reagent.name=§6Мана-реагент
-item.mana_reagent.tooltip1=§cВредит при употреблении.
-item.mana_reagent.tooltip2=§c-§b$mpmax:§c Макс. мана
-
-item.restoration_serum.name=§6Сыворотка восстановления
-item.restoration_serum.tooltip1=Обращает постоянные эффекты трансформации.
-item.restoration_serum.tooltip2=§cВредит при употреблении.
-
 ###Materials End###
 
 ###Trinkets###
@@ -234,6 +219,9 @@ item.titan_ring.0.tooltip4=§cВытаптывает растения.
 item.titan_ring.0.heavy=§cТонет в воде.
 
 item.dragon_ring.0.name=§6Кольцо драконов
+item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
+item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
+item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
 #item.dragon_ring.0.tooltip1=§6Размер существа на $rsize: от обычного.
 #item.dragon_ring.0.tooltip2=§6Нажатие §r<§e*breathkb:§r> — §6изрыгнуть пламенем.
 #item.dragon_ring.0.tooltip3=§6Даёт огнестойкость.
@@ -352,40 +340,75 @@ item.faelis_claw.0.tooltip3=§cСрок действия снижается на
 
 ###Food###
 
-item.dwarf_stout.name=Крепкий портер Гномов
-item.dwarf_stout.tooltip1=§bВыпив некое зелье,
-item.dwarf_stout.tooltip2=§bя смогу снять эффекты.
-item.dwarf_stout.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
 
-item.fairy_dew.name=Роса феи
-item.fairy_dew.tooltip1=§bВыпив некое зелье,
-item.fairy_dew.tooltip2=§bя смогу снять эффекты.
-item.fairy_dew.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+item.mana_candy.food.name=§bМана-конфета
+item.mana_candy.food.tooltip1=§6Restores some Mana
 
-item.titan_spirit.name=Душа титана
-item.titan_spirit.tooltip1=§bВыпив некое зелье,
-item.titan_spirit.tooltip2=§bя смогу снять эффекты.
-item.titan_spirit.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+item.mana_crystal.food.name=§6Мана-кристалл
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 Макс. мана
 
-item.elf_sap.name=Живица эльфа
-item.elf_sap.tooltip1=§bВыпив некое зелье,
-item.elf_sap.tooltip2=§bя смогу снять эффекты.
-item.elf_sap.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+item.mana_reagent.food.name=§6Мана-реагент
+item.mana_reagent.food.tooltip1=§cВредит при употреблении.
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c Макс. мана
 
-item.goblin_soup.name=Суп гоблина
-item.goblin_soup.tooltip1=§bВыпив некое зелье,
-item.goblin_soup.tooltip2=§bя смогу снять эффекты.
-item.goblin_soup.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+item.restoration_serum.food.name=§6Сыворотка восстановления
+item.restoration_serum.food.tooltip1=Обращает постоянные эффекты трансформации.
+item.restoration_serum.food.tooltip2=§cВредит при употреблении.
 
-item.faelis_food.name=Котовник Фаэлиса
-item.faelis_food.tooltip1=§bВыпив некое зелье,
-item.faelis_food.tooltip2=§bя смогу снять эффекты.
-item.faelis_food.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+xat.transformation.food.tooltip1==§bВыпив некое зелье,
+xat.transformation.food.tooltip2=§bя смогу снять эффекты.
+xat.transformation.food.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
 
-item.dragon_gem.name=Камень дракона
-item.dragon_gem.tooltip1=§bВыпив некое зелье,
-item.dragon_gem.tooltip2=§bя смогу снять эффекты.
-item.dragon_gem.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+item.dwarf_stout.food.name=Крепкий портер Гномов
+item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
+#item.dwarf_stout.tooltip1=§bВыпив некое зелье,
+#item.dwarf_stout.tooltip2=§bя смогу снять эффекты.
+#item.dwarf_stout.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.fairy_dew.food.name=Роса феи
+item.fairy_dew.food.tooltip1=§6Transform into a Fairy
+#item.fairy_dew.tooltip1=§bВыпив некое зелье,
+#item.fairy_dew.tooltip2=§bя смогу снять эффекты.
+#item.fairy_dew.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.titan_spirit.food.name=Душа титана
+item.titan_spirit.food.tooltip1=§6Transform into a Titan
+#item.titan_spirit.tooltip1=§bВыпив некое зелье,
+#item.titan_spirit.tooltip2=§bя смогу снять эффекты.
+#item.titan_spirit.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.elf_sap.food.name=Живица эльфа
+item.elf_sap.food.tooltip1=§6Transform into a Elf
+#item.elf_sap.tooltip1=§bВыпив некое зелье,
+#item.elf_sap.tooltip2=§bя смогу снять эффекты.
+#item.elf_sap.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.goblin_soup.food.name=Суп гоблина
+item.goblin_soup.food.tooltip1=§6Transform into a Goblin
+#item.goblin_soup.tooltip1=§bВыпив некое зелье,
+#item.goblin_soup.tooltip2=§bя смогу снять эффекты.
+#item.goblin_soup.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.faelis_food.food.name=Котовник Фаэлиса
+item.faelis_food.food.tooltip1=§6Transform into a Faelis
+#item.faelis_food.tooltip1=§bВыпив некое зелье,
+#item.faelis_food.tooltip2=§bя смогу снять эффекты.
+#item.faelis_food.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
+
+item.dragon_gem.food.name=Камень дракона
+item.dragon_gem.food.tooltip1=Transform into a Dragon.
+item.dragon_gem.food.fire.name=Fire Dragon Gem
+item.dragon_gem.food.fire.tooltip1=Transform into a Fire Dragon.
+item.dragon_gem.food.ice.name=Ice Dragon Gem
+item.dragon_gem.food.ice.tooltip1=Transform into a Ice Dragon.
+item.dragon_gem.food.lightning.name=Lightning Dragon Gem
+item.dragon_gem.food.lightning.tooltip1=Transform into a Lightning Dragon.
+#item.dragon_gem.tooltip1=§bВыпив некое зелье,
+#item.dragon_gem.tooltip2=§bя смогу снять эффекты.
+#item.dragon_gem.tooltip3=<§9Для отмены используйте Сыворотку восстановления§r>
 
 ###Food End###
 

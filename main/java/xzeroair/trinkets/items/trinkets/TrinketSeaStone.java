@@ -6,27 +6,23 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityWaterAffinity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityParasitesImmunity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigSeaStone;
 import xzeroair.trinkets.util.config.trinkets.ConfigSeaStone;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 import java.util.List;
 
@@ -38,20 +34,6 @@ public class TrinketSeaStone extends AccessoryBase {
     public TrinketSeaStone(String name) {
         super(name);
         this.setUUID("6029aecd-318e-4b45-8c36-2ddd7f481e36");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-        final TranslationHelper helper = TranslationHelper.INSTANCE;
-        final KeyEntry key = new LangEntry(this.getTranslationKey(stack), "bubbles", serverConfig.underwater_breathing);
-        final KeyEntry key1 = new OptionEntry("bubbles", true, serverConfig.underwater_breathing ? 10 + "" : 1 + "");
-        final KeyEntry key2 = new LangEntry(this.getTranslationKey(stack), "betterswimming", serverConfig.Swim_Tweaks);
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean tan = tanEnabled || sdEnabled;
-        final KeyEntry key3 = new LangEntry(this.getTranslationKey(stack), "tanthirst", tan && serverConfig.compat.tan.prevent_thirst);
-        return helper.formatAddVariables(translation, key, key1, key2, key3);
     }
 
     @Override
@@ -95,6 +77,11 @@ public class TrinketSeaStone extends AccessoryBase {
         GlStateManager.scale(scale * bS, scale * bS, scale * bS);
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.WATER;
     }
 
     @Override
