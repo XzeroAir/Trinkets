@@ -9,188 +9,237 @@ xat.config.title=Trinkets and Baubles
 
 xat.holdshift=<Przytrzymaj Shift>
 xat.holdctrl=<Przytrzymaj Ctrl>
-xat.noattributes=Ten przedmiot nie zmienia żadnych atrybutów.
-xat.onequip=Kiedy założony:
+xat.noattributes=Ten przedmiot nie zapewnia żadnych modyfikatorów atrybutów.
+xat.onequip=Po założeniu:
 xat.tooltip.attackspeed=Szybkość ataku
-xat.tooltip.attackdamage=Obrażenia
-xat.tooltip.health=Maksymalne zdrowie
-xat.tooltip.armor=Zbroja
-xat.tooltip.toughness=Wytrzymałość zbroi
+xat.tooltip.attackdamage=Obrażenia ataku
+xat.tooltip.health=Zdrowie
+xat.tooltip.armor=Pancerz
+xat.tooltip.toughness=Wytrzymałość pancerza
 xat.tooltip.knockbackresist=Odporność na odrzut
-xat.tooltip.movementspeed=Szybkość poruszania się
+xat.tooltip.movementspeed=Prędkość ruchu
 xat.tooltip.luck=Szczęście
-xat.tooltip.swimspeed=Szybkość pływania
+xat.tooltip.swimspeed=Prędkość pływania
 xat.tooltip.reach=Zasięg
-xat.tooltip.stepheight=Wysokość wchodzenia
+xat.tooltip.stepheight=Wysokość kroku
 xat.tooltip.jumpheight=Wysokość skoku
-xat.tooltip.on=§r(§aWłączony§r)
-xat.tooltip.off=§r(§cWyłączony§r)
-xat.tooltip.enabled=§r[§aWłączony§r]
-xat.tooltip.disabled=§r[§cWyłączony§r]
-xat.tooltip.weight=Ciężar:
+xat.tooltip.on=§r(§aWłączone§r)
+xat.tooltip.off=§r(§cWyłączone§r)
+xat.tooltip.enabled=§r[§aWłączone§r]
+xat.tooltip.disabled=§r[§cWyłączone§r]
+xat.tooltip.weight=Waga:
 
-key.xat.category=Trinkets and Baubles
-key.xat.trinket_target.desc=Oko smoka: zmień cel
-key.xat.trinket_toggle_effect.desc=Oko smoka: widzenie w ciemności
-key.xat.magnet_toggle_effect.desc=Spolaryzowany kamień: magnes
+key.xat.category=Trinkety i Bauble
+key.xat.trinket_target.desc=Smocze Oko: Przełącz cel
+key.xat.trinket_toggle_effect.desc=Smocze Oko: Widzenie w ciemności
+key.xat.magnet_toggle_effect.desc=Spolaryzowany Kamień: Magnes
 key.xat.aux_key.desc=Klawisz pomocniczy
-key.xat.trinket_gui.desc=Menu Trinkets
+key.xat.trinket_gui.desc=Interfejs Trinketów
 
-key.xat.trinket_arcing_attack.desc=Iskrzący orb: atak
-key.xat.race_ability.desc=Umiejętność rasy
+key.xat.trinket_arcing_attack.desc=Łukowa Kula: Atak
+key.xat.race_ability.desc=Zdolność rasy
 
 gui.xat.button.open=Otwórz
 gui.xat.button.close=Zamknij
 
-attribute.name.xat.entityRace=Zaklęta rasa
-
 #################################### Entities ####################################
 
-entity.AlphaWolf.name=Król wilków
+entity.AlphaWolf.name=Król Wilków
 
 #################################### Abilities ####################################
 
 ability.creative_flight.name=§6Latanie
-ability.creative_flight.tooltip1=Daje latanie z trybu kreatywnego
-ability.creative_flight.tooltip2=Naciśnij 2 razy skok, aby zacząć latać i zrób to jeszcze raz, aby przestać
-ability.creative_flight.tooltip3=Daje niewrażliwość na obrażenia od upadku
+ability.creative_flight.tooltip1=§6Zapewnia kreatywne latanie
+ability.creative_flight.tooltip2=$gui:Kliknij dwukrotnie skok, aby zacząć latać, kliknij ponownie dwukrotnie, aby przestać
+ability.creative_flight.tooltip3=$gui:Czyni cię odpornym na obrażenia od upadku
 
-ability.block_detection.name=§aChciwe oczy
-ability.block_detection.tooltip1=Daje użytkownikowi umiejętność znajdowania pobliskich skarbów
-ability.block_detection.tooltip2=Naciśnij *deofkb: = Następny cel
-ability.block_detection.tooltip3=Naciśnij *auxkb:+*deofkb: = Poprzedni cel
-ability.block_detection.tooltip4=$gui:Press *auxkb:+*deofkb: = Previous Target
-ability.block_detection.treasurefinder=§6Current Target: §3§n$target:§r <§e*deofkb:§r>
-ability.block_detection.treasurefinder.on=§6I need more§f $target:§6 for my Treasury $looking:
-ability.block_detection.treasurefinder.notfound=§6I'm unsure what my treasury currently needs. §c(Item not found, returned as $target:)
-ability.block_detection.treasurefinder.off=I think my Treasury is sufficiently full $looking:
+ability.block_detection.name=§aChciwe Oczy
+ability.block_detection.tooltip1=§6Daje zdolność znajdowania pobliskich skarbów
+ability.block_detection.tooltip2=@treasurefinder:
+ability.block_detection.tooltip3=$gui:Naciśnij *deofkb: = Następny cel
+ability.block_detection.tooltip4=$gui:Naciśnij *auxkb:+*deofkb: = Poprzedni cel
+ability.block_detection.treasurefinder=§6Obecny cel: §3§n$target:§r <§e*deofkb:§r>
+ability.block_detection.treasurefinder.on=§6Potrzebuję więcej§f $target:§6 do mojego skarbca $looking:
+ability.block_detection.treasurefinder.notfound=§6Nie jestem pewien, czego obecnie potrzebuje mój skarbiec. §c(Przedmiot nie znaleziony, zwrócono jako $target:)
+ability.block_detection.treasurefinder.off=Myślę, że mój skarbiec jest już wystarczająco pełny $looking:
 
 ability.night_vision.name=§eWidzenie w ciemności
-ability.night_vision.tooltip1=§2Daje noktowizję §r<§e*denvkb:§r>
-ability.night_vision.tooltip2=Naciśnij *denvkb: aby przełączyć widzenie w ciemności
+ability.night_vision.tooltip1=§2Zapewnia widzenie w ciemności §r<§e*denvkb:§r>
 
-ability.fire_breathing.name=§cOgnisty oddech
-ability.fire_breathing.tooltip1=Pozwala na zianie ogniem
-ability.fire_breathing.tooltip2=Naciśnij *firebreath: zionąć ogniem za $fbCost: MP
+ability.fire_breath.name=§cOgnisty oddech
+ability.fire_breath.tooltip1=$gui:§6Zapewnia ognisty oddech
+ability.fire_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć ogniem §3$fbcost: MP
 
-ability.ice_breath.name=§Ice Breath
-ability.ice_breath.tooltip1=$gui:§6Grants Ice Breath
-ability.ice_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Ice §3$fbcost: MP
+ability.ice_breath.name=§bLodowy oddech
+ability.ice_breath.tooltip1=$gui:§6Zapewnia lodowy oddech
+ability.ice_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć lodem §3$fbcost: MP
 
-#ability.lightning_breath.name=§cLightning Breath
-#ability.lightning_breath.tooltip1=Grants Lightning Breath
-#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+#ability.lightning_breath.name=§cPiorunowy oddech
+#ability.lightning_breath.tooltip1=Zapewnia piorunowy oddech
+#ability.lightning_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć piorunem §3$fbcost: MP
 
-ability.fire_immunity.name=§cNiewrażliwość na ogień
-ability.fire_immunity.tooltip1=§6Niewrażliwość na ogień i większość źródeł ciepła
-ability.fire_immunity.tooltip2=§6Nie można zostać podpalonym
-ability.fire_immunity.tooltip3=§6Nie można zostać zranionym przez ataki oparte o ogień
+ability.fire_immunity.name=§cOdporność na ogień
+ability.fire_immunity.tooltip1=§2Zapewnia §c$potion:
+ability.fire_immunity.tooltip2=$gui:§6Odporność na ogień i lawę
+ability.fire_immunity.tooltip3=$gui:Nie można zostać podpalonym
+ability.fire_immunity.tooltip4=$gui:Nie można otrzymać obrażeń od większości ataków opartych na ogniu
+ability.fire_immunity.tooltip5=$gui:§6Odporność na §c$smouldering:
 
-ability.heat_immunity.name=§cNiewrażliwość na ciepło
-ability.heat_immunity.tooltip1=§6:Niewrażliwość na ciepło i większość jego źródeł
+ability.heat_immunity.name=§cOdporność na przegrzanie
+ability.heat_immunity.tooltip1=§6Odporność na §chipertermię
 
-ability.cold_immunity.name=§bNiewrażliwość na zimno
-ability.cold_immunity.tooltip1=§6Niewrażliwość na zimno i większość jego źródeł
+ability.ice_immunity.name=§bOdporność na lód
+ability.ice_immunity.tooltip1=§2Zapewnia §b$potion:
+ability.ice_immunity.tooltip2=$gui:§6Nie można otrzymać obrażeń od większości ataków opartych na lodzie
 
-ability.lightning_bolt.name=§3Przeładowanie elektryczne
-ability.lightning_bolt.tooltip1=Pozwala strzelać piorunami za cenę MP
+ability.cold_immunity.name=§bOdporność na zimno
+ability.cold_immunity.tooltip1=§6Odporność na §bhipotermię
 
-ability.dodging.name=Uniki
-ability.dodging.tooltip1=Pozwala na unik i ogłuszenie pobliskich wrogów poprzez podwójnego naciśnięcie uniku
-ability.dodging.tooltip2=Używa Elenai Dogding jeżeli modyfikacja jest zainstalowana
+ability.frost_walker.name=Mroźny wędrowiec
+ability.frost_walker.tooltip1=§6Zapewnia §bMroźnego wędrowca
 
-ability.block_climbing.name=Wspinanie się
-ability.block_climbing.tooltip1=Pozwala na wspinanie się po niektórych blokach
+ability.lightning_immunity.name=Odporność na pioruny
+ability.lightning_immunity.tooltip1=§2Zapewnia §d$potion1:
+ability.lightning_immunity.tooltip2=@paralysis:
+ability.lightning_immunity.paralysis=§6Odporność na §dparaliż
+ability.lightning_immunity.compat.lycanites=$gui:Usuwa $potion2:
 
-ability.wither_immunity.name=Niewrażliwość na obumieranie
-ability.wither_immunity.tooltip1=Niewrażliwość na efekt obumierania
-ability.wither_immunity.tooltip2=Podczas ataku jest szansa 1 na $witherchance: aby nadać przeciwnikowi efekt obumarcia
-ability.wither_immunity.tooltip3=Leczy przy ataku jeśli przeciwnik ma na sobie efekt obumarcia
+ability.lightning_bolt.name=§3Powinowactwo piorunów
+ability.lightning_bolt.tooltip1=§6Może strzelać piorunami kosztem MP
+ability.lightning_bolt.tooltip2=§6Przytrzymaj §r<§e*arckb:§r>§6, aby rzucić atak piorunem §3$boltcost: MP
+ability.lightning_bolt.tooltip3=§3$boltdamage:§6 obrażeń zależnie od zużytego MP
 
-ability.poison_affinity.name=§2Podobieństwo trucizn
-ability.poison_affinity.tooltip1=Niewrażliwość na truciznę
-ability.poison_affinity.tooltip2=Podczas ataku daje szansę 1 na $poisonchance: aby zatruć przeciwnika
-ability.poison_affinity.tooltip3=Atakowanie zatrutego przeciwnika zadaje $poisonbonus: więcej obrażeń.
+ability.dodging.name=Unik
+ability.dodging.tooltip1=@dodge:
+ability.dodging.tooltip2=@dodge.stun:
+ability.dodging.dodge=§2Zapewnia unik po dwukrotnym naciśnięciu
+ability.dodging.dodge.stun=§6Ogłusza pobliskich wrogów podczas uniku §3$dodgecost: MP
 
-ability.water_affinity.name=§9Niczym woda
-ability.water_affinity.tooltip1=@SurvivalThirst:
-ability.water_affinity.tooltip2=Daje ulepszone pływanie
+ability.block_climbing.name=Wspinaczka
+ability.block_climbing.tooltip1=§6Może wspinać się po blokach
 
-ability.thirst_immunity.name=Niewrażliwość na pragnienie
-ability.thirst_immunity.tooltip1=Niewrażliwość na efekt pragnienia
+ability.wither_immunity.name=Odporność na Wither
+ability.wither_immunity.tooltip1=§6Odporność na Wither
+ability.wither_immunity.tooltip2=§6Podczas ataku ma §3$chance: §6szansy na nałożenie Wither na cel
+ability.wither_immunity.tooltip3=§6Leczy §3$amount: §6serca podczas ataku celu z efektem Wither
 
-ability.parasites_immunity.name=Niewrażliwość na pasożyty
-ability.parasites_immunity.tooltip1=Niewrażliwość na efekt "Pasożyty" podczas picia
+ability.poison_affinity.name=§2Powinowactwo trucizny
+ability.poison_affinity.tooltip1=§6Odporność na truciznę
+ability.poison_affinity.tooltip2=$gui:§6Odporność na głód
+ability.poison_affinity.tooltip3=§6Podczas ataku ma §3$chance: §6szansy na zatrucie celu
+ability.poison_affinity.tooltip4=§6Ataki przeciw zatrutym wrogom zadają dodatkowe §3$bonus:§6 obrażeń
 
-ability.reduce_kinetic.name=Odporność na updadek
-ability.reduce_kinetic.tooltip1=Daje $fallResist: odporności na updatek
+ability.water_affinity.name=§9Powinowactwo wody
+ability.water_affinity.tooltip1=@bubbles:
+ability.water_affinity.tooltip2=@betterswimming:
+ability.water_affinity.bubbles=§6Nieskończony tlen przy §r[§3$bubbles:§r]§6 bąbelkach
+ability.water_affinity.betterswimming=§2Zapewnia ulepszone pływanie
+ability.water_affinity.compat.enhancedvisuals=Wyłącza efekt rozmycia widzenia po wejściu do wody
 
-ability.nullify_kinetic.name=Anulowanie Kinetyki
-ability.nullify_kinetic.tooltip1=Daje niewrażliwość na obrażenia od upadku i energii kinetycznej
+ability.thirst_immunity.name=Odporność na zatrucie pragnieniem
+ability.thirst_immunity.tooltip1=$item:§6Odporność na efekt zatrucia pragnieniem
+ability.thirst_immunity.tooltip2=$gui:Odporność na efekt zatrucia pragnieniem
 
-ability.ender_queen.name=§5Królewskość enderu
-ability.ender_queen.tooltip1=Endermany będą cię chronić
-ability.ender_queen.tooltip2=Przeteleportuje cię przy ataku dystansowym kosztem MP
-ability.ender_queen.tooltip3=Woda ci szkodzi
-ability.ender_queen.tooltip4=Szansa na zignorowanie obrażeń i przywołanie endermana
+ability.parasites_immunity.name=Odporność na pasożyty
+ability.parasites_immunity.tooltip1=$item:§6Odporność na pasożyty
+ability.parasites_immunity.tooltip2=$gui:Odporność na efekt pasożytów z picia brudnej wody
 
-ability.vicious_strike.name=§4Okrutne uderzenie
-ability.vicious_strike.tooltip1=Wywołuje u przeciwnika krwawienie po uderzeniu go
+ability.reduce_kinetic.name=Odporność na upadek
+ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
+ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
 
-ability.magnetic.name=Magnetyczny
+ability.nullify_kinetic.name=Neutralizacja kinetyczna
+ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
+ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
 
-ability.repel.name=Odpychająca siła
+ability.ender_queen.name=§5Królewskość Endu
+ability.ender_queen.tooltip1=§6Królewskość
+ability.ender_queen.tooltip2=§2Endermany walczą za ciebie @endermenfollow:
+ability.ender_queen.tooltip3=@damageignored:
+ability.ender_queen.tooltip4=@endermenchance:
+ability.ender_queen.tooltip5=§3$tpchance: §5szansy na teleportację przy trafieniu pośrednim §3$tpcost: MP
+ability.ender_queen.tooltip6=@waterhurts:
+ability.ender_queen.damageignored=§3$chance: §6Szansy na zignorowanie obrażeń
+ability.ender_queen.endermenchance=§3$chance: §6Szansy na przywołanie Endermana
+ability.ender_queen.endermenfollow=i podążają za tobą
+ability.ender_queen.waterhurts=§cSłabość do wody
+ability.ender_queen.compat.enhancedvisuals=Wyłącza efekt zakłóceń Endermanów
 
-ability.skilled_miner.name=Wprawny górnik
-ability.skilled_miner.tooltip1=Dodatkowe doświadczenie podczas kopania
-ability.skilled_miner.tooltip2=Szybkość kopania wynosi twardość bloku * 4
+ability.vicious_strike.name=§4Brutalne uderzenie
+ability.vicious_strike.tooltip1=§6$chance: szansy na krwawienie przy ataku wręcz
+ability.vicious_strike.tooltip2=§aKrwawienie zadaje 1 obrażenie na sekundę przez §3$duration:§a sekund
+ability.vicious_strike.tooltip3=§cCzas trwania zmniejszony do §3$reduceddur: §csekund dla ras innych niż Faelis
 
-ability.psudo_fortune.name=§6Pseudo-szczęście
-ability.psudo_fortune.tooltip1=Otrzymujesz pasywnie enchant "Szczęście"
+ability.magnetic.name=Magnetyzm
+ability.magnetic.tooltip1=@collect:
+ability.magnetic.tooltip2=§r<§e*magnetkb:§r lub §ePrawy przycisk myszy§r>
+ability.magnetic.collect=§6Przyciąga pobliskie przedmioty @collectxp:
+ability.magnetic.collectxp=i kule doświadczenia $collecttoggle:
+ability.magnetic.magnetmode=Tryb zbierania $collecttoggle:
 
-ability.charged_shot.name=Wprawny łucznik
-ability.charged_shot.tooltip1=Możliwość używania many w celu nasycenia strzały mocą
-ability.charged_shot.tooltip2=Kucnij przed naciągnięciem łuku aby wywołać
-ability.charged_shot.tooltip3=Anulowane kiedy przestaniesz kucać
-ability.charged_shot.tooltip4=Wywołuje niewielki wybuch przy trafieniu z pełnym naładowaniem zadając obrażenia obszarowe
+ability.repel.name=Siła odpychająca
+ability.repel.tooltip1=@repel:
+ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r lub §eSkradanie§r + §ePrawy przycisk myszy§r>
+ability.repel.repel=§6Odpycha strzały $repeltoggle:
+ability.repel.repelmode=Tryb odpychania $repeltoggle:
 
-ability.large_hands.name=Ogromne dłonie
-ability.large_hands.tooltip1=Pozwala wykopać obszar bloków 3x3x3
-ability.large_hands.tooltip2=Kucanie przy kopaniu anuluje umiejętność
+ability.skilled_miner.name=Wykwalifikowany górnik
+ability.skilled_miner.tooltip1=§6Dodatkowe PD podczas kopania
+ability.skilled_miner.tooltip2=$gui:Prędkość kopania ustawiona na Twardość Bloku * 4
+
+ability.psudo_fortune.name=§6Pseudo Fortuna
+ability.psudo_fortune.tooltip1=Zyskujesz efekt fortuny bez zaklęcia
+
+ability.charged_shot.name=Wykwalifikowany łucznik
+ability.charged_shot.tooltip1=§6Skradanie się podczas używania łuku aktywuje potężny strzał
+ability.charged_shot.tooltip2=$gui:Może używać many do wzmocnienia strzały
+ability.charged_shot.tooltip3=$gui:Skradaj się przed naciągnięciem łuku, aby aktywować
+ability.charged_shot.tooltip4=$gui:Anulowane po zaprzestaniu skradania się
+ability.charged_shot.tooltip5=$gui:Powoduje małą eksplozję przy trafieniu przy pełnym naładowaniu, zadając obrażenia obszarowe
+
+ability.large_hands.name=Duże dłonie
+ability.large_hands.tooltip1=§6Kopie w obszarze 3x3x3
+ability.large_hands.tooltip2=§eSkradaj się §2podczas kopania, aby wyłączyć
 
 ability.heavy.name=§cCiężki
 ability.heavy.tooltip1=§cToniesz w wodzie
-ability.heavy.tooltip2=§cNiszczysz rośliny kiedy po nich chodzisz
+ability.heavy.tooltip2=§cNiszczysz rośliny, chodząc po nich
 
 ability.weightless.name=§dNieważkość
-ability.weightless.tooltip1=Wejdź w stan nieważkości
-ability.weightless.tooltip2=Atakuj, aby poruszać się w górę, kucnij i atakuj aby poruszać się w dół.
+ability.weightless.tooltip1=§6Stajesz się nieważki
+ability.weightless.tooltip2=<§eLewy przycisk myszy§r> aby lecieć §2w górę
+ability.weightless.tooltip3=<§eSkradanie§r> + <§eLewy przycisk myszy§r> aby lecieć §2w dół
+#ability.weightless.tooltip4=§aZapewnia lewitację podczas trzymania
 
 ability.safe_guard.name=§6Ochrona
-ability.safe_guard.tooltip1=Daje efekt odporności
-ability.safe_guard.tooltip2=Ignoruje obrażenia co $sohcount: trafień
+ability.safe_guard.tooltip1=§6Zapewnia efekt mikstury $soheffect:
+ability.safe_guard.tooltip2=@explosionresist:
+ability.safe_guard.tooltip3=§6Może zignorować obrażenia co §3$cfghitcount: §6trafień
+ability.safe_guard.tooltip4=@damageignored:
+ability.safe_guard.damageignored=§6Otrzymane trafienia: §3$hitcount:/$cfghitcount:
+ability.safe_guard.explosionresist=§3$explosionresistamount: §6odporności na obrażenia od eksplozji
+ability.safe_guard.compat.enhancedvisuals=Wyłącza rozmycie eksplozji
 
-ability.well_rested.name=Dobrze wypoczęty
-ability.well_rested.tooltip1=Daje kilka wzmocnień podczas snu
-ability.well_rested.tooltip2=@LycanitesFear:
-ability.well_rested.tooltip3=@LycanitesInsomnia:
+ability.well_rested.name=§bDobrze wypoczęty
+ability.well_rested.tooltip1=§6Zapewnia wzmocnienia podczas snu, jeśli jest trzymany
+ability.well_rested.tooltip2=§6Usuwa $fear: §6i usuwa $insomnia:
 
-ability.firstaid_reflex.name=Szybkie odruchy
-ability.firstaid_reflex.tooltip1=Szansa na uniknięcie śmiertelnych trafień w głowę
+ability.firstaid_reflex.name=Szybki refleks
+ability.firstaid_reflex.tooltip1=§3$headshotchance:§6 szansy na zignorowanie trafienia w głowę
 
 #################################### Elements ####################################
 
-xat.element.neutral.name=§fNeutral
-xat.element.air.name=§3Air
-xat.element.dark.name=§8Dark
-xat.element.earth.name=§2Earth
-xat.element.fire.name=§cFire
-xat.element.ice.name=§bIce
-xat.element.light.name=§eLight
-xat.element.lightning.name=§dLightning
-xat.element.poison.name=§2Poison
-xat.element.void.name=§5Void
-xat.element.water.name=§9Water
+xat.element.neutral.name=§fNeutralny
+xat.element.air.name=§3Powietrze
+xat.element.dark.name=§8Ciemność
+xat.element.earth.name=§2Ziemia
+xat.element.fire.name=§cOgień
+xat.element.ice.name=§bLód
+xat.element.light.name=§eŚwiatło
+xat.element.lightning.name=§dPiorun
+xat.element.poison.name=§2Trucizna
+xat.element.void.name=§5Pustka
+xat.element.water.name=§9Woda
 
 #################################### Races ####################################
 
@@ -199,199 +248,92 @@ xat.element.water.name=§9Water
 #################################### Damage Types ####################################
 
 damagetype.xat.water=woda
-death.attack.xat.water=%1$s został zabity przez %2$s podczas noszenia korony królowej Enderu
+death.attack.xat.water=%1$s zginął przez %2$s podczas noszenia Korony Królowej Endu
 
 #################################### Attributes ####################################
 
-xat.jump=Wysokość skoku
-xat.stepheight=Wysokość wchodzenia
+xat.jump=Skok
+xat.stepheight=Wysokość kroku
 xat.entityMagic.maxMana=Maksymalna mana
 xat.entityMagic.regen=Regeneracja MP
-xat.flyspeed=Fly Speed
+xat.flyspeed=Prędkość lotu
 
-attribute.name.xat.jump=Wysokość skoku
-attribute.name.xat.stepheight=Wysokość wchodzenia
+attribute.name.xat.jump=Skok
+attribute.name.xat.stepheight=Wysokość kroku
 attribute.name.xat.entityMagic.maxMana=Maksymalna mana
 attribute.name.xat.entityMagic.regen=Regeneracja MP
-attribute.name.xat.flyspeed=Fly Speed
+attribute.name.xat.flyspeed=Prędkość lotu
+attribute.name.xat.entityRace=Zaklęta rasa
 
 #################################### Materials ####################################
 
-item.glowing_powder.name=Jasktrawy proszek
-item.glowing_powder.tooltip1=Materiał rzemieślniczy szczebla 1
+item.glowing_powder.name=Świecący proszek
+item.glowing_powder.tooltip1=Materiał rzemieślniczy poziomu 1
 
-item.glowing_ingot.name=§eJasktrawa sztabka
-item.glowing_ingot.tooltip1=§eMateriał rzemieślniczy szczebla 2
+item.glowing_ingot.name=§eŚwiecąca sztabka
+item.glowing_ingot.tooltip1=§eMateriał rzemieślniczy poziomu 2
 
-item.glowing_gem.name=§6Jaskrawy klejnot
-item.glowing_gem.tooltip1=§6Materiał rzemieślniczy szczebla 3
+item.glowing_gem.name=§6Świecący klejnot
+item.glowing_gem.tooltip1=§6Materiał rzemieślniczy poziomu 3
 
 #################################### Materials End ####################################
 
 #################################### Trinkets ####################################
 
-item.glow_ring.0.name=§6Pierścień zaklętych oczu
-item.glow_ring.0.tooltip1=§2Daje noktowizję
-
-item.teddy_bear.0.name=Pluszowy miś
-item.teddy_bear.0.tooltip1=§6Jeżeli trzymany podczas snu, daje wzmocnienie
-item.teddy_bear.0.tooltip2=§6Usuwa efekty strachu i bezsenności jeżeli modyfikacja Lycanitesmobs jest zainstalowana
-
-item.weightless_stone.0.name=Kamień odwróconej grawitacji
-item.weightless_stone.0.tooltip1=§2Grawitacja nie oddziałuje na ciebie, gdy go nosisz
-item.weightless_stone.0.tooltip2=<§eLPM§r> żeby unosić się w §2górę
-item.weightless_stone.0.tooltip3=<§eKucnięcie§r> + <§eLPM§r> aby opadać w §2dół
-item.weightless_stone.0.tooltip4=§aDaje lewitację kiedy założony
-
-item.inertia_null_stone.0.name=Kamień braku bezwładności
-item.inertia_null_stone.0.tooltip1=§3$inertianullfd:§6 Odporności na obrażenia od upadku
-item.inertia_null_stone.0.tooltip2=§3$inertianullfd:§6 Odporności na obrażenia od energii kinetycznej
-
-item.greater_inertia_stone.0.name=Kamień większej bezwładności
-item.greater_inertia_stone.0.tooltip1=§3$greaterinertiafd:§6 Odporności na obrażenia od upadku
-
-item.sea_stone.0.name=Kamień morza
-item.sea_stone.0.tooltip1=@bubbles:
-item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=§6Nieskończony tlen na poziomie §r[§3$bubbles:§r]§6 bąbelków
-item.sea_stone.0.betterswimming=§2Ulepszone pływanie
-item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=§6Niewrażliwość na pragnienie
-item.sea_stone.0.compat.enhancedvisuals=Wyłącza niewyraźne widzenie podczas wchodzenia do wody
-
-item.polarized_stone.0.name=Spolaryzowany kamień
-item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<§e*magnetkb:§r lub §ePPM§r>
-item.polarized_stone.0.tooltip3=@repel:
-item.polarized_stone.0.tooltip4=<§e*auxkb:§r + §e*magnetkb:§r lub §ekucnięcie§r + §ePPM§r>
-item.polarized_stone.0.collect=§6Przyciąga pobliskie przedmioty @collectxp:
-item.polarized_stone.0.collectxp=i orby doświadczenia $collecttoggle:
-item.polarized_stone.0.repel=§6Odpycha strzały $repeltoggle:
-item.polarized_stone.0.magnetmode=Tryb zbierania $collecttoggle:
-item.polarized_stone.0.repelmode=Tryb odpychania $repeltoggle:
-
-item.dragons_eye.0.name=Oko smoka
-item.dragons_eye.0.fire.name=Oko ognistego smoka
-item.dragons_eye.0.ice.name=Oko lodowego smoka
-item.dragons_eye.0.lightning.name=Oko elektrycznego smoka
-item.dragons_eye.0.tooltip1=§6Daje $variantresist:
-item.dragons_eye.0.tooltip2=§2Daje noktowizję §r<§e*denvkb:§r>
-item.dragons_eye.0.tooltip3=@treasurefinder:
-item.dragons_eye.0.tooltip4=@frostwalker:
-item.dragons_eye.0.treasurefinder=§6Obecny cel: §3§n$target:§r <§e*deofkb:§r>
-item.dragons_eye.0.treasurefinder.on=§6Potrzebuję więcej §f $target:§6 do mego skarbca $looking:
-item.dragons_eye.0.treasurefinder.notfound=§6Nie jestem pewny, czego potrzebuję §c(Item not found, returned as $target:)
-item.dragons_eye.0.treasurefinder.off=Sądzę, że mój skarbiec jest wystarczająco pełny $looking:
-item.dragons_eye.0.compat.tan=$typeimmune:
-item.dragons_eye.0.heatimmune=§6Niewrażliwość na przegrzanie
-item.dragons_eye.0.coldimmune=§6Niewrażliwość na hipotermię
-item.dragons_eye.0.paralysisimmune=§6Niewrażliwość na sparaliżowanie
-item.dragons_eye.0.compat.enhancedvisuals=
-item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Daje §3mroźnego piechura
-
-item.poison_stone.0.name=Trujący kamień
-item.poison_stone.0.tooltip1=§6Niewrażliwość na truciznę
-item.poison_stone.0.tooltip2=§6Niewrażliwość na głód
-item.poison_stone.0.tooltip3=@poison:
-item.poison_stone.0.tooltip4=@bonusdamage:
-item.poison_stone.0.poison=§3$poisonchance:§2 Szans na zatrucie przeciwnika na §3$poisonduration:
-item.poison_stone.0.bonusdamage=§2Zadaje $damagemultiplier: $2obrażeń przeciwko zatrutym przeciwnikom
-
-item.wither_ring.0.name=Pierścień Withera
-item.wither_ring.0.tooltip1=§6Niewrażliwość na efekt ubumierania
-item.wither_ring.0.tooltip2=@wither:
-item.wither_ring.0.tooltip3=@leech:
-item.wither_ring.0.wither=§3$witherchance:§2 szans na nałożenie na przeciwnika efektu obumierania
-item.wither_ring.0.leech=§2Leczy §3$leechamount:§2 serc przy atakowaniu przeciwników mającym efekt obumierania
-
-item.ender_tiara.0.name=Korona królowej Enderu
-item.ender_tiara.0.tooltip1=§6Królewskość
-item.ender_tiara.0.tooltip2=§2Endermany walczą dla ciebie @endermenfollow:
-item.ender_tiara.0.tooltip3=@damageignored:
-item.ender_tiara.0.tooltip4=@endermenchance:
-item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=§3$chance: §6szans na zignorowanie obrażeń
-item.ender_tiara.0.endermenchance=§3$chance: §6szans na przywołanie endermana
-item.ender_tiara.0.endermenfollow=i podążają za tobą
-item.ender_tiara.0.waterhurts=§cSłabość na wodę
-item.ender_tiara.0.compat.tan=@coldimmune:
-item.ender_tiara.0.compat.enhancedvisuals=Wyłącza efekty zakłóceń w pobliżu endermanów
-item.ender_tiara.0.coldimmune=§6Niewrażliwość na hipotermię
-
+item.arcing_orb.0.name=Łukowa kula
 item.damage_shield.0.name=Tarcza honoru
-item.damage_shield.0.tooltip1=§6Daje $soheffect: podczas noszenia
-item.damage_shield.0.tooltip2=@explosionresist:
-item.damage_shield.0.tooltip3=@damageignored:
-item.damage_shield.0.explosionresist=§3$explosionresistamount: §6odporności na wybuchy
-item.damage_shield.0.damageignored=§6Co §3$cfghitcount: §6trafień, zignoruje następny atak
-//item.damage_shield.0.damageignored=§6Obrażenia zignorowane: §3$damageignoredhitcount:/$cfghitcount:
-item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=§3$headshotchance:§6 Szans na uniknięcie trafienia w głowę
-item.damage_shield.0.compat.enhancedvisuals=Wyłącza rozmycie od wybuchów
 
-item.arcing_orb.0.name=Iskrzący orb
-item.arcing_orb.0.tooltip1=@dodge:
-item.arcing_orb.0.tooltip2=@dodge.stun:
-item.arcing_orb.0.tooltip3=§6Przytrzymaj §r<§e*arckb:§r>§6 aby rzucić piorun §3$boltcost:MP
-item.arcing_orb.0.tooltip4=§3$boltdamage:§6 obrażenia zależą od wydanych MP
-item.arcing_orb.0.dodge=§2Daje umiejętność uniku po podwójnym naciśnięciu
-item.arcing_orb.0.dodge.stun=§6Ogłusza pobliskich przeciwników po uniku za §3$dodgecost:MP
+item.dragons_eye.0.name=§6Smocze Oko
+item.dragons_eye.0.fire.name=§cOgniste Smocze Oko
+item.dragons_eye.0.ice.name=§bLodowe Smocze Oko
+item.dragons_eye.0.lightning.name=§dPiorunowe Smocze Oko
 
-item.faelis_claw.0.name=Pazur kotowatych
-item.faelis_claw.0.tooltip1=§6Atakowanie przeciwników powoduje u nich krwawienie
-item.faelis_claw.0.tooltip2=§akrwawienie zadaje 1 obrażenie co 20 ticków przez $clawbleed: ticków
-item.faelis_claw.0.tooltip3=§cDługość krwawienia skrócona do 1/3 kiedy używany przez rasy inne niż kotowate
+item.ender_tiara.0.name=Korona Królowej Endu
+item.ender_tiara.0.tooltip1=§6Królewskość
+item.faelis_claw.0.name=Szpon Faelis
+item.glow_ring.0.name=§6Pierścień Zaklętych Oczu
+item.greater_inertia_stone.0.name=Kamień Większej Inercji
+item.inertia_null_stone.0.name=Kamień Zerowej Inercji
+item.poison_stone.0.name=Kamień Trucizny
+item.polarized_stone.0.name=Spolaryzowany kamień
+item.sea_stone.0.name=Kamień Morza
+item.teddy_bear.0.name=Pluszowy miś
+item.weightless_stone.0.name=Kamień Ujemnej Grawitacji
+item.wither_ring.0.name=Pierścień Wither
 
 #################################### Trinkets Transformations ####################################
 
-item.dwarf_ring.0.name=§6Pierścień krasnoludów
-item.dwarf_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.dwarf_ring.0.tooltip2=@fortune:
-item.dwarf_ring.0.tooltip3=@skilledminer:
-item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=§6Pseudo-szczęście
-item.dwarf_ring.0.skilledminer=§2Wprawny górnik
-item.dwarf_ring.0.staticminer=§2Stała szybkość kopania
+item.dwarf_ring.0.name=§6Pierścień Krasnoludów
+item.dwarf_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-item.elf_ring.0.name=§6Pierścień elfów
-item.elf_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=§6Zwiększona szybkość ruchu i ataku w lasach
-item.elf_ring.0.chargeshot=§6Kucanie podczas korzystania z łuku aktywuje strzał mocy
+item.elf_ring.0.name=§6Pierścień Elfów
+item.elf_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.elf_ring.0.tooltip2=§6Zwiększona prędkość ruchu i ataku w lasach
 
-item.fairy_ring.0.name=§6Pierścień wróżek
-item.fairy_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=§6Pozwala latać
+item.fairy_ring.0.name=§6Pierścień Wróżek
+item.fairy_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-item.faelis_ring.0.name=§6Pierścień kotowatych
-item.faelis_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.faelis_ring.0.tooltip2=§aZwiększone obrażenia pustą ręką
+item.faelis_ring.0.name=§6Pierścień Faelis
+item.faelis_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.faelis_ring.0.tooltip2=§aZwiększone obrażenia bez broni
 item.faelis_ring.0.tooltip3=§aWzmocnienie po wypiciu mleka
-item.faelis_ring.0.tooltip4=§cSpowolnienie podczas noszenia ciężkiej zbroi
+item.faelis_ring.0.tooltip4=§cKara do prędkości ruchu podczas noszenia ciężkiego pancerza
 
-item.goblin_ring.0.name=§6Pierścień goblinów
-item.goblin_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.goblin_ring.0.tooltip2=§6Może ujeżdżać oswojone wilki
-item.goblin_ring.0.tooltip3=§6Zwiększona regeneracja i siła podczas ujeżdżania wilków
-item.goblin_ring.0.tooltip4=§aNiewielka odporność na ogień i wybuchy
-item.goblin_ring.0.tooltip5=§aCreepery cię ignorują
+item.goblin_ring.0.name=§6Pierścień Goblinów
+item.goblin_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.goblin_ring.0.tooltip2=§6Może jeździć na oswojonych wilkach
+item.goblin_ring.0.tooltip3=§6Zwiększona siła i regeneracja podczas jazdy na wilkach
+item.goblin_ring.0.tooltip4=§aNiewielka odporność na eksplozje i ogień
+item.goblin_ring.0.tooltip5=§aCreepery będą cię ignorować
 
-item.titan_ring.0.name=§6Pierścień tytanów
-item.titan_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-item.titan_ring.0.tooltip2=§6Pozwala wykopywać obszar 3x3x3
-item.titan_ring.0.tooltip3=§c@heavy:
-item.titan_ring.0.tooltip4=§cNiszczysz rośliny
-item.titan_ring.0.heavy=§cToniesz w wodzie
+item.titan_ring.0.name=§6Pierścień Tytanów
+item.titan_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-item.dragon_ring.0.name=§6Pierścień smoków
-item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
-item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
-item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
-#item.dragon_ring.0.tooltip1=§6Rozmiar gracza $rsize: normalnego
-#item.dragon_ring.0.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6 aby zionąć ogniem
-#item.dragon_ring.0.tooltip3=§6Daje niewrażliwość na ogień
-#item.dragon_ring.0.tooltip4=§2Daje noktowizję §r<§e*denvkb:§r>
+item.dragon_ring.0.name=§6Pierścień Smoków
+item.dragon_ring.0.fire.name=§6Pierścień §cOgnistych §6Smoków
+item.dragon_ring.0.ice.name=§6Pierścień §bLodowych §6Smoków
+item.dragon_ring.0.lightning.name=§6Pierścień §dPiorunowych §6Smoków
+item.dragon_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
 #################################### Trinkets End ####################################
 
@@ -401,164 +343,164 @@ xat.food.item.tooltip1=
 xat.food.item.tooltip2=
 xat.food.item.tooltip3=
 
-item.mana_candy.food.name=§bCukierek many
-item.mana_candy.food.tooltip1=§6Restores some Mana
+item.mana_candy.food.name=§bCukierek Many
+item.mana_candy.food.tooltip1=§6Przywraca część many
 
-item.mana_crystal.food.name=§6Kryształ many
-item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 Maksymalnej many
+item.mana_crystal.food.name=§6Kryształ Many
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 maksymalnej many
 
-item.mana_reagent.food.name=§6Odczynnik many
-item.mana_reagent.food.tooltip1=§cSzkodliwy po zjedzeniu
-item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c Maksymalnej many
+item.mana_reagent.food.name=§6Reagent Many
+item.mana_reagent.food.tooltip1=§cSzkodliwy po spożyciu
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c maksymalnej many
 
-item.restoration_serum.food.name=§6Serum przywrócenia
-item.restoration_serum.food.tooltip1=Odwraca permanentne przemiany
-item.restoration_serum.food.tooltip2=§cSzkodliwy po zjedzeniu
+item.restoration_serum.food.name=§6Serum Przywrócenia
+item.restoration_serum.food.tooltip1=Odwraca trwałe efekty transformacji
+item.restoration_serum.food.tooltip2=§cSzkodliwy po spożyciu
 
-xat.transformation.food.tooltip1=§bMogę być w stanie odwrócić efekty
-xat.transformation.food.tooltip2=§bwypijając jakąś miksturę
-xat.transformation.food.tooltip3=<§9Użyj serum przywrócenia aby cofnąć§r>
+xat.transformation.food.tooltip1=§3Może będę w stanie usunąć efekty
+xat.transformation.food.tooltip2=§3pijąc jakiś rodzaj mikstury
+xat.transformation.food.tooltip3=§r<§9Użyj Serum Przywrócenia, aby cofnąć§r>
 
-item.dwarf_stout.food.name=Krasnoludzki stout
-item.dwarf_stout.food.tooltip1=§6Transform into a Dwarf
+item.dwarf_stout.food.name=Krasnoludzkie Piwo
+item.dwarf_stout.food.tooltip1=§6Transformuje w Krasnoluda
 
-item.fairy_dew.food.name=Wróżkowa rosa
-item.fairy_dew.food.tooltip1=§6Transform into a Fairy
+item.fairy_dew.food.name=Rosą Wróżki
+item.fairy_dew.food.tooltip1=§6Transformuje w Wróżkę
 
-item.titan_spirit.food.name=Duch tytana
-item.titan_spirit.food.tooltip1=§6Transform into a Titan
+item.titan_spirit.food.name=Duch Tytana
+item.titan_spirit.food.tooltip1=§6Transformuje w Tytana
 
-item.elf_sap.food.name=Eflicki sok
-item.elf_sap.food.tooltip1=§6Transform into a Elf
+item.elf_sap.food.name=Sok Elfa
+item.elf_sap.food.tooltip1=§6Transformuje w Elfa
 
-item.goblin_soup.food.name=Goblińska zupa
-item.goblin_soup.food.tooltip1=§6Transform into a Goblin
+item.goblin_soup.food.name=Zupa Goblina
+item.goblin_soup.food.tooltip1=§6Transformuje w Goblina
 
-item.faelis_food.food.name=Kocimiętka kotowatych
-item.faelis_food.food.tooltip1=§6Transform into a Faelis
+item.faelis_food.food.name=Faelis Nip
+item.faelis_food.food.tooltip1=§6Transformuje w Faelis
 
-item.dragon_gem.food.name=§6Smoczy klejnot
-item.dragon_gem.food.tooltip1=§6Transform into a Dragon.
-item.dragon_gem.food.fire.name=§cFire Dragon Gem
-item.dragon_gem.food.fire.tooltip1=§6Transform into a §cFire §6Dragon.
-item.dragon_gem.food.ice.name=§bIce Dragon Gem
-item.dragon_gem.food.ice.tooltip1=§6Transform into a §bIce §6Dragon.
-item.dragon_gem.food.lightning.name=§dLightning Dragon Gem
-item.dragon_gem.food.lightning.tooltip1=§6Transform into a §dLightning §6Dragon.
+item.dragon_gem.food.name=§6Smoczy Klejnot
+item.dragon_gem.food.tooltip1=§6Transformuje w Smoka.
+item.dragon_gem.food.fire.name=§cOgnisty Smoczy Klejnot
+item.dragon_gem.food.fire.tooltip1=§6Transformuje w §cOgnistego §6Smoka.
+item.dragon_gem.food.ice.name=§bLodowy Smoczy Klejnot
+item.dragon_gem.food.ice.tooltip1=§6Transformuje w §bLodowego §6Smoka.
+item.dragon_gem.food.lightning.name=§dPiorunowy Smoczy Klejnot
+item.dragon_gem.food.lightning.tooltip1=§6Transformuje w §dPiorunowego §6Smoka.
 
 #################################### Food End ####################################
 
 
 #################################### Potions ####################################
 
-potion.effect.xat.sparkling=Musująca mikstura
-splash_potion.effect.xat.sparkling=Miotana musująca mikstura
-lingering_potion.effect.xat.sparkling=Trwała musująca mikstura
-tipped_arrow.effect.xat.sparkling=Musująca strzała
+potion.effect.xat.sparkling=Musująca Mikstura
+splash_potion.effect.xat.sparkling=Musująca Mikstura Miotana
+lingering_potion.effect.xat.sparkling=Musująca Mikstura Trwała
+tipped_arrow.effect.xat.sparkling=Strzała Musowania
 xat.effect.sparkling=Musowanie
-xat.item.potion.sparkling.tooltip1=§6Leczy 25% maksymalnego zdrowia
-xat.item.potion.sparkling.tooltip2=§6Przywraca 25% maksymalnej many
+xat.item.potion.sparkling.tooltip1=§6Przywraca 25% maksymalnego zdrowia
+xat.item.potion.sparkling.tooltip2=§6Przywraca 25% many
 
-potion.effect.xat.glittering=Błyszcząca mikstura
-splash_potion.effect.xat.glittering=Miotana błyszcząca mikstura
-lingering_potion.effect.xat.glittering=Trwała błyszcząca mikstura
-tipped_arrow.effect.xat.glittering=Błyszcząca strzała
-xat.effect.glittering=Błyszczenie
-xat.item.potion.glittering.tooltip1=§6Leczy 50% maksymalnego zdrowia
-xat.item.potion.glittering.tooltip2=§6Przywraca 50% maksymalnej many
+potion.effect.xat.glittering=Migocząca Mikstura
+splash_potion.effect.xat.glittering=Migocząca Mikstura Miotana
+lingering_potion.effect.xat.glittering=Migocząca Mikstura Trwała
+tipped_arrow.effect.xat.glittering=Strzała Migotania
+xat.effect.glittering=Migotanie
+xat.item.potion.glittering.tooltip1=§6Przywraca 50% maksymalnego zdrowia
+xat.item.potion.glittering.tooltip2=§6Przywraca 50% many
 
-potion.effect.xat.glowing=Świecąca mikstura
-splash_potion.effect.xat.glowing=Miotana świecąca mikstura
-lingering_potion.effect.xat.glowing=Trwała świecąca mikstura
-tipped_arrow.effect.xat.glowing=Świecąca strzała
+potion.effect.xat.glowing=Świecąca Mikstura
+splash_potion.effect.xat.glowing=Świecąca Mikstura Miotana
+lingering_potion.effect.xat.glowing=Świecąca Mikstura Trwała
+tipped_arrow.effect.xat.glowing=Strzała Świecenia
 xat.effect.glowing=Świecenie
-xat.item.potion.glowing.tooltip1=§6Leczy 100% maksymalnego zdrowia
-xat.item.potion.glowing.tooltip2=§6Przywraca 100% maksymalnej many
+xat.item.potion.glowing.tooltip1=§6Przywraca 100% zdrowia
+xat.item.potion.glowing.tooltip2=§6Przywraca 100% many
 
-potion.effect.xat.ice_resistance=Mikstura odporności na zimno
-splash_potion.effect.xat.ice_resistance=Miotana mikstura odporności na zimno
-lingering_potion.effect.xat.ice_resistance=Trwała mikstura odporności na zimno
-tipped_arrow.effect.xat.ice_resistance=Strzała odporności na zimno
-xat.effect.ice_resistance=Odporność na zimno
+potion.effect.xat.ice_resistance=Mikstura Odporności na Lód
+splash_potion.effect.xat.ice_resistance=Miotana Mikstura Odporności na Lód
+lingering_potion.effect.xat.ice_resistance=Trwała Mikstura Odporności na Lód
+tipped_arrow.effect.xat.ice_resistance=Strzała Odporności na Lód
+xat.effect.ice_resistance=Odporność na lód
 
-potion.effect.xat.lightning_resistance=Mikstura odporności na porażenie elektryczne
-splash_potion.effect.xat.lightning_resistance=Miotana mikstura odporności na porażenie elektryczne
-lingering_potion.effect.xat.lightning_resistance=Trwała mikstura odporności na porażenie elektryczne
-tipped_arrow.effect.xat.lightning_resistance=Strzała odporności na porażenie elektryczne
-xat.effect.lightning_resistance=Odporność na porażenie elektryczne
+potion.effect.xat.lightning_resistance=Mikstura Odporności na Pioruny
+splash_potion.effect.xat.lightning_resistance=Miotana Mikstura Odporności na Pioruny
+lingering_potion.effect.xat.lightning_resistance=Trwała Mikstura Odporności na Pioruny
+tipped_arrow.effect.xat.lightning_resistance=Strzała Odporności na Pioruny
+xat.effect.lightning_resistance=Odporność na pioruny
 
-potion.effect.xat.restorative=Mikstura przywrócenia
-splash_potion.effect.xat.restorative=Miotana mikstura przywrócenia
-lingering_potion.effect.xat.restorative=Trwała mikstura przywrócenia
-tipped_arrow.effect.xat.restorative=Strzała przywrócenia
-xat.effect.restorative=Przywracanie
-xat.item.potion.restorative.tooltip1=§6Leczy 100% maksymalnego zdrowia
+potion.effect.xat.restorative=Mikstura Przywrócenia
+splash_potion.effect.xat.restorative=Miotana Mikstura Przywrócenia
+lingering_potion.effect.xat.restorative=Trwała Mikstura Przywrócenia
+tipped_arrow.effect.xat.restorative=Strzała Przywrócenia
+xat.effect.restorative=Przywrócenie
+xat.item.potion.restorative.tooltip1=§6Przywraca 100% zdrowia
 xat.item.potion.restorative.tooltip2=§6Usuwa efekty mikstur
-xat.item.potion.restorative.tooltip3=§6Usuwa efekty przemiany zaklętych potraw
+xat.item.potion.restorative.tooltip3=§6Usuwa efekty transformacji z zaklętego jedzenia
 
-potion.effect.xat.human=Mikstura przemiany w człowieka
-splash_potion.effect.xat.human=Miotana mikstura przemiany w człowieka
-lingering_potion.effect.xat.human=Trwała mikstura przemiany w człowieka
-tipped_arrow.effect.xat.human=Strzała przemiany w człowieka
+potion.effect.xat.human=Mikstura Transformacji w Człowieka
+splash_potion.effect.xat.human=Miotana Mikstura Transformacji w Człowieka
+lingering_potion.effect.xat.human=Trwała Mikstura Transformacji w Człowieka
+tipped_arrow.effect.xat.human=Strzała Transformacji w Człowieka
 xat.effect.human=Człowiek
-xat.item.potion.human.tooltip1=Stań się człowiekiem na $humanticks: sekund
+xat.item.potion.human.tooltip1=Stajesz się Człowiekiem na $humanticks: sekund
 
-potion.effect.xat.fairy=Mikstura przemiany we wróżkę
-splash_potion.effect.xat.fairy=Miotana mikstura przemiany we wróżkę
-lingering_potion.effect.xat.fairy=Trwała mikstura przemiany we wróżkę
-tipped_arrow.effect.xat.fairy=Strzała przemiany we wróżkę
+potion.effect.xat.fairy=Mikstura Transformacji we Wróżkę
+splash_potion.effect.xat.fairy=Miotana Mikstura Transformacji we Wróżkę
+lingering_potion.effect.xat.fairy=Trwała Mikstura Transformacji we Wróżkę
+tipped_arrow.effect.xat.fairy=Strzała Transformacji we Wróżkę
 xat.effect.fairy=Wróżka
-xat.item.potion.fairy.tooltip1=Stań się wróżką na $fairyticks: sekund
+xat.item.potion.fairy.tooltip1=Stajesz się Wróżką na $fairyticks: sekund
 
-potion.effect.xat.dwarf=Mikstura przemiany w krasanoluda
-splash_potion.effect.xat.dwarf=Miotana mikstura przemiany w krasanoluda
-lingering_potion.effect.xat.dwarf=Trwała mikstura przemiany w krasanoluda
-tipped_arrow.effect.xat.dwarf=Strzała przemiany w krasnoluda
+potion.effect.xat.dwarf=Mikstura Transformacji w Krasnoluda
+splash_potion.effect.xat.dwarf=Miotana Mikstura Transformacji w Krasnoluda
+lingering_potion.effect.xat.dwarf=Trwała Mikstura Transformacji w Krasnoluda
+tipped_arrow.effect.xat.dwarf=Strzała Transformacji w Krasnoluda
 xat.effect.dwarf=Krasnolud
-xat.item.potion.dwarf.tooltip1=Stań się krasnoludem na $dwarfticks: sekund
+xat.item.potion.dwarf.tooltip1=Stajesz się Krasnoludem na $dwarfticks: sekund
 
-potion.effect.xat.titan=Mikstura przemiany w tytana
-splash_potion.effect.xat.titan=Miotana mikstura przemiany w tytana
-lingering_potion.effect.xat.titan=Trwała mikstura przemiany w tytana
-tipped_arrow.effect.xat.titan=Strzała przemiany w tytana
+potion.effect.xat.titan=Mikstura Transformacji w Tytana
+splash_potion.effect.xat.titan=Miotana Mikstura Transformacji w Tytana
+lingering_potion.effect.xat.titan=Trwała Mikstura Transformacji w Tytana
+tipped_arrow.effect.xat.titan=Strzała Transformacji w Tytana
 xat.effect.titan=Tytan
-xat.item.potion.titan.tooltip1=Stań się tytanem na $titanticks: sekund
+xat.item.potion.titan.tooltip1=Stajesz się Tytanem na $titanticks: sekund
 
-potion.effect.xat.goblin=Mikstura przemiany w goblina
-splash_potion.effect.xat.goblin=Miotana mikstura przemiany w goblina
-lingering_potion.effect.xat.goblin=Trwała mikstura przemiany w goblina
-tipped_arrow.effect.xat.goblin=Strzała przemiany w goblina
+potion.effect.xat.goblin=Mikstura Transformacji w Goblina
+splash_potion.effect.xat.goblin=Miotana Mikstura Transformacji w Goblina
+lingering_potion.effect.xat.goblin=Trwała Mikstura Transformacji w Goblina
+tipped_arrow.effect.xat.goblin=Strzała Transformacji w Goblina
 xat.effect.goblin=Goblin
-xat.item.potion.goblin.tooltip1=Stań się goblinem na $goblinticks: sekund
+xat.item.potion.goblin.tooltip1=Stajesz się Goblinem na $goblinticks: sekund
 
-potion.effect.xat.elf=Mikstura przemiany w elfa
-splash_potion.effect.xat.elf=Miotana mikstura przemiany w elfa
-lingering_potion.effect.xat.elf=Trwała mikstura przemiany w elfa
-tipped_arrow.effect.xat.elf=Strzała przemiany w elfa
+potion.effect.xat.elf=Mikstura Transformacji w Elfa
+splash_potion.effect.xat.elf=Miotana Mikstura Transformacji w Elfa
+lingering_potion.effect.xat.elf=Trwała Mikstura Transformacji w Elfa
+tipped_arrow.effect.xat.elf=Strzała Transformacji w Elfa
 xat.effect.elf=Elf
-xat.item.potion.elf.tooltip1=Stań się elfem na $elfticks: sekund
+xat.item.potion.elf.tooltip1=Stajesz się Elfem na $elfticks: sekund
 
-potion.effect.xat.faelis=Mikstura przemiany w kotowatego
-splash_potion.effect.xat.faelis=Miotana mikstura przemiany w kotowatego
-lingering_potion.effect.xat.faelis=Trwała mikstura przemiany w kotowatego
-tipped_arrow.effect.xat.faelis=Strzała przemiany w kotowatego
-xat.effect.faelis=Kotowaty
-xat.item.potion.faelis.tooltip1=Stań się kotowatym na $faelisticks: sekund
+potion.effect.xat.faelis=Mikstura Transformacji w Faelis
+splash_potion.effect.xat.faelis=Miotana Mikstura Transformacji w Faelis
+lingering_potion.effect.xat.faelis=Trwała Mikstura Transformacji w Faelis
+tipped_arrow.effect.xat.faelis=Strzała Transformacji w Faelis
+xat.effect.faelis=Faelis
+xat.item.potion.faelis.tooltip1=Stajesz się Faelis na $faelisticks: sekund
 
-potion.effect.xat.dragon=Mikstura przemiany w smoka
-splash_potion.effect.xat.dragon=Miotana mikstura przemiany w smoka
-lingering_potion.effect.xat.dragon=Trwała mikstura przemiany w smoka
-tipped_arrow.effect.xat.dragon=Strzała przemiany w smoka
+potion.effect.xat.dragon=Mikstura Transformacji w Smoka
+splash_potion.effect.xat.dragon=Miotana Mikstura Transformacji w Smoka
+lingering_potion.effect.xat.dragon=Trwała Mikstura Transformacji w Smoka
+tipped_arrow.effect.xat.dragon=Strzała Transformacji w Smoka
 xat.effect.dragon=Smok
-xat.item.potion.dragon.tooltip1=Stań się smokiem na $dragonticks: sekund
+xat.item.potion.dragon.tooltip1=Stajesz się Smokiem na $dragonticks: sekund
 
 #################################### Potions End ####################################
 
 #################################### Blocks ####################################
 
-tile.moon_rose.name=Księżycowa róża
+tile.moon_rose.name=Księżycowa Róża
 tile.moon_rose.tooltip1=§bZaklęty kwiat
-tile.moon_rose.tooltip2=§b<Możesz wyczuć silne magiczne wahania pochodzące z niego>
+tile.moon_rose.tooltip2=§b<Czujesz silne magiczne wibracje emanujące z tego>
 
 #################################### Blocks End ####################################
 
