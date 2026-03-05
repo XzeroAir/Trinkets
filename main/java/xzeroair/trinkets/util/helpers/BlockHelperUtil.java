@@ -1,460 +1,499 @@
 package xzeroair.trinkets.util.helpers;
 
-import java.util.TreeMap;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
+import xzeroair.trinkets.init.ModBlocks;
 import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.util.Reference;
+
+import javax.annotation.Nonnull;
+import java.util.TreeMap;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class BlockHelperUtil {
 
-	public static TreeMap<Double, Vec3d> findAll(final Vec3d origin, final World world, AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
-		final TreeMap<Double, Vec3d> collection = new TreeMap();
-		if (predicate != null) {
-			final int i = MathHelper.floor(aabb.minX);
-			final int j = MathHelper.floor(aabb.maxX + 1.0D);
-			final int k = MathHelper.floor(aabb.minY);
-			final int l = MathHelper.floor(aabb.maxY + 1.0D);
-			final int i1 = MathHelper.floor(aabb.minZ);
-			final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
-			for (int k1 = i; k1 < j; ++k1) {
-				for (int l1 = k; l1 < l; ++l1) {
-					for (int i2 = i1; i2 < j1; ++i2) {
-						final Vec3d pos = new Vec3d(k1, l1, i2);
-						final BlockPos bPos = new BlockPos(pos);
-						final IBlockState state = world.getBlockState(bPos);
-						if (predicate.test(state, bPos)) {
-							double blockDist = pos.distanceTo(origin);
-							collection.put(blockDist, pos);
-						}
-					}
-				}
-			}
-		}
-		return collection;
-	}
+    public static void freezeWater(World world, double x, double y, double z, int strength, double range) {
+        try {
+            BlockPos pos = new BlockPos(x, y, z);
+            float f = Math.min(16, 2 + (strength));
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(0, 0, 0);
+            for (BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.getAllInBoxMutable(pos.add((-f), -range, (-f)), pos.add(f, range, f))) {
+                if (blockpos$mutableblockpos1.distanceSqToCenter(x, y, z) <= (f * f)) {
+                    blockpos$mutableblockpos.setPos(blockpos$mutableblockpos1.getX(), blockpos$mutableblockpos1.getY() + 1, blockpos$mutableblockpos1.getZ());
+                    IBlockState iblockstate = world.getBlockState(blockpos$mutableblockpos);
+                    if (iblockstate.getMaterial() == Material.AIR) {
+                        IBlockState iblockstate1 = world.getBlockState(blockpos$mutableblockpos1);
+                        if ((iblockstate1.getMaterial() == Material.WATER) && ((iblockstate1.getBlock() == Blocks.WATER) || (iblockstate1.getBlock() == Blocks.FLOWING_WATER)) && (iblockstate1.getValue(BlockLiquid.LEVEL).intValue() == 0) && world.mayPlace(Blocks.FROSTED_ICE, blockpos$mutableblockpos1, false, EnumFacing.DOWN, (Entity) null)) {
+                            world.setBlockState(blockpos$mutableblockpos1, Blocks.FROSTED_ICE.getDefaultState());
+                            world.scheduleUpdate(blockpos$mutableblockpos1.toImmutable(), Blocks.FROSTED_ICE, MathHelper.getInt(Reference.random, 60, 120));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static BlockPos findFirst(final Vec3d origin, final World world, AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
-		if (predicate != null) {
-			final int i = MathHelper.floor(aabb.minX);
-			final int j = MathHelper.floor(aabb.maxX + 1.0D);
-			final int k = MathHelper.floor(aabb.minY);
-			final int l = MathHelper.floor(aabb.maxY + 1.0D);
-			final int i1 = MathHelper.floor(aabb.minZ);
-			final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
-			for (int k1 = i; k1 < j; ++k1) {
-				for (int l1 = k; l1 < l; ++l1) {
-					for (int i2 = i1; i2 < j1; ++i2) {
-						final Vec3d pos = new Vec3d(k1, l1, i2);
-						final BlockPos bPos = new BlockPos(pos);
-						final IBlockState state = world.getBlockState(bPos);
-						if (predicate.test(state, bPos)) {
-							return bPos;
-						}
-					}
-				}
-			}
-		}
-		return new BlockPos(origin);
-	}
+    public static void freezeLava(World world, double x, double y, double z, int strength, double range) {
+        try {
+            BlockPos pos = new BlockPos(x, y, z);
+            float f = Math.min(16, 2 + (strength));
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(0, 0, 0);
+            for (BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.getAllInBoxMutable(pos.add((-f), -range, (-f)), pos.add(f, range, f))) {
+                if (blockpos$mutableblockpos1.distanceSqToCenter(x, y, z) <= (f * f)) {
+                    blockpos$mutableblockpos.setPos(blockpos$mutableblockpos1.getX(), blockpos$mutableblockpos1.getY() + 1, blockpos$mutableblockpos1.getZ());
+                    IBlockState iblockstate = world.getBlockState(blockpos$mutableblockpos);
+                    if (iblockstate.getMaterial() == Material.AIR) {
+                        IBlockState iblockstate1 = world.getBlockState(blockpos$mutableblockpos1);
+                        if ((iblockstate1.getMaterial() == Material.LAVA) && ((iblockstate1.getBlock() == Blocks.LAVA) || (iblockstate1.getBlock() == Blocks.FLOWING_LAVA)) && (iblockstate1.getValue(BlockLiquid.LEVEL).intValue() == 0) && world.mayPlace(ModBlocks.Placeables.TEMP_BLOCK, blockpos$mutableblockpos1, false, EnumFacing.DOWN, (Entity) null)) {
+                            world.setBlockState(blockpos$mutableblockpos1, ModBlocks.Placeables.TEMP_BLOCK.getDefaultState());
+                            world.scheduleUpdate(blockpos$mutableblockpos1.toImmutable(), ModBlocks.Placeables.TEMP_BLOCK, MathHelper.getInt(Reference.random, 60, 120));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static boolean isBlockNearby(final World world, final AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
-		if (predicate != null) {
-			final int i = MathHelper.floor(aabb.minX);
-			final int j = MathHelper.floor(aabb.maxX + 1.0D);
-			final int k = MathHelper.floor(aabb.minY);
-			final int l = MathHelper.floor(aabb.maxY + 1.0D);
-			final int i1 = MathHelper.floor(aabb.minZ);
-			final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
-			for (int k1 = i; k1 < j; ++k1) {
-				for (int l1 = k; l1 < l; ++l1) {
-					for (int i2 = i1; i2 < j1; ++i2) {
-						final Vec3d pos = new Vec3d(k1, l1, i2);
-						final BlockPos bPos = new BlockPos(pos);
-						final IBlockState state = world.getBlockState(bPos);
-						if (predicate.test(state, bPos)) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
+    public static TreeMap<Double, Vec3d> findAll(final Vec3d origin, final World world, AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
+        final TreeMap<Double, Vec3d> collection = new TreeMap();
+        if (predicate != null) {
+            final int i = MathHelper.floor(aabb.minX);
+            final int j = MathHelper.floor(aabb.maxX + 1.0D);
+            final int k = MathHelper.floor(aabb.minY);
+            final int l = MathHelper.floor(aabb.maxY + 1.0D);
+            final int i1 = MathHelper.floor(aabb.minZ);
+            final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
+            for (int k1 = i; k1 < j; ++k1) {
+                for (int l1 = k; l1 < l; ++l1) {
+                    for (int i2 = i1; i2 < j1; ++i2) {
+                        final Vec3d pos = new Vec3d(k1, l1, i2);
+                        final BlockPos bPos = new BlockPos(pos);
+                        final IBlockState state = world.getBlockState(bPos);
+                        if (predicate.test(state, bPos)) {
+                            double blockDist = pos.distanceTo(origin);
+                            collection.put(blockDist, pos);
+                        }
+                    }
+                }
+            }
+        }
+        return collection;
+    }
 
-	public static boolean canToolHarvestBlock(ItemStack stack, IBlockState state) {
-		return canToolHarvestBlock(stack, state, 0);
-	}
+    public static BlockPos findFirst(final Vec3d origin, final World world, AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
+        if (predicate != null) {
+            final int i = MathHelper.floor(aabb.minX);
+            final int j = MathHelper.floor(aabb.maxX + 1.0D);
+            final int k = MathHelper.floor(aabb.minY);
+            final int l = MathHelper.floor(aabb.maxY + 1.0D);
+            final int i1 = MathHelper.floor(aabb.minZ);
+            final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
+            for (int k1 = i; k1 < j; ++k1) {
+                for (int l1 = k; l1 < l; ++l1) {
+                    for (int i2 = i1; i2 < j1; ++i2) {
+                        final Vec3d pos = new Vec3d(k1, l1, i2);
+                        final BlockPos bPos = new BlockPos(pos);
+                        final IBlockState state = world.getBlockState(bPos);
+                        if (predicate.test(state, bPos)) {
+                            return bPos;
+                        }
+                    }
+                }
+            }
+        }
+        return new BlockPos(origin);
+    }
 
-	public static boolean canToolHarvestBlock(ItemStack stack, IBlockState state, int bonusToolLevel) {
-		Block block = state.getBlock();
-		if (state.getMaterial().isToolNotRequired()) {
-			return true;
-		}
-		String type = block.getHarvestTool(state);
-		int level = block.getHarvestLevel(state);
-		return (stack.getItem().getHarvestLevel(stack, type, null, state) + bonusToolLevel) >= level;
-	}
+    public static boolean isBlockNearby(final World world, final AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> predicate) {
+        if (predicate != null) {
+            final int i = MathHelper.floor(aabb.minX);
+            final int j = MathHelper.floor(aabb.maxX + 1.0D);
+            final int k = MathHelper.floor(aabb.minY);
+            final int l = MathHelper.floor(aabb.maxY + 1.0D);
+            final int i1 = MathHelper.floor(aabb.minZ);
+            final int j1 = MathHelper.floor(aabb.maxZ + 1.0D);
+            for (int k1 = i; k1 < j; ++k1) {
+                for (int l1 = k; l1 < l; ++l1) {
+                    for (int i2 = i1; i2 < j1; ++i2) {
+                        final Vec3d pos = new Vec3d(k1, l1, i2);
+                        final BlockPos bPos = new BlockPos(pos);
+                        final IBlockState state = world.getBlockState(bPos);
+                        if (predicate.test(state, bPos)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-	public static boolean canPlayerHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, ItemStack harvestTool, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-		return canPlayerHarvestBlock(block, player, harvestTool, world, pos, 0);
-	}
+    public static boolean canToolHarvestBlock(ItemStack stack, IBlockState state) {
+        return canToolHarvestBlock(stack, state, 0);
+    }
 
-	public static boolean canPlayerHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, ItemStack harvestTool, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, int bonusToolLevel) {
-		IBlockState state = world.getBlockState(pos);
-		state = state.getBlock().getActualState(state, world, pos);
-		if (state.getMaterial().isToolNotRequired()) {
-			return true;
-		}
+    public static boolean canToolHarvestBlock(ItemStack stack, IBlockState state, int bonusToolLevel) {
+        Block block = state.getBlock();
+        if (state.getMaterial().isToolNotRequired()) {
+            return true;
+        }
+        String type = block.getHarvestTool(state);
+        int level = block.getHarvestLevel(state);
+        return (stack.getItem().getHarvestLevel(stack, type, null, state) + bonusToolLevel) >= level;
+    }
 
-		String tool = block.getHarvestTool(state);
-		if ((tool == null) || harvestTool.isEmpty()) {
-			return player.canHarvestBlock(state);
-		}
+    public static boolean canPlayerHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, ItemStack harvestTool, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        return canPlayerHarvestBlock(block, player, harvestTool, world, pos, 0);
+    }
 
-		int toolLevel = harvestTool.getItem().getHarvestLevel(harvestTool, tool, player, state) + bonusToolLevel;
-		if (toolLevel < 0) {
-			return player.canHarvestBlock(state);
-		}
+    public static boolean canPlayerHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, ItemStack harvestTool, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, int bonusToolLevel) {
+        IBlockState state = world.getBlockState(pos);
+        state = state.getBlock().getActualState(state, world, pos);
+        if (state.getMaterial().isToolNotRequired()) {
+            return true;
+        }
 
-		return toolLevel >= block.getHarvestLevel(state);
-	}
+        String tool = block.getHarvestTool(state);
+        if ((tool == null) || harvestTool.isEmpty()) {
+            return player.canHarvestBlock(state);
+        }
 
-	public static boolean isToolEffective(ItemStack stack, IBlockState state) {
-		for (String type : stack.getItem().getToolClasses(stack)) {
-			if ((type != null) && type.equals(state.getBlock().getHarvestTool(state))) {
-				return true;
-			}
-		}
-		return state.getBlock().getHarvestTool(state) == null;
-	}
+        int toolLevel = harvestTool.getItem().getHarvestLevel(harvestTool, tool, player, state) + bonusToolLevel;
+        if (toolLevel < 0) {
+            return player.canHarvestBlock(state);
+        }
 
-	/*
-	 * Use for inside Item Classes
-	 */
-	public static float getEntityDigSpeed(EntityLivingBase entity, ItemStack itemstack, IBlockState state, BlockPos pos) {
-		return getEntityDigSpeed(entity, itemstack, state, pos, true);
-	}
+        return toolLevel >= block.getHarvestLevel(state);
+    }
 
-	/*
-	 * Do not call event when used in getBreakSpeed Event
-	 */
-	public static float getEntityDigSpeed(EntityLivingBase entity, ItemStack itemstack, IBlockState state, BlockPos pos, boolean callDigSpeedEvent) {
-		float f = 1.0F;
+    public static boolean isToolEffective(ItemStack stack, IBlockState state) {
+        for (String type : stack.getItem().getToolClasses(stack)) {
+            if ((type != null) && type.equals(state.getBlock().getHarvestTool(state))) {
+                return true;
+            }
+        }
+        return state.getBlock().getHarvestTool(state) == null;
+    }
 
-		if (!itemstack.isEmpty()) {
-			f *= itemstack.getDestroySpeed(state);
-		}
+    /*
+     * Use for inside Item Classes
+     */
+    public static float getEntityDigSpeed(EntityLivingBase entity, ItemStack itemstack, IBlockState state, BlockPos pos) {
+        return getEntityDigSpeed(entity, itemstack, state, pos, true);
+    }
 
-		if (f > 1.0F) {
-			int i = EnchantmentHelper.getEfficiencyModifier(entity);
-			if ((i > 0) && !itemstack.isEmpty()) {
-				f += (i * i) + 1;
-			}
-		}
+    /*
+     * Do not call event when used in getBreakSpeed Event
+     */
+    public static float getEntityDigSpeed(EntityLivingBase entity, ItemStack itemstack, IBlockState state, BlockPos pos, boolean callDigSpeedEvent) {
+        float f = 1.0F;
 
-		if (entity.isPotionActive(MobEffects.HASTE)) {
-			f *= 1.0F + ((entity.getActivePotionEffect(MobEffects.HASTE).getAmplifier() + 1) * 0.2F);
-		}
+        if (!itemstack.isEmpty()) {
+            f *= itemstack.getDestroySpeed(state);
+        }
 
-		if (entity.isPotionActive(MobEffects.MINING_FATIGUE)) {
-			float f1;
-			switch (entity.getActivePotionEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
-			case 0:
-				f1 = 0.3F;
-				break;
-			case 1:
-				f1 = 0.09F;
-				break;
-			case 2:
-				f1 = 0.0027F;
-				break;
-			case 3:
-			default:
-				f1 = 8.1E-4F;
-			}
+        if (f > 1.0F) {
+            int i = EnchantmentHelper.getEfficiencyModifier(entity);
+            if ((i > 0) && !itemstack.isEmpty()) {
+                f += (i * i) + 1;
+            }
+        }
 
-			f *= f1;
-		}
-		if (entity.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(entity)) {
-			f /= 5.0F;
-		}
+        if (entity.isPotionActive(MobEffects.HASTE)) {
+            f *= 1.0F + ((entity.getActivePotionEffect(MobEffects.HASTE).getAmplifier() + 1) * 0.2F);
+        }
 
-		if (!entity.onGround) {
-			f /= 5.0F;
-		}
-		if (callDigSpeedEvent && (entity instanceof EntityPlayer)) {
-			f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed((EntityPlayer) entity, state, f, pos);
-		}
-		return (f < 0 ? 0 : f);
-	}
+        if (entity.isPotionActive(MobEffects.MINING_FATIGUE)) {
+            float f1;
+            switch (entity.getActivePotionEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
+                case 0:
+                    f1 = 0.3F;
+                    break;
+                case 1:
+                    f1 = 0.09F;
+                    break;
+                case 2:
+                    f1 = 0.0027F;
+                    break;
+                case 3:
+                default:
+                    f1 = 8.1E-4F;
+            }
 
-	public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth) {
-		return getBlockList(stack, world, player, origin, width, height, depth, -1, null);
-	}
+            f *= f1;
+        }
+        if (entity.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(entity)) {
+            f /= 5.0F;
+        }
 
-	public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, Predicate<BlockPos> predicate) {
-		return getBlockList(stack, world, player, origin, width, height, depth, -1, predicate);
-	}
+        if (!entity.onGround) {
+            f /= 5.0F;
+        }
+        if (callDigSpeedEvent && (entity instanceof EntityPlayer)) {
+            f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed((EntityPlayer) entity, state, f, pos);
+        }
+        return (f < 0 ? 0 : f);
+    }
 
-	public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance) {
-		return getBlockList(stack, world, player, origin, width, height, depth, distance, null);
-	}
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth) {
+        return getBlockList(stack, world, player, origin, width, height, depth, -1, null);
+    }
 
-	public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance, Predicate<BlockPos> predicate) {
-		IBlockState state = world.getBlockState(origin);
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, Predicate<BlockPos> predicate) {
+        return getBlockList(stack, world, player, origin, width, height, depth, -1, predicate);
+    }
 
-		if ((state.getMaterial() == Material.AIR) || !canToolHarvestBlock(stack, state)) {
-			return ImmutableList.of();
-		}
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance) {
+        return getBlockList(stack, world, player, origin, width, height, depth, distance, null);
+    }
 
-		// raytrace to get the side, but has to result in the same block
-		RayTraceResult targetPoint = RayTraceHelper.rayTrace(world, player, true);
-		if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
-			targetPoint = RayTraceHelper.rayTrace(world, player, false);
-			if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
-				return ImmutableList.of();
-			}
-		}
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance, Predicate<BlockPos> predicate) {
+        IBlockState state = world.getBlockState(origin);
 
-		int x, y, z;
-		BlockPos start = origin;
-		switch (targetPoint.sideHit) {
-		case DOWN:
-		case UP:
-			// x y depends on the angle we look?
-			Vec3i vec = player.getHorizontalFacing().getDirectionVec();
-			x = (vec.getX() * height) + (vec.getZ() * width);
-			y = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
-			z = (vec.getX() * width) + (vec.getZ() * height);
-			start = start.add(-x / 2, 0, -z / 2);
-			if ((x % 2) == 0) {
-				if ((x > 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
-					start = start.add(1, 0, 0);
-				} else if ((x < 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) < 0.5d)) {
-					start = start.add(-1, 0, 0);
-				}
-			}
-			if ((z % 2) == 0) {
-				if ((z > 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
-					start = start.add(0, 0, 1);
-				} else if ((z < 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) < 0.5d)) {
-					start = start.add(0, 0, -1);
-				}
-			}
-			break;
-		case NORTH:
-		case SOUTH:
-			x = width;
-			y = height;
-			z = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
-			start = start.add(-x / 2, -y / 2, 0);
-			if (((x % 2) == 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
-				start = start.add(1, 0, 0);
-			}
-			if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
-				start = start.add(0, 1, 0);
-			}
-			break;
-		case WEST:
-		case EAST:
-			x = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
-			y = height;
-			z = width;
-			start = start.add(-0, -y / 2, -z / 2);
-			if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
-				start = start.add(0, 1, 0);
-			}
-			if (((z % 2) == 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
-				start = start.add(0, 0, 1);
-			}
-			break;
-		default:
-			x = y = z = 0;
-		}
+        if ((state.getMaterial() == Material.AIR) || !canToolHarvestBlock(stack, state)) {
+            return ImmutableList.of();
+        }
 
-		ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
-		for (int xp = start.getX(); xp != (start.getX() + x); xp += x / MathHelper.abs(x)) {
-			for (int yp = start.getY(); yp != (start.getY() + y); yp += y / MathHelper.abs(y)) {
-				for (int zp = start.getZ(); zp != (start.getZ() + z); zp += z / MathHelper.abs(z)) {
-					// don't add the origin block
-					if ((xp == origin.getX()) && (yp == origin.getY()) && (zp == origin.getZ())) {
-						continue;
-					}
-					if ((distance > 0) && ((MathHelper.abs(xp - origin.getX()) + MathHelper.abs(yp - origin.getY()) + MathHelper.abs(
-							zp - origin.getZ()
-					)) > distance)) {
-						continue;
-					}
-					BlockPos pos = new BlockPos(xp, yp, zp);
-					if ((predicate != null) && !predicate.test(pos)) {
-						continue;
-					}
-					if (isToolEffective(stack, world.getBlockState(pos))) {
-						builder.add(pos);
-					}
-				}
-			}
-		}
-		return builder.build();
-	}
+        // raytrace to get the side, but has to result in the same block
+        RayTraceResult targetPoint = RayTraceHelper.rayTrace(world, player, true);
+        if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
+            targetPoint = RayTraceHelper.rayTrace(world, player, false);
+            if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
+                return ImmutableList.of();
+            }
+        }
 
-	public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos) {
-		return canBreakBlock(stack, world, player, harvestedPos, targetPos, 0);
-	}
+        int x, y, z;
+        BlockPos start = origin;
+        switch (targetPoint.sideHit) {
+            case DOWN:
+            case UP:
+                // x y depends on the angle we look?
+                Vec3i vec = player.getHorizontalFacing().getDirectionVec();
+                x = (vec.getX() * height) + (vec.getZ() * width);
+                y = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
+                z = (vec.getX() * width) + (vec.getZ() * height);
+                start = start.add(-x / 2, 0, -z / 2);
+                if ((x % 2) == 0) {
+                    if ((x > 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
+                        start = start.add(1, 0, 0);
+                    } else if ((x < 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) < 0.5d)) {
+                        start = start.add(-1, 0, 0);
+                    }
+                }
+                if ((z % 2) == 0) {
+                    if ((z > 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
+                        start = start.add(0, 0, 1);
+                    } else if ((z < 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) < 0.5d)) {
+                        start = start.add(0, 0, -1);
+                    }
+                }
+                break;
+            case NORTH:
+            case SOUTH:
+                x = width;
+                y = height;
+                z = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
+                start = start.add(-x / 2, -y / 2, 0);
+                if (((x % 2) == 0) && ((targetPoint.hitVec.x - targetPoint.getBlockPos().getX()) > 0.5d)) {
+                    start = start.add(1, 0, 0);
+                }
+                if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
+                    start = start.add(0, 1, 0);
+                }
+                break;
+            case WEST:
+            case EAST:
+                x = targetPoint.sideHit.getAxisDirection().getOffset() * -depth;
+                y = height;
+                z = width;
+                start = start.add(-0, -y / 2, -z / 2);
+                if (((y % 2) == 0) && ((targetPoint.hitVec.y - targetPoint.getBlockPos().getY()) > 0.5d)) {
+                    start = start.add(0, 1, 0);
+                }
+                if (((z % 2) == 0) && ((targetPoint.hitVec.z - targetPoint.getBlockPos().getZ()) > 0.5d)) {
+                    start = start.add(0, 0, 1);
+                }
+                break;
+            default:
+                x = y = z = 0;
+        }
 
-	public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos, int bonusToolLevel) {
-		if (world.isAirBlock(targetPos)) {
-			return false;
-		}
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int xp = start.getX(); xp != (start.getX() + x); xp += x / MathHelper.abs(x)) {
+            for (int yp = start.getY(); yp != (start.getY() + y); yp += y / MathHelper.abs(y)) {
+                for (int zp = start.getZ(); zp != (start.getZ() + z); zp += z / MathHelper.abs(z)) {
+                    // don't add the origin block
+                    if ((xp == origin.getX()) && (yp == origin.getY()) && (zp == origin.getZ())) {
+                        continue;
+                    }
+                    if ((distance > 0) && ((MathHelper.abs(xp - origin.getX()) + MathHelper.abs(yp - origin.getY()) + MathHelper.abs(zp - origin.getZ())) > distance)) {
+                        continue;
+                    }
+                    BlockPos pos = new BlockPos(xp, yp, zp);
+                    if ((predicate != null) && !predicate.test(pos)) {
+                        continue;
+                    }
+                    if (isToolEffective(stack, world.getBlockState(pos))) {
+                        builder.add(pos);
+                    }
+                }
+            }
+        }
+        return builder.build();
+    }
 
-		IBlockState state = world.getBlockState(targetPos);
-		Block block = state.getBlock();
+    public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos) {
+        return canBreakBlock(stack, world, player, harvestedPos, targetPos, 0);
+    }
 
-		// only effective materials
-		if (!isToolEffective(stack, state)) {
-			return false;
-		}
+    public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos, int bonusToolLevel) {
+        if (world.isAirBlock(targetPos)) {
+            return false;
+        }
 
-		IBlockState refState = world.getBlockState(harvestedPos);
-		float refStrength = ForgeHooks.blockStrength(refState, player, world, harvestedPos);
-		float strength = ForgeHooks.blockStrength(state, player, world, targetPos);
+        IBlockState state = world.getBlockState(targetPos);
+        Block block = state.getBlock();
 
-		//		final boolean forgeSaidNo = !ForgeHooks.canHarvestBlock(block, player, world, targetPos);
-		final boolean tooSlow = ((refStrength / strength) > 10f);
+        // only effective materials
+        if (!isToolEffective(stack, state)) {
+            return false;
+        }
 
-		// only harvestable blocks that aren't impossibly slow to harvest
-		if (!canPlayerHarvestBlock(block, player, stack, world, targetPos, bonusToolLevel) || tooSlow) {
-			return false;
-		}
+        IBlockState refState = world.getBlockState(harvestedPos);
+        float refStrength = ForgeHooks.blockStrength(refState, player, world, harvestedPos);
+        float strength = ForgeHooks.blockStrength(state, player, world, targetPos);
 
-		// From this point on it's clear that the player CAN break the block
+        //		final boolean forgeSaidNo = !ForgeHooks.canHarvestBlock(block, player, world, targetPos);
+        final boolean tooSlow = ((refStrength / strength) > 10f);
 
-		if (player.capabilities.isCreativeMode) {
-			block.onBlockHarvested(world, targetPos, state, player);
-			if (block.removedByPlayer(state, world, targetPos, player, false)) {
-				block.onPlayerDestroy(world, targetPos, state);
-			}
+        // only harvestable blocks that aren't impossibly slow to harvest
+        if (!canPlayerHarvestBlock(block, player, stack, world, targetPos, bonusToolLevel) || tooSlow) {
+            return false;
+        }
 
-			// send update to client
-			if (!world.isRemote) {
-				NetworkHandler.sendPacket(player, new SPacketBlockChange(world, targetPos));
-			}
-			return false;
-		}
-		return true;
-	}
+        // From this point on it's clear that the player CAN break the block
 
-	/*
-	 *
-	 */
-	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos) {
-		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, true);
-	}
+        if (player.capabilities.isCreativeMode) {
+            block.onBlockHarvested(world, targetPos, state, player);
+            if (block.removedByPlayer(state, world, targetPos, player, false)) {
+                block.onPlayerDestroy(world, targetPos, state);
+            }
 
-	/*
-	 * Be Careful calling on blockBreakEvent
-	 */
-	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent) {
-		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, 0);
-	}
+            // send update to client
+            if (!world.isRemote) {
+                NetworkHandler.sendPacket(player, new SPacketBlockChange(world, targetPos));
+            }
+            return false;
+        }
+        return true;
+    }
 
-	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel) {
-		breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, bonusToolLevel, null);
-	}
+    /*
+     *
+     */
+    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos) {
+        breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, true);
+    }
 
-	public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, Function<Integer, Integer> handleXP) {
-		if (!canBreakBlock(harvestTool, world, entity, harvestedPos, targetPos, bonusToolLevel)) {
-			return;
-		}
-		IBlockState state = world.getBlockState(targetPos);
-		final Block block = state.getBlock();
+    /*
+     * Be Careful calling on blockBreakEvent
+     */
+    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent) {
+        breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, 0);
+    }
 
-		// callback to the tool the player uses. Called on both sides. This damages the tool n stuff.
-		harvestTool.onBlockDestroyed(world, state, targetPos, entity);
+    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel) {
+        breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, bonusToolLevel, null);
+    }
 
-		// server sided handling
-		if (!world.isRemote) {
-			int xp = block.getExpDrop(state, world, targetPos, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvestTool));
-			if (callBreakEvent) {
-				// send the blockbreak event
-				xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) entity).interactionManager.getGameType(), (EntityPlayerMP) entity, targetPos);
-			}
-			if (handleXP != null) {
-				xp = handleXP.apply(xp);
-			}
-			if (xp == -1) {
-				return;
-			}
+    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, Function<Integer, Integer> handleXP) {
+        if (!canBreakBlock(harvestTool, world, entity, harvestedPos, targetPos, bonusToolLevel)) {
+            return;
+        }
+        IBlockState state = world.getBlockState(targetPos);
+        final Block block = state.getBlock();
 
-			TileEntity tileEntity = world.getTileEntity(targetPos);
-			// ItemInWorldManager.removeBlock
-			if (block.removedByPlayer(state, world, targetPos, entity, true)) { // boolean is if block can be harvested, checked above
-				block.onPlayerDestroy(world, targetPos, state);
-				block.harvestBlock(world, entity, targetPos, state, tileEntity, harvestTool);
-				block.dropXpOnBlockBreak(world, targetPos, xp);
-			}
-			// always send block update to client
-			NetworkHandler.sendPacket(entity, new SPacketBlockChange(world, targetPos));
-		}
-		// client sided handling
-		else {
-			// clientside we do a "this clock has been clicked on long enough to be broken" call. This should not send any new packets
-			// the code above, executed on the server, sends a block-updates that give us the correct state of the block we destroy.
+        // callback to the tool the player uses. Called on both sides. This damages the tool n stuff.
+        harvestTool.onBlockDestroyed(world, state, targetPos, entity);
 
-			// following code can be found in PlayerControllerMP.onPlayerDestroyBlock
-			world.playBroadcastSound(2001, targetPos, Block.getStateId(state));
-			if (block.removedByPlayer(state, world, targetPos, entity, true)) {
-				block.onPlayerDestroy(world, targetPos, state);
-			}
-			// callback to the tool
-			harvestTool.onBlockDestroyed(world, state, targetPos, entity);
+        // server sided handling
+        if (!world.isRemote) {
+            int xp = block.getExpDrop(state, world, targetPos, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvestTool));
+            if (callBreakEvent) {
+                // send the blockbreak event
+                xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) entity).interactionManager.getGameType(), (EntityPlayerMP) entity, targetPos);
+            }
+            if (handleXP != null) {
+                xp = handleXP.apply(xp);
+            }
+            if (xp == -1) {
+                return;
+            }
 
-			if ((harvestTool.getCount() == 0) && (harvestTool == entity.getHeldItemMainhand())) {
-				ForgeEventFactory.onPlayerDestroyItem(entity, harvestTool, EnumHand.MAIN_HAND);
-				entity.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-			}
+            TileEntity tileEntity = world.getTileEntity(targetPos);
+            // ItemInWorldManager.removeBlock
+            if (block.removedByPlayer(state, world, targetPos, entity, true)) { // boolean is if block can be harvested, checked above
+                block.onPlayerDestroy(world, targetPos, state);
+                block.harvestBlock(world, entity, targetPos, state, tileEntity, harvestTool);
+                block.dropXpOnBlockBreak(world, targetPos, xp);
+            }
+            // always send block update to client
+            NetworkHandler.sendPacket(entity, new SPacketBlockChange(world, targetPos));
+        }
+        // client sided handling
+        else {
+            // clientside we do a "this clock has been clicked on long enough to be broken" call. This should not send any new packets
+            // the code above, executed on the server, sends a block-updates that give us the correct state of the block we destroy.
 
-			// send an update to the server, so we get an update back
-			NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getConnection();
-			assert netHandlerPlayClient != null;
-			netHandlerPlayClient.sendPacket(
-					new CPacketPlayerDigging(
-							CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, targetPos, Minecraft
-									.getMinecraft().objectMouseOver.sideHit
-					)
-			);
-		}
-	}
+            // following code can be found in PlayerControllerMP.onPlayerDestroyBlock
+            world.playBroadcastSound(2001, targetPos, Block.getStateId(state));
+            if (block.removedByPlayer(state, world, targetPos, entity, true)) {
+                block.onPlayerDestroy(world, targetPos, state);
+            }
+            // callback to the tool
+            harvestTool.onBlockDestroyed(world, state, targetPos, entity);
+
+            if ((harvestTool.getCount() == 0) && (harvestTool == entity.getHeldItemMainhand())) {
+                ForgeEventFactory.onPlayerDestroyItem(entity, harvestTool, EnumHand.MAIN_HAND);
+                entity.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+            }
+
+            // send an update to the server, so we get an update back
+            NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getConnection();
+            assert netHandlerPlayClient != null;
+            netHandlerPlayClient.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, targetPos, Minecraft.getMinecraft().objectMouseOver.sideHit));
+        }
+    }
 
 }

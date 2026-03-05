@@ -1,6 +1,8 @@
 package xzeroair.trinkets.races.dragon;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
@@ -49,7 +51,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
             if (survival && serverConfig.compat.tan.immuneToHeat) {
                 this.addAbility(new AbilityHeatImmunity().setRequiredElement(Elements.FIRE));
             }
-            if (serverConfig.breath_damage > 0) {
+            if (serverConfig.elementConfig.fire.breath_damage > 0) {
                 this.addAbility(new AbilityFireBreathing().setRequiredElement(Elements.FIRE));
             }
         } else if (ele == Elements.ICE && TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.ICE_VARIANT) {
@@ -60,16 +62,22 @@ public class RaceDragon extends EntityRacePropertiesHandler {
             if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.FROST_WALKER) {
                 this.addAbility(new AbilityFrostWalker().setRequiredElement(Elements.ICE));
             }
+            if (serverConfig.elementConfig.ice.breath_damage > 0) {
+                this.addAbility(new AbilityIceBreathing().setRequiredElement(Elements.ICE));
+            }
         } else if (ele == Elements.LIGHTNING && TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.LIGHTNING_VARIANT) {
             this.addAbility(new AbilityLightningImmunity().setRequiredElement(Elements.LIGHTNING));
             this.addAbility(new AbilityLightningBolt().setRequiredElement(Elements.LIGHTNING));
+            if (serverConfig.elementConfig.lightning.breath_damage > 0) {
+                this.addAbility(new AbilityLightningBreathing().setRequiredElement(Elements.LIGHTNING));
+            }
         } else {
             if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.DE_FIRE_RESIST) {
                 this.addAbility(new AbilityFireImmunity().setRequiredElement(Elements.NEUTRAL));
                 if (survival && serverConfig.compat.tan.immuneToHeat) {
                     this.addAbility(new AbilityHeatImmunity().setRequiredElement(Elements.NEUTRAL));
                 }
-                if (serverConfig.breath_damage > 0) {
+                if (serverConfig.elementConfig.fire.breath_damage > 0) {
                     this.addAbility(new AbilityFireBreathing().setRequiredElement(Elements.NEUTRAL));
                 }
             }
@@ -79,6 +87,35 @@ public class RaceDragon extends EntityRacePropertiesHandler {
         if (TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder) {
             this.addAbility(new AbilityBlockFinder());
         }
+    }
+
+    @Override
+    public boolean potionBeingApplied(PotionEffect effect) {
+        final String e = effect.getPotion().getRegistryName().toString();
+        Element ele = getRaceCache().getElement();
+        if (ele == Elements.FIRE) {
+            for (final String immunity : TrinketsConfig.SERVER.races.dragon.elementConfig.fire.resistances) {
+                final Potion pot = Potion.getPotionFromResourceLocation(immunity);
+                if ((pot != null) && e.contentEquals(pot.getRegistryName().toString())) {
+                    return true;
+                }
+            }
+        } else if (ele == Elements.ICE) {
+            for (final String immunity : TrinketsConfig.SERVER.races.dragon.elementConfig.ice.resistances) {
+                final Potion pot = Potion.getPotionFromResourceLocation(immunity);
+                if ((pot != null) && e.contentEquals(pot.getRegistryName().toString())) {
+                    return true;
+                }
+            }
+        } else if (ele == Elements.LIGHTNING) {
+            for (final String immunity : TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.resistances) {
+                final Potion pot = Potion.getPotionFromResourceLocation(immunity);
+                if ((pot != null) && e.contentEquals(pot.getRegistryName().toString())) {
+                    return true;
+                }
+            }
+        }
+        return super.potionBeingApplied(effect);
     }
 
     @Override

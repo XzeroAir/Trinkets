@@ -76,9 +76,9 @@ ability.ice_breath.name=§Ice Breath
 ability.ice_breath.tooltip1=$gui:§6Grants Ice Breath
 ability.ice_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Ice §3$fbcost: MP
 
-#ability.lightning_breath.name=§cLightning Breath
-#ability.lightning_breath.tooltip1=Grants Lightning Breath
-#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+ability.lightning_breath.name=§cLightning Breath
+ability.lightning_breath.tooltip1=Grants Lightning Breath
+ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
 
 ability.fire_immunity.name=§cInmunidad al fuego
 ability.fire_immunity.tooltip1=§6Inmune a Fuego y Lava
@@ -242,7 +242,14 @@ xat.element.water.name=§9Water
 
 #################################### Races ####################################
 
-
+xat.race.human.name=Human
+xat.race.fairy.name=Fairy
+xat.race.dwarf.name=Dwarf
+xat.race.elf.name=Elf
+xat.race.titan.name=Titan
+xat.race.faelis.name=Faelis
+xat.race.goblin.name=Goblin
+xat.race.dragon.name=Dragon
 
 #################################### Damage Types ####################################
 
@@ -255,12 +262,14 @@ xat.jump=Salto
 xat.stepheight=Altura de paso
 xat.entityMagic.maxMana=Mana max.
 xat.entityMagic.regen=Regen. MP
+xat.entityMagic.regen.cooldown=MP Regen Cooldown
 xat.flyspeed=Fly Speed
 
 attribute.name.xat.jump=Altura de salto
 attribute.name.xat.stepheight=Altura de paso
 attribute.name.xat.entityMagic.maxMana=Mana max.
 attribute.name.xat.entityMagic.regen=Regen. MP
+attribute.name.xat.entityMagic.regen.cooldown=MP Regen Cooldown
 attribute.name.xat.flyspeed=Fly Speed
 attribute.name.xat.entityRace=Raza encantada
 
@@ -1135,8 +1144,37 @@ xat.config.races.dragon.breath.damage=Daño del aliento de dragon
 xat.config.races.dragon.breath.damage.tooltip=Cuanto daño hara el aliento de dragon (en ticks)
 xat.config.races.dragon.breath.cost=Costo del aliento de dragon
 xat.config.races.dragon.breath.cost.tooltip=Costo de Mana al usar el aliento de dragon (en ticks)
+xat.config.races.dragon.breath.terrain=Breath effects environment
+xat.config.races.dragon.breath.terrain.tooltip=Does the breath attack effect the environment
+xat.config.races.dragon.breath.effects=Dragon Breath Effects
+xat.config.races.dragon.breath.effects.tooltip=What effects does the breath attack apply to targets
+xat.config.races.dragon.resistances=Dragon Resistances
+xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
 
-####################################Misc Configs####################################
+#################################### Elemental Configs ####################################
+
+xat.config.element.fire=Fire Settings
+xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
+xat.config.element.ice=Ice Settings
+xat.config.element.ice.tooltip=Settings for Ice Elemental Effects
+xat.config.element.lightning=Lightning Settings
+xat.config.element.lightning.tooltip=Settings for Lightning Elemental Effects
+xat.config.element.air=Air Settings
+xat.config.element.air.tooltip=Settings for Air Elemental Effects
+xat.config.element.dark=Dark Settings
+xat.config.element.dark.tooltip=Settings for Dark Elemental Effects
+xat.config.element.earth=Earth Settings
+xat.config.element.earth.tooltip=Settings for Earth Elemental Effects
+xat.config.element.light=Light Settings
+xat.config.element.light.tooltip=Settings for Light Elemental Effects
+xat.config.element.poison=Poison Settings
+xat.config.element.poison.tooltip=Settings for Poison Elemental Effects
+xat.config.element.void=Void Settings
+xat.config.element.void.tooltip=Settings for Void Elemental Effects
+xat.config.element.water=Water Settings
+xat.config.element.water.tooltip=Settings for Water Elemental Effects
+
+#################################### Misc Configs ####################################
 
 xat.config.potion.settings=Pociones
 xat.config.potion.settings.tooltip=Configuraciones de las pociones.

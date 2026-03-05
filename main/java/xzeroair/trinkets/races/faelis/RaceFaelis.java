@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
@@ -122,7 +123,51 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
             if ((dmg > 0)) {
                 final ItemStack stack1 = entity.getHeldItemMainhand();
                 final ItemStack stack2 = entity.getHeldItemOffhand();
-                if ((stack1.isEmpty() && stack2.isEmpty())) {
+                boolean mainhandCountsAsBare = stack1.isEmpty();
+                boolean offhandCountsAsBare = stack2.isEmpty();
+                if (!mainhandCountsAsBare) {
+                    Item item = stack1.getItem();
+                    String regName = item.getRegistryName().toString();
+                    String itemType = item instanceof ItemBlock ? "block" : ConfigHelper.ArmorEntry.getItemType(stack1);
+                    if (itemType.isEmpty()) {
+                        itemType = "item";
+                    }
+                    if (!itemType.isEmpty()) {
+                        final String ItemMaterial = ConfigHelper.ArmorEntry.getItemMaterial(stack1).toLowerCase();
+                        if (!(item instanceof ItemArmor)) {
+                            final String hand = "mainhand";
+                            String[] mS = new String[]{regName + ":" + hand, regName, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + hand, "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
+                            final ArmorEntry main = ConfigHelper.TrinketConfigStorage.getListEntry(ConfigHelper.TrinketConfigStorage.BareHandedItems, (k, v) -> v.doesItemMatchEntry(stack1), mS);
+//                        double mW = main == null ? 0 : main.getEquipmentWeight();
+                            if (main != null) {
+                                mainhandCountsAsBare = true;
+                                dmg += main.getEquipmentWeight();
+                            }
+                        }
+                    }
+                }
+                if (!offhandCountsAsBare) {
+                    Item item = stack2.getItem();
+                    String regName = item.getRegistryName().toString();
+                    String itemType = item instanceof ItemBlock ? "block" : ConfigHelper.ArmorEntry.getItemType(stack2);
+                    if (itemType.isEmpty()) {
+                        itemType = "item";
+                    }
+                    if (!itemType.isEmpty()) {
+                        final String ItemMaterial = ConfigHelper.ArmorEntry.getItemMaterial(stack2).toLowerCase();
+                        if (!(item instanceof ItemArmor)) {
+                            final String hand = "offhand";
+                            String[] mS = new String[]{regName + ":" + hand, regName, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + hand, "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
+                            final ArmorEntry main = ConfigHelper.TrinketConfigStorage.getListEntry(ConfigHelper.TrinketConfigStorage.BareHandedItems, (k, v) -> v.doesItemMatchEntry(stack2), mS);
+//                        double mW = main == null ? 0 : main.getEquipmentWeight();
+                            if (main != null) {
+                                offhandCountsAsBare = true;
+                                dmg += main.getEquipmentWeight();
+                            }
+                        }
+                    }
+                }
+                if (mainhandCountsAsBare && offhandCountsAsBare) {
                     dmg += serverConfig.bonus;
                 }
             }

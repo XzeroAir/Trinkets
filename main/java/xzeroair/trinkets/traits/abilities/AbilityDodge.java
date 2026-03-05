@@ -139,7 +139,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
             final World w = entity.getEntityWorld();
             if (w instanceof WorldServer) {
                 final WorldServer world = (WorldServer) w;
-                NetworkHandler.sendToClients(world, entity.getPosition(), new EffectsRenderPacket(entity, entity.posX, entity.posY + (entity.height * 0.5F), entity.posZ, entity.posX, entity.posY, entity.posZ, 2515356, 2, 1, 1));
+                NetworkHandler.sendToClients(world, entity.getPosition(), new EffectsRenderPacket(entity, entity.posX, entity.posY + (entity.height * 0.5F), entity.posZ, entity.posX, entity.posY, entity.posZ, 12648447, 2, 0.8F, 1));
             }
         }
         final double distance = TrinketsConfig.SERVER.Items.ARCING_ORB.stunDistance;

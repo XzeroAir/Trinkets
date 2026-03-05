@@ -2,6 +2,7 @@ package xzeroair.trinkets.races;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import xzeroair.trinkets.Registries;
@@ -23,6 +24,7 @@ import xzeroair.trinkets.races.titan.RaceTitan;
 import xzeroair.trinkets.races.titan.RaceTitanAttributes;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.traits.elements.IElementProvider;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 import javax.annotation.Nullable;
@@ -107,6 +109,14 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
 
     public int getRaceHeight() {
         return raceHeight;
+    }
+
+    public String getTranslationKey() {
+        return Reference.MODID + ".race." + getName();
+    }
+
+    public String getDisplayName() {
+        return I18n.translateToLocal(this.getTranslationKey().toLowerCase() + ".name").trim();
     }
 
     public EntityRace setRaceHeight(int raceHeight) {

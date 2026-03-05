@@ -6,6 +6,7 @@ import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
+//@formatter:off
 public class FaelisConfig {
 	private final String name = "faelis";
 	private final String PREFIX = Reference.MODID + ".config.races." + name;
@@ -46,6 +47,7 @@ public class FaelisConfig {
 	public String[] milk = new String[] {
 			"minecraft:milk_bucket"
 	};
+
 	@Config.Comment("List of Items that count as Heavy Armor")
 	@Name("09. Heavy Armor")
 	@LangKey(PREFIX + ".armor.heavy.list")
@@ -72,6 +74,13 @@ public class FaelisConfig {
 			"minecraft:speed:3600:0",
 			"minecraft:strength:3600:0",
 			"minecraft:jump_boost:3600:0"
+	};
+
+	@Config.Comment("List of Items that count as Bare Handed")
+	@Name("11. Bare Handed")
+	@LangKey(PREFIX + ".barehand.list")
+	public String[] barehanded = new String[] {
+			"minecraft:dummy_item;*;0.01"
 	};
 
 	@Name("Compatability Settings")

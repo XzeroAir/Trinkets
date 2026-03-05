@@ -111,6 +111,8 @@ public class ClientProxy extends CommonProxy {
             final double Y = Reference.random.nextDouble() + y;
             final double Z = Reference.random.nextDouble() + z;
             effect = new ParticleGreed(world, new Vec3d(X, Y, Z), color, 1F, false);
+        } else if (effectID == 7) {
+            effect = new ParticleLightningOrb(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
         } else {
 
         }

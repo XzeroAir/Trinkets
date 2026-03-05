@@ -73,9 +73,9 @@ ability.ice_breath.name=§b寒冰吐息
 ability.ice_breath.tooltip1=$gui:§6赋予寒冰吐息
 ability.ice_breath.tooltip2=§6按 §r<§e*breathkb:§r>§6 喷吐寒冰 §3$fbcost: MP
 
-#ability.lightning_breath.name=§cLightning Breath
-#ability.lightning_breath.tooltip1=Grants Lightning Breath
-#ability.lightning_breath.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breath Lightning §3$fbcost: MP
+ability.lightning_breath.name=§c雷霆吐息
+ability.lightning_breath.tooltip1=赋予雷霆吐息能力
+ability.lightning_breath.tooltip2=§6按下 §r<§e*breathkb:§r>§6 以喷吐闪电 §3$fbcost: 魔力
 
 ability.fire_immunity.name=§c火焰免疫
 ability.fire_immunity.tooltip1=§2赋予 §c$potion:
@@ -242,7 +242,14 @@ xat.element.water.name=§9水
 
 #################################### Races ####################################
 
-
+xat.race.human.name=人类
+xat.race.fairy.name=妖精
+xat.race.dwarf.name=矮人
+xat.race.elf.name=精灵
+xat.race.titan.name=泰坦
+xat.race.faelis.name=猫人
+xat.race.goblin.name=哥布林
+xat.race.dragon.name=龙
 
 #################################### Damage Types ####################################
 
@@ -1031,8 +1038,37 @@ xat.config.races.dragon.breath.damage=Dragon Breath Damage
 xat.config.races.dragon.breath.damage.tooltip=How much damage per tick the dragon breath does
 xat.config.races.dragon.breath.cost=Dragon Breath Cost
 xat.config.races.dragon.breath.cost.tooltip=The Mana Cost per tick when using dragons breath
+xat.config.races.dragon.breath.terrain=Breath effects environment
+xat.config.races.dragon.breath.terrain.tooltip=Does the breath attack effect the environment
+xat.config.races.dragon.breath.effects=Dragon Breath Effects
+xat.config.races.dragon.breath.effects.tooltip=What effects does the breath attack apply to targets
+xat.config.races.dragon.resistances=Dragon Resistances
+xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
 
-####################################Misc Configs####################################
+#################################### Elemental Configs ####################################
+
+xat.config.element.fire=Fire Settings
+xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
+xat.config.element.ice=Ice Settings
+xat.config.element.ice.tooltip=Settings for Ice Elemental Effects
+xat.config.element.lightning=Lightning Settings
+xat.config.element.lightning.tooltip=Settings for Lightning Elemental Effects
+xat.config.element.air=Air Settings
+xat.config.element.air.tooltip=Settings for Air Elemental Effects
+xat.config.element.dark=Dark Settings
+xat.config.element.dark.tooltip=Settings for Dark Elemental Effects
+xat.config.element.earth=Earth Settings
+xat.config.element.earth.tooltip=Settings for Earth Elemental Effects
+xat.config.element.light=Light Settings
+xat.config.element.light.tooltip=Settings for Light Elemental Effects
+xat.config.element.poison=Poison Settings
+xat.config.element.poison.tooltip=Settings for Poison Elemental Effects
+xat.config.element.void=Void Settings
+xat.config.element.void.tooltip=Settings for Void Elemental Effects
+xat.config.element.water=Water Settings
+xat.config.element.water.tooltip=Settings for Water Elemental Effects
+
+#################################### Misc Configs ####################################
 
 xat.config.potion.settings=Potion Settings
 xat.config.potion.settings.tooltip=Settings regarding the potions.

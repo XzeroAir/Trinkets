@@ -106,7 +106,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
             boolean forbiddon = false;
 //            for (final String blkList : altSelectionConfig.length > 0 ? altSelectionConfig : selectionConfig) {
             for (final String blkList : altSelectionConfig) {
-                if (r.getName().equalsIgnoreCase(blkList)) {
+                if ((r.getName().equalsIgnoreCase(blkList)) || (r.getRegistryName().toString().equalsIgnoreCase(blkList))) {
                     forbiddon = true;
                     break;
                 }
@@ -114,8 +114,8 @@ public class GuiRaceSelectionScreen extends GuiScreen {
             if (forbiddon) {
                 continue;
             }
-            final int txtLength = this.getFontRenderer().getStringWidth(r.getName()) + 10;
-            this.addButton(new GuiButton(ID, xPos, yPos, txtLength, 20, r.getName()));
+            final int txtLength = this.getFontRenderer().getStringWidth(r.getDisplayName()) + 10;
+            this.addButton(new GuiButton(ID, xPos, yPos, txtLength, 20, r.getDisplayName()));
             buttonMap.putIfAbsent(ID, r);
             ID++;
             if ((xPos + txtLength) >= width) {

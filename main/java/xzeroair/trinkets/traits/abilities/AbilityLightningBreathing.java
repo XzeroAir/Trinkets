@@ -13,24 +13,25 @@ import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.entity.EntityRangedAttack;
 import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
-public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
+public class AbilityLightningBreathing extends Ability implements IKeyBindInterface {
 
     protected double breathStage = 0;
 
-    public AbilityFireBreathing() {
-        super(Abilities.fireBreathing);
+    public AbilityLightningBreathing() {
+        super(Abilities.lightningBreathing);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
         String langKey = getTranslationKey();
-        final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("fbcost", true, TrinketsConfig.SERVER.races.dragon.elementConfig.fire.breath_cost);
+        final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("fbcost", true, TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.breath_cost);
         final TranslationHelper.KeyEntry keybind1 = new TranslationHelper.KeyBindEntry("breathkb", ModKeyBindings.RACE_ABILITY.getDisplayName());
         return helper.formatAddVariables(key, renderID, key1, keybind1);
     }
@@ -45,7 +46,7 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
         if (breathStage == 0) {
             final MagicStats magic = Capabilities.getMagicStats(entity);
             if (magic != null) {
-                if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.elementConfig.fire.breath_cost)) {
+                if (!magic.spendMana(TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.breath_cost)) {
                     return false;
                 }
             }
@@ -60,7 +61,7 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
             world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
             if (!world.isRemote) {
                 //TODO Have a max life, tick it down, then kill the projectile, use the life to show decide on the look
-                final EntityRangedAttack breath = new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, d2, d3, d4, bcolor).setElement(getRequiredElement());
+                final EntityRangedAttack breath = new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, d2, d3, d4, bcolor).setElement(Elements.LIGHTNING);
                 breath.setPosition(headPosX, headPosY, headPosZ);
                 breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 0.0F);
                 world.spawnEntity(breath.setColor(bcolor));
@@ -86,7 +87,7 @@ public class AbilityFireBreathing extends Ability implements IKeyBindInterface {
     public boolean onKeyPress(Entity entity, boolean Aux) {
         final MagicStats magic = Capabilities.getMagicStats(entity);
         if (magic != null) {
-            return magic.getMana() >= TrinketsConfig.SERVER.races.dragon.elementConfig.fire.breath_cost;
+            return magic.getMana() >= TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.breath_cost;
         }
         return true;
     }

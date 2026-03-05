@@ -18,23 +18,13 @@ public class DragonConfig {
     @LangKey(PREFIX + ".flight")
     public boolean creative_flight = true;
 
-    @Config.Comment("How much damage per second the dragon breath does")
-    @Name("01. Dragon Breath Damage")
-    @LangKey(PREFIX + ".breath.damage")
-    public float breath_damage = 1F;
-
-    @Config.Comment("The Mana Cost per tick when using dragons breath")
-    @Name("02. Dragon Breath Cost")
-    @LangKey(PREFIX + ".breath.cost")
-    public float breath_cost = 10F;
-
     @Config.Comment("Mana Cost per second while flying")
     @Name("05. Flight Cost")
     @LangKey(PREFIX + ".flight.cost")
     public float flight_cost = 5F;
 
     @Name("Compatability Settings")
-    @LangKey(Reference.MODID + ".config.compatability")
+    @LangKey(Reference.MODID + ".config.compatibility")
     public Compatability compat = new Compatability();
 
     public class Compatability {
@@ -64,6 +54,117 @@ public class DragonConfig {
             public int amplifier = 0;
         }
 
+    }
+
+    @Name("Element Settings")
+    @LangKey(Reference.MODID + ".config.element")
+    public ElementConfig elementConfig = new ElementConfig();
+
+    public class ElementConfig {
+
+        @Name("Fire Settings")
+        @LangKey(Reference.MODID + ".config.element.fire")
+        public FireElementConfig fire = new FireElementConfig();
+
+        public class FireElementConfig {
+
+            @Config.Comment("Does the breath attack effect terrain")
+            @Name("00. Breath effects terrain")
+            @LangKey(PREFIX + ".breath.terrain")
+            public boolean terrain = true;
+
+            @Config.Comment("How much damage per second the dragon breath does")
+            @Name("01. Dragon Breath Damage")
+            @LangKey(PREFIX + ".breath.damage")
+            public float breath_damage = 1F;
+
+            @Config.Comment("The Mana Cost per tick when using dragons breath")
+            @Name("02. Dragon Breath Cost")
+            @LangKey(PREFIX + ".breath.cost")
+            public float breath_cost = 10F;
+
+            @Config.Comment("What effects does the breath attack apply to targets")
+            @Name("03. Dragon Breath Effects")
+            @LangKey(PREFIX + ".breath.effects")
+            public String[] effects = {};
+
+            @Config.Comment("What effects are dragons immune to")
+            @Name("04. Dragon Resistances")
+            @LangKey(PREFIX + ".resistances")
+            public String[] resistances = {};
+
+        }
+
+        @Name("Ice Settings")
+        @LangKey(Reference.MODID + ".config.element.ice")
+        public IceElementConfig ice = new IceElementConfig();
+
+        public class IceElementConfig {
+
+            @Config.Comment("Does the breath attack effect terrain")
+            @Name("00. Breath effects terrain")
+            @LangKey(PREFIX + ".breath.terrain")
+            public boolean terrain = true;
+
+            @Config.Comment("How much damage per second the dragon breath does")
+            @Name("01. Dragon Breath Damage")
+            @LangKey(PREFIX + ".breath.damage")
+            public float breath_damage = 1F;
+
+            @Config.Comment("The Mana Cost per tick when using dragons breath")
+            @Name("02. Dragon Breath Cost")
+            @LangKey(PREFIX + ".breath.cost")
+            public float breath_cost = 10F;
+
+            @Config.Comment("What effects does the breath attack apply to targets")
+            @Name("03. Dragon Breath Effects")
+            @LangKey(PREFIX + ".breath.effects")
+            public String[] effects = {
+                    "minecraft:slowness:100:2",
+            };
+
+            @Config.Comment("What effects are dragons immune to")
+            @Name("04. Dragon Resistances")
+            @LangKey(PREFIX + ".resistances")
+            public String[] resistances = {};
+
+        }
+
+        @Name("Lightning Settings")
+        @LangKey(Reference.MODID + ".config.element.lightning")
+        public LightningElementConfig lightning = new LightningElementConfig();
+
+        public class LightningElementConfig {
+
+            @Config.Comment("Does the breath attack effect terrain")
+            @Name("00. Breath effects terrain")
+            @LangKey(PREFIX + ".breath.terrain")
+            public boolean terrain = true;
+
+            @Config.Comment("How much damage per second the dragon breath does")
+            @Name("01. Dragon Breath Damage")
+            @LangKey(PREFIX + ".breath.damage")
+            public float breath_damage = 1F;
+
+            @Config.Comment("The Mana Cost per tick when using dragons breath")
+            @Name("02. Dragon Breath Cost")
+            @LangKey(PREFIX + ".breath.cost")
+            public float breath_cost = 10F;
+
+            @Config.Comment("What effects does the breath attack apply to targets")
+            @Name("03. Dragon Breath Effects")
+            @LangKey(PREFIX + ".breath.effects")
+            public String[] effects = {
+                    "minecraft:slowness:20:4",
+                    "minecraft:weakness:20:1"
+            };
+
+            @Config.Comment("What effects are dragons immune to")
+            @Name("04. Dragon Resistances")
+            @LangKey(PREFIX + ".resistances")
+            public String[] resistances = {};
+
+        }
     }
 
     @Name("Size")

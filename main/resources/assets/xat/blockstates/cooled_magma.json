@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "xat:cooled_magma_0"
+    },
+    "age=1": {
+      "model": "xat:cooled_magma_1"
+    },
+    "age=2": {
+      "model": "xat:cooled_magma_2"
+    },
+    "age=3": {
+      "model": "xat:cooled_magma_3"
+    }
+  }
+}

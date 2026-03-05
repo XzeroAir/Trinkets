@@ -113,10 +113,12 @@ public class ConfigHelper {
 
         public static TreeMap<String, MPRecoveryItem> MagicRecoveryItems = new TreeMap();
         public static LinkedHashMap<String, ArmorEntry> ArmorWeightValues = new LinkedHashMap();
+        public static LinkedHashMap<String, ArmorEntry> BareHandedItems = new LinkedHashMap();
 
         public static void init() {
             initRecoveryItems();
             initArmorWeightValues();
+            initBareHanded();
         }
 
         public static ArmorEntry getEquipmentEntry(String... strings) {
@@ -178,6 +180,21 @@ public class ConfigHelper {
         }
 
         public static void initArmorWeightValues() {
+            if (!BareHandedItems.isEmpty()) {
+                BareHandedItems.clear();
+            }
+            final String[] weightValues = TrinketsConfig.SERVER.races.faelis.barehanded;
+            for (String entry : weightValues) {
+                ArmorEntry weightValue = new ArmorEntry(entry);
+                if (!weightValue.isEmpty()) {
+                    String equipSlot = weightValue.getEquipmentSlot();
+                    String toolType = weightValue.getEquipmentType();
+                    BareHandedItems.put(weightValue.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), weightValue);
+                }
+            }
+        }
+
+        public static void initBareHanded() {
             if (!ArmorWeightValues.isEmpty()) {
                 ArmorWeightValues.clear();
             }
