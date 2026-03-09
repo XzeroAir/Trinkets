@@ -9,6 +9,7 @@ import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.races.goblin.config.GoblinConfig;
+import xzeroair.trinkets.races.human.config.HumanConfig;
 import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.mana.EntityManaConfig;
@@ -306,9 +307,9 @@ public class ServerConfig {
         @LangKey(cfgPrefix + "." + "races." + "dragon")
         public DragonConfig dragon = new DragonConfig();
 
-        //			@Config.Name("Human Settings")
-        //			@LangKey(PREFIX + "." + "races." + "human")
-        //			public HumanConfig human = new HumanConfig();
+        @Config.Name("Human Settings")
+        @LangKey(cfgPrefix + "." + "races." + "human")
+        public HumanConfig human = new HumanConfig();
 
     }
 

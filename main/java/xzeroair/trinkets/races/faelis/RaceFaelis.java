@@ -25,7 +25,9 @@ import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.ArmorEntry;
+import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -56,6 +58,16 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 
     @Override
     public void whileTransformed() {
+        super.whileTransformed();
+        if (!entity.world.isRemote) {
+            String[] potEffects = serverConfig.potEffects;
+            for (final String potID : potEffects) {
+                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                if (potion.getPotion() != null) {
+                    entity.addPotionEffect(potion.getPotionEffect());
+                }
+            }
+        }
         if (entity.world.isRemote) {
             return;
         }
@@ -113,8 +125,31 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
     }
 
     @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        DamageTypesConfig config = serverConfig.dmgType;
+        if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+            return true;
+        }
+        for (String type : config.damageTypes) {
+            if (source.damageType.contentEquals(type)) {
+                return true;
+            }
+        }
+        return super.isAttacked(source, dmg);
+    }
+
+    @Override
     public void endTransformation() {
         AttributeHelper.removeAttributes(entity, UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"));
+        String[] potEffects = serverConfig.potEffects;
+        for (final String potID : potEffects) {
+            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+            if (potion.getPotion() != null) {
+                if (entity.isPotionActive(potion.getPotion())) {
+                    entity.removePotionEffect(potion.getPotion());
+                }
+            }
+        }
     }
 
     @Override

@@ -1,3 +1,4 @@
+#
 xat.mod.name=Trinkets and Baubles
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
@@ -65,6 +66,7 @@ ability.block_detection.treasurefinder.off=Myślę, że mój skarbiec jest już 
 
 ability.night_vision.name=§eWidzenie w ciemności
 ability.night_vision.tooltip1=§2Zapewnia widzenie w ciemności §r<§e*denvkb:§r>
+ability.night_vision.tooltip2=
 
 ability.fire_breath.name=§cOgnisty oddech
 ability.fire_breath.tooltip1=$gui:§6Zapewnia ognisty oddech
@@ -244,13 +246,21 @@ xat.element.water.name=§9Woda
 #################################### Races ####################################
 
 xat.race.human.name=Człowiek
+xat.race.human.tooltip1=Jesteś człowiekiem żywiołu $element:
 xat.race.fairy.name=Wróżka
+xat.race.fairy.tooltip1=Jesteś wróżką żywiołu $element:
 xat.race.dwarf.name=Krasnolud
+xat.race.dwarf.tooltip1=Jesteś krasnoludem żywiołu $element:
 xat.race.elf.name=Elf
+xat.race.elf.tooltip1=Jesteś elfem żywiołu $element:
 xat.race.titan.name=Tytan
+xat.race.titan.tooltip1=Jesteś tytanem żywiołu $element:
 xat.race.faelis.name=Faelis
+xat.race.faelis.tooltip1=Jesteś Faelis żywiołu $element:
 xat.race.goblin.name=Goblin
+xat.race.goblin.tooltip1=Jesteś goblinem żywiołu $element:
 xat.race.dragon.name=Smok
+xat.race.dragon.tooltip1=Jesteś smokiem żywiołu $element:
 
 #################################### Damage Types ####################################
 
@@ -263,12 +273,16 @@ xat.jump=Skok
 xat.stepheight=Wysokość kroku
 xat.entityMagic.maxMana=Maksymalna mana
 xat.entityMagic.regen=Regeneracja MP
+xat.entityMagic.regen.cooldown=Czas odnowienia regeneracji MP
+xat.entityMagic.affinity=Powinowactwo z magią
 xat.flyspeed=Prędkość lotu
 
 attribute.name.xat.jump=Skok
 attribute.name.xat.stepheight=Wysokość kroku
 attribute.name.xat.entityMagic.maxMana=Maksymalna mana
 attribute.name.xat.entityMagic.regen=Regeneracja MP
+attribute.name.xat.entityMagic.regen.cooldown=Czas odnowienia regeneracji MP
+attribute.name.xat.entityMagic.affinity=Powinowactwo z magią
 attribute.name.xat.flyspeed=Prędkość lotu
 attribute.name.xat.entityRace=Zaklęta rasa
 
@@ -857,6 +871,7 @@ xat.config.server.faelis_claw.bleeding.chance.tooltip=1 na X szans aby wywołać
 #####################################[Item Configs End]#####################################
 
 #####################################[Magic Configs]#####################################
+
 xat.config.magic=Ustawienia magii
 xat.config.magic.tooltip=
 
@@ -893,9 +908,34 @@ xat.config.magic.mana.players_only.tooltip=Czy tylko gracze mogą mieć manę?
 #####################################[Magic Configs End]#####################################
 
 #####################################[Race Configs]#####################################
+
 xat.config.races=Ustawienia ras
 xat.config.race.size=Ustawienia rozmiaru
 xat.config.race.size.tooltip=Size Configuration
+
+xat.config.races.resistances=Potion Resistances
+xat.config.races.resistances.tooltip=What potion effects is the player immune to
+
+xat.config.races.immunities=Damage Type Immunity
+xat.config.races.immunities.tooltip=What DamageTypes is the player immune to
+xat.config.races.immunities.fire=Fire Damage
+xat.config.races.immunities.fire.tooltip=Immune to All Fire Damage Types
+xat.config.races.immunities.explosion=Explosion Damage
+xat.config.races.immunities.explosion.tooltip=Immune to All Explosion Damage Types
+xat.config.races.immunities.magic=Magic Damage
+xat.config.races.immunities.magic.tooltip=Immune to All Magic Damage Types
+xat.config.races.immunities.projectile=Projectile Damage
+xat.config.races.immunities.projectile.tooltip=Immune to All Projectile Damage Types
+xat.config.races.immunities.indirect=Indirect Damage
+xat.config.races.immunities.indirect.tooltip=Immune to All Indirect Damage Types
+xat.config.races.immunities.types=DamageTypes
+xat.config.races.immunities.types.tooltip=DamageTypes the player is immune to
+
+xat.config.races.effects=Potion Effects
+xat.config.races.effects.tooltip=What effects to add to the player
+
+xat.config.races.human=Ustawienia rasy ludzkiej
+xat.config.races.human.tooltip=
 
 xat.config.races.dwarf=Ustawienia krasnoluda
 xat.config.races.dwarf.tooltip=
@@ -1022,6 +1062,8 @@ xat.config.races.faelis.milk.buff.immunity=Niewrażliwość na zbroję podczas w
 xat.config.races.faelis.milk.buff.immunity.tooltip=Czy kotowate powinny być niewrażliwe na karę wynikającą z ciężkiej zbroi, kiedy wzmocnienie jest aktywne?
 xat.config.races.faelis.milk.list=Mleko
 xat.config.races.faelis.milk.list.tooltip=Lista przedmiotów uznawanych za mleko
+xat.config.races.faelis.barehand.list=Barehanded weapons
+xat.config.races.faelis.barehand.list.tooltip=List of Items that count as Bare Handed
 
 xat.config.races.dragon=Ustawienia smoka
 xat.config.races.dragon.tooltip=
@@ -1046,6 +1088,8 @@ xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
 
 #################################### Elemental Configs ####################################
 
+xat.config.element=Elemental Settings
+xat.config.element.tooltip=Settings for Elemental configurations
 xat.config.element.fire=Fire Settings
 xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
 xat.config.element.ice=Ice Settings
@@ -1122,7 +1166,6 @@ xat.config.baubles.type.tooltip=Jeżeli modyfikacja "Baubles" jest zainstalowana
 
 xat.config.immunities.potions=Niezdobywalne mikstury
 xat.config.immunities.potions.tooltip=Mikstury z tej listy nie mogą być uzyskane
-
 
 xat.config.attributes=Atrybuty
 xat.config.attributes.tooltip="Więcej informacji znajdziesz tu"\n"https://minecraft.gamepedia.com/Attribute"

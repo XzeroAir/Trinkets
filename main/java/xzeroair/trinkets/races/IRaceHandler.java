@@ -18,8 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.client.races.IRenderRaceHandler;
 
-import java.util.List;
-
 public interface IRaceHandler {
 
     default void startTransformation() {
@@ -121,8 +119,5 @@ public interface IRaceHandler {
 
     @SideOnly(Side.CLIENT)
     IRenderRaceHandler<? super IRenderRaceHandler> getRaceRenderer();
-
-    @SideOnly(Side.CLIENT)
-    void getDescription(List<String> tooltips, int rendMod, int rendID);
 
 }

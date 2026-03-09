@@ -39,7 +39,7 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         super(Abilities.blockClimbing);
         canClimb = false;
         sync = true;
-        useWhitelist = false;
+        useWhitelist = TrinketsConfig.SERVER.races.fairy.whitelistClimbables;
         initClimbBlocks();
     }
 

@@ -13,6 +13,9 @@ import xzeroair.trinkets.util.config.ServerConfig;
 import xzeroair.trinkets.util.config.compat.CompatabilityConfigs;
 import xzeroair.trinkets.util.helpers.NBTHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Config(name = Reference.configPath, modid = Reference.MODID)
 @LangKey("xat.config.title")
 public class TrinketsConfig {
@@ -41,11 +44,24 @@ public class TrinketsConfig {
         tag.setBoolean("TRINKET_CONTAINER", TrinketsConfig.SERVER.GUI.guiEnabled);
         tag.setBoolean("OF_ENABLED", TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder);
 
+        NBTTagCompound races = new NBTTagCompound();
+        int index = 0;
+        for (String race : TrinketsConfig.SERVER.races.selectionBlacklist) {
+            races.setString(index + "", race);
+        }
+        tag.setTag("RACE_BLACKLIST", races);
+
         // Climbable blocks sync.
         tag.setBoolean("FAIRY_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
         tag.setBoolean("GOBLIN_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
         tag.setBoolean("FAELIS_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
 
+//        NBTTagCompound climbableBlocks = new NBTTagCompound();
+//        int index1 = 0;
+//        for (String block : TrinketsConfig.SERVER.races.fairy.allowedBlocks) {
+//            climbableBlocks.setString(index1 + "", block);
+//        }
+//        tag.setTag("CLIMB_BLOCKS", climbableBlocks);
         // Most of these are probably not needed.
         if (Trinkets.MOD_COMPAT.ToughAsNails) {
             tag.setBoolean("COMPAT_TAN", TrinketsConfig.compat.toughasnails);
@@ -82,6 +98,15 @@ public class TrinketsConfig {
                 NBTHelper.hasBoolean(tag, "OF_ENABLED", (bool) -> {
                     ClientConfigStore.INSTANCE.DRAGON_EYE_OF_ENABLED = bool;
                 });
+                NBTHelper.hasTag(tag, "RACE_BLACKLIST", (t) -> {
+                    List<String> list = new ArrayList<>();
+                    for (int i = 0; i < t.getSize(); i++) {
+                        if (t.hasKey(i + "")) {
+                            list.add(t.getString(i + ""));
+                        }
+                    }
+                    ClientConfigStore.INSTANCE.RACE_SELECTION_BLACKLIST = list.toArray(new String[0]);
+                });
                 NBTHelper.hasBoolean(tag, "FAIRY_CLIMBING_ENABLED", (bool) -> {
                     ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
                 });
@@ -91,6 +116,15 @@ public class TrinketsConfig {
                 NBTHelper.hasBoolean(tag, "FAELIS_CLIMBING_ENABLED", (bool) -> {
                     ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
                 });
+//                NBTHelper.hasTag(tag, "CLIMB_BLOCKS", (t) -> {
+//                    List<String> list = new ArrayList<>();
+//                    for (int i = 0; i < t.getSize(); i++) {
+//                        if (t.hasKey(i + "")) {
+//                            list.add(t.getString(i + ""));
+//                        }
+//                    }
+//                    ClientConfigStore.INSTANCE.CLIMB_BLOCKS = list.toArray(new String[0]);
+//                });
                 NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> {
                     ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool;
                 });

@@ -4,6 +4,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -11,6 +12,8 @@ import net.minecraft.util.text.TextComponentString;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.transformation.OpenRaceSelectionScreen;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.traits.elements.Element;
 
@@ -100,7 +103,7 @@ public class CommandMain extends CommandBase {
                 case "mana":
                     return getListOfStringsMatchingLastWord(args, "refill", "set", "resetBonus");
                 case "race":
-                    return getListOfStringsMatchingLastWord(args, "setRace", "setImbuedRace", "reset", "resetImbued");
+                    return getListOfStringsMatchingLastWord(args, "setRace", "setImbuedRace", "reset", "resetImbued", "gui");
                 default:
                     return Collections.<String>emptyList();
             }
@@ -240,6 +243,11 @@ public class CommandMain extends CommandBase {
                                 break;
                             case "resetimbued":
                                 capability.setImbuedRace(null);
+                                break;
+                            case "gui":
+                                if (target instanceof EntityPlayerMP) {
+                                    NetworkHandler.sendTo(new OpenRaceSelectionScreen(), (EntityPlayerMP) target);
+                                }
                                 break;
                             default:
                                 break;

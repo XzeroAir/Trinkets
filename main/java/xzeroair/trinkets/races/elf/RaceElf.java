@@ -2,6 +2,8 @@ package xzeroair.trinkets.races.elf;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
@@ -16,7 +18,9 @@ import xzeroair.trinkets.races.elf.config.ElfConfig;
 import xzeroair.trinkets.traits.abilities.AbilityChargedShot;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -51,6 +55,16 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
     @Override
     public void whileTransformed() {
+        super.whileTransformed();
+        if (!entity.world.isRemote) {
+            String[] potEffects = serverConfig.potEffects;
+            for (final String potID : potEffects) {
+                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                if (potion.getPotion() != null) {
+                    entity.addPotionEffect(potion.getPotionEffect());
+                }
+            }
+        }
         if (entity.world.isRemote) {
             return;
         }
@@ -73,10 +87,33 @@ public class RaceElf extends EntityRacePropertiesHandler {
 
     @Override
     public void endTransformation() {
+        String[] potEffects = serverConfig.potEffects;
+        for (final String potID : potEffects) {
+            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+            if (potion.getPotion() != null) {
+                if (entity.isPotionActive(potion.getPotion())) {
+                    entity.removePotionEffect(potion.getPotion());
+                }
+            }
+        }
         AttributeHelper.removeAttributes(entity, UUID.fromString("628dedc0-5f63-4b45-bccb-ecb0fe881b49"));
         //		bonusSpeed.removeModifier();
         //		bonusAtkSpeed.removeModifier();
         //		jump.removeModifier();
+    }
+
+    @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        DamageTypesConfig config = serverConfig.dmgType;
+        if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+            return true;
+        }
+        for (String type : config.damageTypes) {
+            if (source.damageType.contentEquals(type)) {
+                return true;
+            }
+        }
+        return super.isAttacked(source, dmg);
     }
 
     @Override

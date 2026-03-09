@@ -15,6 +15,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.ColorHelper;
@@ -337,7 +340,28 @@ public class GuiEntityProperties extends GuiScreen {
         DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, backHeight, 0, 0, 0, 0, 0, 0.5F);
         fontRenderer.drawStringWithShadow("Show Trait", 6, 32, 16777215);
 
+        if (!properties.getCurrentRace().compareRace(EntityRaces.none)) {
+            int rX = 60;
+            int rY = 4;
+            String race = properties.getCurrentRace().getRace().getDisplayName();
+            int rTxtLength = this.fontRenderer.getStringWidth(race);
+            int distanceToAdd = rTxtLength % 2 == 0 ? rTxtLength + 10 : rTxtLength + 9;
+            DrawingHelper.Draw(rX, rY, -100, 0, 0, 0, 0, distanceToAdd, 14, 0, 0, 0, 0, 0, 0.5F);
+            fontRenderer.drawStringWithShadow(race, rX + 6, rY + 2, 16777215);
 
+            if (!properties.getCurrentRace().compareElement(Elements.NEUTRAL)) {
+                Element ele = properties.getCurrentRace().getElement();
+                int pX = rX + distanceToAdd + 4;
+                int pY = rY;
+                String eleString = ele.getDisplayName();
+                int pTxtLength = this.fontRenderer.getStringWidth(eleString);
+                DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, pTxtLength % 2 == 0 ? pTxtLength + 10 : pTxtLength + 9, 14, 0, 0, 0, 0, 0, 0.5F);
+                fontRenderer.drawStringWithShadow(eleString, pX + 6, pY + 2, ele.getPrimaryColor());
+            }
+        }
+
+//        Element primaryElement = properties.getRaceHandler().getTraitVariant() == 1 ? properties.getOriginalRace().getElement() : properties.getCurrentRace().getElement();
+//        Element secondaryElement = properties.getRaceHandler().getTraitVariant() == 1 ? properties.getCurrentRace().getElement() : properties.getRaceHandler().getTraitVariant() == 2 ? properties.getCurrentRace().getElement() : properties.getOriginalRace().getElement();
         // Render Color Box
         colorField.drawTextBox();
         int exampleX = width - (width / 4);
@@ -351,12 +375,26 @@ public class GuiEntityProperties extends GuiScreen {
         final float bV = rgb[2];
         DrawingHelper.Draw(exampleX + 103, exampleY, 0, 0, 0, 0, 0, 18, 18, 0, 0, rV, gV, bV, 1F);
 
+//        int pX = exampleX + 124;
+//        int pY = exampleY + 2;
+//        String ele = primaryElement.getDisplayName();
+//        int pTxtLength = this.fontRenderer.getStringWidth(ele);
+//        DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, pTxtLength % 2 == 0 ? pTxtLength + 10 : pTxtLength + 9, 14, 0, 0, 0, 0, 0, 0.5F);
+//        fontRenderer.drawStringWithShadow(ele, pX + 6, pY + 2, primaryElement.getPrimaryColor());
+
         colorField2.drawTextBox();
         final float[] rgb2 = ColorHelper.getRGBColor(properties.getRaceHandler().getSecondaryTraitColor());
         final float rV2 = rgb2[0];
         final float gV2 = rgb2[1];
         final float bV2 = rgb2[2];
         DrawingHelper.Draw(exampleX + 103, exampleY + 84, 0, 0, 0, 0, 0, 18, 18, 0, 0, rV2, gV2, bV2, 1F);
+
+//        int sX = exampleX + 124;
+//        int sY = exampleY + 86;
+//        String ele2 = secondaryElement.getDisplayName();
+//        int sTxtLength = this.fontRenderer.getStringWidth(ele2);
+//        DrawingHelper.Draw(sX, sY, -100, 0, 0, 0, 0, sTxtLength % 2 == 0 ? sTxtLength + 10 : sTxtLength + 9, 14, 0, 0, 0, 0, 0, 0.5F);
+//        fontRenderer.drawStringWithShadow(ele2, sX + 6, sY + 2, secondaryElement.getSecondaryColor());
 
         final int h = properties.getHeightValue();
         final double scale = ((300D / (h * 1D)) * 30D);

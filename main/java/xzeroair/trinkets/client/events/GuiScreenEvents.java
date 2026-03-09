@@ -47,11 +47,6 @@ public class GuiScreenEvents {
                 final ClientConfigPropertiesGui config = TrinketsConfig.CLIENT.raceProperties;
                 final GuiContainer gui = (GuiContainer) event.getGui();
                 event.getButtonList().add(new GuiEntityPropertiesButton(config.button.ID, gui, config.button.X, config.button.Y, config.button.bWidth, config.button.bHeight, I18n.format("gui.xat.button.open")));
-            } else {
-                //				if (event.getGui() instanceof ManaHud) {
-                //					final GuiContainer gui = (GuiContainer) event.getGui();
-                //					event.getButtonList().add(new ManaHudButton(69, gui, X - 40, X - 40, 16, 16, I18n.format("gui.xat.button.close")));
-                //				}
             }
         }
     }

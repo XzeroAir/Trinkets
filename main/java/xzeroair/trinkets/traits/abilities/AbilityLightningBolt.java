@@ -63,6 +63,9 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
 
     protected boolean prepareBolt(EntityLivingBase entity, MagicStats magic, boolean def, boolean aux) {
         final float cfgCost = TrinketsConfig.SERVER.Items.ARCING_ORB.attackCost;
+        if (magic.getMana() <= cfgCost) {
+            return false;
+        }
         final int length = Math.min((int) (300 * Math.min(MathHelper.pct(magic.getMana(), 0, cfgCost), 1F)), 300);
         final Counter counter = tickHandler.getCounter("heldCounter", length, false, true, false, true, false);
         counter.setLength(length);
@@ -180,7 +183,6 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
 
     @Override
     public boolean onKeyPress(Entity entity, boolean Aux) {
-
         return Capabilities.getMagicStats(entity, true, (magic, ret) -> this.prepareBolt((EntityLivingBase) entity, magic, ret, Aux));
     }
 

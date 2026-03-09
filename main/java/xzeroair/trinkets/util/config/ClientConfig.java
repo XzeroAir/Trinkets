@@ -87,6 +87,10 @@ public class ClientConfig {
         @LangKey(PREFIX + ".height")
         public int height = 16;
 
+        public boolean rendLocPre = true;
+
+        @RangeInt(min = 0, max = 6)
+        public int rendTexID = 0;
     }
 
     @Config.Name("Race Properties Gui")
@@ -109,6 +113,9 @@ public class ClientConfig {
     public ClientConfigItems items = new ClientConfigItems();
 
     public class ClientConfigItems {
+
+        public boolean renderElements = true;
+
         @Config.Name("Dragon's Eye Settings")
         @Config.Comment("")
         @LangKey("xat.config.dragons_eye")

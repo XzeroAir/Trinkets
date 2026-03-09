@@ -181,11 +181,15 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
         if (this.isLogin()) {
             this.getRaceHandler().setFirstUpdate(true);
         }
-        //		if (player.getName().equalsIgnoreCase("xzeroair") && player.isSneaking() && ((player.ticksExisted % 40) == 0)) {
-        //			if (!world.isRemote && (object instanceof EntityPlayerMP)) {
-        //				NetworkHandler.sendTo(new OpenTrinketGui(4), (EntityPlayerMP) object);
-        //			}
-        //		}
+//        final IAttributeInstance atk = object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE);
+//        if (atk != null) {
+//            System.out.println(atk.getAttributeValue() + "|" + atk.getModifiers());
+//        }
+//        if (player.getName().equalsIgnoreCase("xzeroair") && player.isSneaking() && ((player.ticksExisted % 40) == 0)) {
+//            if (!world.isRemote && (object instanceof EntityPlayerMP)) {
+//                NetworkHandler.sendTo(new OpenTrinketGui(Reference.GUI_RACE_SELECTION), (EntityPlayerMP) object);
+//            }
+//        }
 
         abilities.updateAbilityHandler();
         this.updateRace();
@@ -914,11 +918,11 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
         }
 
         public EntityRace getRace() {
-            return this.getFirst();
+            return getFirst() == null ? EntityRaces.none : this.getFirst();
         }
 
         public Element getElement() {
-            return this.getSecond();
+            return getSecond() == null ? Elements.NEUTRAL : this.getSecond();
         }
 
         public NBTTagCompound saveToNBT(NBTTagCompound tag) {

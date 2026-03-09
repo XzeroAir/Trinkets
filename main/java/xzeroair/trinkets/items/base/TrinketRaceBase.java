@@ -19,6 +19,7 @@ import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.races.IRaceProvider;
 import xzeroair.trinkets.races.RaceAttributesWrapper;
 import xzeroair.trinkets.traits.elements.Element;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.shared.TransformationRingConfig;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
@@ -32,12 +33,16 @@ public class TrinketRaceBase extends AccessoryBase implements IRaceProvider {
     protected EntityRace race;
     protected RaceAttributesWrapper attributes;
 
-    public TrinketRaceBase(String name, EntityRace race, TransformationRingConfig config) {
-        super(name);
+    public TrinketRaceBase(String modid, String name, EntityRace race, TransformationRingConfig config) {
+        super(modid, name);
         this.race = race;
         this.attributes = race.getRaceAttributes();
         this.setUUID("892cfd1f-25c5-44a0-9154-f3b630538c82");
         this.serverConfig = config;
+    }
+
+    public TrinketRaceBase(String name, EntityRace race, TransformationRingConfig config) {
+        this(Reference.MODID, name, race, config);
     }
 
     @Override

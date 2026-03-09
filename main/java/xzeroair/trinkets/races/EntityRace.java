@@ -20,17 +20,21 @@ import xzeroair.trinkets.races.fairy.RaceFairyAttributes;
 import xzeroair.trinkets.races.goblin.RaceGoblin;
 import xzeroair.trinkets.races.goblin.RaceGoblinAttributes;
 import xzeroair.trinkets.races.human.RaceHuman;
+import xzeroair.trinkets.races.human.RaceHumanAttributes;
 import xzeroair.trinkets.races.titan.RaceTitan;
 import xzeroair.trinkets.races.titan.RaceTitanAttributes;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.traits.elements.IElementProvider;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.interfaces.IDescriptionInterface;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 
-public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements IElementProvider {
+public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements IElementProvider, IDescriptionInterface {
 
     public static final ForgeRegistry<EntityRace> Registry = Registries.getRaceRegistry();//Trinkets.RaceRegistry;
 
@@ -112,11 +116,24 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
     }
 
     public String getTranslationKey() {
-        return Reference.MODID + ".race." + getName();
+        return Reference.MODID + ".race." + getName().toLowerCase();
     }
 
+    @Override
     public String getDisplayName() {
         return I18n.translateToLocal(this.getTranslationKey().toLowerCase() + ".name").trim();
+    }
+
+    @Override
+    public void getDescription(List<String> tooltips, int rendMod, int rendID) {
+        String translationKey = getTranslationKey();
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        for (int i = 1; i <= 10; i++) {
+            final String string = helper.getLangTranslation(translationKey + ".tooltip" + i);
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+            }
+        }
     }
 
     public EntityRace setRaceHeight(int raceHeight) {
@@ -229,7 +246,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
             case "Dragon":
                 return new RaceDragonAttributes();
             case "Human":
-                return new RaceAttributesWrapper();
+                return new RaceHumanAttributes();
             default:
                 return new RaceAttributesWrapper();
         }
@@ -243,15 +260,15 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
 
     //@formatter:off
 	public static void registerRaces() {
-		registerRace((new EntityRace("None"		, "00000000-0000-0000-0000-000000000000", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(100));
-		registerRace((new EntityRace("Human"		, "c82ec7c3-2a9d-4a08-b0dd-7ce086c6771b", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(100));
-		registerRace((new EntityRace("Fairy"		, "e5869fac-0949-41f2-889b-4e6b8ca6d2e7", 12514535, 962222, true)).setRaceSize(25).setRaceHeight(TrinketsConfig.SERVER.races.fairy.size.height).setRaceWidth(TrinketsConfig.SERVER.races.fairy.size.width).setCanFly(true).setMagicAffinity(500));
-		registerRace((new EntityRace("Dwarf"		, "917b555b-944a-4e44-afb6-ca638c6d91e5", 10832170, 7039851, true)).setRaceSize(75).setRaceHeight(TrinketsConfig.SERVER.races.dwarf.size.height).setRaceWidth(TrinketsConfig.SERVER.races.dwarf.size.width).setMagicAffinity(100));
-		registerRace((new EntityRace("Titan"		, "a3bc433b-7bb7-4bd9-a88c-5fd120d04d59", 10066329, 3223595, true)).setRaceSize(300).setRaceHeight(TrinketsConfig.SERVER.races.titan.size.height).setRaceWidth(TrinketsConfig.SERVER.races.titan.size.width).setMagicAffinity(50));
-		registerRace((new EntityRace("Elf"		, "25f92404-35f3-453b-ad48-9b788b2e12fc", 16374701, 11107684, true)).setRaceSize(100).setRaceHeight(TrinketsConfig.SERVER.races.elf.size.height).setRaceWidth(TrinketsConfig.SERVER.races.elf.size.width).setMagicAffinity(200));
-		registerRace((new EntityRace("Goblin"		, "d917999a-0399-4c39-bfc5-79784dfff6ed", 6588004, 3096367, true)).setRaceSize(50).setRaceHeight(TrinketsConfig.SERVER.races.goblin.size.height).setRaceWidth(TrinketsConfig.SERVER.races.goblin.size.width).setMagicAffinity(75));
-		registerRace((new EntityRace("Faelis"		, "cdccefa8-6a67-4394-b70d-c737953887a2", 16571252, 4465933, true)).setRaceSize(85).setRaceHeight(TrinketsConfig.SERVER.races.faelis.size.height).setRaceWidth(TrinketsConfig.SERVER.races.faelis.size.width).setMagicAffinity(125));
-		registerRace((new EntityRace("Dragon"		, "3b75821e-6ec6-4dfe-9612-b7a988a7b30b", 3289650, 9509561, true)).setRaceSize(120).setRaceHeight(TrinketsConfig.SERVER.races.dragon.size.height).setRaceWidth(TrinketsConfig.SERVER.races.dragon.size.width).setCanFly(true).setMagicAffinity(400));
+		registerRace((new EntityRace("None"		, "00000000-0000-0000-0000-000000000000", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(TrinketsConfig.SERVER.races.human.magic.affinity));
+		registerRace((new EntityRace("Human"		, "c82ec7c3-2a9d-4a08-b0dd-7ce086c6771b", 11107684, 16374701, true)).setRaceSize(100).setMagicAffinity(TrinketsConfig.SERVER.races.human.magic.affinity));
+		registerRace((new EntityRace("Fairy"		, "e5869fac-0949-41f2-889b-4e6b8ca6d2e7", 12514535, 962222, true)).setRaceSize(25).setRaceHeight(TrinketsConfig.SERVER.races.fairy.size.height).setRaceWidth(TrinketsConfig.SERVER.races.fairy.size.width).setCanFly(true).setMagicAffinity(TrinketsConfig.SERVER.races.fairy.magic.affinity));
+		registerRace((new EntityRace("Dwarf"		, "917b555b-944a-4e44-afb6-ca638c6d91e5", 10832170, 7039851, true)).setRaceSize(75).setRaceHeight(TrinketsConfig.SERVER.races.dwarf.size.height).setRaceWidth(TrinketsConfig.SERVER.races.dwarf.size.width).setMagicAffinity(TrinketsConfig.SERVER.races.dwarf.magic.affinity));
+		registerRace((new EntityRace("Titan"		, "a3bc433b-7bb7-4bd9-a88c-5fd120d04d59", 10066329, 3223595, true)).setRaceSize(300).setRaceHeight(TrinketsConfig.SERVER.races.titan.size.height).setRaceWidth(TrinketsConfig.SERVER.races.titan.size.width).setMagicAffinity(TrinketsConfig.SERVER.races.titan.magic.affinity));
+		registerRace((new EntityRace("Elf"		, "25f92404-35f3-453b-ad48-9b788b2e12fc", 16374701, 11107684, true)).setRaceSize(100).setRaceHeight(TrinketsConfig.SERVER.races.elf.size.height).setRaceWidth(TrinketsConfig.SERVER.races.elf.size.width).setMagicAffinity(TrinketsConfig.SERVER.races.elf.magic.affinity));
+		registerRace((new EntityRace("Goblin"		, "d917999a-0399-4c39-bfc5-79784dfff6ed", 6588004, 3096367, true)).setRaceSize(50).setRaceHeight(TrinketsConfig.SERVER.races.goblin.size.height).setRaceWidth(TrinketsConfig.SERVER.races.goblin.size.width).setMagicAffinity(TrinketsConfig.SERVER.races.goblin.magic.affinity));
+		registerRace((new EntityRace("Faelis"		, "cdccefa8-6a67-4394-b70d-c737953887a2", 16571252, 4465933, true)).setRaceSize(85).setRaceHeight(TrinketsConfig.SERVER.races.faelis.size.height).setRaceWidth(TrinketsConfig.SERVER.races.faelis.size.width).setMagicAffinity(TrinketsConfig.SERVER.races.faelis.magic.affinity));
+		registerRace((new EntityRace("Dragon"		, "3b75821e-6ec6-4dfe-9612-b7a988a7b30b", 3289650, 9509561, true)).setRaceSize(120).setRaceHeight(TrinketsConfig.SERVER.races.dragon.size.height).setRaceWidth(TrinketsConfig.SERVER.races.dragon.size.width).setCanFly(true).setMagicAffinity(TrinketsConfig.SERVER.races.dragon.magic.affinity));
 //		registerRace((new EntityRace("Slime"				, "5db9c85c-f830-44c7-b02f-8368ee5eca8a", 0, 0)).setRaceSize(100).setMagicAffinity(500));
 //		registerRace((new EntityRace("Taurus"		, "07f0d6c2-4177-412e-8de5-07c401209e44", 0, 0)).setRaceSize(100).setMagicAffinity(100));
 //		registerRace((new EntityRace("Orc"		, "591d7d19-dd46-471f-b24f-e9967b1b95ef", 0, 0)).setRaceSize(150).setMagicAffinity(25));
@@ -261,7 +278,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
 //		registerRace((new EntityRace("Siren"		, "1403f7e8-a427-4326-bcd9-1d7fdc1e22bb", 0, 0)).setRaceSize(100).setMagicAffinity(200));
 //		registerRace((new EntityRaceMixed("Mixed"	, "10172391-1b14-4a2d-9387-5f819d56426f")).setRaceSize(100).setMagicAffinity(100));
 	}
-//@formatter:on
+    //@formatter:on
 
     protected static void registerRace(EntityRace race) {
         Registry.register(race);

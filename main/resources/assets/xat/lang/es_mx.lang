@@ -86,6 +86,7 @@ ability.fire_immunity.tooltip2=§6No puedes incendiarte
 ability.fire_immunity.tooltip3=§6No recibes daño por ataques de fuego
 ability.fire_immunity.tooltip4=$gui:Cannot be Harmed by most Fire based attacks
 ability.fire_immunity.tooltip5=$gui:§6Immune to §c$smouldering:
+
 ability.heat_immunity.name=§cInmunidad al calor
 ability.heat_immunity.tooltip1=§6Inmunidad al calor y fuentes igneas
 
@@ -187,6 +188,7 @@ ability.repel.repelmode=Repel mode $repeltoggle:
 ability.skilled_miner.name=Minero habil
 ability.skilled_miner.tooltip1=Recibes mas EXP cuando minas
 ability.skilled_miner.tooltip2=La Vel. de minado se aplica a la Dureza de bloque * 4
+
 ability.psudo_fortune.name=§6Pseudo Fortuna
 ability.psudo_fortune.tooltip1=Tienes Fortuna sin necesidad del encantamiento
 
@@ -200,6 +202,7 @@ ability.charged_shot.tooltip5=$gui:Causes a small explosion on impact with a ful
 ability.large_hands.name=Manos grandes
 ability.large_hands.tooltip1=puedes minar en un radio de 3x3x3
 ability.large_hands.tooltip2=Agachate mientras minas para deshabilitarlo
+
 ability.heavy.name=§cPesado
 ability.heavy.tooltip1=§cTe hundes en el agua
 ability.heavy.tooltip2=§cRompes plantas y cultivos al caminar por ellos
@@ -207,6 +210,7 @@ ability.heavy.tooltip2=§cRompes plantas y cultivos al caminar por ellos
 ability.weightless.name=§dSin peso
 ability.weightless.tooltip1=Te vuelves sin peso
 ability.weightless.tooltip2=Ataca para elevarte, agachate y ataca para descender
+ability.weightless.tooltip3=
 #ability.weightless.tooltip4=§aGrants Levitation while held
 
 ability.safe_guard.name=§6Guardia segura
@@ -220,8 +224,7 @@ ability.safe_guard.compat.enhancedvisuals=Disables explosion blur
 
 ability.well_rested.name=§bBien descansado
 ability.well_rested.tooltip1=Da varios efectos positivos cuando duermes
-ability.well_rested.tooltip2=@LycanitesFear:
-ability.well_rested.tooltip3=@LycanitesInsomnia:
+ability.well_rested.tooltip2=§6Elimina el $fear: §y Elimina el $insomnia:
 
 ability.firstaid_reflex.name=Reflejos rapidos
 ability.firstaid_reflex.tooltip1=Probabilidad de ignorar tiros a la cabeza fatales
@@ -229,27 +232,35 @@ ability.firstaid_reflex.tooltip1=Probabilidad de ignorar tiros a la cabeza fatal
 #################################### Elements ####################################
 
 xat.element.neutral.name=§fNeutral
-xat.element.air.name=§3Air
-xat.element.dark.name=§8Dark
-xat.element.earth.name=§2Earth
-xat.element.fire.name=§cFire
-xat.element.ice.name=§bIce
-xat.element.light.name=§eLight
-xat.element.lightning.name=§dLightning
-xat.element.poison.name=§2Poison
-xat.element.void.name=§5Void
-xat.element.water.name=§9Water
+xat.element.air.name=§3Aire
+xat.element.dark.name=§8Oscuridad
+xat.element.earth.name=§2Tierra
+xat.element.fire.name=§cFuego
+xat.element.ice.name=§bHielo
+xat.element.light.name=§eLuz
+xat.element.lightning.name=§dRayo
+xat.element.poison.name=§2Veneno
+xat.element.void.name=§5Vacío
+xat.element.water.name=§9Agua
 
 #################################### Races ####################################
 
-xat.race.human.name=Human
-xat.race.fairy.name=Fairy
-xat.race.dwarf.name=Dwarf
-xat.race.elf.name=Elf
-xat.race.titan.name=Titan
+xat.race.human.name=Humano
+xat.race.human.tooltip1=Eres un Humano del elemento $element:
+xat.race.fairy.name=Hada
+xat.race.fairy.tooltip1=Eres un Hada del elemento $element:
+xat.race.dwarf.name=Enano
+xat.race.dwarf.tooltip1=Eres un Enano del elemento $element:
+xat.race.elf.name=Elfo
+xat.race.elf.tooltip1=Eres un Elfo del elemento $element:
+xat.race.titan.name=Titán
+xat.race.titan.tooltip1=Eres un Titán del elemento $element:
 xat.race.faelis.name=Faelis
+xat.race.faelis.tooltip1=Eres un Faelis del elemento $element:
 xat.race.goblin.name=Goblin
-xat.race.dragon.name=Dragon
+xat.race.goblin.tooltip1=Eres un Goblin del elemento $element:
+xat.race.dragon.name=Dragón
+xat.race.dragon.tooltip1=Eres un Dragón del elemento $element:
 
 #################################### Damage Types ####################################
 
@@ -262,15 +273,17 @@ xat.jump=Salto
 xat.stepheight=Altura de paso
 xat.entityMagic.maxMana=Mana max.
 xat.entityMagic.regen=Regen. MP
-xat.entityMagic.regen.cooldown=MP Regen Cooldown
-xat.flyspeed=Fly Speed
+xat.entityMagic.regen.cooldown=Tiempo de enfriamiento de regeneración de MP
+xat.entityMagic.affinity=Afinidad mágica
+xat.flyspeed=Velocidad de vuelo
 
 attribute.name.xat.jump=Altura de salto
 attribute.name.xat.stepheight=Altura de paso
 attribute.name.xat.entityMagic.maxMana=Mana max.
 attribute.name.xat.entityMagic.regen=Regen. MP
-attribute.name.xat.entityMagic.regen.cooldown=MP Regen Cooldown
-attribute.name.xat.flyspeed=Fly Speed
+attribute.name.xat.entityMagic.regen.cooldown=Tiempo de enfriamiento de regeneración de MP
+attribute.name.xat.entityMagic.affinity=Afinidad mágica
+attribute.name.xat.flyspeed=Velocidad de vuelo
 attribute.name.xat.entityRace=Raza encantada
 
 #################################### Materials ####################################
@@ -288,139 +301,38 @@ item.glowing_gem.tooltip1=§6Componente de crafteos Clase 3
 
 #################################### Trinkets ####################################
 
-item.glow_ring.0.name=§6Anillo de ojos encantados
-item.glow_ring.0.tooltip1=§2Da Vision nocturna
-
-item.teddy_bear.0.name=Osito de peluche
-item.teddy_bear.0.tooltip1=§6Si lo sostienes al dormir, te dara efectos positivos
-item.teddy_bear.0.tooltip2=§6Remueve Miedo e Insomnio si Lycanites esta instalado
-
-item.weightless_stone.0.name=Piedra de Gravedad negativa
-item.weightless_stone.0.tooltip1=§2La Gravedad no te afecta
-item.weightless_stone.0.tooltip2=<§eClic izq.§r> para ir §2arriba
-item.weightless_stone.0.tooltip3=<§eAgachar§r> + <§eClic izq.§r> para ir §2abajo
-item.weightless_stone.0.tooltip4=§aDa Levitacion
-
-item.inertia_null_stone.0.name=Piedra de incercia nula
-item.inertia_null_stone.0.tooltip1=§6Resistencia al daño por caida: §3$inertianullfd:§r
-item.inertia_null_stone.0.tooltip2=§6Resistencia al daño cinetico: §3$inertianullfd:§r
-
-item.greater_inertia_stone.0.name=Piedra de inercia aumentada
-item.greater_inertia_stone.0.tooltip1=§6Resistencia al daño por caida:§r §3$greaterinertiafd:
-
-item.sea_stone.0.name=Piedra del mar
-item.sea_stone.0.tooltip1=@bubbles:
-item.sea_stone.0.tooltip2=@betterswimming:
-item.sea_stone.0.bubbles=§6Oxigeno infinito cuando tienes §r[§3$bubbles:§r]§6 burbujas
-item.sea_stone.0.betterswimming=§2Aumenta tu velocidad de nado
-item.sea_stone.0.compat.tan=@tanthirst:
-item.sea_stone.0.tanthirst=§6Inmunidad al agua sin purificar
-item.sea_stone.0.compat.enhancedvisuals=Deshabilita la vista borrosa al entrar al agua
-
-item.polarized_stone.0.name=Piedra polarizada
-item.polarized_stone.0.tooltip1=@collect:
-item.polarized_stone.0.tooltip2=<§e*magnetkb:§r o §eClic der.§r>
-item.polarized_stone.0.tooltip3=@repel:
-item.polarized_stone.0.tooltip4=<§e*auxkb:§r + §e*magnetkb:§r o §eAgachar§r + §eClic der.§r>
-item.polarized_stone.0.collect=§6Atraer items cercanos @collectxp:
-item.polarized_stone.0.collectxp=y orbes de EXP $collecttoggle:
-item.polarized_stone.0.repel=§6Repeler flechas $repeltoggle:
-item.polarized_stone.0.magnetmode=Modo recolectar $collecttoggle:
-item.polarized_stone.0.repelmode=Modo repeler $repeltoggle:
+item.arcing_orb.0.name=Orbe electrica
+item.damage_shield.0.name=Escudo de honor
 
 item.dragons_eye.0.name=Ojo de Dragon
 item.dragons_eye.0.fire.name=Ojo de Dragon de fuego
 item.dragons_eye.0.ice.name=Ojo de Dragon de hielo
 item.dragons_eye.0.lightning.name=Ojo de Dragon de rayo
-item.dragons_eye.0.tooltip1=§6Da $variantresist:
-item.dragons_eye.0.tooltip2=§2Da Vision nocturna §r<§e*denvkb:§r>
-item.dragons_eye.0.tooltip3=@treasurefinder:
-item.dragons_eye.0.tooltip4=@frostwalker:
-item.dragons_eye.0.treasurefinder=§6Objetivo actual: §3#underline:$target:§r <§e*deofkb:§r>
-item.dragons_eye.0.treasurefinder.on=§6Necesito mas§f $target:§6 para mi tesoro $looking:
-item.dragons_eye.0.treasurefinder.notfound=§6No estoy seguro de que necesito para mi tesoro. §c(Item no encontrado, retorno $target:)
-item.dragons_eye.0.treasurefinder.off=Creo que mi tesoro ya esta lleno $looking:
-item.dragons_eye.0.compat.tan=$typeimmune:
-item.dragons_eye.0.heatimmune=§6Inmunidad a Hipertermia
-item.dragons_eye.0.coldimmune=§6Inmunidad a Hipotermia
-item.dragons_eye.0.paralysisimmune=§6Inmunidad a Parálisis
-item.dragons_eye.0.compat.enhancedvisuals=
-item.dragons_eye.0.compat.iaf.ice.frostwalker=§6Da §3Paso helado
-
-item.poison_stone.0.name=Piedra de veneno
-item.poison_stone.0.tooltip1=§6Inmunidad a Veneno
-item.poison_stone.0.tooltip2=§6Inmunidad a Hambre
-item.poison_stone.0.tooltip3=@poison:
-item.poison_stone.0.tooltip4=@bonusdamage:
-item.poison_stone.0.poison=§2Prob. de envenenar enemigos: §3$poisonchance:§2 durante §3$poisonduration:
-item.poison_stone.0.bonusdamage=§2Daño adicional a enemigos envenenados: §3$damagemultiplier:
-
-item.wither_ring.0.name=Anillo de Wither
-item.wither_ring.0.tooltip1=§6Inmunidad a Descomposicion
-item.wither_ring.0.tooltip2=@wither:
-item.wither_ring.0.tooltip3=@leech:
-item.wither_ring.0.wither=§2Prob. de aplicar Descomposicion a enemigos: §3$witherchance:
-item.wither_ring.0.leech=§2Atacar enemigos con Descomposicion te curara §3$leechamount:§2 corazones
 
 item.ender_tiara.0.name=Corona de Reina ender
 item.ender_tiara.0.tooltip1=§6Realeza
-item.ender_tiara.0.tooltip2=§2Los Enderman pelearan por ti @endermenfollow:
-item.ender_tiara.0.tooltip3=@damageignored:
-item.ender_tiara.0.tooltip4=@endermenchance:
-item.ender_tiara.0.tooltip5=@waterhurts:
-item.ender_tiara.0.damageignored=§6Prob. de ignorar daños: §3$chance:
-item.ender_tiara.0.endermenchance=§6Prob. de invocar un Enderman: §3$chance: 
-item.ender_tiara.0.endermenfollow=y te seguiran
-item.ender_tiara.0.waterhurts=§cDebilidad al agua
-item.ender_tiara.0.compat.tan=@coldimmune:
-item.ender_tiara.0.compat.enhancedvisuals=Deshabilita el efecto de estatica de los Enderman
-item.ender_tiara.0.coldimmune=§6Inmunidad a Hipotermia
-
-item.damage_shield.0.name=Escudo de honor
-item.damage_shield.0.tooltip1=§6Da $soheffect:
-item.damage_shield.0.tooltip2=@explosionresist:
-item.damage_shield.0.tooltip3=@damageignored:
-item.damage_shield.0.explosionresist=§6Proteccion contra explosiones: §3$explosionresistamount: 
-item.damage_shield.0.damageignored=§6Ignora daño cada §3$cfghitcount: §6golpes
-#item.damage_shield.0.damageignored=§6Damage ignored: §3$damageignoredhitcount:/$cfghitcount:
-item.damage_shield.0.compat.firstaid=@headshots:
-item.damage_shield.0.headshots=§6Prob. de ignorar tiros a la cabeza: §3$headshotchance:
-item.damage_shield.0.compat.enhancedvisuals=Deshabilita la vista borrosa por explosiones
-
-item.arcing_orb.0.name=Orbe electrica
-item.arcing_orb.0.tooltip1=@dodge:
-item.arcing_orb.0.tooltip2=@dodge.stun:
-item.arcing_orb.0.tooltip3=§6Presiona §r<§e*arckb:§r>§6 para lanzar electricidad: §3hasta $boltcost:MP
-item.arcing_orb.0.tooltip4=§6Daño por MP consumido: §3$boltdamage:
-item.arcing_orb.0.dodge=§2Permite esquivar presionando 2 veces
-item.arcing_orb.0.dodge.stun=§6Aturdir enemigos al esquivar: §3$dodgecost:MP
-
 item.faelis_claw.0.name=Garra felina
-item.faelis_claw.0.tooltip1=§6Atacar enemigos los hace sangrar
-item.faelis_claw.0.tooltip2=§aSangrado inflige 1 de daño cada 20 ticks por $clawbleed: ticks
-item.faelis_claw.0.tooltip3=§cLa duracion se reduce a 1/3 cuando es usado por un no-felino
+item.glow_ring.0.name=§6Anillo de ojos encantados
+item.greater_inertia_stone.0.name=Piedra de inercia aumentada
+item.inertia_null_stone.0.name=Piedra de incercia nula
+item.poison_stone.0.name=Piedra de veneno
+item.polarized_stone.0.name=Piedra polarizada
+item.sea_stone.0.name=Piedra del mar
+item.teddy_bear.0.name=Osito de peluche
+item.weightless_stone.0.name=Piedra de Gravedad negativa
+item.wither_ring.0.name=Anillo de Wither
 
 #################################### Trinkets Transformations ####################################
 
 item.dwarf_ring.0.name=§6Anillo de los Enanos
 item.dwarf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.dwarf_ring.0.tooltip2=@fortune:
-item.dwarf_ring.0.tooltip3=@skilledminer:
-item.dwarf_ring.0.tooltip4=@staticminer:
-item.dwarf_ring.0.fortune=§6Pseudo-fortuna
-item.dwarf_ring.0.skilledminer=§2Minero habil
-item.dwarf_ring.0.staticminer=§2Vel. estatica de minado
 
 item.elf_ring.0.name=§6Anillo de los Elfos
 item.elf_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.elf_ring.0.tooltip2=@chargeshot:
-item.elf_ring.0.tooltip3=§6Ganas Vel. de movimiento y de ataque en los bosques
-item.elf_ring.0.chargeshot=§6Agacharte mientras abres tu arco activa el Disparo de Poder
+item.elf_ring.0.tooltip2=§6Ganas Vel. de movimiento y de ataque en los bosques
 
 item.fairy_ring.0.name=§6Anillo de las Hadas
 item.fairy_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.fairy_ring.0.tooltip2=@creativeflight:
-item.fairy_ring.0.creativeflight=§6Da Vuelo creativo
 
 item.faelis_ring.0.name=§6Anillo de los Felinos
 item.faelis_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
@@ -437,19 +349,12 @@ item.goblin_ring.0.tooltip5=§aLos Creepers te ignoraran
 
 item.titan_ring.0.name=§6Anillo de los Titanes
 item.titan_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-item.titan_ring.0.tooltip2=§6Minas en un area de 3x3x3
-item.titan_ring.0.tooltip3=§c@heavy:
-item.titan_ring.0.tooltip4=§cRompes plantas al caminar
-item.titan_ring.0.heavy=§cTe hundes en el agua
 
 item.dragon_ring.0.name=§6Anillo de los Dragones
 item.dragon_ring.0.fire.name=§6Ring of the Fire Dragons
 item.dragon_ring.0.ice.name=§6Ring of the Ice Dragons
 item.dragon_ring.0.lightning.name=§6Ring of the Lightning Dragons
 item.dragon_ring.0.tooltip1=§6Tamaño de entidad: $rsize: de lo normal
-#item.dragon_ring.0.tooltip2=§6Presiona §r<§e*breathkb:§r>§6 para escupir fuego
-#item.dragon_ring.0.tooltip3=§6Da Resistencia al fuego
-#item.dragon_ring.0.tooltip4=§2Da Vision nocturna §r<§e*denvkb:§r>
 
 #################################### Trinkets End ####################################
 
@@ -775,8 +680,10 @@ xat.config.client.dragons_eye.orefinder.particles.tooltip=Ore Finder Max Particl
 
 xat.config.ender_tiara=Corona de Reina ender
 xat.config.ender_tiara.tooltip=Configuracion de la Corona de Reina ender
+
 xat.config.client.ender_tiara.helmet=Renderizar espacio de Casco
 xat.config.client.ender_tiara.helmet.tooltip=
+
 xat.config.server.ender_tiara.waterhurts=El agua hiere
 xat.config.server.ender_tiara.waterhurts.tooltip=El jugador recibira daño al estar sumergido o expuesto a la lluvia?
 xat.config.server.ender_tiara.ignoredamage=Probab. de ignorar daño
@@ -964,6 +871,7 @@ xat.config.server.faelis_claw.bleeding.chance.tooltip=Probabilidad de infligir S
 #####################################[Item Configs End]#####################################
 
 #####################################[Magic Configs]#####################################
+
 xat.config.magic=Magia
 xat.config.magic.tooltip=Configuraciones de Magia
 
@@ -1000,9 +908,34 @@ xat.config.magic.mana.players_only.tooltip=Sólo los jugadores tienen Mana?
 #####################################[Magic Configs End]#####################################
 
 #####################################[Race Configs]#####################################
+
 xat.config.races=Configuraciones de Razas
 xat.config.race.size=Tamaño
 xat.config.race.size.tooltip=Configuraciones de tamaño
+
+xat.config.races.resistances=Potion Resistances
+xat.config.races.resistances.tooltip=What potion effects is the player immune to
+
+xat.config.races.immunities=Damage Type Immunity
+xat.config.races.immunities.tooltip=What DamageTypes is the player immune to
+xat.config.races.immunities.fire=Fire Damage
+xat.config.races.immunities.fire.tooltip=Immune to All Fire Damage Types
+xat.config.races.immunities.explosion=Explosion Damage
+xat.config.races.immunities.explosion.tooltip=Immune to All Explosion Damage Types
+xat.config.races.immunities.magic=Magic Damage
+xat.config.races.immunities.magic.tooltip=Immune to All Magic Damage Types
+xat.config.races.immunities.projectile=Projectile Damage
+xat.config.races.immunities.projectile.tooltip=Immune to All Projectile Damage Types
+xat.config.races.immunities.indirect=Indirect Damage
+xat.config.races.immunities.indirect.tooltip=Immune to All Indirect Damage Types
+xat.config.races.immunities.types=DamageTypes
+xat.config.races.immunities.types.tooltip=DamageTypes the player is immune to
+
+xat.config.races.effects=Potion Effects
+xat.config.races.effects.tooltip=What effects to add to the player
+
+xat.config.races.human=Configuración de la raza humana
+xat.config.races.human.tooltip=
 
 xat.config.races.dwarf=Enano
 xat.config.races.dwarf.tooltip=Configuraciones de la raza Enano
@@ -1129,6 +1062,8 @@ xat.config.races.faelis.milk.buff.immunity=Inmunidad por bono
 xat.config.races.faelis.milk.buff.immunity.tooltip=Deberian los Felinos ser inmunes a la penalidad por armaduras pesadas mientras el bono esta activo?
 xat.config.races.faelis.milk.list=Leche
 xat.config.races.faelis.milk.list.tooltip=Lista de items considerados como Leche
+xat.config.races.faelis.barehand.list=Barehanded weapons
+xat.config.races.faelis.barehand.list.tooltip=List of Items that count as Bare Handed
 
 xat.config.races.dragon=Dragon
 xat.config.races.dragon.tooltip=Configuraciones de la raza Dragon
@@ -1153,6 +1088,8 @@ xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
 
 #################################### Elemental Configs ####################################
 
+xat.config.element=Elemental Settings
+xat.config.element.tooltip=Settings for Elemental configurations
 xat.config.element.fire=Fire Settings
 xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
 xat.config.element.ice=Ice Settings

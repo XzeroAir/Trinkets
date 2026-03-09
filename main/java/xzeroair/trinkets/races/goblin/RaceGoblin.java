@@ -3,6 +3,7 @@ package xzeroair.trinkets.races.goblin;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,6 +18,8 @@ import xzeroair.trinkets.traits.abilities.AbilityClimbing;
 import xzeroair.trinkets.traits.abilities.other.AbilityWolfMount;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 import javax.annotation.Nonnull;
 
@@ -89,6 +92,47 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
             }
         }
         return attack;
+    }
+
+    @Override
+    public void whileTransformed() {
+        super.whileTransformed();
+        if (!entity.world.isRemote) {
+            String[] potEffects = serverConfig.potEffects;
+            for (final String potID : potEffects) {
+                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                if (potion.getPotion() != null) {
+                    entity.addPotionEffect(potion.getPotionEffect());
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        DamageTypesConfig config = serverConfig.dmgType;
+        if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+            return true;
+        }
+        for (String type : config.damageTypes) {
+            if (source.damageType.contentEquals(type)) {
+                return true;
+            }
+        }
+        return super.isAttacked(source, dmg);
+    }
+
+    @Override
+    public void endTransformation() {
+        String[] potEffects = serverConfig.potEffects;
+        for (final String potID : potEffects) {
+            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+            if (potion.getPotion() != null) {
+                if (entity.isPotionActive(potion.getPotion())) {
+                    entity.removePotionEffect(potion.getPotion());
+                }
+            }
+        }
     }
 
     @Override

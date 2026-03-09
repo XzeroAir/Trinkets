@@ -26,23 +26,36 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.capabilities.race.EntityProperties.RaceCache;
+import xzeroair.trinkets.enums.EnumRenderLocation;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.traits.elements.Element;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.DrawingHelper;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public class GuiRaceSelectionScreen extends GuiScreen {
 
     public EntityPlayer player;
+    public EntityRace selectedRace;
+    public Element selectedPrimaryElement;
+    public Element selectedSecondaryElement;
+    public int selectedGender;
     public EntityProperties properties;
     public int buttonPressed;
-
-    protected boolean flip = false;
+    public int BACK = 1;
+    public int EXIT = 2;
+    public int CONFIRM = 3;
+    protected ArrayList<RaceCache> raceCaches;
+    protected ArrayList<Element> elementCache;
 
     public GuiRaceSelectionScreen(EntityPlayer player) {
         this.player = player;
@@ -53,90 +66,113 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     private float oldMouseX;
     private float oldMouseY;
 
-    //	private GuiAttributesScrollingList abilitySelectionList;
-
-    //	private GuiScreen mainMenu;
-    private GuiScrollingList raceSelection;//abilityDescriptions, raceAttributes, raceBonuses;
-    private int selected = -1;
-    //	private IAbilityInterface selectedMod;
-    private int listWidth;
+    private GuiScrollingList raceSelection, elementSelection, secondaryElementSelection, raceDescriptions, elementDescriptions;
+    private int raceSelected, primaryElementSelected, secondaryElementSelected = -1;
+    private int raceListWidth;
+    private int elementListWidth;
 
     private int buttonMargin = 1;
 
-    public void selectAbilityIndex(int index) {
-        if (index == selected) {
+    public void selectIndex(int index) {
+        if (index == raceSelected) {
             return;
         }
-        selected = index;
-        //		selectedMod = ((index >= 0) && (index <= abilities.size())) ? abilities.get(selected) : null;
-
+        raceSelected = index;
+        selectedRace = ((index >= 0) && (index <= raceCaches.size())) ? raceCaches.get(raceSelected).getRace() : null;
         this.updateCache();
     }
 
-    public boolean abilityIndexSelected(int index) {
-        return index == selected;
+    public boolean indexSelected(int index) {
+        return index == raceSelected;
     }
 
-    Map<Integer, EntityRace> buttonMap = new HashMap<>();
+    public void selectPrimaryElement(int index) {
+        if (index == primaryElementSelected) {
+            return;
+        }
+        primaryElementSelected = index;
+        selectedPrimaryElement = ((index >= 0) && (index <= elementCache.size())) ? elementCache.get(primaryElementSelected) : null;
+        this.updateCache();
+    }
+
+    public boolean primaryElementSelected(int index) {
+        return index == primaryElementSelected;
+    }
+
+    public void selectSecondaryElement(int index) {
+        if (index == secondaryElementSelected) {
+            return;
+        }
+        secondaryElementSelected = index;
+        selectedSecondaryElement = ((index >= 0) && (index <= elementCache.size())) ? elementCache.get(secondaryElementSelected) : null;
+        this.updateCache();
+    }
+
+    public boolean secondaryElementSelected(int index) {
+        return index == secondaryElementSelected;
+    }
 
     @Override
     public void initGui() {
         buttonList.clear();
-        buttonMap.clear();
+//        raceCaches.clear();
+//        elementCache.clear();
         super.initGui();
 
-//        String[] selectionConfig = TrinketsConfig.SERVER.races.selectionBlacklist;
+        raceSelected = -1;
+        primaryElementSelected = -1;
+        secondaryElementSelected = -1;
+        raceListWidth = 0;
+        elementListWidth = 0;
         String[] altSelectionConfig = TrinketsConfig.getClientStore().RACE_SELECTION_BLACKLIST;
 
         //		addButton(new GuiButton(buttonId, x, y, widthIn, heightIn, buttonText))
-        //		this.addButton(new GuiPropertiesButton(1, 2, 2, 50, 20, "<--"));
-        this.addButton(new GuiPropertiesButton(2, width - 16, 2, 14, 20, TextFormatting.RED + "X"));
-
-        //		abilities = Lists.newArrayList(properties.getAbilityHandler().getAbilitiesList());
-        final int slotHeight = 20;
+        this.addButton(new GuiPropertiesButton(BACK, 2, 2, 50, 20, "<--"));
+        this.addButton(new GuiPropertiesButton(EXIT, width - (14 + 40), 2, 40, 20, TextFormatting.RED + "X"));
+        this.addButton(new GuiPropertiesButton(CONFIRM, width - (60 + 20), height - 32, 60, 20, TextFormatting.GREEN + "CONFIRM"));
 
         final ForgeRegistry<EntityRace> registryList = EntityRace.Registry;
-        int ID = 3;
-        int xPos = 40;
-        int yPos = 40;
-        for (final EntityRace r : registryList) {
-            if (r.getUUID().compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0) {
-                continue;
-            }
-            boolean forbiddon = false;
-//            for (final String blkList : altSelectionConfig.length > 0 ? altSelectionConfig : selectionConfig) {
-            for (final String blkList : altSelectionConfig) {
-                if ((r.getName().equalsIgnoreCase(blkList)) || (r.getRegistryName().toString().equalsIgnoreCase(blkList))) {
-                    forbiddon = true;
-                    break;
+        raceCaches = new ArrayList<>();
+        try {
+            for (EntityRace entry : registryList.getValuesCollection()) {
+                if (entry.getUUID().compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0) {
+                    continue;
+                }
+                boolean forbid = false;
+                for (final String blkList : altSelectionConfig) {
+                    if ((entry.getName().equalsIgnoreCase(blkList)) || (entry.getRegistryName().toString().equalsIgnoreCase(blkList))) {
+                        forbid = true;
+                        break;
+                    }
+                }
+                if (!forbid) {
+                    int txtLength = this.getFontRenderer().getStringWidth(entry.getDisplayName().trim());
+                    raceCaches.add(new RaceCache(entry));
+                    if (raceListWidth <= txtLength) {
+                        raceListWidth = txtLength;
+                    }
                 }
             }
-            if (forbiddon) {
-                continue;
-            }
-            final int txtLength = this.getFontRenderer().getStringWidth(r.getDisplayName()) + 10;
-            this.addButton(new GuiButton(ID, xPos, yPos, txtLength, 20, r.getDisplayName()));
-            buttonMap.putIfAbsent(ID, r);
-            ID++;
-            if ((xPos + txtLength) >= width) {
-                xPos = 10;
-                yPos += 24;
-            } else {
-                xPos += txtLength;
+        } catch (Exception e) {
+        }
+        int fromTop = 32;
+        int fromBottom = 60;
+
+        raceListWidth = Math.min(raceListWidth + 12, 150);
+        raceSelection = new RaceSelectionList(4, this, raceCaches, raceListWidth, height, fromTop, height - fromBottom, 10, 18);
+//        this(ID, parent, cache, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight);
+        final ForgeRegistry<Element> elements = Element.Registry;
+        elementCache = new ArrayList<>();
+        for (Element ele : elements.getValuesCollection()) {
+            int txtLength = this.getFontRenderer().getStringWidth(ele.getDisplayName().trim());
+            elementCache.add(ele);
+            if (elementListWidth <= txtLength) {
+                elementListWidth = txtLength;
             }
         }
-        //		if ((abilities == null) || abilities.isEmpty()) {
-        //			return;
-        //		}
-        //		for (final IAbilityInterface ability : abilities) {
-        //			if (ability != null) {
-        //				listWidth = Math.max(listWidth, this.getFontRenderer().getStringWidth(ability.getDisplayName()) + 10);
-        //			}
-        //		}
-        //		listWidth = Math.min(listWidth, 150);
-        //        this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
-        //		abilitySelectionList = new GuiAttributesScrollingList(0, this, abilities, listWidth, slotHeight);
-        //		this.updateCache();
+        elementListWidth = Math.min(elementListWidth + 12, 150);
+        elementSelection = new ElementSelectionList(5, this, elementCache, elementListWidth, height, fromTop, height - fromBottom, width - (160), 18, true);
+        this.updateCache();
     }
 
     @Override
@@ -194,16 +230,15 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     protected void actionPerformed(GuiButton button) throws IOException {
         buttonPressed = button.id;
         super.actionPerformed(button);
-        if (button.id == 1) {
-            mc.player.openGui(Trinkets.instance, 2, mc.player.world, 0, 0, 0);
+        if (button.id == BACK) {
+            mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, mc.player.world, 0, 0, 0);
         }
-        if (button.id == 2) {
+        if (button.id == EXIT) {
             mc.player.closeScreen();
         }
-        if (button.id > 2) {
-            final EntityRace race = buttonMap.get(button.id);
-            if (race != null) {
-                properties.setOriginalRace(new RaceCache(race));
+        if (button.id == CONFIRM) {
+            if (selectedRace != null) {
+                properties.setOriginalRace(new RaceCache(selectedRace, selectedPrimaryElement == null ? Elements.NEUTRAL : selectedPrimaryElement));
                 properties.sendInformationToServer();
                 mc.player.closeScreen();
             }
@@ -229,7 +264,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
         //TODO Rendering Might still be broken?
         oldMouseX = mouseX;
         oldMouseY = mouseY;
-        //		this.drawDefaultBackground();
+        this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         if (properties == null) {
@@ -238,6 +273,40 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         if (raceSelection != null) {
             raceSelection.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        if (elementSelection != null) {
+            elementSelection.drawScreen(mouseX, mouseY, partialTicks);
+        }
+
+        if (raceDescriptions != null) {
+            raceDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        if (elementDescriptions != null) {
+            elementDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        }
+
+        int x = width - 60;//(width / 2);
+        int y = height - 30;//(height / 2);
+        if (selectedRace != null) {
+            int pX = x - 16;
+            int pY = y - 20;
+            String name = selectedRace.getDisplayName();
+            int txtLength = this.fontRenderer.getStringWidth(name);
+            int distToAdd = txtLength % 2 == 0 ? 0 : 1;
+            DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, (txtLength + distToAdd) + 10, 14, 0, 0, 0, 0, 0, 0.5F);
+//            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, selectedRace.getPrimaryColor());
+            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
+        }
+        if (selectedPrimaryElement != null) {
+            int pX = x - 16;
+            int pY = y - 34;
+            String name = selectedPrimaryElement.getDisplayName();
+            int txtLength = this.fontRenderer.getStringWidth(name);
+            int distToAdd = txtLength % 2 == 0 ? 0 : 1;
+            DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, (txtLength + distToAdd) + 10, 14, 0, 0, 0, 0, 0, 0.5F);
+//            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, selectedPrimaryElement.getPrimaryColor());
+            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
+            // font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
         }
     }
 
@@ -252,6 +321,9 @@ public class GuiRaceSelectionScreen extends GuiScreen {
         super.handleMouseInput();
         if (raceSelection != null) {
             raceSelection.handleMouseInput(mouseX, mouseY);
+        }
+        if (elementSelection != null) {
+            elementSelection.handleMouseInput(mouseX, mouseY);
         }
     }
 
@@ -269,60 +341,15 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     }
 
     private void updateCache() {
-        final ResourceLocation logoPath2 = null;
-        final Dimension logoDims2 = new Dimension(0, 0);
-        //		final List<String> lines2 = new ArrayList<>();
-        //		TranslationHelper.addAttributeTooltips(properties.getCurrentRace().getRaceAttributes(), lines2);
-        //		raceAttributes = new Info(
-        //				listWidth, lines2, logoPath2, logoDims2, 32,
-        //				(GuiRaceSelectionScreen.this.height - 18) + 4,
-        //				(width - listWidth - 30)
-        //		);
-        //		if (selectedMod == null) {
-        //			return;
-        //		}
-
-        final ResourceLocation logoPath = null;
-        final Dimension logoDims = new Dimension(0, 0);
-        final List<String> lines = new ArrayList<>();
-
-        //		String logoFile = selectedMod.getDisplayName();//getMetadata().logoFile;
-        //		if (!logoFile.isEmpty()) {
-        //			TextureManager tm = mc.getTextureManager();
-        //			IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
-        //			try {
-        //				BufferedImage logo = null;
-        //				if (pack != null) {
-        //					logo = pack.getPackImage();
-        //				} else {
-        //					InputStream logoResource = this.getClass().getResourceAsStream(logoFile);
-        //					if (logoResource != null) {
-        //						logo = TextureUtil.readBufferedImage(logoResource);
-        //					}
-        //				}
-        //				if (logo != null) {
-        //					logoPath = tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo));
-        //					logoDims = new Dimension(logo.getWidth(), logo.getHeight());
-        //				}
-        //			} catch (IOException e) {
-        //			}
-        //		}
-        //		String source = "?";
-        //		try {
-        //			source = properties.getAbilityHandler().getAbilitySource(selectedMod);
-        //		} catch (final Exception e) {
-        //		}
-        //		lines.add(selectedMod.getDisplayName() + " - " + source);
-        //			lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
-        //			lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
-
-        lines.add(null);
-        for (int i = 0; i < 40; i++) {
-            lines.add("This is a Test Line");
+        raceDescriptions = null;
+        elementDescriptions = null;
+        if (selectedRace != null) {
+            final ResourceLocation logoPath = new ResourceLocation(Reference.MODID, "textures/potions/" + selectedRace.getName().toLowerCase() + ".png");
+            final Dimension logoDims = new Dimension(18 * 2, 18 * 2);
+            final List<String> lines = new ArrayList<>();
+            selectedRace.getRaceHandler(player, selectedPrimaryElement == null ? Elements.NEUTRAL : selectedPrimaryElement).getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
+            raceDescriptions = new Info(width - (160 + 56), lines, logoPath, logoDims, 32, (this.height - 60), raceListWidth + 12);
         }
-        //		lines.addAll(selectedMod.getDescription());
-
-        //		raceSelection = new Info((width - listWidth - 30) - listWidth - 30, lines, logoPath, logoDims);
     }
 
     private class Info extends GuiScrollingList {
@@ -341,7 +368,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
         }
 
         public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims) {
-            super(GuiRaceSelectionScreen.this.getMinecraftInstance(), width, GuiRaceSelectionScreen.this.height, 32, (GuiRaceSelectionScreen.this.height - 18) + 4, GuiRaceSelectionScreen.this.listWidth + 20, 60, GuiRaceSelectionScreen.this.width, GuiRaceSelectionScreen.this.height);
+            super(GuiRaceSelectionScreen.this.getMinecraftInstance(), width, GuiRaceSelectionScreen.this.height, 32, (GuiRaceSelectionScreen.this.height - 18) + 4, GuiRaceSelectionScreen.this.raceListWidth + 20, 60, GuiRaceSelectionScreen.this.width, GuiRaceSelectionScreen.this.height);
             this.lines = this.resizeContent(lines);
             this.logoPath = logoPath;
             this.logoDims = logoDims;
@@ -475,6 +502,132 @@ public class GuiRaceSelectionScreen extends GuiScreen {
                 }
             }
         }
+    }
+
+
+    public class RaceSelectionList extends GuiScrollingList {
+
+        private GuiRaceSelectionScreen parent;
+        private ArrayList<RaceCache> cache;
+
+        private int id;
+
+        public RaceSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<RaceCache> cache, int width, int height, int top, int bottom, int left, int slotHeight) {
+            super(parent.mc, width, height, top, bottom, left, slotHeight, parent.width, parent.height);
+            id = ID;
+            this.parent = parent;
+            this.cache = cache;
+        }
+
+        public RaceSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<RaceCache> cache, int listWidth, int slotHeight) {
+            this(ID, parent, cache, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight);
+        }
+
+        @Override
+        protected int getSize() {
+            return cache.size();
+        }
+
+        @Override
+        protected void elementClicked(int index, boolean doubleClick) {
+            parent.selectIndex(index);
+        }
+
+        @Override
+        protected boolean isSelected(int index) {
+            return parent.indexSelected(index);
+        }
+
+        @Override
+        protected void drawBackground() {
+            //		parent.drawDefaultBackground();
+        }
+
+        @Override
+        protected int getContentHeight() {
+            return ((this.getSize()) * slotHeight) + 1;
+        }
+
+        ArrayList<RaceCache> getRaces() {
+            return cache;
+        }
+
+        @Override
+        protected void drawSlot(int idx, int right, int top, int height, Tessellator tess) {
+            if (idx >= cache.size()) return;
+            final RaceCache race = cache.get(idx);
+            final String name = race == null ? "ERROR" : TextFormatting.GOLD + race.getRace().getDisplayName();
+            final FontRenderer font = parent.getFontRenderer();
+            font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
+        }
+    }
+
+    public class ElementSelectionList extends GuiScrollingList {
+
+        private GuiRaceSelectionScreen parent;
+        private ArrayList<Element> cache;
+
+        private int id;
+        private boolean primary;
+
+        public ElementSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<Element> cache, int width, int height, int top, int bottom, int left, int slotHeight, boolean primary) {
+            super(parent.mc, width, height, top, bottom, left, slotHeight, parent.width, parent.height);
+            id = ID;
+            this.parent = parent;
+            this.cache = cache;
+            this.primary = primary;
+        }
+
+        public ElementSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<Element> cache, int listWidth, int slotHeight, boolean primary) {
+            this(ID, parent, cache, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight, primary);
+        }
+
+        @Override
+        protected int getSize() {
+            return cache.size();
+        }
+
+        @Override
+        protected void elementClicked(int index, boolean doubleClick) {
+            if (primary) {
+                parent.selectPrimaryElement(index);
+            } else {
+                parent.selectSecondaryElement(index);
+            }
+        }
+
+        @Override
+        protected boolean isSelected(int index) {
+            if (primary) {
+                return parent.primaryElementSelected(index);
+            } else {
+                return parent.secondaryElementSelected(index);
+            }
+        }
+
+        @Override
+        protected void drawBackground() {
+            //		parent.drawDefaultBackground();
+        }
+
+        @Override
+        protected int getContentHeight() {
+            return ((this.getSize()) * slotHeight) + 1;
+        }
+
+        ArrayList<Element> getElements() {
+            return cache;
+        }
+
+        @Override
+        protected void drawSlot(int idx, int right, int top, int height, Tessellator tess) {
+            if (idx >= cache.size()) return;
+            final Element ele = cache.get(idx);
+            final String name = ele == null ? "ERROR" : TextFormatting.GOLD + ele.getDisplayName();
+            final FontRenderer font = parent.getFontRenderer();
+            font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
+        }
+
     }
 
 }

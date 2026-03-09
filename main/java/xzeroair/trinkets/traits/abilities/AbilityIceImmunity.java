@@ -7,6 +7,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.Elements;
@@ -73,7 +74,12 @@ public class AbilityIceImmunity extends Ability implements ITickableAbility, IPo
 
     @Override
     public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-        if (source.damageType.contentEquals("ooze") || source.damageType.contentEquals("dragon_ice") || source.damageType.contentEquals("cold_fire")) {
+        if (Trinkets.MOD_COMPAT.IceAndFire) {
+            if (source.damageType.contentEquals("dragon_ice")) {
+                return true;
+            }
+        }
+        if (Trinkets.MOD_COMPAT.LycanitesMobs && source.damageType.contentEquals("ooze") || source.damageType.contentEquals("cold_fire")) {
             return true;
         }
         //icefireball

@@ -1,3 +1,4 @@
+#Translated by 502y
 xat.mod.name=Trinkets and Baubles
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
@@ -47,6 +48,7 @@ gui.xat.button.close=关闭
 entity.AlphaWolf.name=狼王
 
 #################################### Abilities ####################################
+
 ability.creative_flight.name=§6飞行
 ability.creative_flight.tooltip1=§6赋予创造模式飞行
 ability.creative_flight.tooltip2=$gui:双击跳跃开始飞行，再次双击停止
@@ -64,6 +66,7 @@ ability.block_detection.treasurefinder.off=我认为我的宝库已经足够充�
 
 ability.night_vision.name=§e夜视
 ability.night_vision.tooltip1=§2赋予夜视§r <§e*denvkb:§r>
+ability.night_vision.tooltip2=
 
 ability.fire_breath.name=§c火焰吐息
 ability.fire_breath.tooltip1=$gui:§6赋予火焰吐息
@@ -243,13 +246,21 @@ xat.element.water.name=§9水
 #################################### Races ####################################
 
 xat.race.human.name=人类
+xat.race.human.tooltip1=你是$element:元素的人类
 xat.race.fairy.name=妖精
+xat.race.fairy.tooltip1=你是$element:元素的妖精
 xat.race.dwarf.name=矮人
+xat.race.dwarf.tooltip1=你是$element:元素的矮人
 xat.race.elf.name=精灵
+xat.race.elf.tooltip1=你是$element:元素的精灵
 xat.race.titan.name=泰坦
-xat.race.faelis.name=猫人
+xat.race.titan.tooltip1=你是$element:元素的泰坦
+xat.race.faelis.name=法埃利斯
+xat.race.faelis.tooltip1=你是$element:元素的法埃利斯
 xat.race.goblin.name=哥布林
-xat.race.dragon.name=龙
+xat.race.goblin.tooltip1=你是$element:元素的哥布林
+xat.race.dragon.name=巨龙
+xat.race.dragon.tooltip1=你是$element:元素的巨龙
 
 #################################### Damage Types ####################################
 
@@ -262,12 +273,16 @@ xat.jump=跳跃
 xat.stepheight=跨步高度
 xat.entityMagic.maxMana=最大法力
 xat.entityMagic.regen=法力恢复
+xat.entityMagic.regen.cooldown=MP恢复冷却时间
+xat.entityMagic.affinity=魔法亲和力
 xat.flyspeed=飞行速度
 
 attribute.name.xat.jump=跳跃
 attribute.name.xat.stepheight=跨步高度
 attribute.name.xat.entityMagic.maxMana=最大法力
 attribute.name.xat.entityMagic.regen=法力恢复
+attribute.name.xat.entityMagic.regen.cooldown=MP恢复冷却时间
+attribute.name.xat.entityMagic.affinity=魔法亲和力
 attribute.name.xat.flyspeed=飞行速度
 attribute.name.xat.entityRace=附魔种族
 
@@ -898,6 +913,30 @@ xat.config.races=Race Settings
 xat.config.race.size=Size Settings
 xat.config.race.size.tooltip=Size Configuration
 
+xat.config.races.resistances=Potion Resistances
+xat.config.races.resistances.tooltip=What potion effects is the player immune to
+
+xat.config.races.immunities=Damage Type Immunity
+xat.config.races.immunities.tooltip=What DamageTypes is the player immune to
+xat.config.races.immunities.fire=Fire Damage
+xat.config.races.immunities.fire.tooltip=Immune to All Fire Damage Types
+xat.config.races.immunities.explosion=Explosion Damage
+xat.config.races.immunities.explosion.tooltip=Immune to All Explosion Damage Types
+xat.config.races.immunities.magic=Magic Damage
+xat.config.races.immunities.magic.tooltip=Immune to All Magic Damage Types
+xat.config.races.immunities.projectile=Projectile Damage
+xat.config.races.immunities.projectile.tooltip=Immune to All Projectile Damage Types
+xat.config.races.immunities.indirect=Indirect Damage
+xat.config.races.immunities.indirect.tooltip=Immune to All Indirect Damage Types
+xat.config.races.immunities.types=DamageTypes
+xat.config.races.immunities.types.tooltip=DamageTypes the player is immune to
+
+xat.config.races.effects=Potion Effects
+xat.config.races.effects.tooltip=What effects to add to the player
+
+xat.config.races.human=人类种族设置
+xat.config.races.human.tooltip=
+
 xat.config.races.dwarf=Dwarf Race Settings
 xat.config.races.dwarf.tooltip=
 xat.config.races.dwarf.blocks=Block Settings
@@ -1023,6 +1062,8 @@ xat.config.races.faelis.milk.buff.immunity=Buff Immunity
 xat.config.races.faelis.milk.buff.immunity.tooltip=Should the Faelis be Immune to the armor weight penalty while the Buff is Active
 xat.config.races.faelis.milk.list=Milk
 xat.config.races.faelis.milk.list.tooltip=List of Items that count as Milk
+xat.config.races.faelis.barehand.list=Barehanded weapons
+xat.config.races.faelis.barehand.list.tooltip=List of Items that count as Bare Handed
 
 xat.config.races.dragon=Dragon Race Settings
 xat.config.races.dragon.tooltip=
@@ -1047,6 +1088,8 @@ xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
 
 #################################### Elemental Configs ####################################
 
+xat.config.element=Elemental Settings
+xat.config.element.tooltip=Settings for Elemental configurations
 xat.config.element.fire=Fire Settings
 xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
 xat.config.element.ice=Ice Settings

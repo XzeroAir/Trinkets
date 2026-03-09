@@ -7,10 +7,11 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import xzeroair.trinkets.Registries;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.interfaces.IDescriptionInterface;
 
 import javax.annotation.Nullable;
 
-public class Element extends IForgeRegistryEntry.Impl<Element> {// implements INBTSerializable<NBTTagCompound> {
+public class Element extends IForgeRegistryEntry.Impl<Element> implements IDescriptionInterface {// implements INBTSerializable<NBTTagCompound> {
 
     public static final ForgeRegistry<Element> Registry = Registries.getElementRegistry();
     /*----------------------------------Constructor----------------------------------------*/
@@ -47,6 +48,14 @@ public class Element extends IForgeRegistryEntry.Impl<Element> {// implements IN
 
     public String getDisplayName() {
         return new TextComponentTranslation(this.getTranslationKey().toLowerCase() + ".name").getFormattedText();
+    }
+
+    public int getPrimaryColor() {
+        return 16777215;
+    }
+
+    public int getSecondaryColor() {
+        return 16777215;
     }
 
     /*----------------------------------Registry----------------------------------------*/

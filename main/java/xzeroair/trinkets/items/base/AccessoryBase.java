@@ -435,7 +435,9 @@ public abstract class AccessoryBase extends Item implements IsModelLoaded, IAcce
         } catch (Exception e) {
             e.printStackTrace();
         }
-        tooltip.add(getPrimaryElement(stack).getDisplayName());
+        if (TrinketsConfig.CLIENT.items.renderElements) {
+            tooltip.add(getPrimaryElement(stack).getDisplayName());
+        }
     }
 
     /*

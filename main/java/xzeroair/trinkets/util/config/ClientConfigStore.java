@@ -24,6 +24,7 @@ public class ClientConfigStore {
      * Climbable Blocks
      */
     public boolean CLIMBING_ENABLED = TrinketsConfig.SERVER.races.fairy.climbing;
+    public String[] CLIMB_BLOCKS = TrinketsConfig.SERVER.races.fairy.allowedBlocks;
 
     /**
      * Better Diving Compat.

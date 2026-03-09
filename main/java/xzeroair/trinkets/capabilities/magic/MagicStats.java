@@ -174,7 +174,7 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
         IAttributeInstance maxMana = object.getEntityAttribute(MagicAttributes.MAX_MANA);
         if (maxMana != null) {
             final float max = (float) maxMana.getAttributeValue();
-            final float maxAffinityBonus = (float) ((maxMana.getBaseValue() * (this.getRacialAffinity() * 0.01F)) - maxMana.getBaseValue());
+            final float maxAffinityBonus = (float) ((maxMana.getBaseValue() * (this.getMagicAffinity() * 0.01F)) - maxMana.getBaseValue());
             if (manaConfig.mana_cap) {
                 if (manaConfig.cap_affinity) {
                     return MathHelper.clamp(max, 0F, manaConfig.mana_max);
@@ -220,10 +220,10 @@ public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
         IAttributeInstance affinity = object.getEntityAttribute(MagicAttributes.affinity);
         if (affinity != null) {
             int amount = (int) affinity.getAttributeValue();
-            amount += (this.getRacialAffinity() - 100);
+            amount += (this.getRacialAffinity());
             return amount;
         } else {
-            return 100;
+            return 0;
         }
     }
 

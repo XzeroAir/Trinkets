@@ -1,3 +1,4 @@
+#
 xat.mod.name=Trinkets and Baubles
 itemGroup.trinketstab=Trinkets
 xat.config.title=Trinkets and Baubles
@@ -65,6 +66,7 @@ ability.block_detection.treasurefinder.off=I think my Treasury is sufficiently f
 
 ability.night_vision.name=§eNight Vision
 ability.night_vision.tooltip1=§2Grants Night Vision §r<§e*denvkb:§r>
+ability.night_vision.tooltip2=
 
 ability.fire_breath.name=§cFire Breath
 ability.fire_breath.tooltip1=$gui:§6Grants Fire Breath
@@ -244,13 +246,21 @@ xat.element.water.name=§9Water
 #################################### Races ####################################
 
 xat.race.human.name=Human
+xat.race.human.tooltip1=You're a Human of the $element: Element.
 xat.race.fairy.name=Fairy
+xat.race.fairy.tooltip1=You're a Fairy of the $element: Element.
 xat.race.dwarf.name=Dwarf
+xat.race.dwarf.tooltip1=You're a Dwarf of the $element: Element.
 xat.race.elf.name=Elf
+xat.race.elf.tooltip1=You're a Elf of the $element: Element.
 xat.race.titan.name=Titan
+xat.race.titan.tooltip1=You're a Titan of the $element: Element.
 xat.race.faelis.name=Faelis
+xat.race.faelis.tooltip1=You're a Faelis of the $element: Element.
 xat.race.goblin.name=Goblin
+xat.race.goblin.tooltip1=You're a Goblin of the $element: Element.
 xat.race.dragon.name=Dragon
+xat.race.dragon.tooltip1=You're a Dragon of the $element: Element.
 
 #################################### Damage Types ####################################
 
@@ -264,6 +274,7 @@ xat.stepheight=Step Height
 xat.entityMagic.maxMana=Max Mana
 xat.entityMagic.regen=MP Regen
 xat.entityMagic.regen.cooldown=MP Regen Cooldown
+xat.entityMagic.affinity=Magic Affinity
 xat.flyspeed=Fly Speed
 
 attribute.name.xat.jump=Jump
@@ -271,6 +282,7 @@ attribute.name.xat.stepheight=Step Height
 attribute.name.xat.entityMagic.maxMana=Max Mana
 attribute.name.xat.entityMagic.regen=MP Regen
 attribute.name.xat.entityMagic.regen.cooldown=MP Regen Cooldown
+attribute.name.xat.entityMagic.affinity=Magic Affinity
 attribute.name.xat.flyspeed=Fly Speed
 attribute.name.xat.entityRace=Enchanted Race
 
@@ -900,6 +912,30 @@ xat.config.magic.mana.players_only.tooltip=Only players have Mana
 xat.config.races=Race Settings
 xat.config.race.size=Size Settings
 xat.config.race.size.tooltip=Size Configuration
+
+xat.config.races.resistances=Potion Resistances
+xat.config.races.resistances.tooltip=What potion effects is the player immune to
+
+xat.config.races.immunities=Damage Type Immunity
+xat.config.races.immunities.tooltip=What DamageTypes is the player immune to
+xat.config.races.immunities.fire=Fire Damage
+xat.config.races.immunities.fire.tooltip=Immune to All Fire Damage Types
+xat.config.races.immunities.explosion=Explosion Damage
+xat.config.races.immunities.explosion.tooltip=Immune to All Explosion Damage Types
+xat.config.races.immunities.magic=Magic Damage
+xat.config.races.immunities.magic.tooltip=Immune to All Magic Damage Types
+xat.config.races.immunities.projectile=Projectile Damage
+xat.config.races.immunities.projectile.tooltip=Immune to All Projectile Damage Types
+xat.config.races.immunities.indirect=Indirect Damage
+xat.config.races.immunities.indirect.tooltip=Immune to All Indirect Damage Types
+xat.config.races.immunities.types=DamageTypes
+xat.config.races.immunities.types.tooltip=DamageTypes the player is immune to
+
+xat.config.races.effects=Potion Effects
+xat.config.races.effects.tooltip=What effects to add to the player
+
+xat.config.races.human=Human Race Settings
+xat.config.races.human.tooltip=
 
 xat.config.races.dwarf=Dwarf Race Settings
 xat.config.races.dwarf.tooltip=

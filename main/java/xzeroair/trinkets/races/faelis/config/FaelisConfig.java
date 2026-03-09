@@ -4,6 +4,8 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
 //@formatter:off
@@ -21,6 +23,7 @@ public class FaelisConfig {
 	@Name("03. Armor Penalties")
 	@LangKey(PREFIX + ".armor.penalties")
 	public boolean penalties = true;
+
 	@Config.Comment("The Amount of Weight per armor piece equipped")
 	@Name("04. Penaltiy amount")
 	@LangKey(PREFIX + ".armor.penalties.amount")
@@ -98,6 +101,25 @@ public class FaelisConfig {
 		}
 
 	}
+
+	@Config.Comment("What potion effects is the player immune to")
+	@Name("Potion Resistances")
+	@LangKey(Reference.MODID + ".config.races" + ".resistances")
+	public String[] resistances = {};
+
+	@Config.Comment("What DamageTypes is the player immune to")
+	@Name("Damage Immunity")
+	@LangKey(Reference.MODID + ".config.races" + ".immunities")
+	public DamageTypesConfig dmgType = new DamageTypesConfig();
+
+	@Config.Comment("What effects to add to the player")
+	@Name("Potion Effects")
+	@LangKey(Reference.MODID + ".config.races" + ".effects")
+	public String[] potEffects = {};
+
+	@Config.Name("Magic")
+	@Config.LangKey(Reference.MODID + ".config.magic")
+	public final RaceMagicConfig magic = new RaceMagicConfig(125);
 
 	@Name("Size")
 	@LangKey(Reference.MODID + ".config.race.size")

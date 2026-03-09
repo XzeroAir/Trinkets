@@ -23,6 +23,7 @@ import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.capabilities.race.EntityProperties.RaceCache;
 import xzeroair.trinkets.client.races.IRenderRaceHandler;
 import xzeroair.trinkets.client.races.RaceEmptyRenderer;
+import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.IncreasedReachPacket;
@@ -35,9 +36,8 @@ import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.handlers.SizeHandler;
-import xzeroair.trinkets.util.helpers.NBTHelper;
-import xzeroair.trinkets.util.helpers.RayTraceHelper;
-import xzeroair.trinkets.util.helpers.StringUtils;
+import xzeroair.trinkets.util.helpers.*;
+import xzeroair.trinkets.util.interfaces.IDescriptionInterface;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 
-public abstract class EntityRacePropertiesHandler implements IRaceHandler {
+public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDescriptionInterface {
 
     protected boolean firstUpdate;
     protected boolean firstTransformUpdate;
@@ -108,6 +108,25 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     }
 
     protected void initAttributes() {
+        final EntityRace previous = this.getEntityProperties().getPreviousRace().getRace();
+        double d1 = Double.parseDouble(Reference.DECIMALFORMAT.format(1D - this.TransformationProgress()));
+        if (d1 != 0) {
+            String[] raceAttributes = previous.getRaceAttributes().getAttributes();
+            if (raceAttributes.length > 0) {
+                for (String entry : raceAttributes) {
+                    AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+                    if (attributeShell != null) {
+                        String name = attributeShell.getAttribute();
+                        double amount = attributeShell.getAmount();
+                        int operation = attributeShell.getOperation();
+                        boolean isSaved = attributeShell.isSaved();
+                        UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(false);
+                        //					attribute.addModifier(entity, (amount), operation);
+                        attribute.addModifier(entity, (amount * d1), operation);
+                    }
+                }
+            }
+        }
         double d = Double.parseDouble(Reference.DECIMALFORMAT.format(this.TransformationProgress()));
         if (d != 0) {
             final World world = entity.getEntityWorld();
@@ -246,13 +265,17 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
         if (this.isTransforming()) {
             this.whileTranforming();
         } else if (this.isTransformed()) {
-            if (firstTransformUpdate && !entity.world.isRemote) {
-                float newMaxHealth = entity.getMaxHealth();
-                float difference = healthBeforeTransformation - maxHealthBeforeTranformation;
-                float healAmount = (maxHealthBeforeTranformation - newMaxHealth) + difference;
-                if (healAmount > 0) {
-                    entity.heal(healAmount);
+            if (firstTransformUpdate) {
+                if (!entity.world.isRemote) {
+                    float newMaxHealth = entity.getMaxHealth();
+                    float difference = healthBeforeTransformation - maxHealthBeforeTranformation;
+                    float healAmount = (maxHealthBeforeTranformation - newMaxHealth) + difference;
+                    if (healAmount > 0) {
+                        entity.heal(healAmount);
+                    }
                 }
+                final EntityRace previous = this.getEntityProperties().getPreviousRace().getRace();
+                AttributeHelper.removeAttributesByUUID(entity, previous.getUUID());
             }
             SizeAttribute artemis = this.getArtemisAttributeSize();
             if (artemis != null) {
@@ -579,26 +602,22 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler {
     @Override
     @SideOnly(Side.CLIENT)
     public void getDescription(List<String> tooltips, int rendMod, int rendID) {
-//        try {
-//            final TranslationHelper helper = TranslationHelper.INSTANCE;
-//            String langKey = "xat." + getRace().getName().toLowerCase();
-//            for (int i = 1; i < 10; i++) {
-//                final String string = helper.getLangTranslation(langKey + ".tooltip" + i, (lang) -> {
-////                    final TranslationHelper.KeyEntry key = new TranslationHelper.LangEntry(langKey, "explosionresist", serverConfig.explosion_resist);
-////                    final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("explosionresistamount", serverConfig.explosion_resist, ((100F - (serverConfig.explosion_amount * 100F)) + "%"));
-//                    String output = helper.formatAddVariables(lang);
-//                    return output.startsWith("$advanced:") ? show ? output.replace("$advanced:", "") : "" : output;
-//                });
-//                if (!helper.isStringEmpty(string)) {
-//                    tooltips.add(string);
-//                }
-//            }
-//            for (IAbilityInterface ability : getRaceAbilities().values()) {
-////                ability.getDescription(tooltips, show);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        String translationKey = raceCache.getRace().getTranslationKey();
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        for (int i = 1; i <= 10; i++) {
+            final String string = helper.getLangTranslation(translationKey + ".tooltip" + i, (lang) -> {
+                final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("element", true, raceCache.getElement().getDisplayName());
+                return helper.formatAddVariable(lang, EnumRenderLocation.GUI.getId(), key1);
+            });
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+            }
+        }
+    }
+
+    @Override
+    public String getDisplayName() {
+        return raceCache.getRace().getDisplayName();
     }
 
     @SideOnly(Side.CLIENT)

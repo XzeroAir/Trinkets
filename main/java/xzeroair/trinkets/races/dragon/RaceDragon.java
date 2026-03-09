@@ -3,6 +3,8 @@ package xzeroair.trinkets.races.dragon;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
@@ -17,6 +19,8 @@ import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityHeatImmunity;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 import javax.annotation.Nonnull;
 
@@ -90,6 +94,75 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     }
 
     @Override
+    public void whileTransformed() {
+        super.whileTransformed();
+        if (!entity.world.isRemote) {
+            String[] potEffects;
+            if (getRaceCache().compareElement(Elements.FIRE)) {
+                potEffects = serverConfig.elementConfig.fire.potEffects;
+            } else if (getRaceCache().compareElement(Elements.ICE)) {
+                potEffects = serverConfig.elementConfig.ice.potEffects;
+            } else if (getRaceCache().compareElement(Elements.LIGHTNING)) {
+                potEffects = serverConfig.elementConfig.lightning.potEffects;
+            } else {
+                potEffects = serverConfig.potEffects;
+            }
+            for (final String potID : potEffects) {
+                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                if (potion.getPotion() != null) {
+                    entity.addPotionEffect(potion.getPotionEffect());
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        if (getRaceCache().compareElement(Elements.FIRE)) {
+            DamageTypesConfig config = serverConfig.elementConfig.fire.dmgType;
+            if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+                return true;
+            }
+            for (String type : config.damageTypes) {
+                if (source.damageType.contentEquals(type)) {
+                    return true;
+                }
+            }
+        } else if (getRaceCache().compareElement(Elements.ICE)) {
+            DamageTypesConfig config = serverConfig.elementConfig.ice.dmgType;
+            if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+                return true;
+            }
+            for (String type : config.damageTypes) {
+                if (source.damageType.contentEquals(type)) {
+                    return true;
+                }
+            }
+        } else if (getRaceCache().compareElement(Elements.LIGHTNING)) {
+            DamageTypesConfig config = serverConfig.elementConfig.lightning.dmgType;
+            if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+                return true;
+            }
+            for (String type : config.damageTypes) {
+                if (source.damageType.contentEquals(type)) {
+                    return true;
+                }
+            }
+        } else {
+            DamageTypesConfig config = serverConfig.dmgType;
+            if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
+                return true;
+            }
+            for (String type : config.damageTypes) {
+                if (source.damageType.contentEquals(type)) {
+                    return true;
+                }
+            }
+        }
+        return super.isAttacked(source, dmg);
+    }
+
+    @Override
     public boolean potionBeingApplied(PotionEffect effect) {
         final String e = effect.getPotion().getRegistryName().toString();
         Element ele = getRaceCache().getElement();
@@ -114,8 +187,37 @@ public class RaceDragon extends EntityRacePropertiesHandler {
                     return true;
                 }
             }
+        } else {
+            for (final String immunity : TrinketsConfig.SERVER.races.dragon.resistances) {
+                final Potion pot = Potion.getPotionFromResourceLocation(immunity);
+                if ((pot != null) && e.contentEquals(pot.getRegistryName().toString())) {
+                    return true;
+                }
+            }
         }
         return super.potionBeingApplied(effect);
+    }
+
+    @Override
+    public void endTransformation() {
+        String[] potEffects;
+        if (getRaceCache().compareElement(Elements.FIRE)) {
+            potEffects = serverConfig.elementConfig.fire.potEffects;
+        } else if (getRaceCache().compareElement(Elements.ICE)) {
+            potEffects = serverConfig.elementConfig.ice.potEffects;
+        } else if (getRaceCache().compareElement(Elements.LIGHTNING)) {
+            potEffects = serverConfig.elementConfig.lightning.potEffects;
+        } else {
+            potEffects = serverConfig.potEffects;
+        }
+        for (final String potID : potEffects) {
+            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+            if (potion.getPotion() != null) {
+                if (entity.isPotionActive(potion.getPotion())) {
+                    entity.removePotionEffect(potion.getPotion());
+                }
+            }
+        }
     }
 
     @Override

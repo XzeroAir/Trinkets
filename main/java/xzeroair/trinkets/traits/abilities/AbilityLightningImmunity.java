@@ -88,7 +88,7 @@ public class AbilityLightningImmunity extends Ability implements ITickableAbilit
     public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
         if (Trinkets.MOD_COMPAT.IceAndFire) {
             if (source.damageType.contentEquals("dragon_lightning")) {
-
+                return true;
             }
         }
         if (source.damageType.contentEquals(DamageSource.LIGHTNING_BOLT.damageType) || source.damageType.contentEquals("locks.shock")) {
