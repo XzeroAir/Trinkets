@@ -30,4 +30,14 @@ public class ShieldBase extends ItemShield implements IAccessoryInterface, IsMod
 
 	}
 
+	@Override
+	public int getSlot(ItemStack stack) {
+		return -1;
+	}
+
+	@Override
+	public String getItemHandler(ItemStack stack) {
+		return "None";
+	}
+
 }

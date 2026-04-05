@@ -1,0 +1,138 @@
+package xzeroair.trinkets.traits.abilities.other;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.traits.abilities.Ability;
+import xzeroair.trinkets.traits.abilities.interfaces.IInteractionAbility;
+import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
+import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
+import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityWolfRider;
+import xzeroair.trinkets.util.handlers.Counter;
+import xzeroair.trinkets.util.helpers.RayTraceHelper;
+
+public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyBindInterface, IInteractionAbility {
+
+    protected final ConfigAbilityWolfRider CONFIG;
+
+    public AbilityWolfMount() {
+        this(TrinketsConfig.SERVER.ABILITIES.WOLF_RIDER);
+    }
+
+    public AbilityWolfMount(ConfigAbilityWolfRider config) {
+        super(TrinketsRegistryNames.ModAbilities.WOLF_RIDER);
+        this.CONFIG = config;
+        this.setAbilityEnabled(config.ENABLED);
+    }
+
+    @Override
+    public void tickAbility(EntityLivingBase entity) {
+        final Counter counter = tickHandler.getCounter("mountAtkCooldown", 40, true, true, false, true, false);
+        if ((counter != null)) {
+            if ((counter.getTick() > 0)) {
+                counter.Tick();
+            }
+        }
+    }
+
+    @Override
+    public void interactEntity(EntityLivingBase entityLiving, World world, ItemStack itemStack, EnumHand hand, EnumFacing face, BlockPos pos, Entity target) {
+    }
+
+    @Override
+    public boolean onKeyPress(Entity entity, boolean Aux) {
+        if (entity instanceof EntityPlayer) {
+            final EntityPlayer player = (EntityPlayer) entity;
+            final World world = player.getEntityWorld();
+            double reachDistance = 5;
+            final IAttributeInstance reachAttribe = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE);
+            if (reachAttribe != null) {
+                reachDistance = reachAttribe.getAttributeValue();
+            }
+            if (player.isRiding() && (player.getRidingEntity() instanceof AlphaWolf)) {
+                final Counter counter = tickHandler.getCounter("mountAtkCooldown", 40, true, true, false, true, false);
+                final AlphaWolf wolf = (AlphaWolf) player.getRidingEntity();
+                if (counter.Tick()) {
+                    wolf.MountedAttack(player, reachDistance);
+                    counter.resetTick();
+                }
+            } else if (!player.isRiding()) {
+                RayTraceResult result = RayTraceHelper.rayTrace(world, player, reachDistance * 0.5D, true);
+                if ((result != null) && (result.typeOfHit == Type.ENTITY)) {
+                    if ((result.entityHit instanceof EntityWolf) && !(result.entityHit instanceof AlphaWolf)) {
+                        this.MountWolf(player, (EntityWolf) result.entityHit);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onKeyDown(Entity entity, boolean Aux) {
+        return true;
+    }
+
+    @Override
+    public boolean onKeyRelease(Entity entity, boolean Aux) {
+        return true;
+    }
+
+    public boolean MountWolf(EntityLivingBase entity, EntityWolf wolf) {
+        final World world = entity.getEntityWorld();
+        final boolean isOwner = (wolf.isTamed() && wolf.isOwner(entity));
+        if (!isOwner || wolf.isChild() || wolf.isDead || !wolf.isEntityAlive()) {
+            return false;
+        }
+        if (!world.isRemote) {
+            if (!entity.isRiding()) {
+                final AlphaWolf newWolf = new AlphaWolf(world);
+                newWolf.setCustomNameTag(wolf.getCustomNameTag());
+                newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
+                newWolf.setTamedBy(entity);
+                newWolf.setHealth(wolf.getHealth());
+                if (world.spawnEntity(newWolf)) {
+                    newWolf.getEntityData().setBoolean("xat:summoned", true);
+                    if (entity.startRiding(newWolf)) {
+                        final NBTTagCompound tag = new NBTTagCompound();
+                        wolf.writeToNBT(tag);
+                        tag.setString("id", EntityList.getKey(wolf.getClass()).toString());
+                        newWolf.storeOldWolf(tag);
+                        wolf.setDead();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getKey() {
+        return ModKeyBindings.RACE_ABILITY.getDisplayName();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getAuxKey() {
+        return ModKeyBindings.AUX_KEY.getDisplayName();
+    }
+}

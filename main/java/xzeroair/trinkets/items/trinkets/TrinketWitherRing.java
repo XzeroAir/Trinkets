@@ -1,57 +1,71 @@
 package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.AbilityWitherAffinity;
+import xzeroair.trinkets.traits.abilities.elements.dark.AbilityAffinityDark;
+import xzeroair.trinkets.traits.abilities.elements.dark.AbilityDarkImmunity;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigWitherRing;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+
 public class TrinketWitherRing extends AccessoryBase {
 
-	public static final ConfigWitherRing serverConfig = TrinketsConfig.SERVER.Items.WITHER_RING;
+    protected final ConfigWitherRing CONFIG = TrinketsConfig.SERVER.ITEMS.WITHER_RING;
 
-	public TrinketWitherRing(String name) {
-		super(name);
-		this.setUUID("bca63279-4a19-4891-b4b0-a5a2f76e4b90");
-		this.setItemAttributes(serverConfig.Attributes);
-		ModItems.trinkets.ITEMS.add(this);
-	}
+    public TrinketWitherRing(String name) {
+        super(name);
+        this.setUUID("bca63279-4a19-4891-b4b0-a5a2f76e4b90");
+    }
 
-	/*
-	 * This Triggers before @method playerEquipped() in AccessoryBase
-	 */
-	@Override
-	public void initAbilities(EntityLivingBase entity) {
-		this.addAbility(entity, Abilities.witherImmunity, new AbilityWitherAffinity());
-	}
+    @Override
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityAffinityDark(this.CONFIG.ABILITIES.AFFINITY_DARK));
+        abilities.add(new AbilityDarkImmunity(this.CONFIG.ABILITIES.IMMUNITY_DARK));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
+    }
 
-	@Override
-	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		super.eventPlayerTick(stack, player);
-	}
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.DARK;
+    }
 
-	@Override
-	public void playerEquipped(ItemStack stack, EntityLivingBase player) {
-		super.playerEquipped(stack, player);
-	}
+    @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
 
-	@Override
-	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
-		super.playerUnequipped(stack, player);
-	}
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
 
-	@Override
-	public boolean ItemEnabled() {
-		return serverConfig.enabled;
-	}
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
 
-	@Override
-	public void registerModels() {
-		Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
-	}
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
+    public boolean ItemEnabled() {
+        return this.CONFIG.ENABLED;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
+    }
 }

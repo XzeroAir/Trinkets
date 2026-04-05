@@ -1,140 +1,276 @@
 package xzeroair.trinkets.races.faelis;
 
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.attributes.JumpAttribute;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
-import xzeroair.trinkets.client.model.FaelisEars;
+import xzeroair.trinkets.capabilities.race.RaceCache;
+import xzeroair.trinkets.client.races.IRenderRaceHandler;
+import xzeroair.trinkets.client.races.faelis.RaceFaelisRenderer;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
+import xzeroair.trinkets.traits.abilities.AbilityClimbing;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
+import xzeroair.trinkets.util.config.ConfigHelper.ConfigEquipmentObject;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
+import xzeroair.trinkets.util.helpers.EntityHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class RaceFaelis extends EntityRacePropertiesHandler {
 
-	public static FaelisConfig serverConfig = TrinketsConfig.SERVER.races.faelis;
-	protected UpdatingAttribute movement, jump;
+    private final FaelisConfig CONFIG = TrinketsConfig.SERVER.RACES.FAELIS;
+    protected UpdatingAttribute movement, jump;
 
-	public RaceFaelis(@Nonnull EntityLivingBase e, EntityProperties properties) {
-		super(e, properties, EntityRaces.faelis);
-		movement = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), SharedMonsterAttributes.MOVEMENT_SPEED);
-		jump = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), JumpAttribute.Jump);
-	}
+    public RaceFaelis(@Nonnull EntityLivingBase e, @Nonnull EntityProperties properties) {
+        super(e, properties, new RaceCache(EntityRaces.faelis));
+        this.movement = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), SharedMonsterAttributes.MOVEMENT_SPEED).setSavedInNBT(false);
+        this.jump = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), JumpAttribute.Jump).setSavedInNBT(false);
+    }
 
-	@Override
-	public void startTransformation() {
-		//		this.addAbility(Abilities.blockClimbing, new AbilityClimbing());
-	}
+    public RaceFaelis(@Nonnull EntityLivingBase e, @Nonnull EntityProperties properties, @Nonnull RaceCache raceCache) {
+        super(e, properties, raceCache);
+        this.movement = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), SharedMonsterAttributes.MOVEMENT_SPEED).setSavedInNBT(false);
+        this.jump = new UpdatingAttribute(UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"), JumpAttribute.Jump).setSavedInNBT(false);
+    }
 
-	@Override
-	public void whileTransformed() {
-		if (entity.world.isRemote) {
-			return;
-		}
-		boolean hasMilkBuff = false;
-		if (TrinketsConfig.SERVER.races.faelis.penalties) {
-			double amount = 0;
-			final double weight = serverConfig.penalty_amount;//0.0125;
-			final StatusHandler status = Capabilities.getStatusHandler(entity);
-			if (status != null) {
-				if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
-					hasMilkBuff = true;
-				} else {
-					hasMilkBuff = false;
-				}
-			}
-			try {
-				for (final ItemStack stack : entity.getArmorInventoryList()) {
-					if (!stack.isEmpty() && (stack.getItem() instanceof ItemArmor)) {
-						final double w = ConfigHelper.parseItemArmor(stack, serverConfig.heavyArmor);
-						amount -= w == 0 ? weight : w;
-					}
-				}
-			} catch (final Exception e) {
-			}
+    @Override
+    public void startTransformation() {
+        this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
+        this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
+    }
 
-			if ((amount != 0) && !hasMilkBuff) {
-				movement.addModifier(entity, amount, 2);
-				jump.addModifier(entity, amount, 2);
-			} else {
-				movement.removeModifier(entity);
-				jump.removeModifier(entity);
-			}
-		} else {
-			movement.removeModifier(entity);
-			jump.removeModifier(entity);
-		}
-	}
+    @Override
+    public void whileTransformed() {
+        super.whileTransformed();
+        PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_REMOVE);
+        PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.EFFECTS_TO_ADD);
+        if (!this.getEntity().world.isRemote && this.getEntity().isRiding()) {
+            final Entity mount = this.getEntity().getRidingEntity();
+            if ((mount != null) && !this.mountEntity(mount)) {
+                this.getEntity().dismountRidingEntity();
+            }
+        }
+        if (this.getEntity().world.isRemote) {
+            return;
+        }
+        boolean hasMilkBuff = Capabilities.getStatusHandler(this.getEntity(), false, (status, rtn) -> {
+            if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
+                return true;
+            }
+            return rtn;
+        });
+        if (this.CONFIG.HEAVY_ARMOR_PENALTY) {
+            double amount = 0;
+            if (TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {
+                try {
+                    for (final ItemStack stack : this.getEntity().getEquipmentAndArmor()) {
+                        final Item item = stack.getItem();
+                        final String regName = item.getRegistryName().toString();
+                        final String itemType = ConfigEquipmentObject.getItemType(stack);
+                        if (!itemType.isEmpty()) {
+                            final String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack).toLowerCase();
+                            if (item instanceof ItemArmor) {
+                                final ItemArmor armor = ((ItemArmor) item);
+                                final String armorType = armor.armorType.getName();
+                                ConfigEquipmentObject entry = ConfigHelper.TrinketConfigStorage.getEquipmentEntry(regName + ":" + armorType, regName, "ObjectMaterial:" + ItemMaterial + ":" + armorType, "ObjectMaterial:" + ItemMaterial);
+                                if (entry != null) {
+                                    amount -= entry.getEquipmentWeight();
+                                }
+                            } else {
+                                final String hand = stack.isItemEqual(this.getEntity().getHeldItemMainhand()) ? "mainhand" : stack.isItemEqual(this.getEntity().getHeldItemOffhand()) ? "offhand" : "hand";
+                                String[] mS = new String[]{regName + ":" + hand, regName, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + hand, "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
+                                final ConfigEquipmentObject main = ConfigHelper.TrinketConfigStorage.getEquipmentEntry((k, v) -> v.doesItemMatchEntry(stack), mS);
+                                double mW = main == null ? 0 : main.getEquipmentWeight();
+                                amount -= mW;
+                            }
+                        }
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
-	@Override
-	public void endTransformation() {
-		AttributeHelper.removeAttributes(entity, UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"));
-	}
+            if ((amount != 0) && !hasMilkBuff) {
+                this.movement.addModifier(this.getEntity(), amount, 2);
+                this.jump.addModifier(this.getEntity(), amount, 2);
+            } else {
+                if (this.CONFIG.MILK_INVIGORATED) {
+                    this.movement.removeModifier(this.getEntity());
+                    this.jump.removeModifier(this.getEntity());
+                }
+            }
+        } else {
+            this.movement.removeModifier(this.getEntity());
+            this.jump.removeModifier(this.getEntity());
+        }
+    }
 
-	@Override
-	public float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		if (!((source instanceof EntityDamageSourceIndirect) || source.isExplosion() || source.isMagicDamage() || source.isProjectile())) {
-			if ((dmg > 0)) {
-				final ItemStack stack1 = entity.getHeldItemMainhand();
-				final ItemStack stack2 = entity.getHeldItemOffhand();
-				if ((stack1.isEmpty() && stack2.isEmpty())) {
-					dmg += serverConfig.bonus;
-				}
-			}
-		}
-		return dmg;
-	}
+    @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        if (!this.getEntity().world.isRemote) {
+            boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getFirst();
+            return !result;
+        }
+        return true;
+    }
 
-	private FaelisEars ears = new FaelisEars();
+    @Override
+    public float isHurt(DamageSource source, float dmg) {
+        return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || !properties.showTraits()) {
-			return;
-		}
-		GlStateManager.pushMatrix();
-		if (entity.isSneaking()) {
-			GlStateManager.translate(0, 0.2, 0);
-		}
-		if (renderer instanceof RenderPlayer) {
-			final RenderPlayer rend = (RenderPlayer) renderer;
-			rend.getMainModel().bipedHead.postRender(scale);
-		}
-		if (entity.hasItemInSlot(EntityEquipmentSlot.HEAD)) {
-			GlStateManager.translate(0.0F, -0.02F, -0.045F);
-			GlStateManager.scale(1.1F, 1.1F, 1.1F);
-		}
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
-		GlStateManager.disableLighting();
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		ears.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, 1F);
-		GlStateManager.enableLighting();
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.popMatrix();
-	}
+    @Override
+    public float isDamaged(DamageSource source, float dmg) {
+        return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
+    }
 
+    @Override
+    public void endTransformation() {
+        AttributeHelper.removeAttributes(this.getEntity(), UUID.fromString("1c9ba72a-a558-4ccc-a997-777bf3a9859a"));
+        PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_ADD);
+    }
+
+    @Override
+    public float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
+        if (!this.CONFIG.BAREHAND_COMBAT) {
+            return dmg;
+        }
+        if (!((source instanceof EntityDamageSourceIndirect) || source.isExplosion() || source.isMagicDamage() || source.isProjectile())) {
+            if ((dmg > 0)) {
+                final ItemStack stack1 = this.getEntity().getHeldItemMainhand();
+                final ItemStack stack2 = this.getEntity().getHeldItemOffhand();
+                boolean mainhandCountsAsBare = stack1.isEmpty();
+                boolean offhandCountsAsBare = stack2.isEmpty();
+                if (!mainhandCountsAsBare) {
+                    Item item = stack1.getItem();
+                    String regName = item.getRegistryName().toString();
+                    String itemType = item instanceof ItemBlock ? "block" : ConfigEquipmentObject.getItemType(stack1);
+                    if (itemType.isEmpty()) {
+                        itemType = "item";
+                    }
+                    if (!itemType.isEmpty()) {
+                        final String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack1).toLowerCase();
+                        if (!(item instanceof ItemArmor)) {
+                            final String hand = "mainhand";
+                            String[] mS = new String[]{regName + ":" + hand, regName, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + hand, "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
+                            final ConfigEquipmentObject main = ConfigHelper.TrinketConfigStorage.getListEntry(ConfigHelper.TrinketConfigStorage.BareHandedItems, (k, v) -> v.doesItemMatchEntry(stack1), mS);
+//                        double mW = main == null ? 0 : main.getEquipmentWeight();
+                            if (main != null) {
+                                mainhandCountsAsBare = true;
+                                dmg += main.getEquipmentWeight();
+                            }
+                        }
+                    }
+                }
+                if (!offhandCountsAsBare) {
+                    Item item = stack2.getItem();
+                    String regName = item.getRegistryName().toString();
+                    String itemType = item instanceof ItemBlock ? "block" : ConfigEquipmentObject.getItemType(stack2);
+                    if (itemType.isEmpty()) {
+                        itemType = "item";
+                    }
+                    if (!itemType.isEmpty()) {
+                        final String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack2).toLowerCase();
+                        if (!(item instanceof ItemArmor)) {
+                            final String hand = "offhand";
+                            String[] mS = new String[]{regName + ":" + hand, regName, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + hand + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + hand, "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
+                            final ConfigEquipmentObject main = ConfigHelper.TrinketConfigStorage.getListEntry(ConfigHelper.TrinketConfigStorage.BareHandedItems, (k, v) -> v.doesItemMatchEntry(stack2), mS);
+//                        double mW = main == null ? 0 : main.getEquipmentWeight();
+                            if (main != null) {
+                                offhandCountsAsBare = true;
+                                dmg += (float) main.getEquipmentWeight();
+                            }
+                        }
+                    }
+                }
+                if (mainhandCountsAsBare && offhandCountsAsBare) {
+                    dmg += (float) this.CONFIG.BAREHAND_COMBAT_BONUS;
+                }
+            }
+        }
+        return dmg;
+    }
+
+    @Override
+    public boolean potionBeingApplied(PotionEffect effect) {
+        return PotionHelper.isPotionEffect(effect, this.CONFIG.EFFECTS_TO_REMOVE);
+    }
+
+    @Override
+    public boolean mountEntity(Entity mount) {
+        if (EntityHelper.isCreative(this.getEntity())) {
+            return true;
+        } else if (!this.CONFIG.CAN_MOUNT) {
+            return false;
+        } else if (this.CONFIG.MOUNT_BLACKLIST.length > 0) {
+            List<String> disallowedMounts = Arrays.asList(this.CONFIG.MOUNT_BLACKLIST);
+            try {
+                final ResourceLocation regName = EntityRegistry.getEntry(mount.getClass()).getRegistryName();
+                final String modID = regName.getNamespace();
+                final String entityID = regName.getPath();
+                final boolean exists = disallowedMounts.contains(modID + ":*") || disallowedMounts.contains(regName.toString());
+                if (exists) {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                        final EntityBoat boat = (EntityBoat) mount;
+                        final Entity controller = boat.getControllingPassenger();
+                        if ((controller == null) || (controller == this.getEntity())) {
+                            return false;
+                        }
+                    }
+                    return this.CONFIG.MOUNT_WHITELIST;
+                } else {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                        final EntityBoat boat = (EntityBoat) mount;
+                        final Entity controller = boat.getControllingPassenger();
+                        if ((controller == null) || (controller == this.getEntity())) {
+                            return false;
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            return !this.CONFIG.MOUNT_WHITELIST;
+        } else {
+            if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                final EntityBoat boat = (EntityBoat) mount;
+                final Entity controller = boat.getControllingPassenger();
+                return (controller != null) && (controller != this.getEntity());
+            }
+            return true;
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IRenderRaceHandler getRaceRenderer() {
+        if (this.RendererRace == null) {
+            this.RendererRace = new RaceFaelisRenderer(this.getEntity(), this);
+        }
+        return this.RendererRace;
+    }
 }

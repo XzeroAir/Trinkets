@@ -1,75 +1,108 @@
 package xzeroair.trinkets.items.potions;
 
-import java.util.List;
-import java.util.UUID;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.items.base.BasePotion;
+import xzeroair.trinkets.traits.elements.Element;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class TransformationPotion extends BasePotion {
 
-	String uuid;
+    // I assume before the packet syncs to the client, the client removes the attribute or something, in the empty race handler
 
-	public TransformationPotion(String name, int color, String uuid, int IconX, int IconY) {
-		super(name, 0, color, IconX, IconY);
-		this.uuid = uuid;
-		this.setIconIndex(IconX, IconY);
-		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, uuid, 1, 0);
-	}
+    protected RaceCache race;
+    protected Element primary, secondary;
 
-	public TransformationPotion(String name, int color, String uuid, int IconX, int IconY, ResourceLocation texturelocation) {
-		super(name, 0, color, IconX, IconY);
-		this.uuid = uuid;
-		ICON = texturelocation;
-		this.setIconIndex(IconX, IconY);
-		this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, uuid, 1, 0);
-	}
+    public TransformationPotion(String modid, String name, int color, int duration, @Nonnull RaceCache cache, ResourceLocation texture) {
+        super(modid, name, color, duration, false, -1, -1, texture);
+        this.registerPotionAttributeModifier(RaceAttribute.ENTITY_RACE, cache.getRace().getUUID().toString(), 1, 0);
+        this.race = cache;
+        this.primary = cache.getPrimaryElement();
+        this.secondary = cache.getSecondaryElement();
+    }
 
-	@Override
-	public boolean isReady(int duration, int amplifier) {
-		return duration <= 1;
-	}
+    @Override
+    public void applyAttributesModifiersToEntity(EntityLivingBase entity, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
+        List<Potion> removal = new ArrayList<>();
+        for (Entry<Potion, PotionEffect> effect : entity.getActivePotionMap().entrySet()) {
+            if (effect.getKey() instanceof TransformationPotion) {
+                TransformationPotion pot = (TransformationPotion) effect.getKey();
+                boolean matches = this.getRaceCache().compare(pot.getRaceCache());
+                if (!matches) {
+                    removal.add(pot);
+                }
+            }
+        }
+        for (Potion pot : removal) {
+            entity.removePotionEffect(pot);
+        }
+        RaceAttribute.removeAllModifiers(entity);
+        Capabilities.getEntityProperties(entity, prop -> {
+            prop.setPotionRace(this.getRaceCache());
+        });
+        super.applyAttributesModifiersToEntity(entity, attributeMapIn, amplifier);
+    }
 
-	@Override
-	public boolean isInstant() {
-		return false;
-	}
+    @Override
+    public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
 
-	// Triggers when the potion ends, No, Triggers when the Potion isReady
-	@Override
-	public void performEffect(EntityLivingBase entity, int amplifier) {
-	}
+    }
 
-	// works if instant on all Potion Types, No, Only ever Called if the potion is instant
-	@Override
-	public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entityLivingBaseIn, int amplifier, double health) {
-		RaceAttribute.removeAllModifiersExcluding(entityLivingBaseIn, UUID.fromString(uuid));
-	}
+    @Override
+    public void performEffect(@Nonnull EntityLivingBase entity, int amplifier) {
+    }
 
-	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entity, AbstractAttributeMap attributeMapIn, int amplifier) {
-		RaceAttribute.removeModifier(entity, UUID.fromString(uuid));
-		super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
-	}
+    @Override
+    public void removeAttributesModifiersFromEntity(@Nonnull EntityLivingBase entity, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
+        super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
+        Capabilities.getEntityProperties(entity, prop -> {
+            prop.setPotionRace(null);
+        });
+    }
 
-	@Override
-	public boolean hasStatusIcon() {
-		Minecraft.getMinecraft().renderEngine.bindTexture(ICON);
-		return true;
-	}
+    @Override
+    public boolean isReady(int duration, int amplifier) {
+        return true;//super.isReady(duration, amplifier);
+    }
 
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return super.getCurativeItems();
-	}
+    @Override
+    public boolean isInstant() {
+        return false;//super.isInstant();
+    }
 
-	public String getRaceUUID() {
-		return uuid;
-	}
+    @Override
+    public boolean isBadEffect() {
+        return super.isBadEffect();
+    }
+
+    @Override
+    public boolean isBeneficial() {
+        return super.isBeneficial();
+    }
+
+    @Override
+    public List<ItemStack> getCurativeItems() {
+        List<ItemStack> cures = new ArrayList<>();
+        return cures;
+    }
+
+    public RaceCache getRaceCache() {
+        return this.race;
+    }
+
+    public String getRaceUUID() {
+        return this.getRaceCache().getRace().getUUID().toString();
+    }
 }

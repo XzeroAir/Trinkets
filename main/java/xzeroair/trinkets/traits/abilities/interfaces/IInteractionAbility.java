@@ -11,9 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
 
-public interface IInteractionAbility extends IAbilityHandler {
+public interface IInteractionAbility extends IAbilityInterface {
 
 	default void interact(EntityLivingBase entityLiving, World world, ItemStack itemStack, EnumHand hand, EnumFacing face, BlockPos pos) {
 

@@ -1,159 +1,107 @@
 package xzeroair.trinkets.races.dwarf.config;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilitySkilledMiner;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
+import xzeroair.trinkets.util.config.race.RaceMagicConfig;
+import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
-//@formatter:off
 public class DwarfConfig {
 
-	private final String name = "dwarf";
-	private final String PREFIX = Reference.MODID + ".config.races." + name;
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_RACES_DWARF;
 
-		@Config.Comment("Dwarves Special Fortune Like Effect. Set to False to Disable. Default True")
-		@Name("01. Fortune Effect")
-		@LangKey(PREFIX + ".fortune")
-		public boolean fortune = true;
+    public DwarfConfig() {
+    }
 
-		@Config.Comment("Should the Dwarves Fortune Effect stack with the Fortune Enchantment?. Set to False to Disable. Default True")
-		@Name("02. Fortune Stacking")
-		@LangKey(PREFIX + ".fortune.stacking")
-		public boolean fortune_mix = true;
+    /// Default Abilities
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-		@Config.Comment("Should the Dwarves lower the mining level requirement for pickaxes. IE. an Iron Pickaxe will be able to break Obsidian. Set to False to Disable. Default True")
-		@Name("03. Skilled Mining Ability")
-		@LangKey(PREFIX + ".skilledminer")
-		public boolean skilled_miner = true;
+    public class ConfigAbilities {
 
-		@Config.Comment("Mining Speed is static at (Block Hardness * 4), Not Including other Modifiers.  Set to False to Disable. Default True")
-		@Name("04. Static Mining")
-		@LangKey(PREFIX + ".static_mining")
-		public boolean static_mining = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_MINER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_MINER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_MINER)
+        public ConfigAbilitySkilledMiner SKILLED_MINER = new ConfigAbilitySkilledMiner();
 
-		@Name("Block Settings")
-		@LangKey(PREFIX + ".blocks")
-		public Blocks BLOCKS = new Blocks();
-		public class Blocks {
+    }
 
-			@Name("01. Ore Blocks that Fortune Effect works on")
-			@LangKey(PREFIX + ".fortune.blocks.list")
-			public String[] Blocks = new String[] {
-					"minecraft:coal_ore",
-					"minecraft:lapis_ore",
-					"minecraft:diamond_ore",
-					"minecraft:redstone_ore",
-					"minecraft:lit_redstone_ore",
-					"minecraft:emerald_ore",
-					"minecraft:quartz_ore"
-			};
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL)
+    public boolean CAN_MOUNT = true;
 
-			@Config.Comment("Should Blocks give Bonus XP")
-			@Name("02. Bonus XP")
-			@LangKey(PREFIX + ".blocks.xp")
-			public boolean bonus_exp = true;
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT)
+    public boolean CAN_CONTROL_BOATS = true;
 
-			@Name("03. Bonus XP Max")
-			@LangKey(PREFIX + ".blocks.xp.max")
-			public int bonus_exp_max = 2;
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED)
+    public boolean MOUNT_WHITELIST = false;
 
-			@Name("04. Bonus XP Min")
-			@LangKey(PREFIX + ".blocks.xp.min")
-			public int bonus_exp_min = 0;
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST)
+    public String[] MOUNT_BLACKLIST = {};
 
-			@Config.Comment("Blocks in this List will give Bonus XP Randomly between Bonus_XP_Min and Bonus_XP_Max")
-			@Name("05. Blocks that give Bonus XP")
-			@LangKey(PREFIX + ".blocks.xp.list")
-			public String[] xPBlocks = new String[] {
-					"minecraft:coal_ore",
-					"minecraft:iron_ore",
-					"minecraft:gold_ore",
-					"minecraft:lapis_ore",
-					"minecraft:redstone_ore",
-					"minecraft:diamond_ore",
-					"minecraft:emerald_ore",
-					"minecraft:quartz_ore"
-			};
+    @Config.Name("05. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-			@Config.Comment("Should Blocks give at least 1 XP")
-			@Name("06. Minimum XP Blocks")
-			@LangKey(PREFIX + ".blocks.minimum.xp")
-			public boolean minXpBlocks = true;
+    @Config.Name("06. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
 
-			@Config.Comment("Blocks in this List will always give 1 xp when broken")
-			@Name("07. Blocks that give a Minimum XP")
-			@LangKey(PREFIX + ".blocks.minimum.xp.list")
-			public String[] MinBlocks = new String[] { "minecraft:stone", "minecraft:end_stone" };
-		}
-
-		@Name("Compatability Settings")
-		@LangKey(Reference.MODID + ".config.compatability")
-		private Compatability compat = new Compatability();
-		public class Compatability {
-
-			@Name("Tough as Nails Compatability")
-			@LangKey(Reference.MODID + ".config.toughasnails")
-			private TANCompat tan = new TANCompat();
-			public class TANCompat {
-
-			}
-
-		}
-
-		private final boolean 	armor = false;
-		private final double 	armorAmount = 0;
-		private final int		armorOperation = 1;
-		private final boolean 	attackSpeed = true;
-		private final double 	attackSpeedAmount = -0.25D;
-		private final int		attackSpeedOperation = 2;
-		private final boolean 	damage = true;
-		private final double 	damageAmount = 0.25D;
-		private final int		damageOperation = 1;
-		private final boolean 	health = true;
-		private final double 	healthAmount = -0.3D;
-		private final int		healthOperation = 1;
-		private final boolean 	knockback = true;
-		private final double 	knockbackAmount = 0.2;
-		private final int		knockbackOperation = 1;
-		private final boolean 	speed = true;
-		private final double 	speedAmount = -0.25D;
-		private final int		speedOperation = 1;
-		private final boolean 	swimSpeed = false;
-		private final double 	swimSpeedAmount = 0;
-		private final int		swimSpeedOperation = 1;
-		private final boolean 	toughness = true;
-		private final double 	toughnessAmount = 0.25D;
-		private final int		toughnessOperation = 2;
-		private final boolean	luck = false;
-		private final double	luckAmount = 0;
-		private final int		luckOperation = 1;
-		private final boolean	reach = false;
-		private final double	reachAmount = 0;
-		private final int		reachOperation = 1;
-		private final boolean	jump = false;
-		private final double	jumpAmount = 0;
-		private final int		jumpOperation = 1;
-		private final boolean	stepHeight = false;
-		private final double	stepHeightAmount = 0;
-		private final int		stepHeightOperation = 1;
+    @Config.Name("07. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
 
-		@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-		@Name("Attributes")
-		@LangKey(Reference.MODID + ".config.attributes")
-		public ConfigAttribs Attributes = new ConfigAttribs(
-				armor, 			armorAmount, 		armorOperation,
-				attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-				damage, 		damageAmount, 		damageOperation,
-				health, 		healthAmount, 		healthOperation,
-				knockback, 		knockbackAmount, 	knockbackOperation,
-				speed, 			speedAmount, 		speedOperation,
-				swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-				toughness, 		toughnessAmount, 	toughnessOperation,
-				luck,			luckAmount,			luckOperation,
-				reach,			reachAmount,		reachOperation,
-				jump, 			jumpAmount, 		jumpOperation,
-				stepHeight,		stepHeightAmount, 	stepHeightOperation
-				);
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.maxHealth, Amount:-0.3, Operation:1",
+            "Name:generic.knockbackResistance; Amount:0.2; Operation:1",
+            "Name:generic.movementSpeed, Amount:-0.25, Operation:1",
+            "Name:generic.attackDamage, Amount:0.25, Operation:1",
+            "Name:generic.attackSpeed, Amount:-0.25, Operation:2",
+            "Name:generic.armorToughness, Amount:0.25, Operation:2",
+            //@formatter:on
+    };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC)
+    public RaceMagicConfig MAGIC = new RaceMagicConfig(100);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SIZE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
+    public RaceSizeConfig SIZE = new RaceSizeConfig(75, 75);
+
+    /// Default Compat
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+    }
+
 }

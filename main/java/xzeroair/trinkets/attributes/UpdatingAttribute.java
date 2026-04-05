@@ -9,33 +9,35 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.network.play.server.SPacketEntityProperties;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidCompat;
 
 public class UpdatingAttribute {
-	private final String id = Reference.MODID + ".";
-	private EntityLivingBase entity;
-	private String name;
-	private String attribute;
-	private UUID uuid;
-	private double amount;
-	private int operation;
-	private boolean isSavedInNBT;
 
-	public UpdatingAttribute(EntityLivingBase entity, UUID uuid, IAttribute attribute) {
-		this(uuid, attribute);
-		this.entity = entity;
-	}
+	public String modifierName;
+	public String attribute;
+	public UUID uuid;
+	public double amount;
+	public int operation;
+	public boolean isSavedInNBT;
 
 	public UpdatingAttribute(UUID uuid, IAttribute attribute) {
-		this(Reference.MODID + "." + attribute.getName(), uuid, attribute.getName());
+		this(Reference.MODID + "." + attribute.getName() + ".modifier", uuid, attribute.getName());
+	}
+
+	public UpdatingAttribute(String name, UUID uuid, IAttribute attribute) {
+		this(name, uuid, attribute.getName());
 	}
 
 	public UpdatingAttribute(String name, UUID uuid, String attributeName) {
-		this.name = name;
+		modifierName = name;
 		this.uuid = uuid;
 		attribute = attributeName;
 		isSavedInNBT = true;
+		amount = 0;
+		operation = 0;
 	}
 
 	public UpdatingAttribute setSavedInNBT(boolean isSavedInNBT) {
@@ -43,101 +45,95 @@ public class UpdatingAttribute {
 		return this;
 	}
 
+	public UpdatingAttribute setAmount(double amount) {
+		this.amount = amount;
+		return this;
+	}
+
+	public UpdatingAttribute setOperation(int operation) {
+		this.operation = operation;
+		return this;
+	}
+
 	private AttributeModifier createModifier(double amount, int operation) {
 		if (!isSavedInNBT) {
-			return new AttributeModifier(uuid, name, amount, operation).setSaved(false);
+			return new AttributeModifier(uuid, modifierName, amount, operation).setSaved(false);
 		}
-		return new AttributeModifier(uuid, name, amount, operation);
+		return new AttributeModifier(uuid, modifierName, amount, operation);
+	}
+
+	public boolean isValidAttribute(EntityLivingBase entity) {
+		if (entity != null) {
+			final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);
+			return AttributeInstance != null;
+		}
+		return false;
+	}
+
+	public void addModifier(EntityLivingBase entity) {
+		this.addModifier(entity, amount, operation);
 	}
 
 	public void addModifier(EntityLivingBase entity, double amount, int operation) {
-		this.entity = entity;
-		this.addModifier(amount, operation);
-	}
-
-	public void addModifier(double amount, int operation) {
-		if (entity == null) {
+		final World world = entity == null ? null : entity.getEntityWorld();
+		if ((entity == null) || (world == null)) {
 			return;
 		}
-		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);
 		if ((AttributeInstance == null) || (uuid.compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0)) {
 			return;
 		}
 		if ((AttributeInstance.getModifier(uuid) != null)) {
 			final AttributeModifier m = AttributeInstance.getModifier(uuid);
-			if ((m.getAmount() != amount) || (m.getOperation() != operation)) {
-				this.removeModifier();
+			if ((amount == 0) || (m.getAmount() != amount) || (m.getOperation() != operation)) {
+				this.removeModifier(entity);
 			}
 		}
 		if (amount != 0) {
 			if (AttributeInstance.getModifier(uuid) == null) {
 				if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
 					final AttributeModifier modifier = this.createModifier(amount, operation);
-					final float Health = entity.getHealth();
+					//					float oldHealth = entity.getHealth();
+					//					float oldMax = entity.getMaxHealth();
 					AttributeInstance.applyModifier(modifier);
-					//					if (!entity.world.isRemote) {
-					//					if (Health > AttributeInstance.getAttributeValue()) {
-					//						if (entity instanceof EntityPlayerMP) {
-					//							entity.setHealth(entity.getMaxHealth());
-					//							//							System.out.println("Sending?");
-					//							NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
-					//						}
+					//					entity.setHealth(oldHealth);
+					//					float newMax = entity.getMaxHealth();
+					//					float newHealth = entity.getHealth();
+					//					float diff = newMax - oldMax;
+					//					if (diff > 0) {
+					//						entity.heal(diff);
+					//					} else {
 					//					}
-					if ((entity != null) && !entity.getEntityWorld().isRemote) {
-						if (entity.getEntityWorld() instanceof WorldServer) {
+
+					FirstAidCompat.rescale(entity);
+					if (!world.isRemote) {
+						if (world instanceof WorldServer) {
 							final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-							((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
+							((WorldServer) world).getEntityTracker().sendToTrackingAndSelf(entity, packet);
 						}
 					}
-					//					}
 				} else {
 					AttributeInstance.applyModifier(this.createModifier(amount, operation));
 				}
-				//				if ((entity != null) && !entity.getEntityWorld().isRemote) {
-				//					if (entity.getEntityWorld() instanceof WorldServer) {
-				//						final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-				//						((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
-				//					}
-				//				}
 			}
 		}
-	}
 
-	public void removeModifier() {
-		if (entity == null) {
-			return;
-		}
-		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);//.getAttributeMap().getAttributeInstance(attrib);
-		if ((AttributeInstance == null) || (AttributeInstance.getModifier(uuid) == null)) {
-			return;
-		}
-		if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
-			final float health = entity.getHealth();
-			AttributeInstance.removeModifier(uuid);
-			if (health > AttributeInstance.getAttributeValue()) {
-				//				if (!entity.world.isRemote) {
-				//					if (entity instanceof EntityPlayerMP) {
-				entity.setHealth(entity.getMaxHealth());
-				//						NetworkHandler.INSTANCE.sendTo(new HealthUpdatePacket(entity), (EntityPlayerMP) entity);
-				//			}
-				//							}
-			}
-		} else {
-			if (AttributeInstance.getAttribute() == JumpAttribute.stepHeight) {
-				if (entity.stepHeight != AttributeInstance.getBaseValue()) {
-					entity.stepHeight = (float) AttributeInstance.getBaseValue();
-				}
-			}
-			AttributeInstance.removeModifier(uuid);
-		}
-		//		if ((entity != null) && !entity.getEntityWorld().isRemote) {
-		//			final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-		//			((WorldServer) entity.getEntityWorld()).getEntityTracker().sendToTrackingAndSelf(entity, packet);
-		//		}
 	}
 
 	public void removeModifier(EntityLivingBase entity) {
-		this.entity = entity;
-		this.removeModifier();
+		final World world = entity == null ? null : entity.getEntityWorld();
+		if (((entity == null) || (world == null))) {
+			return;
+		}
+		final IAttributeInstance AttributeInstance = entity.getAttributeMap().getAttributeInstanceByName(attribute);
+		if ((AttributeInstance == null) || (AttributeInstance.getModifier(uuid) == null)) {
+			return;
+		}
+		if (AttributeInstance.getAttribute() == JumpAttribute.stepHeight) {
+			if (entity.stepHeight != AttributeInstance.getBaseValue()) {
+				entity.stepHeight = (float) AttributeInstance.getBaseValue();
+			}
+		}
+		AttributeInstance.removeModifier(uuid);
 	}
 }

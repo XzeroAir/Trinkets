@@ -2,20 +2,27 @@ package xzeroair.trinkets.api;
 
 import net.minecraft.entity.Entity;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
 
+/**
+ * Self Note
+ * Do not Remove, Change or Rename this method, or Class
+ */
 public class EntityApiHelper {
 
-	public static String getEntityRace(Entity entity) {
-		try {
-			final EntityProperties raceProp = Capabilities.getEntityRace(entity);
-			if (raceProp != null) {
-				return raceProp.getCurrentRace().getName();
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return "";
-	}
+    public static String getEntityRace(Entity entity) {
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getRace().getName());
+    }
+
+    public static String getEntityRaceRegistryName(Entity entity) {
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getRace().getRegistryName().toString());
+    }
+
+    public static String getEntityPrimaryElement(Entity entity) {
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getName());
+    }
+
+    public static String getEntityPrimaryElementRegistryName(Entity entity) {
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getRegistryName().toString());
+    }
 
 }

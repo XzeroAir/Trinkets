@@ -1,43 +1,65 @@
 package xzeroair.trinkets.capabilities;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public class CapabilityProviderBase<Handler extends CapabilityBase> implements ICapabilitySerializable<NBTTagCompound> {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	private final Capability<?> capability;
-	private final Handler handler;
+public class CapabilityProviderBase<Handler extends CapabilityBase<Handler, E>, E> implements ICapabilitySerializable<NBTBase> {
 
-	public CapabilityProviderBase(Capability<?> capability, Handler handler) {
-		this.capability = capability;
-		this.handler = handler;
-	}
+    protected final Capability<Handler> capability;
+    protected final EnumFacing facing;
+    protected final Handler handler;
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return capability == this.capability;
-	}
+    public CapabilityProviderBase(final Capability<Handler> capability, @Nullable final Handler handler) {
+        this(capability, null, handler);
+    }
 
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == this.capability) {
-			return (T) handler;
-		}
-		return null;
-	}
+    public CapabilityProviderBase(final Capability<Handler> capability, @Nullable final EnumFacing facing, @Nullable final Handler handler) {
+        this.capability = capability;
+        this.facing = facing;
+        this.handler = handler;
+    }
 
-	@Override
-	public NBTTagCompound serializeNBT() {
-		final NBTTagCompound tag = handler.getTag();
-		handler.saveToNBT(tag);
-		return tag;
-	}
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        return capability == this.getCapability();
+    }
 
-	@Override
-	public void deserializeNBT(NBTTagCompound nbt) {
-		handler.loadFromNBT(nbt);
-	}
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (capability == this.getCapability()) {
+            return this.getCapability().cast(this.getInstance());
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public NBTBase serializeNBT() {
+        return this.getCapability().writeNBT(this.getInstance(), this.getFacing());
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt) {
+        this.getCapability().readNBT(this.getInstance(), this.getFacing(), nbt);
+    }
+
+    public final Capability<Handler> getCapability() {
+        return this.capability;
+    }
+
+    @Nullable
+    public EnumFacing getFacing() {
+        return this.facing;
+    }
+
+    @Nullable
+    public Handler getInstance() {
+        return this.handler;
+    }
 
 }

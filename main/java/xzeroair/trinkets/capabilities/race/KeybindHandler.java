@@ -1,229 +1,221 @@
 package xzeroair.trinkets.capabilities.race;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.entity.Entity;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.client.keybinds.KeyHandler;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
+import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 public class KeybindHandler {
 
-	Map<String, KeyHandler> storage;
+    public static enum keyEnum {
 
-	public KeybindHandler() {
-		storage = new HashMap<>();
-		this.addKeyBind("Left");
-		this.addKeyBind("Right");
-		this.addKeyBind("Forward");
-		this.addKeyBind("Back");
-		this.addKeyBind("Jump");
-		this.addKeyBind("Sneak");
-	}
+        LEFT("Left"), RIGHT("Right"), FORWARD("Forward"), BACK("Backward"), JUMP("Jump"), SNEAK("Sneak"), NONE("None");
 
-	public void addKeyBind(String key) {
-		if (!storage.containsKey(key)) {
-			storage.put(key, new KeyHandler());
-		}
-	}
+        private String name;
 
-	public KeyHandler getKeyHandler(String key) {
-		if (storage.containsKey(key)) {
-			return storage.get(key);
-		} else {
-			final KeyHandler kh = new KeyHandler();
-			storage.put(key, kh);
-			return kh;
-		}
-	}
+        private keyEnum(String name) {
+            this.name = name;
+        }
 
-	public boolean pressKey(Entity entity, String key, int state) {
-		switch (key) {
-		case "Left":
-			return this.left(entity, state);
-		case "Right":
-			return this.right(entity, state);
-		case "Forward":
-			return this.forward(entity, state);
-		case "Backward":
-			return this.back(entity, state);
-		case "Jump":
-			return this.jump(entity, state);
-		case "Sneak":
-			return this.sneak(entity, state);
-		default:
-			return false;
-		}
-	}
+        public String getName() {
+            return name;
+        }
 
-	//	public int tickKeyState(String key, boolean isDown) {
-	//		KeyHandler keybind = this.getKeyHandler(key);
-	//		if (keybind != null) {
-	//			return keybind.tickKey(isDown);
-	//		} else {
-	//			return -1;
-	//		}
-	//	}
+        private static final keyEnum[] ID = new keyEnum[values().length];
 
-	public boolean left(Entity entity, String ability, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			final IAbilityInterface kbAbility = cap.getAbilityHandler().getAbilityByName(ability);
-			if (kbAbility != null) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(kbAbility);
-					if ((handler != null) && (handler instanceof IMovementAbility)) {
-						final IMovementAbility keybind = ((IMovementAbility) handler);
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + kbAbility.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
+        public static keyEnum byName(String name) {
+            for (int i = 0; i < values().length; i++) {
+                if (byID(i).getName().contentEquals(name)) return byID(i);
+            }
+            return NONE;
+        }
 
-	public boolean left(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.left(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+        public static keyEnum byID(int value) {
+            if ((value < 0) || (value >= values().length)) {
+                value = 0;
+            }
+            return values()[value];
+        }
 
-	public boolean right(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.right(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+    }
 
-	public boolean forward(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.forward(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+    private Map<String, KeyHandler> storage;
 
-	public boolean back(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.back(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+    public KeybindHandler() {
+        storage = new HashMap<>();
+        this.addKeyBind(keyEnum.LEFT.getName());
+        this.addKeyBind(keyEnum.RIGHT.getName());
+        this.addKeyBind(keyEnum.FORWARD.getName());
+        this.addKeyBind(keyEnum.BACK.getName());
+        this.addKeyBind(keyEnum.JUMP.getName());
+        this.addKeyBind(keyEnum.SNEAK.getName());
+    }
 
-	public boolean jump(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.jump(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+    public void addKeyBind(String key) {
+        if (!storage.containsKey(key)) {
+            storage.put(key, new KeyHandler());
+        }
+    }
 
-	public boolean sneak(Entity entity, int state) {
-		final EntityProperties cap = Capabilities.getEntityRace(entity);
-		if (cap != null) {
-			for (final IAbilityInterface ability : cap.getAbilityHandler().getAbilitiesList()) {
-				try {
-					final IAbilityHandler handler = cap.getAbilityHandler().getAbilityInstance(ability);
-					if ((handler != null)) {
-						if ((handler instanceof IMovementAbility)) {
-							final IMovementAbility keybind = (IMovementAbility) handler;
-							if (!keybind.sneak(entity, state)) {
-								return false;
-							}
-						}
-					}
-				} catch (final Exception e) {
-					Trinkets.log.error("Trinkets had an Error with Ability:" + ability.getName());
-					e.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+    public KeyHandler getKeyHandler(String key) {
+        if (storage.containsKey(key)) return storage.get(key);
+        else {
+            final KeyHandler kh = new KeyHandler();
+            return storage.put(key, kh);
+        }
+    }
+
+    public boolean pressKey(Entity entity, String key, int state) {
+        keyEnum KEY = keyEnum.byName(key);
+        switch (KEY) {
+            case LEFT:
+                return this.left(entity, state);
+            case RIGHT:
+                return this.right(entity, state);
+            case FORWARD:
+                return this.forward(entity, state);
+            case BACK:
+                return this.back(entity, state);
+            case JUMP:
+                return this.jump(entity, state);
+            case SNEAK:
+                return this.sneak(entity, state);
+            default:
+                return false;
+        }
+    }
+
+    public boolean left(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).left(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
+
+    public boolean right(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).right(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
+
+    public boolean forward(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).forward(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
+
+    public boolean back(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).back(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
+
+    public boolean jump(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).jump(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
+
+    public boolean sneak(Entity entity, int state) {
+        return Capabilities.getEntityProperties(entity, true, (properties, bool) -> {
+            Map<String, AbilityHolder> abilities = properties.getAbilityHandler().getActiveAbilities();
+            for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
+                String key = entry.getKey();
+                AbilityHolder holder = entry.getValue();
+                try {
+                    IAbilityInterface ability = holder.getAbility();
+                    if (ability instanceof IMovementAbility) {
+                        boolean cancel = ((IMovementAbility) ability).sneak(entity, state);
+                        if (!cancel) return false;
+                    }
+                } catch (Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+            return bool;
+        });
+    }
 
 }

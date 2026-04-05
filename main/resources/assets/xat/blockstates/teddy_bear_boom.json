@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "normal": { "model": "xat:teddy_bear_boom"},
+        "facing=north": {"model": "xat:teddy_bear_boom"},
+        "facing=south": {"model": "xat:teddy_bear_boom", "y": 180},
+        "facing=west": {"model": "xat:teddy_bear_boom", "y": 270},
+        "facing=east": {"model": "xat:teddy_bear_boom", "y": 90}
+    }
+}

@@ -1,9 +1,8 @@
 package xzeroair.trinkets.traits.abilities.interfaces;
 
 import net.minecraft.entity.Entity;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
 
-public interface IMovementAbility extends IAbilityHandler {
+public interface IMovementAbility extends IAbilityInterface {
 
 	public default boolean left(Entity entity, int state) {
 		return true;

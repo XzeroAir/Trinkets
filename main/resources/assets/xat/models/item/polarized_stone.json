@@ -3,12 +3,6 @@
     "textures" : {
         "layer0" : "xat:items/polarized_stone"
     },
-    "overrides": [
-        { "predicate": { "in_use": 0.0000000 }, "model": "xat:item/polarized_stone" },
-        { "predicate": { "in_use": 1.0000000 }, "model": "xat:item/polarized_stone_magnet" },
-		{ "predicate": { "in_use": 2.0000000 }, "model": "xat:item/polarized_stone_repell" },
-		{ "predicate": { "in_use": 3.0000000 }, "model": "xat:item/polarized_stone_both" }
-    ],
         "display" : {
 	
 	     "thirdperson_righthand": {

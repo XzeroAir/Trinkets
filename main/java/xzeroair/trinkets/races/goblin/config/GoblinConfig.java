@@ -1,95 +1,127 @@
 package xzeroair.trinkets.races.goblin.config;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityWolfRider;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
+import xzeroair.trinkets.util.config.race.RaceMagicConfig;
+import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
 public class GoblinConfig {
 
-	private final String name = "goblin";
-	private final String PREFIX = Reference.MODID + ".config.races." + name;
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_RACES_GOBLIN;
 
-	@Config.Comment("")
-	@Name("01. Resistances")
-	@LangKey(PREFIX + ".natural_resistance")
-	public boolean natural_resistance = true;
-	@Config.Comment("")
-	@Name("02. Goblin Rider")
-	@LangKey(PREFIX + ".rider")
-	public boolean rider = true;
+    public GoblinConfig() {
+    }
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	private Compatability compat = new Compatability();
+    /// Default Abilities
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	public class Compatability {
+    public class ConfigAbilities {
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_WOLF_RIDER_COMMENT)
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_WOLF_RIDER_NAME)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_WOLF_RIDER)
+        public ConfigAbilityWolfRider WOLF_RIDER = new ConfigAbilityWolfRider();
 
-		public class TANCompat {
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_COMMENT)
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_NAME)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING)
+        public ConfigAbilityClimbing CLIMBING = new ConfigAbilityClimbing();
 
-		}
+    }
 
-	}
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_RACES_GOBLIN_RESISTANCE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_GOBLIN_RESISTANCE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_GOBLIN_RESISTANCE)
+    public boolean NATURAL_RESISTANCE_TO_EXPLOSIVES = true;
 
-	//@formatter:off
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 0;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 0;
-	private final boolean 	damage = true;
-	private final double 	damageAmount = -0.5;
-	private final int		damageOperation = 1;
-	private final boolean 	health = true;
-	private final double 	healthAmount = -0.4;
-	private final int		healthOperation = 2;
-	private final boolean 	knockback = false;
-	private final double 	knockbackAmount = 0;
-	private final int		knockbackOperation = 0;
-	private final boolean 	speed = true;
-	private final double 	speedAmount = 0.2;
-	private final int		speedOperation = 1;
-	private final boolean 	swimSpeed = true;
-	private final double 	swimSpeedAmount = 0.1;
-	private final int		swimSpeedOperation = 1;
-	private final boolean 	toughness = false;
-	private final double 	toughnessAmount = 0;
-	private final int		toughnessOperation = 0;
-	private final boolean	luck = true;
-	private final double	luckAmount = 1;
-	private final int		luckOperation = 0;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 0;
-	private final boolean	jump = false;
-	private final double	jumpAmount = 0;
-	private final int		jumpOperation = 2;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 2;
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_FRIENDLY_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_FRIENDLY_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_FRIENDLY)
+    public boolean FRIENDLY_CREEPERS = true;
+
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE)
+    public boolean CREEPERS_EXPLODE_ON_CONTACT = true;
+
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL)
+    public boolean CAN_MOUNT = true;
+
+    @Config.Name("05. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT)
+    public boolean CAN_CONTROL_BOATS = true;
+
+    @Config.Name("06. " + ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED)
+    public boolean MOUNT_WHITELIST = false;
+
+    @Config.Name("07. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST)
+    public String[] MOUNT_BLACKLIST = {};
+
+    @Config.Name("08. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
+
+    @Config.Name("09. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+    @Config.Name("10. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 			jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.maxHealth, Amount:-0.4, Operation:2",
+            "Name:generic.movementSpeed, Amount:0.2, Operation:1",
+            "Name:generic.attackDamage, Amount:0.5, Operation:1",
+            "Name:generic.luck, Amount:1, Operation:0",
+            "Name:forge.swimSpeed, Amount:0.1, Operation:1"
+            //formatter:on
+    };
+
+    @Config.Name( ConstantsConfigLang.CONFIG_MAGIC_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC)
+    public RaceMagicConfig MAGIC = new RaceMagicConfig(75);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SIZE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
+    public RaceSizeConfig SIZE = new RaceSizeConfig(50, 50);
+
+    /// Default Compat
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+    }
+
 }

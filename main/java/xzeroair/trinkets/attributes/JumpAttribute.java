@@ -4,6 +4,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import xzeroair.trinkets.util.Reference;
 
+//@formatter:off
 public class JumpAttribute {
 
 	public JumpAttribute() {
@@ -12,12 +13,12 @@ public class JumpAttribute {
 	//	0.33319999363422365
 	public static final IAttribute Jump = new RangedAttribute(
 			(IAttribute) null, Reference.MODID + ".jump",
-			0.42F, 0F, 256F
-	).setDescription("Jump Height").setShouldWatch(true);
+			(double) 1.0F, (double)0.0F, (double) Integer.MAX_VALUE
+			).setDescription("Jump Height").setShouldWatch(true);
 
 	public static final IAttribute stepHeight = new RangedAttribute(
 			(IAttribute) null, Reference.MODID + ".stepheight",
-			0.6F, 0F, 256F
+			(double) 0.6F, (double) 0.0F, (double) Integer.MAX_VALUE
 	).setDescription("Step Height").setShouldWatch(true);
 
 }

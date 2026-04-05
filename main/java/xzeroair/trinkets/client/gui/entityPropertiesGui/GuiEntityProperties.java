@@ -1,19 +1,12 @@
 package xzeroair.trinkets.client.gui.entityPropertiesGui;
 
-import java.io.IOException;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Config;
@@ -22,281 +15,316 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
+import xzeroair.trinkets.client.gui.helpers.ColorSlider;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.races.EntityRacePropertiesHandler;
+import xzeroair.trinkets.traits.elements.Element;
+import xzeroair.trinkets.util.ConstantsTextTranslations;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
 
+import java.io.IOException;
+
 @SideOnly(Side.CLIENT)
-public class GuiEntityProperties extends GuiScreen {
+public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterface {
 
-	public EntityPlayer player;
-	public EntityProperties properties;
-	public GuiTextField colorField, colorField2;
-	protected GuiPropertiesSlider r, g, b, a, r2, g2, b2, a2;
-	public ColorHelper colorHelper;
-	public int[] color;
-	public int buttonPressed;
+    public enum ColorOption {
+        //@formatter:off
+        Normal(0),
+        Inverted(1),
+        Solid(2);
+        //@formatter:on
 
-	public int manaBar = 1;
-	public int abilityMenu = 2;
-	public int manaOrientation = 3;
-	public int toggleTrait = 4;
-	public int colorFieldID = 5;
-	public int flipPlayer = 6;
-	public int resetColor = 7;
-	public int redSlider = 8;
-	public int greenSlider = 9;
-	public int blueSlider = 10;
-	//		public int alphaSlider = 11;
-	public int closeGui = 11;
-	public int traitX = 12;
-	public int traitY = 13;
-	public int traitZ = 14;
-	public int traitWidth = 15;
-	public int redSlider2 = 16;
-	public int greenSlider2 = 17;
-	public int blueSlider2 = 18;
+        private final int id;
 
-	protected boolean flip = false;
+        ColorOption(int id) {
+            this.id = id;
+        }
 
-	public GuiEntityProperties(EntityPlayer player) {
-		this.player = player;
-		colorHelper = new ColorHelper();
-		properties = Capabilities.getEntityRace(player);
-	}
+        public int getId() {
+            return this.id;
+        }
 
-	public static ResourceLocation background = null;
-	private float oldMouseX;
-	private float oldMouseY;
+        public static int getMaxLength() {
+            return values().length;
+        }
 
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
-		colorField.updateCursorCounter();
-	}
+        public static ColorOption color(int value) {
+            if ((value < 0) || (value >= values().length)) {
+                value = 0;
+            }
+            return values()[value];
+        }
+    }
 
-	@Override
-	public void initGui() {
-		buttonList.clear();
-		super.initGui();
 
-		this.addButton(new GuiPropertiesButton(manaBar, 2, height - 22, 60, 20, "Mana Bar")); // Open Mana bar gui
-		this.addButton(new GuiPropertiesButton(abilityMenu, 2, 2, 50, 20, "Stats"));
-		this.addButton(new GuiPropertiesButton(manaOrientation, 64, height - 22, 14, 20, "")); // Change Mana Bar Direction
-		this.addButton(new GuiPropertiesButton(toggleTrait, 2, 40, 60, 20, "")); // Toggle Trait Shown
+    public EntityPlayer player;
+    public EntityRacePropertiesHandler properties;
 
-		int bX = (width - (width / 4));
-		int bY = (height - (height / 2));
-		bX -= 30;
-		bY -= (height / 4);
-		this.addButton(new GuiPropertiesButton(flipPlayer, (width / 2) - 30, 0, 60, 20, "Flip")); // Flip Player
+    private final ResourceLocation background = null;
+    private float oldMouseX;
+    private float oldMouseY;
 
-		colorField = new GuiTextField(colorFieldID, fontRenderer, bX, bY, 100, 20);
-		colorField.setMaxStringLength(8);
-		colorField.setText(properties.getTraitColor());
-		colorHelper.setColor(properties.getTraitColor());
-		// WAS ID 3
-		this.addButton(new GuiPropertiesButton(resetColor, bX + 102, bY - 1, 20, 20, "R")); // Color Reset
-		bY += 24;
-		r = new GuiPropertiesSlider(this, redSlider, bX, bY, 100, 20, "Red", colorHelper.getRed(), 1F, 0F);
-		bY += 20;
-		g = new GuiPropertiesSlider(this, greenSlider, bX, bY, 100, 20, "Green", colorHelper.getGreen(), 1F, 0F);
-		bY += 20;
-		b = new GuiPropertiesSlider(this, blueSlider, bX, bY, 100, 20, "Blue", colorHelper.getBlue(), 1F, 0F);
-		bY += 20;
-		this.addButton(r);
-		this.addButton(g);
-		this.addButton(b);
-		//		bY += 4;
-		//		r2 = new GuiPropertiesSlider(this, redSlider2, bX, bY, 100, 20, "Red", 0, 1F, 0F);
-		//		bY += 20;
-		//		g2 = new GuiPropertiesSlider(this, greenSlider2, bX, bY, 100, 20, "Green", 0, 1F, 0F);
-		//		bY += 20;
-		//		b2 = new GuiPropertiesSlider(this, blueSlider2, bX, bY, 100, 20, "Blue", 0, 1F, 0F);
-		//		bY += 20;
-		//		this.addButton(r2);
-		//		this.addButton(g2);
-		//		this.addButton(b2);
+    public ColorSlider color1;
+    public ColorSlider color2;
+    public ColorSlider color3;
 
-		this.addButton(new GuiPropertiesButton(closeGui, width - 16, 2, 14, 20, TextFormatting.RED + "X")); // Change Mana Bar Direction
-	}
+    protected boolean flip;
+    protected int colorOption;
 
-	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY, state);
-		buttonPressed = 0;
-	}
+    public GuiEntityProperties(EntityPlayer player) {
+        this.player = player;
+        this.properties = Capabilities.getEntityProperties(player, null, (prop, rtn) -> prop.getRaceHandler());
+        this.flip = false;
+        this.colorOption = 0;
+    }
 
-	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-		colorField.mouseClicked(mouseX, mouseY, mouseButton);
-	}
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        this.color1.getColorField().updateCursorCounter();
+        this.color2.getColorField().updateCursorCounter();
+        if (this.color3 != null) {
+            this.color3.getColorField().updateCursorCounter();
+        }
+    }
 
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-	}
+    @Override
+    public void initGui() {
+        this.buttonList.clear();
+        super.initGui();
+        if (this.properties == null) {
+            return;
+        }
 
-	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
-		super.actionPerformed(button);
-		buttonPressed = button.id;
-		if (button.id == manaBar) {
-			//			mc.player.closeScreen();
-			mc.player.openGui(Trinkets.instance, 1, mc.player.world, 0, 0, 0);
-		}
-		if (button.id == abilityMenu) {
-			//			mc.player.closeScreen();
-			mc.player.openGui(Trinkets.instance, 3, mc.player.world, 0, 0, 0);
-		}
-		if (button.id == manaOrientation) {
-			TrinketsConfig.CLIENT.MPBar.mana_horizontal = !TrinketsConfig.CLIENT.MPBar.mana_horizontal;
-			ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-		}
-		if (button.id == toggleTrait) {
-			properties.setTraitsShown(!properties.showTraits());
-		}
-		if (button.id == flipPlayer) {
-			flip = !flip;
-		}
-		if (button.id == resetColor) {
-			properties.setTraitColor("#ffffff");
-			colorHelper.setColor("#ffffff");
-			colorField.setText(properties.getTraitColor());
-			colorField.setTextColor(16777215);
-			r.sliderValue = 1F;
-			g.sliderValue = 1F;
-			b.sliderValue = 1F;
-		}
-		if (button.id == closeGui) {
-			this.displayNormalInventory();
-		}
+        int buttonID = 0;
+        /// Close Button
+        this.addButton(new GuiPropertiesButton(buttonID++, this.width - 24, 2, 22, 20, TextFormatting.RED + "<--", (button, pressed) -> {
+            this.displayNormalInventory();
+        }));
 
-	}
+        this.addButton(new GuiPropertiesButton(buttonID++, this.width - (60 + 20), this.height - 32, 60, 20, TextFormatting.GREEN + "CONFIRM", (button, pressed) -> {
+            this.player.closeScreen();
+        }));
 
-	@Override
-	public void onGuiClosed() {
-		properties.sendInformationToServer();
-		//		super.onGuiClosed();
-	}
+        /// Mana Bar config gui
+        this.addButton(new GuiPropertiesButton(buttonID++, 2, this.height - 22, 60, 20, ConstantsTextTranslations.GUI_MANA_BAR.getFormattedText(), (button, pressed) -> {
+//            this.player.closeScreen();
+            this.player.openGui(Trinkets.instance, 1, this.player.world, 0, 0, 0);
+        }));
 
-	@Override
-	public boolean doesGuiPauseGame() {
-		return false;//super.doesGuiPauseGame();
-	}
+        /// Change the mana bar direction from horizontal to vertical.
+        this.addButton(new GuiPropertiesButton(buttonID++, 64, this.height - 22, 14, 20, (button, pressed) -> {
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.mana_horizontal = !TrinketsConfig.CLIENT.MANA_BAR_HUD.mana_horizontal;
+            ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+        }, (button, renderPre) -> {
+            button.displayString = TrinketsConfig.CLIENT.MANA_BAR_HUD.mana_horizontal ? "H" : "V";
+        }));
 
-	/**
-	 * Draws the screen and all the components in it.
-	 */
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		//TODO Rendering Might still be broken?
-		oldMouseX = mouseX;
-		oldMouseY = mouseY;
-		//		TrinketsConfig.CLIENT.Hud.X = ((mouseX * 100) / width) * 0.01D;
-		//		TrinketsConfig.CLIENT.Hud.Y = ((mouseY * 100) / height) * 0.01D;
-		//		this.drawDefaultBackground();
-		super.drawScreen(mouseX, mouseY, partialTicks);
+        /// Always show the mana bar, or only when it's full.
+        this.addButton(new GuiPropertiesButton(buttonID++, 80, this.height - 22, 14, 20, (button, pressed) -> {
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.always_shown = !TrinketsConfig.CLIENT.MANA_BAR_HUD.always_shown;
+            ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+        }, (button, renderPre) -> {
+            button.displayString = TrinketsConfig.CLIENT.MANA_BAR_HUD.always_shown ? "A" : "^";
+        }));
 
-		final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-		//		if (!properties.isFake()) {
-		int backHeight = 30;
-		if (properties.getCurrentRace().equals(EntityRaces.dragon) || properties.getCurrentRace().equals(EntityRaces.fairy)) {
-			backHeight = 42;
-			final int flying = properties.showTraits() ? 51200 : 13107200;
-			fontRenderer.drawStringWithShadow("Flying", 17, 62, flying);
-		}
-		DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, backHeight, 0, 0, 0, 0, 0, 0.5F);
-		fontRenderer.drawStringWithShadow("Show Trait", 6, 32, 16777215);
-		//		}
+        /// Stat and information screen
+        this.addButton(new GuiPropertiesButton(buttonID++, 2, 2, 50, 20, ConstantsTextTranslations.GUI_RACE_INFO.getFormattedText(), (button, pressed) -> {
+//            this.player.closeScreen();
+            this.player.openGui(Trinkets.instance, 3, this.player.world, 0, 0, 0);
+        }));
 
-		colorField.drawTextBox();
-		GlStateManager.pushMatrix();
-		int exampleX = width - (width / 4);
-		int exampleY = (height - (height / 2));
-		exampleX -= 30;
-		exampleY -= (height / 4);
-		DrawingHelper.Draw(exampleX + 102, exampleY, 0, 0, 0, 0, 0, 18, 18, 0, 0, colorHelper.getRed(), colorHelper.getGreen(), colorHelper.getBlue(), 1F);
-		//		GlStateManager.resetColor();
-		GlStateManager.color(1, 1, 1);
+        /// Whether to show the players racial trait, Wings, ears, etc.
+        this.addButton(new GuiPropertiesButton(buttonID++, 2, 40, 60, 20, (button, pressed) -> {
+            this.properties.setShowTraits(!this.properties.showTraits());
+        }, (button, renderPre) -> {
+            button.displayString = "" + this.properties.showTraits();
+        }));
 
-		//		float t = 30 / (((30 * (properties.getSize() * 0.001F)) * 100) / 30);//(int) (30 * properties.getSize() * 0.01F);
-		final float t = ((30 * 10) / properties.getSize());
-		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		GlStateManager.blendFunc(770, 771);
-		GlStateManager.enableBlend();
-		GlStateManager.enableAlpha();
-		DrawingHelper.Draw((width / 2) - 50, (height / 2) - 75, -100, 0, 0, 0, 0, 100, 180, 0, 0, 0, 0, 0, 0.5F);
-		this.drawEntityOnScreen(width / 2, (height / 2) + 100, (int) (30 * t), ((width / 2)) - oldMouseX, ((height / 2)) - 50 - oldMouseY, mc.player);
-		GlStateManager.disableBlend();
-		GlStateManager.disableAlpha();
-		GlStateManager.popMatrix();
-		//		drawHoveringText(text, mouseX, y);
-		//		this.renderHoveredToolTip(mouseX, mouseY);
-	}
+        /// Flip the player renderer, so it's possible to see the players back.
+        this.addButton(new GuiPropertiesButton(buttonID++, (this.width / 2) - 30, 0, 60, 20, ConstantsTextTranslations.GUI_FLIP_PLAYER.getFormattedText(), (button, pressed) -> {
+            this.flip = !this.flip;
+        }));
 
-	@Override
-	protected void keyTyped(char par1, int par2) throws IOException {
-		//		ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-		super.keyTyped(par1, par2);
-		colorField.textboxKeyTyped(par1, par2);
-		properties.setTraitColor(colorField.getText());
-		//		if (par2 == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
-		//			player.closeScreen();
-		//			this.displayNormalInventory();
-		//		}
-	}
+//        int bX = (this.width - (this.width / 4));
+//        int bY = (this.height - (this.height / 2));
+//        bX -= 30;
+//        bY -= (this.height / 4) + 34;
 
-	public void displayNormalInventory() {
-		final GuiInventory gui = new GuiInventory(mc.player);
-		mc.displayGuiScreen(gui);
-	}
+        int sliderWidth = 50;
+        int sliderHeight = 20;
+        int bX = this.width - (sliderWidth + 50);
+        int bY = 34;
+        bX = 70;
+        bY = 40;
+        this.addButton(new GuiPropertiesButton(buttonID++, bX, bY, sliderWidth + 22, sliderHeight, ColorOption.color(this.properties.getColorOption()).name(), (button, pressed) -> {
+            this.colorOption++;
+            if (this.colorOption >= ColorOption.getMaxLength()) {
+                this.colorOption = 0;
+            }
+            button.displayString = ColorOption.color(this.colorOption).name();
+            this.properties.setColorOption(this.colorOption);
+        }));
 
-	public void drawEntityOnScreen(int posX, int posY, int scale, float mouseX, float mouseY, EntityLivingBase ent) {
-		GlStateManager.enableColorMaterial();
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(posX, posY, 50.0F);
-		GlStateManager.scale((-scale), scale, scale);
-		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-		final float f = ent.renderYawOffset;
-		final float f1 = ent.rotationYaw;
-		final float f2 = ent.rotationPitch;
-		final float f3 = ent.prevRotationYawHead;
-		final float f4 = ent.rotationYawHead;
-		GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-		RenderHelper.enableStandardItemLighting();
-		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-		final float YawOffset = (float) Math.atan(mouseX / 40.0F) * 20.0F;
-		final float yaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
-		ent.renderYawOffset = flip ? -YawOffset : YawOffset;
-		ent.rotationYaw = flip ? -yaw : yaw;
-		ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
-		ent.rotationYawHead = ent.rotationYaw;
-		ent.prevRotationYawHead = ent.rotationYaw;
-		GlStateManager.translate(0.0F, 0.0F, 0.0F);
-		if (flip) {
-			GlStateManager.rotate(-180, 0.0F, 1.0F, 0.0F);
-		}
-		final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
-		rendermanager.setPlayerViewY(180.0F);
-		rendermanager.setRenderShadow(false);
-		rendermanager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-		rendermanager.setRenderShadow(true);
-		ent.renderYawOffset = f;
-		ent.rotationYaw = f1;
-		ent.rotationPitch = f2;
-		ent.prevRotationYawHead = f3;
-		ent.rotationYawHead = f4;
-		GlStateManager.popMatrix();
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		GlStateManager.disableTexture2D();
-		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-	}
+        bY += 20;
+        /**
+         * Trait Variant slider.
+         * Decides the players rendered trait.
+         */
+        int rVMax = this.properties.getRace().getRaceInformation().getPrimaryTraitMaxVariants() - 1;
+        int rV = this.properties.getTraitVariant();
+        float startingValue = rVMax <= 0 ? 0F : (rV + 0F) / (rVMax - 0F);
+        this.addButton(new GuiPropertiesSlider(buttonID++, bX, bY, sliderWidth + 22, sliderHeight, ConstantsTextTranslations.GUI_MAIN_TRAIT_VARIANT.getFormattedText() + ": " + ((int) (startingValue * rVMax)), startingValue, rVMax > 0 ? 1F : 0F, 0F, (slider, wrapper) -> {
+            int result = (int) ((slider.sliderValue * slider.sliderMaxValue) * (rVMax));
+            this.properties.setTraitVariant(result);
+            slider.displayString = ConstantsTextTranslations.GUI_MAIN_TRAIT_VARIANT.getFormattedText() + ": " + (result);
+        }));
+        final int traitPrimaryColor = this.properties.getPrimaryTraitColor();
+        final int traitSecondaryColor = this.properties.getSecondaryTraitColor();
+
+        bY += sliderHeight + 1;
+        this.color1 = new ColorSlider(this, buttonID++, bX, bY, sliderWidth, sliderHeight, traitPrimaryColor, this.properties.getRaceCache().getPrimaryColor(), this.fontRenderer, (color) -> this.properties.setPrimaryTraitColor(color));
+        this.color1.init(this.buttonList);
+        this.color2 = new ColorSlider(this, this.color1.getNextId(), this.color1.getX(), (this.color1.getNextY() + 2), sliderWidth, sliderHeight, traitSecondaryColor, this.properties.getRaceCache().getSecondaryColor(), this.fontRenderer, (color) -> this.properties.setSecondaryTraitColor(color));
+        this.color2.init(this.buttonList);
+//        bX = this.color2.getNextX();
+//        bY = this.color2.getNextY();
+//        bX = 70;
+//        bY = 40;
+        bX = this.width - (sliderWidth + 50);
+        bY = 60;
+
+        int rVMax2 = this.properties.getRace().getRaceInformation().getSecondaryTraitMaxVariants();
+        if (rVMax2 > 0) {
+            int rV2 = this.properties.getTraitAuxVariant();
+            float startingValue2 = rVMax2 <= 0 ? 0F : (rV2 + 0F) / (rVMax2 - 0F);
+            this.addButton(new GuiPropertiesSlider(this.color2.getNextId(), bX, bY, sliderWidth + 22, sliderHeight, ConstantsTextTranslations.GUI_MAIN_TRAIT_VARIANT.getFormattedText() + ": " + ((int) (startingValue2 * rVMax2)), startingValue2, 1F, 0F, (slider, wrapper) -> {
+                int result = (int) ((slider.sliderValue * slider.sliderMaxValue) * (rVMax2));
+                this.properties.setTraitAuxVariant(result);
+                slider.displayString = ConstantsTextTranslations.GUI_MAIN_TRAIT_VARIANT.getFormattedText() + ": " + (result);
+            }));
+            bY += sliderHeight + 1;
+            final int traitAuxColor = this.properties.getTraitAuxColor();
+            this.color3 = new ColorSlider(this, this.color2.getNextId() + 1, bX, bY, sliderWidth, sliderHeight, traitAuxColor, this.properties.getRaceCache().getRace().getRaceInformation().getOptionalColor(), this.fontRenderer, (color) -> this.properties.setTraitAuxColor(color));
+            this.color3.init(this.buttonList);
+        }
+
+    }
+
+    @Override
+    protected void keyTyped(char par1, int par2) throws IOException {
+        super.keyTyped(par1, par2);
+        if (this.color1.getColorField().isFocused()) {
+            this.color1.keyTyped(par1, par2);
+            this.properties.setPrimaryTraitColor(this.color1.getColor());
+        } else if (this.color2.getColorField().isFocused()) {
+            this.color2.keyTyped(par1, par2);
+            this.properties.setSecondaryTraitColor(this.color2.getColor());
+        } else if (this.color3 != null && this.color3.getColorField().isFocused()) {
+            this.color3.keyTyped(par1, par2);
+            this.properties.setTraitAuxColor(this.color3.getColor());
+        } else {
+            if (par2 == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
+                this.player.closeScreen();
+                this.displayNormalInventory();
+            }
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        this.color1.mouseClicked(mouseX, mouseY, mouseButton);
+        this.color2.mouseClicked(mouseX, mouseY, mouseButton);
+        if (this.color3 != null) {
+            this.color3.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        this.properties.getProperties().sendInformationToServer(this.properties.savedNBTData(new NBTTagCompound()));
+    }
+
+    /**
+     * Draws the screen and all the components in it.
+     */
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.oldMouseX = mouseX;
+        this.oldMouseY = mouseY;
+        GlStateManager.translate(0, 0, -500);
+        this.drawDefaultBackground();
+        GlStateManager.translate(0, 0, 500);
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
+
+        // Render Trait Button
+        int backHeight = 30;
+        if (this.properties.getRace().canFly()) {
+            backHeight = 42;
+            this.fontRenderer.drawStringWithShadow("Flying", 17, 62, this.properties.canFly() ? 51200 : 13107200);
+        }
+        DrawingHelper.Draw(2, 30, -100, 0, 0, 0, 0, 60, backHeight, 0, 0, 0, 0, 0, 0.5F);
+        this.fontRenderer.drawStringWithShadow("Show Trait", 6, 32, 16777215);
+
+        if (!this.properties.getRaceCache().compareRace(EntityRaces.none)) {
+            int rX = 60;
+            int rY = 4;
+            String race = this.properties.getRace().getDisplayName();
+            int rTxtLength = this.fontRenderer.getStringWidth(race);
+            int distanceToAdd = rTxtLength % 2 == 0 ? rTxtLength + 10 : rTxtLength + 9;
+            DrawingHelper.Draw(rX, rY, -100, 0, 0, 0, 0, distanceToAdd, 14, 0, 0, 0, 0, 0, 0.5F);
+            this.fontRenderer.drawStringWithShadow(race, rX + 6, rY + 2, 16777215);
+
+            if (!this.properties.getRaceCache().comparePrimaryElement(Elements.NEUTRAL)) {
+                Element ele = this.properties.getRaceCache().getPrimaryElement();
+                int pX = rX + distanceToAdd + 4;
+                int pY = rY;
+                String eleString = ele.getDisplayName();
+                int pTxtLength = this.fontRenderer.getStringWidth(eleString);
+                DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, pTxtLength % 2 == 0 ? pTxtLength + 10 : pTxtLength + 9, 14, 0, 0, 0, 0, 0, 0.5F);
+                this.fontRenderer.drawStringWithShadow(eleString, pX + 6, pY + 2, ele.getPrimaryColor());
+            }
+        }
+
+        this.color1.render(mouseX, mouseY, partialTicks);
+        this.color2.render(mouseX, mouseY, partialTicks);
+        if (this.color3 != null) {
+            this.color3.render(mouseX, mouseY, partialTicks);
+        }
+        GlStateManager.translate(0, 0, -200);
+        final int h = this.properties.getProperties().getHeightValue();
+        final double scale = ((300D / (h * 1D)) * 30D);
+        DrawingHelper.Draw((this.width / 2) - 50, (this.height / 2) - 75, -100, 0, 0, 0, 0, 100, 180, 0, 0, 0, 0, 0, 0.5F);
+        DrawingHelper.drawEntityOnScreen(this.width / 2, (this.height / 2) + 100, (int) scale, this.flip, 180, ((this.width / 2)) - this.oldMouseX, ((this.height / 2)) - 50 - this.oldMouseY, this.player);
+
+//        this.drawHoveringText("", mouseX, mouseY);
+//        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        super.actionPerformed(button);
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;//super.doesGuiPauseGame();
+    }
+
+    public void displayNormalInventory() {
+        final GuiInventory gui = new GuiInventory(this.mc.player);
+        this.mc.displayGuiScreen(gui);
+    }
 }

@@ -1,71 +1,52 @@
 package xzeroair.trinkets.network.vip;
 
-import java.util.UUID;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.network.ThreadSafePacket;
-import xzeroair.trinkets.vip.VIPHandler;
 
 public class VipStatusPacket extends ThreadSafePacket {
 
-	public VipStatusPacket() {
-		super();
-	}
+    public VipStatusPacket() {
+        super();
+    }
 
-	public VipStatusPacket(EntityPlayer entity, NBTTagCompound tag) {
-		super(entity.getEntityId(), tag);
-	}
+    public VipStatusPacket(EntityPlayer entity, NBTTagCompound tag) {
+        super(entity.getEntityId(), tag);
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-		ByteBufUtils.writeTag(buf, tag);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(this.entityID);
+        ByteBufUtils.writeTag(buf, this.tag);
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		entityID = buf.readInt();
-		tag = ByteBufUtils.readTag(buf);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.entityID = buf.readInt();
+        this.tag = ByteBufUtils.readTag(buf);
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
+        final World world = clientPlayer.getEntityWorld();
+        final Entity entity = world.getEntityByID(this.entityID);
+        Capabilities.getVipStatus(entity, vip -> {
+            vip.loadFromNBT(this.tag);
+        });
+    }
 
-	}
-
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
-		final EntityPlayerMP serverPlayer = server.player;
-		try {
-			if (tag == null) {
-				return;
-			} else {
-				if (!tag.hasKey("uuid")) {
-					return;
-				}
-			}
-			final String id = tag.getString("uuid");
-			if (VIPHandler.Vips.containsKey(id.replaceAll("-", ""))) {
-				final Entity entity = serverPlayer.getServerWorld().getEntityFromUuid(UUID.fromString(id));
-				if ((entity != null) && (entity instanceof EntityPlayerMP)) {
-					final EntityPlayerMP vip = (EntityPlayerMP) entity;
-					final VipStatus status = Capabilities.getVipStatus(vip);
-					if (status != null) {
-						status.confirmedStatus();
-					}
-				}
-			}
-		} catch (final Exception e) {
-		}
-	}
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
+    }
 
 }

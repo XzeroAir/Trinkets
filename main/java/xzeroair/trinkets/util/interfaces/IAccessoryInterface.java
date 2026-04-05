@@ -4,169 +4,233 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
+import xzeroair.trinkets.api.ITrinketInterface;
 
-public interface IAccessoryInterface {
+import javax.annotation.Nonnull;
 
-	/**
-	 * @param itemstack
-	 * @param player
-	 */
+public interface IAccessoryInterface extends ITrinketInterface {
 
-	default void eventClientTick(ItemStack stack, EntityLivingBase entity) {
-	}
+    /**
+     * @param stack
+     * @param player
+     */
 
-	/**
-	 * This Triggers at the End of every Player Tick
-	 */
-	default void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-	}
+    default void eventClientTick(ItemStack stack, EntityPlayer player) {
+    }
 
-	/**
-	 * This Triggers at the End of every LivingUpdate Tick
-	 */
-	default void eventLivingUpdateTick(ItemStack stack, EntityLivingBase entity) {
-	}
+    /**
+     * This Triggers at the End of every Player Tick
+     */
+    default void eventPlayerTick(ItemStack stack, EntityPlayer player) {
+    }
 
-	/**
-	 * This Triggers when the entity enters the world
-	 */
-	default void eventEntityJoinWorld(ItemStack stack, EntityLivingBase entity) {
-	}
+    /**
+     * This Triggers at the End of every LivingUpdate Tick
+     */
+    default void eventLivingUpdateTick(ItemStack stack, EntityLivingBase entity) {
+    }
 
-	/**
-	 * This Triggers when the Player disconnects
-	 */
-	default void eventPlayerLogout(ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when the entity enters the world
+     */
+    default void eventPlayerLogin(ItemStack stack, EntityPlayer player) {
+    }
 
-	/**
-	 * This Triggers when the Entity jumps
-	 */
-	default void eventLivingJump(ItemStack stack, EntityLivingBase entity) {
-	}
+    /**
+     * This Triggers when the Player disconnects
+     */
+    default void eventPlayerLogout(ItemStack stack, EntityPlayer player) {
+    }
 
-	/**
-	 * This Triggers when the Entity is About to hit the ground
-	 */
-	default void eventLivingFall(LivingFallEvent event, ItemStack stack, EntityLivingBase entity) {
-	}
+    default void eventPlayerChangedDimension(ItemStack stack, EntityPlayer player, int fromDimension, int toDimension) {
+    }
 
-	/**
-	 * This Triggers when the Player is About to be Hurt
-	 */
-	default void eventPlayerHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when the Entity jumps
+     */
+    default void eventLivingJump(ItemStack stack, EntityLivingBase entity) {
+    }
 
-	/**
-	 * This Triggers when an Entity is about to be Hurt by a Player
-	 */
-	default void eventLivingHurt(LivingHurtEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when the Entity is About to hit the ground
+     */
+    default void eventLivingFall(ItemStack stack, EntityLivingBase entity, LivingFallEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player is attempting to break a block
-	 */
-	default void eventBreakSpeed(BreakSpeed event, ItemStack stack, EntityLivingBase player) {
-	}
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Combat~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/**
-	 * This Triggers when the Player is about to break a block
-	 */
-	default void eventBlockBreak(BreakEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when an Entity tries targeting an Entity
+     *
+     * @param stack
+     * @param target   - The Entity being targeted
+     * @param attacker - The Entity Targeting
+     */
+    default void eventSetAttackTarget(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+    }
 
-	/**
-	 * This Triggers after a player breaks a block
-	 */
-	default void eventBlockDrops(HarvestDropsEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when the Entity is About to be Hurt
+     *
+     * @param stack
+     * @param attacked - The Entity being Attacked - the same as
+     *                 {@link LivingHurtEvent#getEntityLiving()}
+     * @param event
+     */
+    default void eventLivingAttacked(@Nonnull ItemStack stack, @Nonnull EntityLivingBase attacked, @Nonnull LivingAttackEvent event) {
+    }
 
-	/**
-	 * This Triggers when something tries to target the Player
-	 */
-	default void eventSetAttackTarget(LivingSetAttackTargetEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when an Entity is about to Hurt another Entity
+     *
+     * @param stack
+     * @param attacker - The Entity Attacking - the same as
+     *                 {@link LivingHurtEvent#getSource()}.{@link DamageSource#getTrueSource()}
+     * @param event
+     */
+    default void eventLivingAttacker(@Nonnull ItemStack stack, @Nonnull EntityLivingBase attacker, @Nonnull LivingAttackEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player kills an Entity
-	 */
-	default void eventLivingExperienceDrops(LivingExperienceDropEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when the Entity is About to be Hurt
+     *
+     * @param stack
+     * @param attacked - The Entity being Attacked - the same as
+     *                 {@link LivingHurtEvent#getEntityLiving()}
+     * @param event
+     */
+    default void eventLivingHurtAttacked(@Nonnull ItemStack stack, @Nonnull EntityLivingBase attacked, @Nonnull LivingHurtEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player kills an Entity
-	 */
-	default void eventLivingDrops(LivingDropsEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when an Entity is about to Hurt another Entity
+     *
+     * @param stack
+     * @param attacker - The Entity Attacking - the same as
+     *                 {@link LivingHurtEvent#getSource()}.{@link DamageSource#getTrueSource()}
+     * @param event
+     */
+    default void eventLivingHurtAttacker(@Nonnull ItemStack stack, @Nonnull EntityLivingBase attacker, @Nonnull LivingHurtEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player is about to be Damaged by an Entity
-	 */
-	default void eventLivingDamageAttacked(LivingDamageEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when Entity is about to be Damaged
+     *
+     * @param stack
+     * @param attacked - The Entity Attacking - the same as
+     *                 {@link LivingHurtEvent#getSource()}.{@link DamageSource#getTrueSource()}
+     * @param event
+     */
+    default void eventLivingDamageAttacked(ItemStack stack, EntityLivingBase attacked, LivingDamageEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player is about to Damage an Entity
-	 */
-	default void eventLivingDamageAttacker(LivingDamageEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when an Entity is about to Damage another Entity
+     *
+     * @param stack
+     * @param attacker - The Entity Attacking - the same as
+     *                 {@link LivingHurtEvent#getSource()}.{@link DamageSource#getTrueSource()}
+     * @param event
+     */
+    default void eventLivingDamageAttacker(ItemStack stack, EntityLivingBase attacker, LivingDamageEvent event) {
+    }
 
-	/**
-	 * This Triggers when a potion effect is about to be applied to a player
-	 */
-	default void eventPotionApplicable(PotionApplicableEvent event, ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when a Player kills an Entity
+     */
+    default void eventLivingExperienceDrops(ItemStack stack, EntityPlayer player, LivingExperienceDropEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player Equips the ItemStack
-	 */
-	default void playerEquipped(ItemStack stack, EntityLivingBase player) {
-	}
+    /**
+     * This Triggers when an Entity kills another Entity
+     *
+     * @param stack
+     * @param attacker - The Entity Attacking - the same as
+     *                 {@link LivingDropsEvent#getSource()}.{@link DamageSource#getTrueSource()}
+     * @param event
+     */
+    default void eventLivingDrops(ItemStack stack, EntityLivingBase attacker, LivingDropsEvent event) {
+    }
 
-	/**
-	 * This Triggers when the Player Unequips the ItemStack
-	 */
-	default void playerUnequipped(ItemStack stack, EntityLivingBase player) {
-	}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~End Combat~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/**
-	 * This Triggers when the Player Attempts to Equip an ItemStack
-	 */
-	default boolean playerCanEquip(ItemStack stack, EntityLivingBase player) {
-		return true;
-	}
+    /**
+     * This Triggers when the Player is attempting to break a block
+     */
+    default void eventBreakSpeed(ItemStack stack, EntityPlayer player, BreakSpeed event) {
+    }
 
-	/**
-	 * This Triggers when the Player Attempts to Unequip an ItemStack
-	 */
-	default boolean playerCanUnequip(ItemStack stack, EntityLivingBase player) {
-		return true;
-	}
+    /**
+     * This Triggers when the Player is about to break a block
+     */
+    default void eventBlockBreak(ItemStack stack, EntityPlayer player, BreakEvent event) {
+    }
 
-	/**
-	 * This Renders things on the Trinkets Render Layer
-	 *
-	 * @param scale
-	 * @param isSlim - True if using Slim Model
-	 */
-	default void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isTrinket) {
-	}
+    /**
+     * This Triggers after a player breaks a block
+     */
+    default void eventBlockDrops(ItemStack stack, EntityLivingBase player, HarvestDropsEvent event) {
+    }
 
-	/**
-	 * This is used internally to determine if Trinket Items should be registered
-	 */
-	default boolean ItemEnabled() {
-		return true;
-	}
+    /**
+     * This Triggers when a potion effect is about to be applied to an entity
+     */
+    default void eventPotionApplicable(ItemStack stack, EntityLivingBase entity, PotionApplicableEvent event) {
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~End Events~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    default void onEntityArmorTick(World world, EntityLivingBase entity, ItemStack stack) {
+
+    }
+
+    /**
+     * This Triggers when the Entity Equips the ItemStack
+     */
+    default void onAccessoryEquipped(ItemStack stack, EntityLivingBase entity) {
+    }
+
+    /**
+     * This Triggers when the Entity Unequips the ItemStack
+     */
+    default void onAccessoryUnequipped(ItemStack stack, EntityLivingBase entity) {
+    }
+
+    /**
+     * This Triggers when the Entity Attempts to Equip an ItemStack
+     */
+    default boolean canEquipAccessory(ItemStack stack, EntityLivingBase entity) {
+        return true;
+    }
+
+    /**
+     * This Triggers when the Entity Attempts to Unequip an ItemStack
+     */
+    default boolean canUnequipAccessory(ItemStack stack, EntityLivingBase entity) {
+        return true;
+    }
+
+    /**
+     * This Renders things on the Trinkets Render Layer
+     *
+     * @param scale
+     * @param isSlim - True if using Slim Model
+     */
+    default void playerRenderLayer(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale) {
+    }
+
+    /**
+     * This is used internally to determine if Trinket Items should be registered
+     */
+    default boolean ItemEnabled() {
+        return true;
+    }
 
 }

@@ -16,7 +16,6 @@ public class ConditionalIngredientFactory implements IIngredientFactory {
 		if (CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), context)) {
 			return CraftingHelper.getIngredient(json.get("ingredient"), context);
 		}
-
 		return IngredientNever.INSTANCE;
 	}
 }

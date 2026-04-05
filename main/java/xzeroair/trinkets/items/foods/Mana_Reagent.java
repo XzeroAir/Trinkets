@@ -1,5 +1,6 @@
 package xzeroair.trinkets.items.foods;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -15,50 +16,63 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.items.base.FoodBase;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
+import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
+
+import javax.annotation.Nonnull;
 
 public class Mana_Reagent extends FoodBase {
 
-	public Mana_Reagent(String name) {
-		super(name, 2, 1f);
-		this.setAlwaysEdible();
-		this.setUUID("5569090a-43b2-468e-918a-05df8570277c");
-	}
+    public Mana_Reagent(String name) {
+        super(name, 2, 1f);
+        this.setAlwaysEdible();
+        this.setUUID("5569090a-43b2-468e-918a-05df8570277c");
+    }
 
-	@Override
-	public int getMaxItemUseDuration(ItemStack stack) {
-		return 32;
-	}
+    @Override
+    public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
+        return 32;
+    }
 
-	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity) {
-		final MagicStats magic = Capabilities.getMagicStats(entity);
-		if (magic != null) {
-			magic.setBonusMana(magic.getBonusMana() - 1);
-		}
-		if (TrinketsConfig.SERVER.mana.reagentHarmful) {
-			if (!entity.isPotionActive(MobEffects.POISON)) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 300, 1, false, false));
-			}
-			if (!entity.isPotionActive(MobEffects.WEAKNESS)) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 600, 1, false, false));
-			}
-		}
-		return super.onItemUseFinish(stack, world, entity);
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        final KeyEntry key = new OptionEntry("mpmax", "10");
+        return helper.formatAddVariables(translation, key);
+    }
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		return super.onItemRightClick(worldIn, player, handIn);
-	}
+    @Override
+    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase entity) {
+        final MagicStats magic = Capabilities.getMagicStats(entity);
+        if (magic != null) {
+            magic.setBonusMana(magic.getBonusMana() - 1);
+        }
+        if (TrinketsConfig.SERVER.MAGIC.MAGIC_ITEMS.MAGIC_REAGENT.reagentHarmful) {
+            if (!entity.isPotionActive(MobEffects.POISON)) {
+                entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 300, 1, false, false));
+            }
+            if (!entity.isPotionActive(MobEffects.WEAKNESS)) {
+                entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 600, 1, false, false));
+            }
+        }
+        return super.onItemUseFinish(stack, world, entity);
+    }
 
-	@Override
-	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.EAT;
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull EnumHand handIn) {
+        return super.onItemRightClick(worldIn, player, handIn);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		super.registerModels();
-	}
+    @Override
+    public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
+        return EnumAction.EAT;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        super.registerModels();
+    }
 }

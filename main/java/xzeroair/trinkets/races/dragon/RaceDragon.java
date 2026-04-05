@@ -1,363 +1,260 @@
 package xzeroair.trinkets.races.dragon;
 
-import javax.annotation.Nonnull;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.init.Abilities;
+import xzeroair.trinkets.capabilities.race.RaceCache;
+import xzeroair.trinkets.client.races.IRenderRaceHandler;
+import xzeroair.trinkets.client.races.dragon.RaceDragonRenderer;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
+import xzeroair.trinkets.races.dragon.config.ConfigFireDragon;
+import xzeroair.trinkets.races.dragon.config.ConfigIceDragon;
+import xzeroair.trinkets.races.dragon.config.ConfigLightningDragon;
 import xzeroair.trinkets.races.dragon.config.DragonConfig;
-import xzeroair.trinkets.traits.abilities.AbilityBlockFinder;
-import xzeroair.trinkets.traits.abilities.AbilityFireBreathing;
-import xzeroair.trinkets.traits.abilities.AbilityFireImmunity;
-import xzeroair.trinkets.traits.abilities.AbilityFlying;
+import xzeroair.trinkets.traits.abilities.AbilityCreativeFlight;
+import xzeroair.trinkets.traits.abilities.AbilityGreedyEyes;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
-import xzeroair.trinkets.traits.abilities.compat.survival.AbilityHeatImmunity;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireBreath;
+import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireImmunity;
+import xzeroair.trinkets.traits.abilities.elements.ice.AbilityFrostWalker;
+import xzeroair.trinkets.traits.abilities.elements.ice.AbilityIceBreath;
+import xzeroair.trinkets.traits.abilities.elements.ice.AbilityIceImmunity;
+import xzeroair.trinkets.traits.abilities.elements.lightning.AbilityLightningBolt;
+import xzeroair.trinkets.traits.abilities.elements.lightning.AbilityLightningBreath;
+import xzeroair.trinkets.traits.abilities.elements.lightning.AbilityLightningImmunity;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.DrawingHelper;
+import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
+import xzeroair.trinkets.util.helpers.EntityHelper;
+import xzeroair.trinkets.util.helpers.PotionHelper;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 public class RaceDragon extends EntityRacePropertiesHandler {
 
-	public static final DragonConfig serverConfig = TrinketsConfig.SERVER.races.dragon;
+    private final DragonConfig CONFIG = TrinketsConfig.SERVER.RACES.DRAGON;
 
-	public RaceDragon(@Nonnull EntityLivingBase e, EntityProperties properties) {
-		super(e, properties, EntityRaces.dragon);
-	}
+    public RaceDragon(@Nonnull EntityLivingBase e, @Nonnull EntityProperties properties) {
+        super(e, properties, new RaceCache(EntityRaces.dragon));
+    }
 
-	@Override
-	public void startTransformation() {
-		this.addAbility(Abilities.nightVision, new AbilityNightVision());
-		this.addAbility(Abilities.fireImmunity, new AbilityFireImmunity());
-		if (TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder) {
-			this.addAbility(Abilities.blockDetection, new AbilityBlockFinder());
-		}
-		if (serverConfig.creative_flight) {
-			this.addAbility(
-					Abilities.creativeFlight, new AbilityFlying()
-							.setFlightEnabled(serverConfig.creative_flight)
-							.setSpeedEnabled(serverConfig.creative_flight_speed)
-							.setFlightSpeed((float) serverConfig.flight_speed)
-							.setFlightCost(serverConfig.flight_cost)
-			);
-		}
-		if (serverConfig.breath_damage > 0) {
-			this.addAbility(Abilities.fireBreathing, new AbilityFireBreathing());
-		}
-		if ((Trinkets.ToughAsNails || Trinkets.SimpleDifficulty) && serverConfig.compat.tan.immuneToHeat) {
-			this.addAbility(Abilities.survivalHeatImmunity, new AbilityHeatImmunity());
-		}
-	}
+    public RaceDragon(@Nonnull EntityLivingBase e, @Nonnull EntityProperties properties, @Nonnull RaceCache raceCache) {
+        super(e, properties, raceCache);
+    }
 
-	@Override
-	public void whileTransformed() {
-		if (entity.world.isRemote) {
-			if (!entity.onGround) {
-				lastTick = tick;
-				tick += 48;
-			}
-			if ((tick >= (1210)) || (entity.onGround)) {
-				tick = 0;
-				lastTick = 0;
-			}
-		}
-	}
+    @Override
+    public void startTransformation() {
+        // Night Vision
+        this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
+        this.addAbility(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Client~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+        Element element = this.getRaceCache().getPrimaryElement();
+        // Elemental Features
+        if (element == Elements.FIRE) {
+            this.addFireAbilities(element);
+        } else if (element == Elements.ICE) {
+            this.addIceAbilities(element);
+        } else if (element == Elements.LIGHTNING) {
+            this.addLightningAbilities(element);
+        } else {
+//            if (CONFIG.ABILITIES.FIRE_IMMUNITY.ENABLED) {
+            this.addAbility(new AbilityFireImmunity(this.CONFIG.ABILITIES.FIRE_IMMUNITY));
+//            }
+        }
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/dragon_wings.png");
+        // Other Abilities
+        this.addAbility(new AbilityGreedyEyes(this.CONFIG.ABILITIES.GREEDY_EYES));
+    }
 
-	int tick, lastTick = 0;
-	float armSwing = 0;
-	int wingFrames = 0;
+    private void addFireAbilities(Element element) {
+        ConfigFireDragon cfg = this.CONFIG.ELEMENTS.FIRE;
+        this.addAbility(new AbilityFireImmunity(cfg.ABILITIES.FIRE_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(cfg.COMPAT.SURVIVAL, element);
+        this.addAbility(new AbilityFireBreath(cfg.ABILITIES.FIRE_BREATH).setRequiredElement(element));
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		if (!TrinketsConfig.CLIENT.rendering || (!properties.showTraits())) {
-			return;
-		}
-		GlStateManager.pushMatrix();
-		//			float flap = MathHelper.cos((limbSwing * 0.6662F) + (float) Math.PI);
-		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
-		if (entity.isSneaking()) {
-			GlStateManager.translate(0F, 0.2F, 0F);
-		}
-		if (renderer instanceof RenderPlayer) {
-			final RenderPlayer rend = (RenderPlayer) renderer;
-			rend.getMainModel().bipedBody.postRender(scale);
-		}
-		GlStateManager.scale(scale, scale, scale);
-		GlStateManager.rotate(90, 0, 1, 0);
-		GlStateManager.translate(0, -2F, 0);
-		if (entity.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
-			GlStateManager.translate(-0.4F, -1F, 0F);
-		}
+    private void addIceAbilities(Element element) {
+        ConfigIceDragon cfg = this.CONFIG.ELEMENTS.ICE;
+        this.addAbility(new AbilityIceImmunity(cfg.ABILITIES.ICE_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(cfg.COMPAT.SURVIVAL, element);
+        this.addAbility(new AbilityFrostWalker(cfg.ABILITIES.FROST_WALKER).setRequiredElement(element));
+        this.addAbility(new AbilityIceBreath(cfg.ABILITIES.ICE_BREATH).setRequiredElement(element));
+    }
 
-		final int base = entity.onGround ? 40 : 50;
-		final int wing = 20;
-		final int tip = -20;
-		final int rotX = 0;
-		final int rotZ = -10;
+    private void addLightningAbilities(Element element) {
+        ConfigLightningDragon cfg = this.CONFIG.ELEMENTS.LIGHTNING;
+        this.addAbility(new AbilityLightningImmunity(cfg.ABILITIES.LIGHTNING_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(cfg.COMPAT.SURVIVAL, element);
+        this.addAbility(new AbilityLightningBolt(cfg.ABILITIES.LIGHTNING_BOLT).setRequiredElement(element));
+        this.addAbility(new AbilityLightningBreath(cfg.ABILITIES.LIGHTNING_BREATH).setRequiredElement(element));
+    }
 
-		final double[][] frames = new double[121][10];
+    @Override
+    public void whileTransformed() {
+        super.whileTransformed();
+        if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.FIRE.EFFECTS_TO_REMOVE);
+            PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.ELEMENTS.FIRE.EFFECTS_TO_ADD);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.ICE.EFFECTS_TO_REMOVE);
+            PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.ELEMENTS.ICE.EFFECTS_TO_ADD);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.LIGHTNING.EFFECTS_TO_REMOVE);
+            PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.ELEMENTS.LIGHTNING.EFFECTS_TO_ADD);
+        } else {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_REMOVE);
+            PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.EFFECTS_TO_ADD);
+        }
+        if (!this.getEntity().world.isRemote && this.getEntity().isRiding()) {
+            final Entity mount = this.getEntity().getRidingEntity();
+            if ((mount != null) && !this.mountEntity(mount)) {
+                this.getEntity().dismountRidingEntity();
+            }
+        }
+    }
 
-		wingFrames = frames.length;
+    @Override
+    public boolean isAttacked(DamageSource source, float dmg) {
+        if (!this.getEntity().world.isRemote) {
+            if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+                boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getFirst();
+                return !result;
+            } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+                boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getFirst();
+                return !result;
+            } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+                boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getFirst();
+                return !result;
+            } else {
+                boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getFirst();
+                return !result;
+            }
+        }
+        return true;
+    }
 
-		final float tickT = (lastTick + ((tick - lastTick) * partialTicks));
-		int angleTick = (int) (tickT * 0.1F);
-		this.getWingFrames(angleTick, base, wing, tip, rotX, rotZ, frames);
-		if (angleTick >= (frames.length)) {
-			angleTick = frames.length - 1;
-		}
+    @Override
+    public float isHurt(DamageSource source, float dmg) {
+        if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else {
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        }
+    }
 
-		final double x = -12;
-		final double y = isSlim ? -19 : -20;
-		final double z = 0;
-		final int width = 8;
-		final int height = 32;
-		final int uWidth = 16;
-		final int vHeight = 64;
-		final int texWidth = 64;
-		final int texHeight = 64;
+    @Override
+    public float isDamaged(DamageSource source, float dmg) {
+        if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        } else {
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
+        }
+    }
 
-		final int innerWidth = 16;
-		final int innerHeight = 32;
-		final int innerUWidth = 32;
-		final int innerVHeight = 64;
-		final int innerTexWidth = 64;
-		final int innerTexHeight = 64;
+    @Override
+    public boolean potionBeingApplied(PotionEffect effect) {
+        if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+            return PotionHelper.isPotionEffect(effect, TrinketsConfig.SERVER.RACES.DRAGON.ELEMENTS.FIRE.EFFECTS_TO_REMOVE);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+            return PotionHelper.isPotionEffect(effect, TrinketsConfig.SERVER.RACES.DRAGON.ELEMENTS.ICE.EFFECTS_TO_REMOVE);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+            return PotionHelper.isPotionEffect(effect, TrinketsConfig.SERVER.RACES.DRAGON.ELEMENTS.LIGHTNING.EFFECTS_TO_REMOVE);
+        } else {
+            return PotionHelper.isPotionEffect(effect, TrinketsConfig.SERVER.RACES.DRAGON.EFFECTS_TO_REMOVE);
+        }
+    }
 
-		final int outerwidth = 8;
-		final int outHeight = 32;
-		final int outerUWidth = 16;
-		final int outerVHeight = 64;
-		final int outerTexWidth = 64;
-		final int outerTexHeight = 64;
-		GlStateManager.disableLighting();
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		GlStateManager.pushMatrix();
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
-		GlStateManager.scale(0.9, 0.9, 0.9);
-		GlStateManager.rotate((float) frames[angleTick][0], 0, 1, 0);
-		//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
-		//			GlStateManager.rotate((float) -frames[angleTick][3], 1, 0, 0);
-		DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
-		GlStateManager.translate(x, y, z);
-		GlStateManager.rotate((float) frames[angleTick][1], 0, 1, 0);
-		GlStateManager.translate(-x, -y, -z);
-		DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight);
-		GlStateManager.translate(x - innerWidth, y, z);
-		GlStateManager.rotate((float) (frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
-		GlStateManager.translate(-(x - innerWidth), -y, -z);
-		DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight);
-		GlStateManager.popMatrix();
+    @Override
+    public void endTransformation() {
+        if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.FIRE.EFFECTS_TO_ADD);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.ICE.EFFECTS_TO_ADD);
+        } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.ELEMENTS.LIGHTNING.EFFECTS_TO_ADD);
+        } else {
+            PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_ADD);
+        }
+    }
 
-		GlStateManager.pushMatrix();
-		GlStateManager.color(properties.getTraitColorHandler().getRed(), properties.getTraitColorHandler().getGreen(), properties.getTraitColorHandler().getBlue());
-		GlStateManager.scale(0.9, 0.9, 0.9);
-		GlStateManager.rotate((float) -frames[angleTick][0], 0, 1, 0);
-		//			GlStateManager.rotate((float) frames[angleTick][4], 0, 0, 1);
-		//			GlStateManager.rotate((float) frames[angleTick][3], 1, 0, 0);
-		DrawingHelper.Draw(x, y, z, 48, 0, uWidth, vHeight, width, height, texWidth, texHeight);
-		GlStateManager.translate(x, y, z);
-		GlStateManager.rotate((float) -frames[angleTick][1], 0, 1, 0);
-		GlStateManager.translate(-x, -y, -z);
-		DrawingHelper.Draw(x - innerWidth, y, z, 16, 0, innerUWidth, innerVHeight, innerWidth, innerHeight, innerTexWidth, innerTexHeight);
-		GlStateManager.translate(x - innerWidth, y, z);
-		GlStateManager.rotate((float) -(frames[angleTick][1] + (float) frames[angleTick][2]), 0, 1, 0);
-		GlStateManager.translate(-(x - innerWidth), -y, -z);
-		DrawingHelper.Draw((x - innerWidth) - outerwidth, y, z, 0, 0, outerUWidth, outerVHeight, outerwidth, outHeight, outerTexWidth, outerTexHeight);
-		GlStateManager.popMatrix();
+    @Override
+    public boolean mountEntity(Entity mount) {
+        if (EntityHelper.isCreative(this.getEntity())) {
+            return true;
+        } else if (!this.CONFIG.CAN_MOUNT) {
+            return false;
+        } else if (this.CONFIG.MOUNT_BLACKLIST.length > 0) {
+            List<String> disallowedMounts = Arrays.asList(this.CONFIG.MOUNT_BLACKLIST);
+            try {
+                final ResourceLocation regName = EntityRegistry.getEntry(mount.getClass()).getRegistryName();
+                final String modID = regName.getNamespace();
+                final String entityID = regName.getPath();
+                final boolean exists = disallowedMounts.contains(modID + ":*") || disallowedMounts.contains(regName.toString());
+                if (exists) {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                        final EntityBoat boat = (EntityBoat) mount;
+                        final Entity controller = boat.getControllingPassenger();
+                        if ((controller == null) || (controller == this.getEntity())) {
+                            return false;
+                        }
+                    }
+                    return this.CONFIG.MOUNT_WHITELIST;
+                } else {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                        final EntityBoat boat = (EntityBoat) mount;
+                        final Entity controller = boat.getControllingPassenger();
+                        if ((controller == null) || (controller == this.getEntity())) {
+                            return false;
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            return !this.CONFIG.MOUNT_WHITELIST;
+        } else {
+            if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
+                final EntityBoat boat = (EntityBoat) mount;
+                final Entity controller = boat.getControllingPassenger();
+                return (controller != null) && (controller != this.getEntity());
+            }
+            return true;
+        }
+    }
 
-		GlStateManager.enableLighting();
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		//			armSwing = flap;
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.popMatrix();
-	}
+    @Override
+    public boolean canFly() {
+        return super.canFly() && this.showTraits() && this.CONFIG.ABILITIES.FLIGHT.ENABLED;
+    }
 
-	private double[][] getWingFrames(int tickPos, double base, double wing, double tip, double rotX, double rotZ, double[][] frames) {
-		frames[0] = new double[] { base, wing, tip, rotX, rotZ };
-		int position = 1;
-		final int s = this.frames(15);
-		for (int i1 = 0; i1 < s; i1++) {
-			frames[position][0] = base - i1;
-			frames[position][1] = wing - i1;
-			frames[position][2] = tip;
-			frames[position][3] = rotX;
-			frames[position][4] = rotZ;
-			position++;
-		}
-		final int pos1 = position;
-		final int s1 = this.frames(10);
-		for (int i1 = 0; i1 < s1; i1++) {
-			frames[position][0] = frames[pos1 - 1][0] - i1;
-			frames[position][1] = frames[pos1 - 1][1] - i1;
-			frames[position][2] = frames[pos1 - 1][2];
-			frames[position][3] = frames[pos1 - 1][3];
-			frames[position][4] = frames[pos1 - 1][4];
-			position++;
-		}
-		final int pos2 = position;
-		final int s2 = this.frames(10);
-		for (int i1 = 0; i1 < s2; i1++) {
-			frames[position][0] = frames[pos2 - 1][0];
-			frames[position][1] = frames[pos2 - 1][1] + i1;
-			frames[position][2] = frames[pos2 - 1][2];
-			frames[position][3] = frames[pos2 - 1][3] + (i1);
-			frames[position][4] = frames[pos2 - 1][4] - (i1);
-			position++;
-		}
-		final int pos3 = position;
-		final int s3 = this.frames(10);
-		for (int i1 = 0; i1 < s3; i1++) {
-			frames[position][0] = frames[pos3 - 1][0] + i1;
-			frames[position][1] = frames[pos3 - 1][1] + i1;
-			frames[position][2] = frames[pos3 - 1][2];
-			frames[position][3] = frames[pos3 - 1][3] + (i1);
-			frames[position][4] = frames[pos3 - 1][4];
-			position++;
-		}
-		final int pos4 = position;
-		final int s4 = this.frames(10);
-		for (int i1 = 0; i1 < s4; i1++) {
-			frames[position][0] = frames[pos4 - 1][0] + i1;
-			frames[position][1] = frames[pos4 - 1][1] + i1;
-			frames[position][2] = frames[pos4 - 1][2];
-			frames[position][3] = frames[pos4 - 1][3] + i1;
-			frames[position][4] = frames[pos4 - 1][4];
-			position++;
-		}
-		final int pos5 = position;
-		final int s5 = this.frames(10);
-		for (int i1 = 0; i1 < s5; i1++) {
-			frames[position][0] = frames[pos5 - 1][0] + i1;
-			frames[position][1] = frames[pos5 - 1][1] + i1;
-			frames[position][2] = frames[pos5 - 1][2];
-			frames[position][3] = frames[pos5 - 1][3];
-			frames[position][4] = frames[pos5 - 1][4];
-			position++;
-		}
-		final int pos6 = position;
-		final int s6 = this.frames(10);
-		for (int i1 = 0; i1 < s6; i1++) {
-			frames[position][0] = frames[pos6 - 1][0];
-			frames[position][1] = frames[pos6 - 1][1] + i1;
-			frames[position][2] = frames[pos6 - 1][2];
-			frames[position][3] = frames[pos6 - 1][3];
-			frames[position][4] = frames[pos6 - 1][4];
-			position++;
-		}
-		final int pos7 = position;
-		final int s7 = this.frames(10);
-		for (int i1 = 0; i1 < s7; i1++) {
-			frames[position][0] = frames[pos7 - 1][0];
-			frames[position][1] = frames[pos7 - 1][1] + i1;
-			frames[position][2] = frames[pos7 - 1][2] - i1;
-			frames[position][3] = frames[pos7 - 1][3];
-			frames[position][4] = frames[pos7 - 1][4];
-			position++;
-		}
-		final int pos8 = position;
-		final int s8 = this.frames(10);
-		for (int i1 = 0; i1 < s8; i1++) {
-			frames[position][0] = frames[pos8 - 1][0];
-			frames[position][1] = frames[pos8 - 1][1] - i1;
-			frames[position][2] = frames[pos8 - 1][2];
-			frames[position][3] = frames[pos8 - 1][3] - (i1);
-			frames[position][4] = frames[pos8 - 1][4] + (i1);
-			position++;
-		}
-		final int pos9 = position;
-		final int s9 = this.frames(15);
-		for (int i1 = 0; i1 < s9; i1++) {
-			frames[position][0] = frames[pos9 - 1][0];
-			frames[position][1] = frames[pos9 - 1][1] - i1;
-			frames[position][2] = frames[pos9 - 1][2] - i1;
-			frames[position][3] = frames[pos9 - 1][3] - (i1);
-			frames[position][4] = frames[pos9 - 1][4];
-			position++;
-		}
-		final int pos10 = position;
-		final int s10 = this.frames(10);
-		for (int i1 = 0; i1 < s10; i1++) {
-			frames[position][0] = frames[pos10 - 1][0];
-			frames[position][1] = frames[pos10 - 1][1] - i1;
-			frames[position][2] = frames[pos10 - 1][2] + i1;
-			frames[position][3] = frames[pos10 - 1][3];
-			frames[position][4] = frames[pos10 - 1][4];
-			position++;
-		}
-		//		System.out.println(wingFrames);
-		//		int posL = position;
-		//		int sL = this.frames(1000);
-		//		for (int i1 = 0; i1 < sL; i1++) {
-		//			frames[position][0] = frames[posL - 1][0];
-		//			frames[position][1] = frames[posL - 1][1];
-		//			frames[position][2] = frames[posL - 1][2];
-		//			frames[position][3] = frames[posL - 1][3];
-		//			frames[position][4] = frames[posL - 1][4];
-		//			position++;
-		//		}
-		return frames;
-	}
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Client~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-	private double[][] section(int length, int position, int savedPos, int incBase, int incWing, int incTip, int incRotX, int incRotY, double[][] frames) {
-		final int sL = this.frames(length);
-		for (int i1 = 0; i1 < sL; i1++) {
-			frames[position][0] = frames[savedPos - 1][0] + incBase;
-			frames[position][1] = frames[savedPos - 1][1] + incWing;
-			frames[position][2] = frames[savedPos - 1][2] + incTip;
-			frames[position][3] = frames[savedPos - 1][3] + incRotX;
-			frames[position][4] = frames[savedPos - 1][4] + incRotY;
-		}
-		return frames;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IRenderRaceHandler getRaceRenderer() {
+        if (this.RendererRace == null) {
+            this.RendererRace = new RaceDragonRenderer(this.getEntity(), this);
+        }
+        return this.RendererRace;
+    }
 
-	private int frames(int amount) {
-		if ((wingFrames - amount) >= 0) {
-			wingFrames -= amount;
-			return amount;
-		} else {
-			if (wingFrames > 0) {
-				return wingFrames;
-			} else {
-				return 0;
-			}
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-		if (entity.isRiding()) {
-			double t = 0;
-			t = ((100 - properties.getSize()) * 0.01D);
-			//			t = 1.8 - ((properties.getSize()) * 0.01D);
-			//			t = 1.8;//+ ((100 - properties.getSize()) * 0.01D);
-			//			//			double t1 = (entity.height * 100) / (1.8 * 100);
-			//			//			double t2 = (1.8 * 100) / (entity.height * 100);
-			//			if (entity.getRidingEntity() instanceof EntityHorse) {
-			//				t = (1.8);
-			//			} else if (entity.getRidingEntity() instanceof EntityBoat) {
-			//				//				t += entity.height * 3;
-			//			}
-			//			System.out.println(t);
-			GlStateManager.translate(0, t, 0);
-		}
-	}
 }

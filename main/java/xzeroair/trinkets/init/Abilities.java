@@ -1,98 +1,63 @@
 package xzeroair.trinkets.init;
 
-import net.minecraft.util.ResourceLocation;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.traits.abilities.Ability;
-import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.util.Reference;
-
 public class Abilities {
 
-	public static final IAbilityInterface nightVision;
-	public static final IAbilityInterface creativeFlight;
-	public static final IAbilityInterface fireBreathing;
-	public static final IAbilityInterface fireImmunity;
-	public static final IAbilityInterface blockDetection;
-	public static final IAbilityInterface blockClimbing;
-	public static final IAbilityInterface witherImmunity;
-	public static final IAbilityInterface weightless;
-	public static final IAbilityInterface wellRested;
-	public static final IAbilityInterface poisonAffinity;
-	public static final IAbilityInterface waterAffinity;
-	public static final IAbilityInterface fallResistance;
-	public static final IAbilityInterface nullKinetic;
-	public static final IAbilityInterface safeGuard;
-	public static final IAbilityInterface enderQueen;
-	public static final IAbilityInterface viciousStrike;
-	public static final IAbilityInterface magnetic;
-	public static final IAbilityInterface repel;
-	public static final IAbilityInterface skilledMiner;
-	public static final IAbilityInterface psudoFortune;
-	public static final IAbilityInterface chargedShot;
-	public static final IAbilityInterface lightningBolt;
-	public static final IAbilityInterface dodging;
-	public static final IAbilityInterface largeHands;
-	public static final IAbilityInterface heavy;
+//	private static final String name(String id) {
+//		return Reference.MODID + ":" + id;
+//	}
 
-	// External Mods
-	public static final IAbilityInterface survivalHeatImmunity;
-	public static final IAbilityInterface survivalColdImmunity;
-	public static final IAbilityInterface survivalThirstImmunity;
-	public static final IAbilityInterface survivalParasitesImmunity;
-	public static final IAbilityInterface firstAidReflex;
+//	static {
+//		nightVision 				= 	name("night_vision");
+//		creativeFlight				=	name("creative_flight");
 
-	private static IAbilityInterface getFromRegistry(String id) {
-		final IAbilityInterface race = Ability.Registry.getObject(new ResourceLocation(Reference.MODID, id));
-		if (race == null) {
-			//			throw new IllegalStateException("Invalid Race requested: " + name);
-			Trinkets.log.error("Invalid Ability Entry: " + id);
-			return null;
-		} else {
-			return race;
-		}
-	}
+    //Fire
+//		fireBreathing				=	name("fire_breathing");
+//		fireImmunity				=	name("fire_immunity");
 
-	//@formatter:off
-	static {
-		nightVision 				= 	getFromRegistry("night_vision");
-		creativeFlight				=	getFromRegistry("creative_flight");
+    //Heat
+//		survivalHeatImmunity		=	name("heat_immunity");
+//		Cold
+//		survivalColdImmunity		=	name("cold_immunity");
+    //Thirst
+//		survivalThirstImmunity		=	name("thirst_immunity");
+    //Parasites
+//		survivalParasitesImmunity	=	name("parasites_immunity");
 
-		//Fire
-		fireBreathing				=	getFromRegistry("fire_breathing");
-		fireImmunity				=	getFromRegistry("fire_immunity");
+//		blockDetection				=	name("block_detection");
+//		blockClimbing				=	name("block_climbing");
+//		witherImmunity				= 	name("wither_immunity");
+//		weightless					= 	name("weightless");
+//		wellRested					= 	name("well_rested");
+//		poisonAffinity				=	name("poison_affinity");
+//		waterAffinity				=	name("water_affinity");
+//		fallResistance				=	name("fall_resistance");
+//		nullKinetic					=	name("nullify_kinetic");
+//		safeGuard					=	name("safe_guard");
+//		firstAidReflex				=	name("firstaid_reflex");
+//		enderQueen					=	name("ender_queen");
+//		viciousStrike				=	name("vicious_strike");
+//		magnetic					=	name("magnetic");
+//		repel						=	name("repel");
+//		skilledMiner				=	name("skilled_miner");
+//		psudoFortune				= 	name("psudo_fortune");
+//		chargedShot					=	name("charged_shot");
+//		lightningBolt				=	name("lightning_bolt");
+//		dodging						=	name("dodging");
+//		largeHands					=	name("large_hands");
+//		heavy						=	name("heavy");
+//	}
+// @formatter:on
 
-		//Heat
-		survivalHeatImmunity		=	getFromRegistry("heat_immunity");
-		//Cold
-		survivalColdImmunity		=	getFromRegistry("cold_immunity");
-		//Thirst
-		survivalThirstImmunity		=	getFromRegistry("thirst_immunity");
-		//Parasites
-		survivalParasitesImmunity	=	getFromRegistry("parasites_immunity");
-
-		blockDetection				=	getFromRegistry("block_detection");
-		blockClimbing				=	getFromRegistry("block_climbing");
-		witherImmunity				= 	getFromRegistry("wither_immunity");
-		weightless					= 	getFromRegistry("weightless");
-		wellRested					= 	getFromRegistry("well_rested");
-		poisonAffinity				=	getFromRegistry("poison_affinity");
-		waterAffinity				=	getFromRegistry("water_affinity");
-		fallResistance				=	getFromRegistry("fall_resistance");
-		nullKinetic					=	getFromRegistry("nullify_kinetic");
-		safeGuard					=	getFromRegistry("safe_guard");
-		firstAidReflex				=	getFromRegistry("firstaid_reflex");
-		enderQueen					=	getFromRegistry("ender_queen");
-		viciousStrike				=	getFromRegistry("vicious_strike");
-		magnetic					=	getFromRegistry("magnetic");
-		repel						=	getFromRegistry("repel");
-		skilledMiner				=	getFromRegistry("skilled_miner");
-		psudoFortune				= 	getFromRegistry("psudo_fortune");
-		chargedShot					=	getFromRegistry("charged_shot");
-		lightningBolt				=	getFromRegistry("lightning_bolt");
-		dodging						=	getFromRegistry("dodging");
-		largeHands					=	getFromRegistry("large_hands");
-		heavy						=	getFromRegistry("heavy");
-	}
-	//@formatter:on
+//    @Nullable
+//    public static final IAbilityInterface getAbility(String ability) {
+//        switch (ability) {
+//            case Reference.MODID + ":" + nightVision:
+//                return new AbilityNightVision();
+//            //		case creativeFlight:
+//            //			return new AbilityFlying();
+//            default:
+//                return null;
+//        }
+//    }
 
 }

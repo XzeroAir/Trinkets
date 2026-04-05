@@ -1,127 +1,92 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityWellRested;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
 public class ConfigTeddyBear {
 
-	private final String name = ModItems.TeddyBear;
-	private final String PREFIX = Reference.MODID + ".config." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_TEDDY_BEAR;
 
-	@Config.Comment("give buffs when sleeping")
-	@Name("01. Sleep Bonus")
-	@LangKey(PREFIX + ".sleepbonus")
-	public boolean sleep_bonus = true;
+    public ConfigTeddyBear() {
 
-	@Config.Comment("Which Buffs to give")
-	@Name("02. Buffs")
-	@LangKey(PREFIX + ".sleepbonus.buff")
-	public String[] buffs = new String[] {
-			"minecraft:regeneration:300:0",
-			"minecraft:luck:600:0",
-			"minecraft:health_boost:3600:1"
-	};
+    }
 
-	@Config.Comment("If this value is greater then 0, instead of giving every buff in the list, it gives x random buffs")
-	@Name("03. Random Buffs")
-	@LangKey(PREFIX + ".sleepbonus.buff.random")
-	public int randomBuff = 0;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public Abilities ABILITIES = new Abilities();
 
-	@Config.Comment("Which effects to prevent")
-	@Name("10. Immunities")
-	@LangKey(PREFIX + ".immunities")
-	public String[] immunities = new String[] {
-			"lycanitesmobs:fear",
-			"lycanitesmobs:insomnia"
-	};
+    public class Abilities {
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_WELL_RESTED_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_WELL_RESTED_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_WELL_RESTED)
+        public ConfigAbilityWellRested WELL_RESTED = new ConfigAbilityWellRested();
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
+    }
 
-	public class Compatability {
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
 
-		@Name("Baubles Compatability")
-		@Config.Comment({
-				"If the mod Baubles is installed what bauble slot should it use",
-				"Available Types:",
-				"Trinket, Any, All",
-				"Amulet, Necklace, Pendant",
-				"Ring, Rings",
-				"Belt",
-				"Head, Hat",
-				"Body, Chest",
-				"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("trinket");
-	}
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-	protected final boolean armor = false;
-	protected final double armorAmount = 0;
-	protected final int armorOperation = 0;
-	protected final boolean attackSpeed = false;
-	protected final double attackSpeedAmount = 0;
-	protected final int attackSpeedOperation = 0;
-	protected final boolean damage = false;
-	protected final double damageAmount = 0;
-	protected final int damageOperation = 0;
-	protected final boolean health = false;
-	protected final double healthAmount = 0;
-	protected final int healthOperation = 0;
-	protected final boolean knockback = false;
-	protected final double knockbackAmount = 0;
-	protected final int knockbackOperation = 0;
-	protected final boolean speed = false;
-	protected final double speedAmount = 0;
-	protected final int speedOperation = 0;
-	protected final boolean swimSpeed = false;
-	protected final double swimSpeedAmount = 0;
-	protected final int swimSpeedOperation = 0;
-	protected final boolean toughness = false;
-	protected final double toughnessAmount = 0;
-	protected final int toughnessOperation = 0;
-	protected final boolean luck = false;
-	protected final double luckAmount = 0;
-	protected final int luckOperation = 0;
-	protected final boolean reach = false;
-	protected final double reachAmount = 0;
-	protected final int reachOperation = 0;
-	protected final boolean jump = false;
-	protected final double jumpAmount = 0;
-	protected final int jumpOperation = 0;
-	protected final boolean stepHeight = false;
-	protected final double stepHeightAmount = 0;
-	protected final int stepHeightOperation = 0;
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {
+            //@formatter:off
+            "lycanitesmobs:fear",
+            "lycanitesmobs:insomnia"
+            //@formatter:on
+    };
 
-	@Config.Comment({ "For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute" })
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, armorAmount, armorOperation,
-			attackSpeed, attackSpeedAmount, attackSpeedOperation,
-			damage, damageAmount, damageOperation,
-			health, healthAmount, healthOperation,
-			knockback, knockbackAmount, knockbackOperation,
-			speed, speedAmount, speedOperation,
-			swimSpeed, swimSpeedAmount, swimSpeedOperation,
-			toughness, toughnessAmount, toughnessOperation,
-			luck, luckAmount, luckOperation,
-			reach, reachAmount, reachOperation,
-			jump, jumpAmount, jumpOperation,
-			stepHeight, stepHeightAmount, stepHeightOperation
-	);
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {};
+
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+                "If the mod Baubles is installed what bauble slot should it use",
+                "Available Types:",
+                "Trinket, Any, All",
+                "Amulet, Necklace, Pendant",
+                "Ring, Rings",
+                "Belt",
+                "Head, Hat",
+                "Body, Chest",
+                "Charm"
+                //@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("trinket");
+    }
 
 }

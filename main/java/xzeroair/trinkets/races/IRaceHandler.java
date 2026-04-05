@@ -1,143 +1,123 @@
 package xzeroair.trinkets.races;
 
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.client.races.IRenderRaceHandler;
 
 public interface IRaceHandler {
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderLayer(RenderLivingBase renderer, boolean isFake, boolean isSlim, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-	}
+    default void startTransformation() {
+    }
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderPlayerPre(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-	}
+    default void endTransformation() {
+    }
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderPlayerPost(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
-	}
+    default void whileTranforming() {
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderLivingSpecialsPre(RenderLivingEvent.Specials.Pre event) {
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderLivingSpecialsPost(RenderLivingEvent.Specials.Post event) {
-	}
+    default void whileTransformed() {
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderLivingPre(RenderLivingEvent.Pre event) {
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	default void doRenderLivingPost(RenderLivingEvent.Post event) {
-	}
+    default void jump() {
+    }
 
-	@SideOnly(Side.CLIENT)
-	default void onClientTick() {
-	}
+    default void fall(LivingFallEvent event) {
+    }
 
-	default void startTransformation() {
-	}
+    default boolean potionBeingApplied(PotionEffect effect) {
+        return false;
+    }
 
-	default void endTransformation() {
-	}
+    default void breakingBlock(BreakSpeed event) {
+    }
 
-	default void whileTransformed() {
+    default void blockBroken(BreakEvent event) {
+    }
 
-	}
+    default void blockDrops(HarvestDropsEvent event) {
+    }
 
-	default void jump() {
-	}
+    default void bowNocked(ArrowNockEvent event) {
+    }
 
-	default void fall(LivingFallEvent event) {
-	}
+    default void bowDrawing(ItemStack stack, int charge) {
+    }
 
-	default boolean potionBeingApplied(PotionEffect effect) {
-		return false;
-	}
+    default void bowUsed(ArrowLooseEvent event) {
+    }
 
-	default void breakingBlock(BreakSpeed event) {
-	}
+    default void interact(PlayerInteractEvent event) {
+    }
 
-	default void blockBroken(BreakEvent event) {
-	}
+    default void interactWithEntity(PlayerInteractEvent.EntityInteract event) {
+    }
 
-	default void blockDrops(HarvestDropsEvent event) {
-	}
+    default boolean dismountedEntity(Entity mount) {
+        return true;
+    }
 
-	default ActionResult<ItemStack> bowNocked(World world, ItemStack bow, EnumHand hand, ActionResult<ItemStack> result, boolean hasAmmo) {
-		return result;
-	}
+    default boolean mountEntity(Entity mount) {
+        return true;
+    }
 
-	default void bowDrawing(ItemStack stack, int charge) {
-	}
+    /**
+     * @param enemy {@link EntityLiving#setAttackTarget(EntityLivingBase)}
+     */
+    default void targetedByEnemy(EntityLivingBase enemy) {
+    }
 
-	default void bowUsed(ItemStack stack, int charge) {
-	}
+    default boolean isAttacked(DamageSource source, float dmg) {
+        return true;
+    }
 
-	default void interact(PlayerInteractEvent event) {
-	}
+    default float isHurt(DamageSource source, float dmg) {
+        return dmg;
+    }
 
-	default void interactWithEntity(PlayerInteractEvent.EntityInteract event) {
-	}
+    default float isDamaged(DamageSource source, float dmg) {
+        return dmg;
+    }
 
-	default boolean dismountedEntity(Entity mount) {
-		return true;
-	}
+    default boolean attackedEntity(EntityLivingBase target, DamageSource source, float dmg) {
+        return true;
+    }
 
-	default boolean mountEntity(Entity mount) {
-		return true;
-	}
+    default float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
+        return dmg;
+    }
 
-	default void targetedByEnemy(EntityLivingBase enemy) {
-	}
+    default float damagedEntity(EntityLivingBase target, DamageSource source, float dmg) {
+        return dmg;
+    }
 
-	default boolean isAttacked(DamageSource source, float dmg) {
-		return true;
-	}
+    default float onHeal(float healAmount) {
+        return healAmount;
+    }
 
-	default float isHurt(DamageSource source, float dmg) {
-		return dmg;
-	}
+    default NBTTagCompound savedNBTData(NBTTagCompound compound) {
+        return compound;
+    }
 
-	default float isDamaged(DamageSource source, float dmg) {
-		return dmg;
-	}
+    default void loadNBTData(NBTTagCompound compound) {
+    }
 
-	default boolean attackedEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		return true;
-	}
+    @SideOnly(Side.CLIENT)
+    IRenderRaceHandler<? super IRenderRaceHandler> getRaceRenderer();
 
-	default float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		return dmg;
-	}
-
-	default float damagedEntity(EntityLivingBase target, DamageSource source, float dmg) {
-		return dmg;
-	}
-
-	default void savedNBTData(NBTTagCompound compound) {
-	}
-
-	default void loadNBTData(NBTTagCompound compound) {
-	}
 }

@@ -1,6 +1,5 @@
 package xzeroair.trinkets.proxy;
 
-import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -17,104 +17,131 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.container.TrinketInventoryContainer;
+import xzeroair.trinkets.events.*;
+import xzeroair.trinkets.init.ModEntities;
+import xzeroair.trinkets.init.ModSounds;
+import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.OreDictionaryCompat;
-import xzeroair.trinkets.util.registry.EventRegistry;
+import xzeroair.trinkets.util.compat.elenaidodge.ElenaiDodgeCompat;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidDamageEvent;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class CommonProxy implements IGuiHandler {
 
-	public Side getSide() {
-		return Side.SERVER;
-	}
+    public Side getSide() {
+        return Side.SERVER;
+    }
 
-	public void preInit(FMLPreInitializationEvent e) {
+    public void preInit(FMLPreInitializationEvent e) {
 
-		//Register Mod Stuff
+        //Register Mod Stuff
 
-		//Event Handlers
-		EventRegistry.preInit();
-		//Other Mod Compatibility
-		EventRegistry.modCompatPreInit();
-	}
+        //Event Handlers
+        ModEntities.registerEntities();
+        //Other Mod Compatibility
 
-	public void init(FMLInitializationEvent e) {
-		OreDictionaryCompat.registerOres();
+    }
 
-		EventRegistry.serverInit();
+    public void init(FMLInitializationEvent e) {
+        OreDictionaryCompat.registerOres();
 
-		EventRegistry.init();
-		EventRegistry.modCompatInit();
-	}
+        MinecraftForge.EVENT_BUS.register(EventHandlerServer.instance);
 
-	public void postInit(FMLPostInitializationEvent e) {
-		EventRegistry.postInit();
-		EventRegistry.modCompatPostInit();
-	}
+        ModSounds.init();
+        MinecraftForge.EVENT_BUS.register(new EventHandlerServer());
 
-	public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
-	}
+        MinecraftForge.EVENT_BUS.register(new OnWorldJoinHandler());
 
-	public void registerItemRenderer(Item item, int meta, String id) {
-	}
+        MinecraftForge.EVENT_BUS.register(new PlayerEventMC());
 
-	public IThreadListener getThreadListener(final MessageContext context) {
-		if (context.side.isServer()) {
-			return context.getServerHandler().player.getServerWorld();
-		} else {
-			throw new WrongSideException("Tried to get the IThreadListener from a client-side MessageContext on the dedicated server");
-		}
-	}
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
 
-	public EntityPlayer getPlayer(final MessageContext context) {
-		if (context.side.isServer()) {
-			return context.getServerHandler().player;
-		} else {
-			throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
-		}
-	}
+        MinecraftForge.EVENT_BUS.register(new EnderQueenHandler());
 
-	@Nullable
-	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID) {
-		if (context.side.isServer()) {
-			final Entity entity = context.getServerHandler().player.world.getEntityByID(entityID);
-			return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
-		}
-		throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
-	}
+        MinecraftForge.EVENT_BUS.register(new CombatHandler());
 
-	class WrongSideException extends RuntimeException {
-		public WrongSideException(final String message) {
-			super(message);
-		}
+        MinecraftForge.EVENT_BUS.register(new MovementHandler());
 
-		public WrongSideException(final String message, final Throwable cause) {
-			super(message, cause);
-		}
-	}
+        MinecraftForge.EVENT_BUS.register(new BlockBreakEvents());
 
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
-	}
+        if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.SERVER.GUI.TRINKETS_CONTAINER_ALLOW_BAUBLES) {
+            MinecraftForge.EVENT_BUS.register(new BaubleEventHandler());
+        }
+        if (TrinketsConfig.SERVER.GUI.ENABLED) {
+            MinecraftForge.EVENT_BUS.register(new TrinketEventHandler());
+        }
+        if (Trinkets.MOD_COMPAT.FirstAid) {
+            MinecraftForge.EVENT_BUS.register(new FirstAidDamageEvent());
+        }
+        if (Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE) {
+            MinecraftForge.EVENT_BUS.register(new ElenaiDodgeCompat());
+        }
+    }
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (world instanceof WorldServer) {
-			switch (ID) {
-			case Trinkets.GUI:
-				return new TrinketInventoryContainer(player.inventory, !world.isRemote, player);
-			case 1:
-				return null;//Mana Hud
-			case 2:
-				return null;// Properties
-			case 3:
-				return null;// Properties Attributes
-			}
-		}
-		return null;
-	}
+    public void postInit(FMLPostInitializationEvent e) {
+    }
 
-	public void spawnParticle(int effectID, World world, double x, double y, double z, double motX, double motY, double motZ, int color, float alpha) {
+    public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
+    }
 
-	}
+    public void registerItemRenderer(Item item, int meta, String id) {
+    }
+
+    public IThreadListener getThreadListener(@Nonnull final MessageContext context) {
+        if (context.side.isServer()) {
+            return context.getServerHandler().player.getServerWorld();
+        } else {
+            throw new WrongSideException("Tried to get the IThreadListener from a client-side MessageContext on the dedicated server");
+        }
+    }
+
+    public EntityPlayer getPlayer(@Nonnull final MessageContext context) {
+        if (context.side.isServer()) {
+            return context.getServerHandler().player;
+        } else {
+            throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
+        }
+    }
+
+    @Nullable
+    public EntityLivingBase getEntityLivingBase(@Nonnull MessageContext context, int entityID) {
+        if (context.side.isServer()) {
+            final Entity entity = context.getServerHandler().player.world.getEntityByID(entityID);
+            return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
+        }
+        throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
+    }
+
+    class WrongSideException extends RuntimeException {
+        public WrongSideException(final String message) {
+            super(message);
+        }
+
+        public WrongSideException(final String message, final Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        if (world instanceof WorldServer) {
+            switch (ID) {
+                case Reference.GUI:
+                    return new TrinketInventoryContainer(player.inventory, !world.isRemote, player);
+                default:
+                    return null;
+            }
+        }
+        return null;
+    }
+
 }

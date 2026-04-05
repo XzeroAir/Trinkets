@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "#C#",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "xat:mana_reagent"
+    }
+  },
+  "result": {
+    "item": "xat:spark_powder",
+    "count": 4
+  }
+}

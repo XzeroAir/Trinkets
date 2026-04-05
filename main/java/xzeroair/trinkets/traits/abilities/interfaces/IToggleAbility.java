@@ -1,13 +1,13 @@
 package xzeroair.trinkets.traits.abilities.interfaces;
 
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
+public interface IToggleAbility extends IAbilityInterface {
 
-public interface IToggleAbility extends IAbilityHandler {
+    boolean isAbilityToggled();
 
-	boolean abilityEnabled();
+    int getToggleMode();
 
-	IToggleAbility toggleAbility(boolean enabled);
+    IToggleAbility toggleAbility(boolean enabled);
 
-	IToggleAbility toggleAbility(int value);
+    IToggleAbility toggleAbility(int value);
 
 }

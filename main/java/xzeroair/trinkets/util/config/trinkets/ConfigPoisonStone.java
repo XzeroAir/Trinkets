@@ -1,133 +1,99 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityAffinityPoison;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityPoison;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
-//@formatter:off
 public class ConfigPoisonStone {
 
-	private final String name = ModItems.Poison;
-	private final String PREFIX = Reference.MODID + ".config." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_POISON_STONE;
 
-	@Config.Comment("If an Enemy is Poisoned, Should you be able to do Extra damage")
-	@Name("01. Bonus Damage")
-	@LangKey(PREFIX + ".damagebonus")
-	public boolean bonus_damage = true;
+    public ConfigPoisonStone() {
 
-	@Config.Comment("How much damage should you do when the enemy is poisoned. Default Damage x this")
-	@Name("02. Bonus Damage amount")
-	@LangKey(PREFIX + ".damagebonus.amount")
-	public float bonus_damage_amount = 2f;
+    }
 
-	@Config.Comment("Can the Poison Stone Poison Enemies?")
-	@Name("03. Can Poison")
-	@LangKey(PREFIX + ".poison")
-	public boolean poison = true;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.Comment("1 in X chance to Poison an Enemy on Attack for 2 seconds, Settings this value to 0 always poisons")
-	@Name("04. Poison Chance")
-	@LangKey(PREFIX + ".poison.chance")
-	public int poison_chance = 5;
+    public class ConfigAbilities {
 
-	@Config.Comment("")
-	@Name("05. Poison Duration")
-	@LangKey(PREFIX + ".poison.duration")
-	public int poison_duration = 40;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_POISON)
+        public ConfigAbilityAffinityPoison POISON_AFFINITY = new ConfigAbilityAffinityPoison();
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_POISON)
+        public ConfigAbilityImmunityPoison IMMUNITY_POISON = new ConfigAbilityImmunityPoison();
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
-	public class Compatability {
+    }
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
-		public class TANCompat {
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
 
-		}
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-		@Name("Baubles Compatability")
-		@Config.Comment({
-			"If the mod Baubles is installed what bauble slot should it use",
-			"Available Types:",
-			"Trinket, Any, All",
-			"Amulet, Necklace, Pendant",
-			"Ring, Rings",
-			"Belt",
-			"Head, Hat",
-			"Body, Chest",
-			"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("trinket");
-	}
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {
+            //@formatter:off
+            "minecraft:poison",
+            "minecraft:hunger",
+            "lycanitesmobs:plague"
+            //@formatter:on
+    };
 
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 0;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 0;
-	private final boolean 	damage = false;
-	private final double 	damageAmount = 0;
-	private final int		damageOperation = 0;
-	private final boolean 	health = false;
-	private final double 	healthAmount = 0;
-	private final int		healthOperation = 0;
-	private final boolean 	knockback = false;
-	private final double 	knockbackAmount = 0;
-	private final int		knockbackOperation = 0;
-	private final boolean 	speed = false;
-	private final double 	speedAmount = 0;
-	private final int		speedOperation = 0;
-	private final boolean 	swimSpeed = false;
-	private final double 	swimSpeedAmount = 0;
-	private final int		swimSpeedOperation = 0;
-	private final boolean 	toughness = false;
-	private final double 	toughnessAmount = 0;
-	private final int		toughnessOperation = 0;
-	private final boolean	luck = false;
-	private final double	luckAmount = 0;
-	private final int		luckOperation = 0;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 0;
-	private final boolean	jump = false;
-	private final double	jumpAmount = 0;
-	private final int		jumpOperation = 0;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 0;
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isPoison"};
 
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {};
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 		jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+                "If the mod Baubles is installed what bauble slot should it use",
+                "Available Types:",
+                "Trinket, Any, All",
+                "Amulet, Necklace, Pendant",
+                "Ring, Rings",
+                "Belt",
+                "Head, Hat",
+                "Body, Chest",
+                "Charm"
+                //@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("trinket");
+    }
 
 }

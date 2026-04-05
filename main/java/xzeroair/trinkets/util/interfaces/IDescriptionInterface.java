@@ -1,9 +1,17 @@
 package xzeroair.trinkets.util.interfaces;
 
-import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public interface IDescriptionInterface {
 
-	boolean hasDiscription(ItemStack stack);
+    String getDisplayName();
+
+    @SideOnly(Side.CLIENT)
+    default void getDescription(List<String> tooltips, int rendMod, int rendID) {
+
+    }
 
 }

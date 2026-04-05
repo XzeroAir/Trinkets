@@ -6,6 +6,11 @@ import xzeroair.trinkets.util.Reference;
 
 public class MagicAttributes {
 
+	public static final IAttribute MAX_MANA = new RangedAttribute(
+			(IAttribute) null, Reference.MODID + ".entityMagic.maxMana",
+			100.0, 0, Double.MAX_VALUE
+	).setDescription("Max Mana").setShouldWatch(true);
+
 	public static final IAttribute regen = new RangedAttribute(
 			(IAttribute) null, Reference.MODID + ".entityMagic.regen",
 			1.0, 0, Double.MAX_VALUE
@@ -18,7 +23,7 @@ public class MagicAttributes {
 
 	public static final IAttribute affinity = new RangedAttribute(
 			(IAttribute) null, Reference.MODID + ".entityMagic.affinity",
-			1.0, 0, Double.MAX_VALUE
+			0.0, 0, Double.MAX_VALUE
 	).setDescription("Magic Affinity").setShouldWatch(true);
 
 	// Make Potions give Regen?

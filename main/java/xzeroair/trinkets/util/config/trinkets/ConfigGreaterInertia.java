@@ -1,118 +1,96 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityKinetic;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
-//@formatter:off
 public class ConfigGreaterInertia {
 
-	private final String name = ModItems.GreaterInertia;
-	private final String PREFIX = Reference.MODID + ".config." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_INERTIA_STONE;
 
-	@Config.Comment("Should you Take Fall Damage?. Set to true to Enable. Default False")
-	@Name("Modified Fall Damage")
-	@LangKey(PREFIX + ".falldamage")
-	public boolean fall_damage = true;
+    public ConfigGreaterInertia() {
 
-	@Name("Modified Fall Damage Amount")
-	@Config.RangeDouble(min = 0, max = 10)
-	@LangKey(PREFIX + ".falldamage.amount")
-	public float falldamage_amount = 0.25f;
+    }
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
-	public class Compatability {
+    public class ConfigAbilities {
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
-		public class TANCompat {
-
-		}
-
-		@Name("Baubles Compatability")
-		@Config.Comment({
-			"If the mod Baubles is installed what bauble slot should it use",
-			"Available Types:",
-			"Trinket, Any, All",
-			"Amulet, Necklace, Pendant",
-			"Ring, Rings",
-			"Belt",
-			"Head, Hat",
-			"Body, Chest",
-			"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("trinket");
-	}
-
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 0;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 0;
-	private final boolean 	damage = false;
-	private final double 	damageAmount = 0;
-	private final int		damageOperation = 0;
-	private final boolean 	health = false;
-	private final double 	healthAmount = 0;
-	private final int		healthOperation = 0;
-	private final boolean 	knockback = true;
-	private final double 	knockbackAmount = 0.4D;
-	private final int		knockbackOperation = 0;
-	private final boolean 	speed = true;
-	private final double 	speedAmount = 1.5D;
-	private final int		speedOperation = 2;
-	private final boolean 	swimSpeed = false;
-	private final double 	swimSpeedAmount = 0;
-	private final int		swimSpeedOperation = 0;
-	private final boolean 	toughness = false;
-	private final double 	toughnessAmount = 0;
-	private final int		toughnessOperation = 0;
-	private final boolean	luck = false;
-	private final double	luckAmount = 0;
-	private final int		luckOperation = 0;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 0;
-	private final boolean	jump = true;
-	private final double	jumpAmount = 1;
-	private final int		jumpOperation = 1;
-	private final boolean	stepHeight = true;
-	private final double	stepHeightAmount = 0.6;
-	private final int		stepHeightOperation = 0;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_REDUCE_KINETIC_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_REDUCE_KINETIC_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_REDUCE_KINETIC)
+        public ConfigAbilityKinetic REDUCE_KINETIC = new ConfigAbilityKinetic(0.25F);
 
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 		jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+    }
+
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
+
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
+
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.knockbackResistance; Amount:0.4; Operation:0",
+            "Name:generic.movementSpeed, Amount:0.5, Operation:2",
+            "Name:xat.jump, Amount:1, Operation:1",
+            "Name:xat.stepheight, Amount:0.6, Operation:0"
+            //@formatter:on
+    };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+                "If the mod Baubles is installed what bauble slot should it use",
+                "Available Types:",
+                "Trinket, Any, All",
+                "Amulet, Necklace, Pendant",
+                "Ring, Rings",
+                "Belt",
+                "Head, Hat",
+                "Body, Chest",
+                "Charm"
+                //@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("trinket");
+    }
 
 }

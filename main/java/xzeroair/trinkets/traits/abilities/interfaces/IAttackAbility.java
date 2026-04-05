@@ -6,9 +6,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
 
-public interface IAttackAbility extends IAbilityHandler {
+public interface IAttackAbility extends IAbilityInterface {
+
+	default void targetedByEnemy(EntityLivingBase enemy) {
+
+	}
 
 	/**
 	 * @param source - Damage Source attacking the Entity with the Ability
@@ -22,7 +25,8 @@ public interface IAttackAbility extends IAbilityHandler {
 	/**
 	 * @param source - Damage Source attacking the Entity with the Ability
 	 * @param dmg    - The Amount of Damage done by the DamageSource
-	 * @return float - Return the modified damage from the source
+	 * @return float - Return the modified damage from the source, returning 0
+	 *         cancels the event
 	 *
 	 *         Armor and Enchantments have not been applied yet
 	 */
@@ -33,7 +37,8 @@ public interface IAttackAbility extends IAbilityHandler {
 	/**
 	 * @param source - Damage Source attacking the Entity with the Ability
 	 * @param dmg    - The Amount of Damage done by the DamageSource
-	 * @return float - Return the modified damage from the source
+	 * @return float - Return the modified damage from the source, returning 0
+	 *         cancels the event
 	 *
 	 *         Armor and Enchantments have been applied at this point
 	 */
@@ -59,7 +64,7 @@ public interface IAttackAbility extends IAbilityHandler {
 	 * @param source - DamageSource the Ability Holder is attacking with
 	 * @param dmg    - The Amount of Damage done by the DamageSource
 	 * @return float - Return the modified damage, return dmg if nothing was
-	 *         modified
+	 *         modified, returning 0 cancels the event
 	 *
 	 *         Enchantments have not been applied yet
 	 */
@@ -72,7 +77,7 @@ public interface IAttackAbility extends IAbilityHandler {
 	 * @param source - DamageSource the Ability Holder is attacking with
 	 * @param dmg    - The Amount of Damage done by the DamageSource
 	 * @return float - Return the modified damage, return dmg if nothing was
-	 *         modified
+	 *         modified, returning 0 cancels the event
 	 *
 	 *         Armor and Enchantments have been applied at this point
 	 */
@@ -80,15 +85,14 @@ public interface IAttackAbility extends IAbilityHandler {
 		return dmg;
 	}
 
-	default boolean killedEntity(EntityLivingBase target, DamageSource source, boolean cancel) {
-		return cancel;
+	default void killedEntity(EntityLivingBase target, DamageSource source) {
 	}
 
 	default int killedEntityExpDrop(EntityLivingBase target, int originalExp, int droppedExp) {
 		return droppedExp;
 	}
 
-	default void killedEntityItemDrops(EntityLivingBase attacked, DamageSource source, int lootingLevel, List<EntityItem> drops) {
+	default void killedEntityItemDrops(EntityLivingBase target, DamageSource source, int lootingLevel, List<EntityItem> drops) {
 
 	}
 

@@ -1,123 +1,152 @@
 package xzeroair.trinkets.races.dragon.config;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityNightVision;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
+import xzeroair.trinkets.util.config.race.RaceMagicConfig;
+import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
 public class DragonConfig {
-	private final String name = "dragon";
-	private final String PREFIX = Reference.MODID + ".config.races." + name;
 
-	@Config.RequiresWorldRestart
-	@Config.Comment("Creative Flight. Set to False to Disable. Default True")
-	@Name("00. Creative Flight")
-	@LangKey(PREFIX + ".flight")
-	public boolean creative_flight = true;
+    private final static String LANG_PREFIX = ConstantsConfigLang.CONFIG_RACES_DRAGON;
 
-	@Config.Comment("How much damage per second the dragon breath does")
-	@Name("01. Dragon Breath Damage")
-	@LangKey(PREFIX + ".breath.damage")
-	public float breath_damage = 1F;
+    public DragonConfig() {
+    }
 
-	@Config.Comment("The Mana Cost per tick when using dragons breath")
-	@Name("02. Dragon Breath Cost")
-	@LangKey(PREFIX + ".breath.cost")
-	public float breath_cost = 10F;
+    /// Default Abilities
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.RequiresWorldRestart
-	@Config.Comment("Change the flight speed from the Vanilla Default of 0.05")
-	@Name("03. Change Flight Speed")
-	@LangKey(PREFIX + ".flight.speed")
-	public boolean creative_flight_speed = true;
+    public class ConfigAbilities {
 
-	@Config.RequiresWorldRestart
-	@Config.Comment("How Fast the player moves when in Creative Flight. Vanilla Default 0.05. Default 0.02")
-	@Name("04. Creative Flight Speed")
-	@Config.RangeDouble(min = 0.01, max = 1)
-	@LangKey(PREFIX + ".flight.speed.amount")
-	public double flight_speed = 0.02;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES)
+        public ConfigAbilityGreedyEyes GREEDY_EYES = new ConfigAbilityGreedyEyes();
 
-	@Config.Comment("Mana Cost per second while flying")
-	@Name("05. Flight Cost")
-	@LangKey(PREFIX + ".flight.cost")
-	public float flight_cost = 5F;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION)
+        public ConfigAbilityNightVision NIGHT_VISION = new ConfigAbilityNightVision();
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE)
+        public ConfigAbilityImmunityFire FIRE_IMMUNITY = new ConfigAbilityImmunityFire(false);
 
-	public class Compatability {
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT)
+        public ConfigAbilityFlight FLIGHT = new ConfigAbilityFlight(true, 5F);
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		public TANCompat tan = new TANCompat();
+    }
 
-		public class TANCompat {
-			@Config.Comment("If Tough as Nails is Installed, Should the player be immune to Heat")
-			@Name("00. Immune to Heat")
-			@LangKey(Reference.MODID + ".config." + ModItems.DragonsEye + ".toughasnails.immunity.heat")
-			public boolean immuneToHeat = true;
-		}
+    /// Elemental Configuration
 
-	}
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementConfig ELEMENTS = new ElementConfig();
 
-	//@formatter:off
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 2;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 2;
-	private final boolean 	damage = true;
-	private final double 	damageAmount = 0.5;
-	private final int		damageOperation = 1;
-	private final boolean 	health = true;
-	private final double 	healthAmount = 0.25;
-	private final int		healthOperation = 1;
-	private final boolean 	knockback = false;
-	private final double 	knockbackAmount = 0;
-	private final int		knockbackOperation = 1;
-	private final boolean 	speed = false;
-	private final double 	speedAmount = 0;
-	private final int		speedOperation = 1;
-	private final boolean 	swimSpeed = false;
-	private final double 	swimSpeedAmount = 0;
-	private final int		swimSpeedOperation = 1;
-	private final boolean 	toughness = true;
-	private final double 	toughnessAmount = 0.5;
-	private final int		toughnessOperation = 1;
-	private final boolean	luck = false;
-	private final double	luckAmount = 0;
-	private final int		luckOperation = 1;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 1;
-	private final boolean	jump = false;
-	private final double	jumpAmount = 0;
-	private final int		jumpOperation = 1;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 1;
+    public class ElementConfig {
+
+        /// Fire
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireDragon FIRE = new ConfigFireDragon();
+
+        /// Ice
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceDragon ICE = new ConfigIceDragon();
+
+        /// Lightning
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningDragon LIGHTNING = new ConfigLightningDragon();
+
+    }
+
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL)
+    public boolean CAN_MOUNT = true;
+
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT)
+    public boolean CAN_CONTROL_BOATS = true;
+
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED)
+    public boolean MOUNT_WHITELIST = false;
+
+    @Config.Name("05. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST)
+    public String[] MOUNT_BLACKLIST = {};
+
+    @Config.Name("06. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
+
+    @Config.Name("07. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+    @Config.Name("08. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 			jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.maxHealth, Amount:0.25, Operation:1",
+            "Name:generic.attackDamage, Amount:0.5, Operation:1",
+            "Name:generic.armorToughness, Amount:0.5, Operation:1",
+            "Name:xat.flyspeed, Amount:-0.6, Operation:2"
+            //@formatter:on
+    };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC)
+    public RaceMagicConfig MAGIC = new RaceMagicConfig(400);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SIZE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
+    public RaceSizeConfig SIZE = new RaceSizeConfig(120, 120);
+
+    /// Default Compat
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+    }
+
 }

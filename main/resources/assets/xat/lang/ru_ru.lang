@@ -1,0 +1,589 @@
+#Translated by Razduplation and Heimdallr-1
+xat.mod.name=Trinkets and Baubles
+itemGroup.trinketstab=Trinkets
+xat.config.title=Trinkets & Baubles
+
+#xat.exampletext.start=Это пример информационного текста, он не отображается в игре.
+#xat.exampletext.1=Подсказки предметов поддерживают до 10 строк
+#xat.exampletext.2=item.glow_ring.tooltip1, item.glow_ring.tooltip2 и т.д.
+#xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+xat.holdshift=<Удерживайте Shift>
+xat.holdctrl=<Удерживайте Ctrl>
+xat.holdalt=<Удерживайте Alt>
+xat.noattributes=Этот предмет не даёт модификаторов атрибутов.
+xat.onequip=Когда надето:
+xat.tooltip.attackspeed=Скорость атаки
+xat.tooltip.attackdamage=Урон атаки
+xat.tooltip.health=Здоровье
+xat.tooltip.armor=Броня
+xat.tooltip.toughness=Прочность брони
+xat.tooltip.knockbackresist=Сопротивление отбрасыванию
+xat.tooltip.movementspeed=Скорость передвижения
+xat.tooltip.luck=Удача
+xat.tooltip.swimspeed=Скорость плавания
+xat.tooltip.reach=Дальность
+xat.tooltip.stepheight=Высота шага
+xat.tooltip.jumpheight=Высота прыжка
+xat.tooltip.on=§r(§aВкл.§r)
+xat.tooltip.off=§r(§cВыкл.§r)
+xat.tooltip.enabled=§r[§aВключено§r]
+xat.tooltip.disabled=§r[§cВыключено§r]
+xat.tooltip.weight=Вес:
+
+key.xat.category=Trinkets and Baubles
+key.xat.trinket_target.desc=Око дракона: Сменить цель
+key.xat.trinket_toggle_effect.desc=Око дракона: Ночное зрение
+key.xat.magnet_toggle_effect.desc=Поляризованный камень: Магнит
+key.xat.aux_key.desc=Доп. клавиша
+key.xat.trinket_gui.desc=Интерфейс Trinkets
+
+key.xat.trinket_arcing_attack.desc=Искрящаяся сфера: Атака
+key.xat.trinket_ender_crown.desc=Корона Эндера: Активация
+key.xat.race_ability.desc=Раса: Активная способность
+
+gui.xat.button.open=Открыть
+gui.xat.button.close=Закрыть
+
+gui.xat.race.trait.main=Скрыть особенность
+gui.xat.race.trait.main.variant=Тип
+gui.xat.race.trait.alt=Скрыть другое
+gui.xat.race.trait.alt.variant=Тип
+gui.xat.race.stats=Информация
+gui.xat.race.flip=Перевернуть
+
+##################################### Entities ####################################
+
+xat.entity.AlphaWolf.name=Король волков
+
+##################################### Abilities ####################################
+
+xat.ability.creative_flight.name=§6Полёт
+xat.ability.creative_flight.tooltip1=§6Даёт творческий полёт
+xat.ability.creative_flight.tooltip2=$gui:Дважды нажмите прыжок, чтобы полететь, и ещё раз, чтобы остановиться
+xat.ability.creative_flight.tooltip3=$gui:Даёт иммунитет к урону от падения
+
+xat.ability.greedy_eyes.name=§aЖадные глаза
+xat.ability.greedy_eyes.tooltip1=§6Позволяет находить сокровища поблизости
+xat.ability.greedy_eyes.tooltip2=@treasurefinder:
+xat.ability.greedy_eyes.tooltip3=$gui:Нажмите *deofkb: = Следующая цель
+xat.ability.greedy_eyes.tooltip4=$gui:Нажмите *auxkb:+*deofkb: = Предыдущая цель
+xat.ability.greedy_eyes.treasurefinder=§6Текущая цель: §3§n$target:§r <§e*deofkb:§r>
+xat.ability.greedy_eyes.treasurefinder.on=§6Мне нужно больше §f$target:§6 для моей сокровищницы $looking:
+xat.ability.greedy_eyes.treasurefinder.notfound=§6Я не уверен, что сейчас нужно моей сокровищнице. §c(Предмет не найден, возвращено как $target:)
+xat.ability.greedy_eyes.treasurefinder.off=Думаю, моя сокровищница уже достаточно полна $looking:
+
+xat.ability.night_vision.name=§eНочное зрение
+xat.ability.night_vision.tooltip1=§2Даёт ночное зрение §r<§e*denvkb:§r>
+xat.ability.night_vision.tooltip2=
+
+xat.ability.breath_fire.name=§cОгненное дыхание
+xat.ability.breath_fire.tooltip1=$gui:§6Даёт огненное дыхание
+xat.ability.breath_fire.tooltip2=§6Нажмите §r<§e*breathkb:§r>§6, чтобы использовать огненное дыхание §3$fbcost: маны
+
+xat.ability.breath_ice.name=§bЛедяное дыхание
+xat.ability.breath_ice.tooltip1=$gui:§6Даёт ледяное дыхание
+xat.ability.breath_ice.tooltip2=§6Нажмите §r<§e*breathkb:§r>§6, чтобы использовать ледяное дыхание §3$fbcost: маны
+
+xat.ability.breath_lightning.name=§dМолниевое дыхание
+xat.ability.breath_lightning.tooltip1=$gui:§6Даёт дыхание молнией
+xat.ability.breath_lightning.tooltip2=§6Нажмите §r<§e*breathkb:§r>§6, чтобы использовать дыхание молнией §3$fbcost: маны
+
+xat.ability.immunity_fire.name=§cОгненный §6иммунитет
+xat.ability.immunity_fire.tooltip1=§2Даёт §c$potion:
+xat.ability.immunity_fire.tooltip2=$gui:§6Иммунитет к огню и лаве
+xat.ability.immunity_fire.tooltip3=$gui:§6Невозможно поджечь
+xat.ability.immunity_fire.tooltip4=$gui:Невосприимчивость к большинству огненных атак
+xat.ability.immunity_fire.tooltip5=$gui:§6Иммунитет к §c$smouldering:
+
+xat.ability.immunity_ice.name=§bЛедяной §6иммунитет
+xat.ability.immunity_ice.tooltip1=§2Даёт §b$potion:
+xat.ability.immunity_ice.tooltip2=$gui:§6Невосприимчивость к большинству ледяных атак
+
+xat.ability.immunity_lightning.name=§dИммунитет к молнии §6
+xat.ability.immunity_lightning.tooltip1=§2Даёт §d$potion:
+xat.ability.immunity_lightning.tooltip2=@paralysis:
+xat.ability.immunity_lightning.paralysis=§6Иммунитет к §dпараличу
+
+xat.ability.immunity_dark.name=§8Тёмный §6иммунитет
+xat.ability.immunity_dark.tooltip1=$heal:§6Лечит от §8$wither:
+xat.ability.immunity_dark.tooltip2=§6Восстанавливает §3$dark_heal: §6от полученного тёмного урона
+xat.ability.immunity_dark.tooltip3=§6Снижает весь §8тёмный§6 урон на §3$amount:
+xat.ability.immunity_dark.tooltip4=$not_dark_heal:§6Иммунитет к §8тёмному§6 урону
+
+xat.ability.immunity_poison.name=§2Иммунитет к яду
+xat.ability.immunity_poison.tooltip1=§6Устойчивость к §2урону ядом
+
+xat.ability.immunity_water.name=§9Иммунитет к воде
+xat.ability.immunity_water.tooltip1=§6Устойчивость к §9водному§6 урону
+
+xat.ability.affinity_dark.name=§8Тёмное §6сродство
+xat.ability.affinity_dark.tooltip2=§6Даёт §3$wither_chance: §6шанс наложить §8$wither:§6 на цель на §3$wither_duration:§6 сек.
+xat.ability.affinity_dark.tooltip3=§6Похищает §3$leech_amount: §6сердец у целей под §8$wither:
+xat.ability.affinity_dark.tooltip4=$true_leech:§6Похищает §3$amount: §6урона у целей под §8$wither:
+
+xat.ability.affinity_poison.name=§2Ядовитое §6сродство
+xat.ability.affinity_poison.tooltip1=§6При атаке есть §3$chance: §6шанс отравить цель
+xat.ability.affinity_poison.tooltip2=§6При атаке отравленного врага наносит $bonus: урона
+
+xat.ability.affinity_water.name=§9Сродство с водой
+xat.ability.affinity_water.tooltip1=§6Бесконечный кислород при §r[§3$bubbles:§r]§6 пузырьках
+xat.ability.affinity_water.tooltip2=$vanilla:§2Даёт §d$potion:
+
+xat.ability.skilled_swimmer.name=Опытный пловец
+xat.ability.skilled_swimmer.tooltip1=§2Улучшает плавание
+xat.ability.skilled_swimmer.tooltip2=$gui:§2Вы чувствуете, будто плавали всю жизнь
+
+xat.ability.reduce_kinetic.name=Сопротивление падению
+xat.ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 Сопротивление урону от падения
+xat.ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 Сопротивление кинетическому урону
+
+xat.ability.nullify_kinetic.name=Нейтрализация кинетики
+xat.ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 Сопротивление урону от падения
+xat.ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 Сопротивление кинетическому урону
+
+xat.ability.frost_walker.name=§bЛедоход
+xat.ability.frost_walker.tooltip1=§6Даёт §bЛедоход
+
+xat.ability.lightning_bolt.name=§3Сродство с молнией
+xat.ability.lightning_bolt.tooltip1=§6Позволяет выпускать молнии ценой маны
+xat.ability.lightning_bolt.tooltip2=§6Удерживайте §r<§e*arckb:§r>§6, чтобы выпустить разряд §3$boltcost: маны
+xat.ability.lightning_bolt.tooltip3=§3$boltdamage:§6 урона в зависимости от потраченной маны
+
+xat.ability.dodging.name=Уклонение
+xat.ability.dodging.tooltip1=@dodge:
+xat.ability.dodging.tooltip2=@dodge.stun:
+xat.ability.dodging.dodge=§2Даёт уклонение двойным нажатием
+xat.ability.dodging.dodge.stun=§6Оглушает ближайших врагов при уклонении §3$dodgecost: маны
+
+xat.ability.climbing.name=Лазание
+xat.ability.climbing.tooltip1=§6Позволяет взбираться по блокам
+
+xat.ability.ender_queen.name=§5Королева Эндера
+xat.ability.ender_queen.tooltip1=$gui:§6Королевская кровь
+xat.ability.ender_queen.tooltip2=§3$dmgchance: §6шанс проигнорировать урон
+xat.ability.ender_queen.tooltip3=§3$spawnchance: §6шанс призвать эндермена на помощь
+xat.ability.ender_queen.tooltip4=$follow:§2Эндермены будут следовать за вами
+xat.ability.ender_queen.tooltip5=§3$tpchance: §5шанс телепортироваться от непрямого урона §3$hurtcost: маны
+xat.ability.ender_queen.tooltip6=$waterhurts:§cСлабость к воде
+xat.ability.ender_queen.tooltip7=$gui:$chest:§6Удалённый доступ к эндер-сундуку по нажатию §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: маны
+xat.ability.ender_queen.tooltip8=$gui:§6Случайная телепортация поблизости по нажатию §r<§e*tpkey:§r> §3$tpcost: маны
+xat.ability.ender_queen.tooltip9=§6Предотвращает $instability:
+xat.ability.ender_queen.teleport=§2Телепортация $toggle:
+xat.ability.ender_queen.teleport.failed=§cЧто-то мешает вам перемещаться через пустоту.
+
+xat.ability.vicious_strike.name=§4Жестокий удар
+xat.ability.vicious_strike.tooltip1=§6$chance: шанс вызвать кровотечение в ближнем бою
+xat.ability.vicious_strike.tooltip2=§aКровотечение наносит 1 урон каждую секунду в течение §3$duration:§a сек.
+xat.ability.vicious_strike.tooltip3=§cДлительность уменьшена до §3$reduceddur: §cсек. при использовании не-Фаэлисами
+
+xat.ability.magnetic.name=Магнетизм
+xat.ability.magnetic.tooltip1=@collect:
+xat.ability.magnetic.tooltip2=§r<§e*magnetkb:§r или §eПКМ§r>
+xat.ability.magnetic.collect=§6Притягивает ближайшие предметы @collectxp:
+xat.ability.magnetic.collectxp=и сферы опыта $collecttoggle:
+xat.ability.magnetic.magnetmode=Режим сбора $collecttoggle:
+
+xat.ability.repel.name=Отталкивание
+xat.ability.repel.tooltip1=@repel:
+xat.ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r или §eКрасться§r + §eПКМ§r>
+xat.ability.repel.repel=§6Отталкивает стрелы $repeltoggle:
+xat.ability.repel.repelmode=Режим отталкивания $repeltoggle:
+
+xat.ability.skilled_miner.name=§6Искусный шахтёр
+xat.ability.skilled_miner.tooltip1=§6Даёт дополнительный опыт при добыче
+xat.ability.skilled_miner.tooltip2=$gui:$fortune:§6Похоже, при добыче вы получаете больше ресурсов.
+xat.ability.skilled_miner.tooltip3=$gui:Скорость добычи фиксируется как твёрдость блока * 4
+
+xat.ability.skilled_archer.name=Искусный лучник
+xat.ability.skilled_archer.tooltip1=§6При использовании лука в режиме скрытности активирует усиленный выстрел ценой маны
+xat.ability.skilled_archer.tooltip2=$gui:Позволяет использовать ману, чтобы наполнить стрелу силой
+xat.ability.skilled_archer.tooltip3=$gui:Начните красться перед натягиванием лука для активации
+xat.ability.skilled_archer.tooltip4=$gui:При полном натяжении вызывает небольшой взрыв при попадании, наносящий урон по области
+
+xat.ability.large_hands.name=Большие руки
+xat.ability.large_hands.tooltip1=§6Позволяет добывать область 3x3x3
+xat.ability.large_hands.tooltip2=§eКрадитесь §2во время добычи, чтобы отключить способность
+
+xat.ability.heavy.name=§cТяжёлый
+xat.ability.heavy.tooltip1=§cВы тонете в воде
+xat.ability.heavy.tooltip2=§cВытаптываете растения, проходя по ним
+
+xat.ability.weightless.name=§dНевесомость
+xat.ability.weightless.tooltip1=§6Делает вас невесомым
+xat.ability.weightless.tooltip2=<§eЛКМ§r> чтобы двигаться §2вверх
+xat.ability.weightless.tooltip3=<§eКрасться§r> + <§eЛКМ§r> чтобы двигаться §2вниз
+#xat.ability.weightless.tooltip4=§aДаёт левитацию, пока предмет удерживается
+
+xat.ability.safe_guard.name=§6Защита
+xat.ability.safe_guard.tooltip1=§6Даёт эффект зелья $soheffect:
+xat.ability.safe_guard.tooltip2=@explosionresist:
+xat.ability.safe_guard.tooltip3=§6Может игнорировать урон каждые §3$cfghitcount: §6ударов
+xat.ability.safe_guard.tooltip4=@damageignored:
+xat.ability.safe_guard.damageignored=§6Получено ударов: §3$hitcount:/$cfghitcount:
+xat.ability.safe_guard.explosionresist=§3$explosionresistamount: §6сопротивление урону от взрывов
+
+xat.ability.well_rested.name=§bХорошо отдохнувший
+xat.ability.well_rested.tooltip1=§6Даёт усиления, если держать предмет во время сна
+
+xat.ability.stampede.name=§6Таран
+xat.ability.stampede.tooltip1=§6Удерживайте §r<§e*rkey:§r>§6 для рывка с разгоном
+xat.ability.stampede.tooltip2=§6Существа на вашем пути будут получать урон
+
+xat.ability.wolf_rider.name=Наездник на волке
+xat.ability.skilled_rider.name=Опытный наездник
+
+xat.ability.blessing_of_life.name=§6Благословение жизни
+xat.ability.blessing_of_life.tooltip1=$gui:§6У вас есть шанс заблокировать смертельный удар и полностью восстановить здоровье
+
+##################################### External Mod Abilities ####################################
+# SURVIVAL MODS
+
+xat.ability.immunity_heat.name=§cИммунитет к жаре
+xat.ability.immunity_heat.tooltip1=§6Иммунитет к §cгипертермии
+xat.ability.immunity_cold.name=§bИммунитет к холоду
+xat.ability.immunity_cold.tooltip1=§6Иммунитет к §bгипотермии
+xat.ability.immunity_thirst.name=Иммунитет к жажде §6
+xat.ability.immunity_thirst.tooltip1=$item:§6Иммунитет к жажде
+xat.ability.immunity_thirst.tooltip2=$gui:Иммунитет к эффекту жажды от питья грязной воды
+xat.ability.immunity_parasites.name=Иммунитет к паразитам §6
+xat.ability.immunity_parasites.tooltip1=$item:§6Иммунитет к паразитам
+xat.ability.immunity_parasites.tooltip2=$gui:Иммунитет к эффекту паразитов от питья грязной воды
+xat.ability.absorption_thirst.name=§9Поглощение воды
+xat.ability.absorption_thirst.tooltip1=§6Пассивно восстанавливает жажду, находясь в воде
+# FIRST AID
+xat.ability.hard_head.name=§6Крепкая голова
+xat.ability.hard_head.tooltip1=§3$headshotchance:§6 шанс проигнорировать выстрел в голову
+# ENHANCED VISUALS
+xat.ability.clear_vision.name=Ясное зрение
+xat.ability.clear_vision.tooltip1=$gui:Убирает эффект размытия
+xat.ability.ender_eyes.name=Глаза Эндера
+xat.ability.ender_eyes.tooltip1=$gui:Убирает эффект помех эндермена
+
+##################################### Elements ####################################
+
+xat.element.neutral.name=§fНейтральный
+xat.element.air.name=§3Воздух
+xat.element.dark.name=§8Тьма
+xat.element.earth.name=§2Земля
+xat.element.fire.name=§cОгонь
+xat.element.ice.name=§bЛёд
+xat.element.light.name=§eСвет
+xat.element.lightning.name=§dМолния
+xat.element.poison.name=§2Яд
+xat.element.void.name=§5Пустота
+xat.element.water.name=§9Вода
+
+##################################### Races ####################################
+
+xat.race.human.name=Человек
+xat.race.human.tooltip1=Вы — человек стихии $element:.
+xat.race.fairy.name=Фея
+xat.race.fairy.tooltip1=Вы — фея стихии $element:.
+xat.race.dwarf.name=Дворф
+xat.race.dwarf.tooltip1=Вы — дворф стихии $element:.
+xat.race.elf.name=Эльф
+xat.race.elf.tooltip1=Вы — эльф стихии $element:.
+xat.race.titan.name=Титан
+xat.race.titan.tooltip1=Вы — титан стихии $element:.
+xat.race.faelis.name=Фаэлис
+xat.race.faelis.tooltip1=Вы — фаэлис стихии $element:.
+xat.race.goblin.name=Гоблин
+xat.race.goblin.tooltip1=Вы — гоблин стихии $element:.
+xat.race.dragon.name=Дракон
+xat.race.dragon.tooltip1=Вы — дракон стихии $element:.
+xat.race.taurus.name=Тавр
+xat.race.taurus.tooltip1=Вы — тавр стихии $element:.
+
+##################################### Damage Types ####################################
+
+xat.damagetype.damage_water=вода
+xat.damagetype.damage_water.attack=%1$s погиб(ла) от %2$s
+xat.damagetype.damage_water.attack.crown=%1$s погиб(ла) от %2$s, нося Корону королевы Эндера.
+xat.danagetype.damage_poison=яд
+xat.damagetype.damage_poison.attack=%1$s погиб(ла) от %2$s
+xat.danagetype.damage_bleed=кровотечение
+xat.damagetype.damage_bleed.attack=%1$s погиб(ла) от %2$s
+
+##################################### Attributes ####################################
+
+attribute.name.xat.jump=Прыжок
+attribute.name.xat.stepheight=Высота шага
+attribute.name.xat.entityMagic.maxMana=Макс. мана
+attribute.name.xat.entityMagic.regen=Регенерация маны
+attribute.name.xat.entityMagic.regen.cooldown=Задержка регенерации маны
+attribute.name.xat.entityMagic.affinity=Магическая близость
+attribute.name.xat.flyspeed=Скорость полёта
+attribute.name.xat.entityRace=Зачарованная раса
+
+##################################### Materials ####################################
+
+item.glowing_powder.name=Светящаяся пыль
+item.glowing_powder.tooltip1=Материал для крафта 1 уровня
+
+item.glowing_ingot.name=§eСветящийся слиток
+item.glowing_ingot.tooltip1=§eМатериал для крафта 2 уровня
+
+item.glowing_gem.name=§6Светящийся самоцвет
+item.glowing_gem.tooltip1=§6Материал для крафта 3 уровня
+
+item.spark_powder.name=§6Искрящаяся пыль
+item.spark_powder.tooltip1=§6Материал для крафта 3 уровня
+
+##################################### Materials End ###############################
+#
+##################################### Trinkets ####################################
+
+item.arcing_orb.name=Искрящаяся сфера
+item.damage_shield.name=Щит чести
+
+item.dragons_eye.name=§6Око дракона
+item.dragons_eye.fire.name=§cОко огненного дракона
+item.dragons_eye.ice.name=§bОко ледяного дракона
+item.dragons_eye.lightning.name=§dОко дракона молний
+
+item.ender_tiara.name=Корона королевы Эндера
+item.ender_tiara.tooltip1=§6Королевская кровь
+
+item.faelis_claw.name=Коготь фаэлиса
+item.glow_ring.name=§6Кольцо зачарованных глаз
+item.greater_inertia_stone.name=Камень великой инерции
+item.inertia_null_stone.name=Камень нейтрализации инерции
+item.poison_stone.name=Ядовитый камень
+item.polarized_stone.name=Поляризованный камень
+item.sea_stone.name=Морской камень
+item.teddy_bear.name=Плюшевый мишка
+item.weightless_stone.name=Камень невесомости
+item.wither_ring.name=Кольцо иссушения
+
+item.cosmetic.0.name=Косметический предмет
+item.cosmetic.1.name=Крылья феи
+item.cosmetic.2.name=Борода дворфа
+item.cosmetic.3.name=Уши эльфа
+item.cosmetic.4.name=Уши гоблина
+item.cosmetic.5.name=Уши фаэлиса
+item.cosmetic.6.name=Черта титана
+item.cosmetic.7.name=Крылья дракона
+item.cosmetic.8.name=Рога тавра
+item.cosmetic.9.name=Рога тавра с колокольчиком
+item.cosmetic.10.name=Рога тавра (Ж)
+item.cosmetic.11.name=Рога тавра (Ж) с колокольчиком
+item.cosmetic.12.name=Коровий колокольчик
+item.cosmetic.13.name=Рога суккуба
+item.cosmetic.14.name=Рога
+item.cosmetic.15.name=Перевёрнутые рога
+item.cosmetic.16.name=Драконьи рога
+
+##################################### Trinkets Transformations ####################################
+
+item.dwarf_ring.name=§6Кольцо дворфов
+item.dwarf_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+
+item.elf_ring.name=§6Кольцо эльфов
+item.elf_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+item.elf_ring.tooltip2=§6Увеличивает скорость передвижения и атаки в лесах
+
+item.fairy_ring.name=§6Кольцо фей
+item.fairy_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+
+item.faelis_ring.name=§6Кольцо фаэлисов
+item.faelis_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+item.faelis_ring.tooltip2=§aПовышает урон без оружия
+item.faelis_ring.tooltip3=§aДаёт усиление при питье молока
+item.faelis_ring.tooltip4=§cШтраф к скорости передвижения в тяжёлой броне
+
+item.goblin_ring.name=§6Кольцо гоблинов
+item.goblin_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+item.goblin_ring.tooltip2=§6Позволяет ездить на прирученных волках
+item.goblin_ring.tooltip3=§6Даёт силу и регенерацию при езде на волках
+item.goblin_ring.tooltip4=§aНебольшая устойчивость к взрывам и огню
+item.goblin_ring.tooltip5=§aКриперы не будут вас замечать
+
+item.titan_ring.name=§6Кольцо титанов
+item.titan_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+
+item.dragon_ring.name=§6Кольцо драконов
+item.dragon_ring.fire.name=§6Кольцо §cогненных §6драконов
+item.dragon_ring.ice.name=§6Кольцо §bледяных §6драконов
+item.dragon_ring.lightning.name=§6Кольцо §dдраконов молний
+item.dragon_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+
+item.taurus_ring.name=§6Кольцо тавра
+item.taurus_ring.tooltip1=§6Размер сущности: $rsize: от обычного
+
+##################################### Trinkets End ############################
+#
+##################################### Food ####################################
+
+xat.food.item.tooltip1=
+xat.food.item.tooltip2=
+xat.food.item.tooltip3=
+
+item.mana_candy.food.name=§bКонфета маны
+item.mana_candy.food.tooltip1=§6Восстанавливает немного маны
+
+item.mana_crystal.food.name=§6Кристалл маны
+item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 к максимуму маны
+
+item.mana_reagent.food.name=§6Реагент маны
+item.mana_reagent.food.tooltip1=§cВредно при употреблении
+item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c к максимуму маны
+
+item.restoration_serum.food.name=§6Сыворотка восстановления
+item.restoration_serum.food.tooltip1=Снимает постоянные эффекты трансформации
+item.restoration_serum.food.tooltip2=§cВредно при употреблении
+
+xat.transformation.food.tooltip1=§3Возможно, я смогу снять этот эффект
+xat.transformation.food.tooltip2=§3если выпью какое-нибудь зелье
+xat.transformation.food.tooltip3=§r<§9Используйте сыворотку восстановления§r>
+
+item.dwarf_stout.food.name=Дворфийский стаут
+item.dwarf_stout.food.tooltip1=§6Превращает в дворфа
+
+item.fairy_dew.food.name=Роса феи
+item.fairy_dew.food.tooltip1=§6Превращает в фею
+
+item.titan_spirit.food.name=Дух титана
+item.titan_spirit.food.tooltip1=§6Превращает в титана
+
+item.elf_sap.food.name=Сок эльфа
+item.elf_sap.food.tooltip1=§6Превращает в эльфа
+
+item.goblin_soup.food.name=Суп гоблина
+item.goblin_soup.food.tooltip1=§6Превращает в гоблина
+
+item.faelis_food.food.name=Кошачья мята фаэлиса
+item.faelis_food.food.tooltip1=§6Превращает в фаэлиса
+
+item.dragon_gem.food.name=§6Самоцвет дракона
+item.dragon_gem.food.tooltip1=§6Превращает в дракона.
+item.dragon_gem.food.fire.name=§cСамоцвет огненного дракона
+item.dragon_gem.food.fire.tooltip1=§6Превращает в §cогненного §6дракона.
+item.dragon_gem.food.ice.name=§bСамоцвет ледяного дракона
+item.dragon_gem.food.ice.tooltip1=§6Превращает в §bледяного §6дракона.
+item.dragon_gem.food.lightning.name=§dСамоцвет дракона молний
+item.dragon_gem.food.lightning.tooltip1=§6Превращает в §dдракона молний§6.
+
+item.taurus_tea.food.name=Травяной чай тавра
+item.taurus_tea.food.tooltip1=§6Превращает в тавра
+
+##################################### Food End ###################################
+#
+#
+##################################### Potions ####################################
+
+tipped_arrow.effect.xat.sparkling=Стрела искрящегося зелья
+lingering_potion.effect.xat.sparkling=Туманное искрящееся зелье
+splash_potion.effect.xat.sparkling=Взрывное искрящееся зелье
+potion.effect.xat.sparkling=Искрящееся зелье
+xat.effect.sparkling=Искрящееся
+xat.item.potion.sparkling.tooltip1=§6Восстанавливает 25% от максимального здоровья
+xat.item.potion.sparkling.tooltip2=§6Восстанавливает 25% маны
+
+tipped_arrow.effect.xat.glittering=Стрела сверкающего зелья
+lingering_potion.effect.xat.glittering=Туманное сверкающее зелье
+splash_potion.effect.xat.glittering=Взрывное сверкающее зелье
+potion.effect.xat.glittering=Сверкающее зелье
+xat.effect.glittering=Сверкающее
+xat.item.potion.glittering.tooltip1=§6Восстанавливает 50% от максимального здоровья
+xat.item.potion.glittering.tooltip2=§6Восстанавливает 50% маны
+
+tipped_arrow.effect.xat.glowing=Стрела светящегося зелья
+lingering_potion.effect.xat.glowing=Туманное светящееся зелье
+splash_potion.effect.xat.glowing=Взрывное светящееся зелье
+potion.effect.xat.glowing=Светящееся зелье
+xat.effect.glowing=Светящееся
+xat.item.potion.glowing.tooltip1=§6Полностью восстанавливает здоровье
+xat.item.potion.glowing.tooltip2=§6Полностью восстанавливает ману
+
+tipped_arrow.effect.xat.ice_resistance=Стрела зелья ледяной стойкости
+lingering_potion.effect.xat.ice_resistance=Туманное зелье ледяной стойкости
+splash_potion.effect.xat.ice_resistance=Взрывное зелье ледяной стойкости
+potion.effect.xat.ice_resistance=Ледяная стойкость
+xat.effect.ice_resistance=Ледяная стойкость
+
+tipped_arrow.effect.xat.lightning_resistance=Стрела зелья стойкости к молнии
+lingering_potion.effect.xat.lightning_resistance=Туманное зелье стойкости к молнии
+splash_potion.effect.xat.lightning_resistance=Взрывное зелье стойкости к молнии
+potion.effect.xat.lightning_resistance=Стойкость к молнии
+xat.effect.lightning_resistance=Стойкость к молнии
+
+tipped_arrow.effect.xat.human=Стрела превращения в человека
+lingering_potion.effect.xat.human=Туманное зелье превращения в человека
+splash_potion.effect.xat.human=Взрывное зелье превращения в человека
+potion.effect.xat.human=Зелье превращения в человека
+xat.effect.human=Человек
+
+tipped_arrow.effect.xat.fairy=Стрела превращения в фею
+lingering_potion.effect.xat.fairy=Туманное зелье превращения в фею
+splash_potion.effect.xat.fairy=Взрывное зелье превращения в фею
+potion.effect.xat.fairy=Зелье превращения в фею
+xat.effect.fairy=Фея
+
+tipped_arrow.effect.xat.dwarf=Стрела превращения в дворфа
+lingering_potion.effect.xat.dwarf=Туманное зелье превращения в дворфа
+splash_potion.effect.xat.dwarf=Взрывное зелье превращения в дворфа
+potion.effect.xat.dwarf=Зелье превращения в дворфа
+xat.effect.dwarf=Дворф
+
+tipped_arrow.effect.xat.titan=Стрела превращения в титана
+lingering_potion.effect.xat.titan=Туманное зелье превращения в титана
+splash_potion.effect.xat.titan=Взрывное зелье превращения в титана
+potion.effect.xat.titan=Зелье превращения в титана
+xat.effect.titan=Титан
+
+tipped_arrow.effect.xat.goblin=Стрела превращения в гоблина
+lingering_potion.effect.xat.goblin=Туманное зелье превращения в гоблина
+splash_potion.effect.xat.goblin=Взрывное зелье превращения в гоблина
+potion.effect.xat.goblin=Зелье превращения в гоблина
+xat.effect.goblin=Гоблин
+
+tipped_arrow.effect.xat.elf=Стрела превращения в эльфа
+lingering_potion.effect.xat.elf=Туманное зелье превращения в эльфа
+splash_potion.effect.xat.elf=Взрывное зелье превращения в эльфа
+potion.effect.xat.elf=Зелье превращения в эльфа
+xat.effect.elf=Эльф
+
+tipped_arrow.effect.xat.faelis=Стрела превращения в фаэлиса
+lingering_potion.effect.xat.faelis=Туманное зелье превращения в фаэлиса
+splash_potion.effect.xat.faelis=Взрывное зелье превращения в фаэлиса
+potion.effect.xat.faelis=Зелье превращения в фаэлиса
+xat.effect.faelis=Фаэлис
+
+tipped_arrow.effect.xat.dragon=Стрела превращения в дракона
+lingering_potion.effect.xat.dragon=Туманное зелье превращения в дракона
+splash_potion.effect.xat.dragon=Взрывное зелье превращения в дракона
+potion.effect.xat.dragon=Зелье превращения в дракона
+xat.effect.dragon=Дракон
+
+tipped_arrow.effect.xat.dragon_fire=Стрела превращения в огненного дракона
+lingering_potion.effect.xat.dragon_fire=Туманное зелье превращения в огненного дракона
+splash_potion.effect.xat.dragon_fire=Взрывное зелье превращения в огненного дракона
+potion.effect.xat.dragon_fire=Зелье превращения в огненного дракона
+xat.effect.dragon_fire=Огненный дракон
+
+tipped_arrow.effect.xat.dragon_ice=Стрела превращения в ледяного дракона
+lingering_potion.effect.xat.dragon_ice=Туманное зелье превращения в ледяного дракона
+splash_potion.effect.xat.dragon_ice=Взрывное зелье превращения в ледяного дракона
+potion.effect.xat.dragon_ice=Зелье превращения в ледяного дракона
+xat.effect.dragon_ice=Ледяной дракон
+
+tipped_arrow.effect.xat.dragon_lightning=Стрела превращения в дракона молний
+lingering_potion.effect.xat.dragon_lightning=Туманное зелье превращения в дракона молний
+splash_potion.effect.xat.dragon_lightning=Взрывное зелье превращения в дракона молний
+potion.effect.xat.dragon_lightning=Зелье превращения в дракона молний
+xat.effect.dragon_lightning=Дракон молний
+
+tipped_arrow.effect.xat.taurus=Стрела превращения в тавра
+lingering_potion.effect.xat.taurus=Туманное зелье превращения в тавра
+splash_potion.effect.xat.taurus=Взрывное зелье превращения в тавра
+potion.effect.xat.taurus=Зелье превращения в тавра
+xat.effect.taurus=Тавр
+
+##################################### Blocks #######################################
+
+xat.tile.moon_rose.name=Лунная роза
+xat.tile.moon_rose.tooltip1=§bЗачарованный цветок
+xat.tile.moon_rose.tooltip2=§b<Вы чувствуете сильные магические колебания, исходящие от него>
+
+#################################### Blocks End ####################################

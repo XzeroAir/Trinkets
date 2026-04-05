@@ -1,0 +1,35 @@
+{
+  "type": "xat:shaped",
+  "pattern": [
+    "#I ",
+    "ICI",
+    " I "
+  ],
+  "key": {
+    "#": {
+      "item": "xat:mana_crystal"
+    },
+    "I": {
+      "item": "xat:glowing_ingot"
+    },
+    "C": {
+      "type": "xat:nbt",
+      "item": "xat:dragon_gem",
+      "data": 3,
+      "nbt": {
+        "Elements": {
+          "primary": "xat:lightning"
+        }
+      }
+    }
+  },
+  "result": {
+    "item": "xat:dragon_ring",
+    "data": 3,
+    "nbt": {
+      "Elements": {
+        "primary": "xat:lightning"
+      }
+    }
+  }
+}

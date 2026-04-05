@@ -2,172 +2,154 @@ package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.Vip.VipStatus;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.AbilityResistance;
-import xzeroair.trinkets.traits.abilities.compat.firstaid.AbilityIgnoreHeadshot;
+import xzeroair.trinkets.traits.abilities.AbilitySafeGuard;
+import xzeroair.trinkets.traits.abilities.compat.enhancedvisuals.AbilityEnhancedVisualsBlur;
+import xzeroair.trinkets.traits.abilities.compat.firstaid.AbilityHardHead;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.TrinketsConfig.xClient.TrinketItems.Shield;
+import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsCompat;
+import xzeroair.trinkets.util.compat.firstaid.FirstAidCompat;
+import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigDamageShield;
 import xzeroair.trinkets.util.config.trinkets.ConfigDamageShield;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class TrinketDamageShield extends AccessoryBase {
 
-	public static final ConfigDamageShield serverConfig = TrinketsConfig.SERVER.Items.DAMAGE_SHIELD;
-	public static final Shield clientConfig = TrinketsConfig.CLIENT.items.DAMAGE_SHIELD;
+    protected final ConfigDamageShield CONFIG = TrinketsConfig.SERVER.ITEMS.DAMAGE_SHIELD;
+    protected final ClientConfigDamageShield clientConfig = TrinketsConfig.CLIENT.ITEMS.DAMAGE_SHIELD;
 
-	public TrinketDamageShield(String name) {
-		super(name);
-		this.setUUID("c0885371-20dd-4c56-86eb-78f24d9fe777");
-		this.setItemAttributes(serverConfig.Attributes);
-		ModItems.trinkets.ITEMS.add(this);
-	}
+    public TrinketDamageShield(String name) {
+        super(name);
+        this.setUUID("c0885371-20dd-4c56-86eb-78f24d9fe777");
+    }
 
-	@Override
-	public void initAbilities(EntityLivingBase entity) {
-		this.addAbility(entity, Abilities.safeGuard, new AbilityResistance());
-		if (Trinkets.FirstAid && serverConfig.compat.firstaid.chance_ignore) {
-			this.addAbility(entity, Abilities.firstAidReflex, new AbilityIgnoreHeadshot());
-		}
-	}
+    @Override
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilitySafeGuard(this.CONFIG.ABILITIES.SAFE_GUARD));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
+        if (FirstAidCompat.isModEnabled()) {
+            abilities.add(new AbilityHardHead(this.CONFIG.ABILITIES.EXTERNAL.HARD_HEAD));
+        }
+        if (EnhancedVisualsCompat.isModActive()) {
+            abilities.add(new AbilityEnhancedVisualsBlur(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
+        }
+    }
 
-	@Override
-	public void eventPlayerTick(ItemStack stack, EntityPlayer player) {
-		super.eventPlayerTick(stack, player);
-		try {
-			final VipStatus status = Capabilities.getVipStatus(player);
-			if (status != null) {
-				if (this.stackHasStatus(stack)) {
-					if (this.getTagCompoundSafe(stack).getInteger("status") != status.getStatus()) {
-						this.getTagCompoundSafe(stack).setInteger("status", status.getStatus());
-					}
-				}
-			}
-		} catch (final Exception e) {
-		}
-	}
+    @Override
+    public Element getPrimaryElement() {
+        return Elements.LIGHT;
+    }
 
-	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-		super.onUpdate(stack, world, entity, itemSlot, isSelected);
-		this.removePlayerStatus(stack);
-	}
+    @Override
+    public void onAccessoryEquipped(ItemStack stack, @Nonnull EntityLivingBase entity) {
+        super.onAccessoryEquipped(stack, entity);
+    }
 
-	@Override
-	public void playerEquipped(ItemStack stack, EntityLivingBase player) {
-		this.addPlayerStatus(stack, player);
-		super.playerEquipped(stack, player);
-	}
+    @Override
+    public void onUpdate(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull Entity entity, int itemSlot, boolean isSelected) {
+        super.onUpdate(stack, world, entity, itemSlot, isSelected);
+    }
 
-	@Override
-	public void playerUnequipped(ItemStack stack, EntityLivingBase player) {
-		super.playerUnequipped(stack, player);
-		if (!TrinketHelper.AccessoryCheck(player, stack.getItem())) {
-			this.removePlayerStatus(stack);
-		}
-	}
+    @Override
+    public void onAccessoryUnequipped(ItemStack stack, @Nonnull EntityLivingBase entity) {
+        super.onAccessoryUnequipped(stack, entity);
+    }
 
-	private boolean stackHasStatus(ItemStack stack) {
-		return this.getTagCompoundSafe(stack).hasKey("status");
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void playerRenderLayer(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale) {
+        if (!this.clientConfig.RENDER) {
+            return;
+        }
+        final float offsetX = 0.17F;
+        final float offsetY = 0.22F;
+        final float offsetZ = 0.16F;
+        GlStateManager.pushMatrix();
+        if (player.isSneaking()) {
+            GlStateManager.translate(0F, 0.2F, 0F);
+        }
+        renderer.getMainModel().bipedBody.postRender(scale);
+        GlStateManager.rotate(180F, 1F, 0F, 0F);
+        GlStateManager.translate(offsetX, -offsetY, offsetZ);
+        if (player.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
+            GlStateManager.translate(offsetX - 0.14F, 0, -(offsetZ - 0.2F));
+        }
+        final float bS = 3f;
+        GlStateManager.scale(scale * bS, scale * bS, scale * bS);
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
+        GlStateManager.popMatrix();
+    }
 
-	private void addPlayerStatus(ItemStack stack, EntityLivingBase player) {
-		if (this.stackHasStatus(stack)) {
-			this.getTagCompoundSafe(stack).removeTag("status");
-		}
-		final VipStatus status = Capabilities.getVipStatus(player);
-		if (status != null) {
-			this.getTagCompoundSafe(stack).setInteger("status", status.getStatus());
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
+        final ModelResourceLocation bro = new ModelResourceLocation(this.getRegistryName().toString() + "_bro", "inventory");
+        final ModelResourceLocation panda = new ModelResourceLocation(this.getRegistryName().toString() + "_panda", "inventory");
+        final ModelResourceLocation vip = new ModelResourceLocation(this.getRegistryName().toString() + "_vip", "inventory");
+        final ModelResourceLocation artsy = new ModelResourceLocation(this.getRegistryName().toString() + "_artsy", "inventory");
+        final ModelResourceLocation twilight = new ModelResourceLocation(this.getRegistryName().toString() + "_twilight", "inventory");
+        ModelBakery.registerItemVariants(this, normal, bro, panda, vip, artsy, twilight);
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            int variant = Capabilities.getTrinketProperties(stack, 0, (prop, var) -> prop.getVariant());
+            switch (variant) {
+                case 1:
+                    return vip;
+                case 2:
+                    return bro;
+                case 3:
+                    return panda;
+                case 4:
+                    return artsy;
+                case 5:
+                    return twilight;
+                default:
+                    return normal;
+            }
+        });
+    }
 
-	private void removePlayerStatus(ItemStack stack) {
-		if (this.stackHasStatus(stack)) {
-			this.getTagCompoundSafe(stack).removeTag("status");
-		}
-	}
+    @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		final ModelResourceLocation normal = new ModelResourceLocation(this.getRegistryName().toString(), "inventory");
-		final ModelResourceLocation bro = new ModelResourceLocation(this.getRegistryName().toString() + "_bro", "inventory");
-		final ModelResourceLocation panda = new ModelResourceLocation(this.getRegistryName().toString() + "_panda", "inventory");
-		final ModelResourceLocation vip = new ModelResourceLocation(this.getRegistryName().toString() + "_vip", "inventory");
-		final ModelResourceLocation artsy = new ModelResourceLocation(this.getRegistryName().toString() + "_artsy", "inventory");
-		final ModelResourceLocation twilight = new ModelResourceLocation(this.getRegistryName().toString() + "_twilight", "inventory");
-		ModelBakery.registerItemVariants(this, normal, bro, panda, vip, artsy, twilight);
-		ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-			@Override
-			public ModelResourceLocation getModelLocation(ItemStack stack) {
-				if (TrinketDamageShield.this.stackHasStatus(stack)) {
-					if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 0) {
-						return normal;
-					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 1) {
-						return vip;
-					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 2) {
-						return bro;
-					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 3) {
-						return panda;
-					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 4) {
-						return artsy;
-					} else if (TrinketDamageShield.this.getTagCompoundSafe(stack).getInteger("status") == 5) {
-						return twilight;
-					} else {
-						return vip;
-					}
-				} else {
-					return normal;
-				}
-			}
-		});
-	}
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void playerRender(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale, boolean isBauble) {
-		if (!clientConfig.doRender) {
-			return;
-		}
-		final float offsetX = 0.17F;
-		final float offsetY = 0.22F;
-		final float offsetZ = 0.16F;
-		GlStateManager.pushMatrix();
-		if (player.isSneaking()) {
-			GlStateManager.translate(0F, 0.2F, 0F);
-		}
-		renderer.getMainModel().bipedBody.postRender(scale);
-		GlStateManager.rotate(180F, 1F, 0F, 0F);
-		GlStateManager.translate(offsetX, -offsetY, offsetZ);
-		if (player.hasItemInSlot(EntityEquipmentSlot.CHEST)) {
-			GlStateManager.translate(offsetX - 0.14F, 0, -(offsetZ - 0.2F));
-		}
-		final float bS = 3f;
-		GlStateManager.scale(scale * bS, scale * bS, scale * bS);
-		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
-		GlStateManager.popMatrix();
-	}
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
 
-	@Override
-	public boolean ItemEnabled() {
-		return serverConfig.enabled;
-	}
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
+    public boolean ItemEnabled() {
+        return this.CONFIG.ENABLED;
+    }
+
 }

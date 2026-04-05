@@ -12,7 +12,9 @@ public class TrinketsConfigEvent {
 	@SubscribeEvent
 	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 		if (event.getModID().equals(Reference.MODID)) {
+			ConfigHelper.refreshAttributeCacheMap();
 			TrinketsConfig.Save();
+			ConfigHelper.TrinketConfigStorage.init();
 		}
 	}
 

@@ -2,9 +2,8 @@ package xzeroair.trinkets.traits.abilities.interfaces;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
 
-public interface IItemUseAbility extends IAbilityHandler {
+public interface IItemUseAbility extends IAbilityInterface {
 
 	default int onItemStartUse(EntityLivingBase entity, ItemStack stack, int duration) {
 		return duration;

@@ -1,9 +1,8 @@
 package xzeroair.trinkets.traits.abilities.interfaces;
 
 import net.minecraft.entity.EntityLivingBase;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
 
-public interface IJumpAbility extends IAbilityHandler {
+public interface IJumpAbility extends IAbilityInterface {
 
 	default void jump(EntityLivingBase entity) {
 	}

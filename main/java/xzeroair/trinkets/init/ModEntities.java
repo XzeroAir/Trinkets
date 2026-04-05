@@ -10,35 +10,32 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.client.entityRenders.RenderAlphaWolf;
 import xzeroair.trinkets.client.entityRenders.RenderThrownProjectile;
 import xzeroair.trinkets.entity.AlphaWolf;
-import xzeroair.trinkets.entity.MovingThrownProjectile;
+import xzeroair.trinkets.entity.EntityRangedAttack;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class ModEntities {
 
-	public static void registerEntities() {
-		registerEntity("AlphaWolf", AlphaWolf.class, 120, 50);
-		registerEntity("DragonBreath", MovingThrownProjectile.class, 121, 50);
-		//		EntityEntryBuilder.create().
-	}
+    public static void registerEntities() {
+        registerEntity(TrinketsRegistryNames.ModEntities.ALPHA_WOLF, AlphaWolf.class, 120, 50);
+        registerEntity(TrinketsRegistryNames.ModEntities.DRAGON_BREATH, EntityRangedAttack.class, 121, 50);
+//        registerEntity(TrinketsRegistryNames.ModEntities.AREA_EFFECT, AreaEffectEntity.class, 122, 50);
+        //		EntityEntryBuilder.create().
+    }
 
-	private static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int color1, int color2) {
-		EntityRegistry.registerModEntity(
-				new ResourceLocation(Reference.MODID + ":" + name), entity,
-				name, id, Trinkets.instance, range, 1, true, color1, color2
-		);
-	}
+    private static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int color1, int color2) {
+        EntityRegistry.registerModEntity(new ResourceLocation(Reference.MODID + ":" + name), entity, name, id, Trinkets.instance, range, 1, true, color1, color2);
+    }
 
-	private static void registerEntity(String name, Class<? extends Entity> entity, int id, int range) {
-		EntityRegistry.registerModEntity(
-				new ResourceLocation(Reference.MODID + ":" + name), entity,
-				name, id, Trinkets.instance, range, 1, true
-		);
-	}
+    private static void registerEntity(String name, Class<? extends Entity> entity, int id, int range) {
+        EntityRegistry.registerModEntity(new ResourceLocation(Reference.MODID + ":" + name), entity, name, id, Trinkets.instance, range, 1, true);
+    }
 
-	@SideOnly(Side.CLIENT)
-	public static void registerEntityRenders() {
-		RenderingRegistry.registerEntityRenderingHandler(AlphaWolf.class, RenderAlphaWolf.FACTORY);
-		RenderingRegistry.registerEntityRenderingHandler(MovingThrownProjectile.class, RenderThrownProjectile.FACTORY);
-	}
+    @SideOnly(Side.CLIENT)
+    public static void registerEntityRenders() {
+        RenderingRegistry.registerEntityRenderingHandler(AlphaWolf.class, RenderAlphaWolf.FACTORY);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRangedAttack.class, RenderThrownProjectile.FACTORY);
+//        RenderingRegistry.registerEntityRenderingHandler(AreaEffectEntity.class, RenderAreaEffectEntity.FACTORY);
+    }
 
 }

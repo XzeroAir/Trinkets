@@ -1,125 +1,124 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityAffinityWater;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityWater;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilitySkilledSwimmer;
+import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsBlur;
+import xzeroair.trinkets.util.config.abilities.external.survival.ConfigAbilitySurvivalThirstAbsorption;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
-//@formatter:off
 public class ConfigSeaStone {
 
-	private final String name = ModItems.Sea;
-	private final String PREFIX = Reference.MODID + ".config." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_SEA_STONE;
 
-	@Config.Comment("Sea Stone's Ability to float in water. Set to False to Disable. Default True")
-	@Name("01. Sea Stone's Swimming Tweaks")
-	@LangKey(PREFIX + ".betterswimming")
-	public boolean Swim_Tweaks = true;
+    public ConfigSeaStone() {
 
-	@Name("02. Infinite Water Breathing")
-	@LangKey(PREFIX + ".waterbreathing")
-	public boolean underwater_breathing = true;
+    }
 
-	@Config.Comment("Should the player always have full bubbles, or stop at 1")
-	@Name("03. Full Bubbles")
-	@LangKey(PREFIX + ".waterbreathing.bubbles")
-	public boolean always_full = true;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+    public class ConfigAbilities {
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
-	public class Compatability {
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_WATER)
+        public ConfigAbilityAffinityWater WATER_AFFINITY = new ConfigAbilityAffinityWater();
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		public TANCompat tan = new TANCompat();
-		public class TANCompat {
-			@Config.Comment("If Tough as Nails is installed should the Stone of the Sea Prevent thirst Poisoning")
-			@Name("00. Prevent TAN Thirst Poisoning")
-			@LangKey(PREFIX + ".toughasnails.thirst")
-			public boolean prevent_thirst = true;
-		}
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_WATER)
+        public ConfigAbilityImmunityWater WATER_IMMUNITY = new ConfigAbilityImmunityWater();
 
-		@Name("Baubles Compatability")
-		@Config.Comment({
-			"If the mod Baubles is installed what bauble slot should it use",
-			"Available Types:",
-			"Trinket, Any, All",
-			"Amulet, Necklace, Pendant",
-			"Ring, Rings",
-			"Belt",
-			"Head, Hat",
-			"Body, Chest",
-			"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("amulet");
-	}
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_SWIMMER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_SWIMMER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_SKILLED_SWIMMER)
+        public ConfigAbilitySkilledSwimmer SKILLED_SWIMMER = new ConfigAbilitySkilledSwimmer();
 
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 0;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 0;
-	private final boolean 	damage = false;
-	private final double 	damageAmount = 0;
-	private final int		damageOperation = 0;
-	private final boolean 	health = false;
-	private final double 	healthAmount = 0;
-	private final int		healthOperation = 0;
-	private final boolean 	knockback = false;
-	private final double 	knockbackAmount = 0;
-	private final int		knockbackOperation = 0;
-	private final boolean 	speed = false;
-	private final double 	speedAmount = 0;
-	private final int		speedOperation = 0;
-	private final boolean 	swimSpeed = true;
-	private final double 	swimSpeedAmount = 4D;
-	private final int		swimSpeedOperation = 2;
-	private final boolean 	toughness = false;
-	private final double 	toughnessAmount = 0;
-	private final int		toughnessOperation = 0;
-	private final boolean	luck = false;
-	private final double	luckAmount = 0;
-	private final int		luckOperation = 0;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 0;
-	private final boolean	jump = false;
-	private final double	jumpAmount = 0;
-	private final int		jumpOperation = 0;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 0;
+        @Config.Name(ConstantsConfigLang.CONFIG_EXTERNAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_EXTERNAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_EXTERNAL)
+        public ConfigExternal EXTERNAL = new ConfigExternal();
 
+        public class ConfigExternal {
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 		jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_SURVIVAL_THIRST_ABSORPTION_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_SURVIVAL_THIRST_ABSORPTION_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_SURVIVAL_THIRST_ABSORPTION)
+            public ConfigAbilitySurvivalThirstAbsorption WATER_ABSORPTION = new ConfigAbilitySurvivalThirstAbsorption();
+
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION)
+            public ConfigAbilityEnhancedVisualsBlur CLEAR_VISION = new ConfigAbilityEnhancedVisualsBlur();
+
+        }
+
+    }
+
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
+
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
+
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:forge.swimSpeed, Amount:4, Operation:2"
+            //@formatter:on
+    };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat().setImmuneToThirst().setImmuneToParasites();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+                "If the mod Baubles is installed what bauble slot should it use",
+                "Available Types:",
+                "Trinket, Any, All",
+                "Amulet, Necklace, Pendant",
+                "Ring, Rings",
+                "Belt",
+                "Head, Hat",
+                "Body, Chest",
+                "Charm"
+                //@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("amulet");
+    }
 
 }

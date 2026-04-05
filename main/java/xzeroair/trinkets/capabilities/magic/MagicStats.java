@@ -1,257 +1,309 @@
 package xzeroair.trinkets.capabilities.magic;
 
-import java.util.Map;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.attributes.MagicAttributes;
+import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.CapabilityBase;
-import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.CapabilityEntityBase;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.mana.SyncManaCostToHudPacket;
 import xzeroair.trinkets.network.mana.SyncManaStatsPacket;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.ConfigHelper;
-import xzeroair.trinkets.util.config.ConfigHelper.ItemObjectHolder;
 import xzeroair.trinkets.util.config.mana.EntityManaConfig;
+import xzeroair.trinkets.util.helpers.NBTHelper;
+import xzeroair.trinkets.util.helpers.StringUtils;
 
-public class MagicStats extends CapabilityBase<MagicStats, EntityLivingBase> {
+import javax.annotation.Nonnull;
+import java.util.UUID;
 
-	private static final EntityManaConfig manaConfig = TrinketsConfig.SERVER.mana;
+public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBase> {
 
-	private float mana = 100f;
-	private float maxMana = 100f;
-	private int bonusMana = 0;
-	private int racialBonus = 100;
-	private boolean sync = false;
+    private final String TAG_KEY = Reference.MODID + ":magic";
+    private final EntityManaConfig manaConfig = TrinketsConfig.SERVER.MAGIC;
 
-	private int manaUpdateTickRate = 0;
-	private int manaRegenTimeout = 0;
+    private float mana = 100f;
+    private double bonusMana = 0;
+    private boolean sync = false;
 
-	public MagicStats(EntityLivingBase e) {
-		super(e);
-	}
+    private double manaUpdateTickRate = 0;
+    private double manaRegenTimeout = 0;
 
-	@Override
-	public NBTTagCompound getTag() {
-		//		if (object.getEntityData() != null) {
-		//			tag = object.getEntityData();
-		//		}
-		return super.getTag();
-	}
+    private final UpdatingAttribute MANA_BONUS;
 
-	@Override
-	public void onUpdate() {
-		final boolean isCreative = (object instanceof EntityPlayer) && (((EntityPlayer) object).isCreative() || ((EntityPlayer) object).isSpectator());
-		if (!TrinketsConfig.SERVER.mana.mana_enabled || isCreative) {
-			this.refillMana();
-			return;
-		}
-		if (object.getEntityWorld().isRemote) {
-			sync = false;
-			return;
-		}
-		if (manaRegenTimeout > 0) {
-			manaRegenTimeout--;
-			return;
-		} else {
-			manaRegenTimeout = 0;
-		}
-		if (this.getMana() > this.getMaxMana()) {
-			this.setMana(this.getMaxMana());
-		}
-		if (this.getMana() < this.getMaxMana()) {
-			manaUpdateTickRate++;
-			if (manaUpdateTickRate > manaConfig.mana_update_ticks) {
-				/*
-				 * TODO Fix Affinity Maybe setup a field that determines the regen amount Maybe
-				 * setup something to reduce the ticks needed to regen
-				 */
-				final IAttributeInstance attribute = object.getAttributeMap().getAttributeInstance(MagicAttributes.regen);
-				if (attribute != null) {
-					this.addMana((float) attribute.getAttributeValue());
-				} else {
-					this.addMana(1F);
-				}
-				manaUpdateTickRate = 0;
-			}
-		}
-		if (sync) {
-			sync = false;
-			this.refillMana();
-			//			this.sendManaToPlayer(object);
-		}
-		//		if (Trinkets.proxy.getSide() == Side.CLIENT) {
-		//			ScreenOverlayEvents.instance.SyncMana(this.getMana(), this.getBonusMana(), this.getMaxMana());
-		//		}
-	}
+    public MagicStats(EntityLivingBase e) {
+        super(e);
+        this.MANA_BONUS = new UpdatingAttribute("BonusMax", UUID.fromString("a3b8802c-e521-45c0-b126-eb45692f68eb"), MagicAttributes.MAX_MANA).setSavedInNBT(true);
+    }
 
-	public void refillMana() {
-		if (this.getMana() != this.getMaxMana()) {
-			this.setMana(this.getMaxMana());
-		}
-	}
+    @Override
+    public NBTTagCompound getTag() {
+        final NBTTagCompound tag = NBTHelper.getEntityTag(this.getEntity());
+        if (tag != null) {
+            if (!tag.hasKey(this.TAG_KEY)) {
+                tag.setTag(this.TAG_KEY, new NBTTagCompound());
+            }
+            return tag.getCompoundTag(this.TAG_KEY);
+        } else {
+            return super.getTag();
+        }
+    }
 
-	/**
-	 * Getters, Setters and Booleans
-	 */
+    public boolean onRegenCooldown() {
+        boolean manaEnabled = TrinketsConfig.SERVER.MAGIC.mana_enabled;
+        if (!manaEnabled || (this.manaRegenTimeout <= 0)) {
+            this.manaRegenTimeout = 0;
+            return false;
+        }
+        this.manaRegenTimeout--;
+        return true;
+    }
 
-	public float getMana() {
-		return mana;
-	}
+    @Override
+    public void onUpdate() {
+        if (this.MANA_BONUS != null) {
+            float bonusPerPoint = TrinketsConfig.SERVER.MAGIC.bonus;
+            if (bonusPerPoint > 0) {
+                double bonus = this.getBonusMana();
+                double amount = bonusPerPoint * bonus;
+                this.MANA_BONUS.addModifier(this.getEntity(), amount, 0);
+            } else {
+                this.MANA_BONUS.removeModifier(this.getEntity());
+            }
+        }
+        if (this.getEntity().world.isRemote) {
+            this.sync = false;
+            return;
+        }
+        if (!TrinketsConfig.SERVER.MAGIC.mana_enabled || this.isCreativePlayer()) {
+            this.refillMana();
+            return;
+        }
+        if (this.onRegenCooldown()) {
+            return;
+        }
+        if (this.getMana() > this.getMaxMana()) {
+            this.setMana(this.getMaxMana());
+        } else if (this.getMana() < this.getMaxMana()) {
+            this.manaUpdateTickRate++;
+            final IAttributeInstance cooldown = this.getEntity().getAttributeMap().getAttributeInstance(MagicAttributes.regenCooldown);
+            double cooldownMulti = cooldown != null ? cooldown.getAttributeValue() : 1D;
+            if (this.manaUpdateTickRate > (this.manaConfig.mana_update_ticks * cooldownMulti)) {
+                /*
+                 * TODO Fix Affinity Maybe setup a field that determines the regen amount Maybe
+                 * setup something to reduce the ticks needed to regen
+                 */
+                final IAttributeInstance attribute = this.getEntity().getAttributeMap().getAttributeInstance(MagicAttributes.regen);
+                this.addMana(attribute != null ? (float) attribute.getAttributeValue() : 1F);
+                this.manaUpdateTickRate = 0;
+            }
+        }
+        if (this.sync) {
+            this.sync = false;
+            this.refillMana(); // this only triggers when changing dimension from the end to the overworld, or when the player dies
+        }
+    }
 
-	public void setMana(float mana) {
-		if (mana > this.getMaxMana()) {
-			this.mana = this.getMaxMana();
-		} else if (mana < 0) {
-			this.mana = 0;
-		} else {
-			this.mana = mana;
-		}
-		//		sync = true;
-		this.sendManaToPlayer(object);
-	}
+    public void refillMana() {
+        if (this.getMana() != this.getMaxMana()) {
+            this.setMana(this.getMaxMana());
+        }
+    }
 
-	public void addMana(float mana) {
-		this.setMana(this.mana + mana);
-	}
+    /**
+     * Getters, Setters and Booleans
+     */
 
-	public boolean spendMana(float cost) {
-		final boolean isCreative = (object instanceof EntityPlayer) && (((EntityPlayer) object).isCreative() || ((EntityPlayer) object).isSpectator());
-		boolean spend = true;
-		if (isCreative || !TrinketsConfig.SERVER.mana.mana_enabled) {
-			return true;
-		} else if (cost <= this.getMana()) {
-			spend = true;
-		} else {
-			spend = false;
-			if ((object instanceof EntityPlayer) && object.world.isRemote) {
-				final String Message = "No MP";
-				((EntityPlayer) object).sendStatusMessage(new TextComponentString(Message), true);
-			}
-		}
+    public float getMana() {
+        return this.mana;
+    }
 
-		if (spend == true) {
-			this.setMana(mana - cost);
-			this.setManaRegenTimeout();
-		}
-		return spend;
-	}
+    public void setMana(float mana) {
+        if (!this.getEntity().world.isRemote) {
+            float amount = Math.min(Math.max(mana, 0), this.getMaxMana());
+            if (this.mana != amount) {
+                this.mana = amount;
+                this.sendInformationToPlayer();
+            }
+        }
+    }
 
-	public float getMaxMana() {
-		final float maxAffinityBonus = ((maxMana * (this.getRacialAffinity() * 0.01F)) - maxMana);
-		final float maxBonus = maxMana + (10F * this.getBonusMana());
-		final float max = maxAffinityBonus + maxBonus;
-		if (manaConfig.mana_cap) {
-			if (manaConfig.cap_affinity) {
-				return MathHelper.clamp(max, 0F, manaConfig.mana_max);
-			} else {
-				return MathHelper.clamp(maxBonus, 0F, manaConfig.mana_max) + maxAffinityBonus;
-			}
-		} else {
-			return max;
-		}
-	}
+    public void addMana(float mana) {
+        this.setMana(this.mana + mana);
+    }
 
-	public int getBonusMana() {
-		return bonusMana;
-	}
+    public boolean spendMana(float cost) {
+        boolean isCreative = (this.getEntity() instanceof EntityPlayer) && ((EntityPlayer) this.getEntity()).isCreative();
+        boolean manaEnabled = TrinketsConfig.SERVER.MAGIC.mana_enabled;
 
-	public boolean needMana() {
-		return mana < this.getMaxMana();
-	}
+        if (!manaEnabled || isCreative) {
+            return true;
+        }
+        if (cost <= 0 && !this.getEntity().world.isRemote) {
+            return true;
+        } else if ((cost > 0) && (cost <= this.getMana())) {
+            this.setMana(this.mana - cost);
+            this.setManaRegenTimeout();
+            return true;
+        } else if ((cost > this.getMana())) {
+            StringUtils.sendStatusMessageToPlayer(this.getEntity(), "No MP", true);
+        }
+        return false;
+    }
 
-	public void setBonusMana(int bonus) {
-		if (bonus < 0) {
-			bonusMana = 0;
-		} else {
-			bonusMana = bonus;
-		}
-		this.sendManaToPlayer(object);
-	}
+    public float getMaxMana() {
+        IAttributeInstance maxMana = this.getEntity().getEntityAttribute(MagicAttributes.MAX_MANA);
+        if (maxMana != null) {
+            final float max = (float) maxMana.getAttributeValue();
+            final float maxAffinityBonus = (float) ((maxMana.getBaseValue() * (this.getMagicAffinity() * 0.01F)) - maxMana.getBaseValue());
+            return Math.max(max + maxAffinityBonus, 0);
+        } else {
+            return 100F;
+        }
+    }
 
-	public void setManaRegenTimeout() {
-		this.setManaRegenTimeout(manaConfig.mana_regen_timeout);
-	}
+    public double getBonusMana() {
+        return this.bonusMana;
+    }
 
-	public void setManaRegenTimeout(int timeout) {
-		manaRegenTimeout = timeout;
-	}
+    public boolean needMana() {
+        return this.getMana() < this.getMaxMana();
+    }
 
-	public int getRacialAffinity() {
-		final EntityProperties race = Capabilities.getEntityRace(object);
-		if (race != null) {
-			racialBonus = race.getCurrentRace().getMagicAffinity();
-		}
-		return racialBonus;
-	}
+    public void setBonusMana(double bonus) {
+        if (bonus < 0) {
+            this.bonusMana = 0;
+        } else {
+            this.bonusMana = bonus;
+        }
+        if (this.bonusMana > this.manaConfig.bonus_max) {
+            this.bonusMana = this.manaConfig.bonus_max;
+        }
+        this.sendInformationToPlayer(this.getEntity());
+    }
 
-	public Map<String, ItemObjectHolder> getRecoveryItems() {
-		return ConfigHelper.getMagicRecoveryItems();
-	}
+    public void setManaRegenTimeout() {
+        final IAttributeInstance attribute = this.getEntity().getAttributeMap().getAttributeInstance(MagicAttributes.regenCooldown);
+        double cooldownMulti = attribute != null ? attribute.getAttributeValue() : 1D;
+        this.setManaRegenTimeout((int) (this.manaConfig.mana_regen_timeout * cooldownMulti));
+        //		this.setManaRegenTimeout(manaConfig.mana_regen_timeout);
+    }
 
-	/**
-	 * Send Mana from Server to a Client player
-	 */
+    public void setManaRegenTimeout(int timeout) {
+        this.manaRegenTimeout = timeout;
+    }
 
-	public void sendManaToPlayer(EntityLivingBase e) {
-		if ((e instanceof EntityPlayerMP)) {
-			NetworkHandler.sendTo(new SyncManaStatsPacket(object, this), (EntityPlayerMP) e);
-		}
-	}
+    public int getMagicAffinity() {
+        IAttributeInstance affinity = this.getEntity().getEntityAttribute(MagicAttributes.affinity);
+        if (affinity != null) {
+            int amount = (int) affinity.getAttributeValue();
+            amount += (this.getRacialAffinity());
+            return amount;
+        } else {
+            return 0;
+        }
+    }
 
-	public void syncToManaCostToHud(float cost) {
-		if ((object instanceof EntityPlayer) && !object.world.isRemote) {
-			NetworkHandler.sendTo(new SyncManaCostToHudPacket(cost), (EntityPlayerMP) object);
-		}
-	}
+    public int getRacialAffinity() {
+        return Capabilities.getEntityProperties(this.getEntity(), EntityRaces.none, (prop, r) -> prop.getCurrentRace().getRace()).getMagicAffinity();
+    }
 
-	/**
-	 * Handle NBT
-	 */
-	@Override
-	public void copyFrom(MagicStats stats, boolean wasDeath, boolean keepInv) {
-		bonusMana = stats.bonusMana;
-		if (wasDeath) {
-			if (keepInv) {
-				mana = stats.mana;
-			} else {
-				mana = this.getMaxMana();
-			}
-		} else {
-			mana = stats.mana;
-		}
-		sync = true;
-	}
+    @Override
+    public void onJoinWorld() {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(this.getEntity());
+        }
+    }
 
-	@Override
-	public void saveToNBT(NBTTagCompound tag) {
-		tag.setFloat("mana", mana);
-		//		tag.setFloat("max_mana", maxMana);
-		//		tag.setInteger("racial_bonus", racialBonus);
-		tag.setInteger("bonus_mana", bonusMana);
-	}
+    @Override
+    public void onLogin() {
+    }
 
-	@Override
-	public void loadFromNBT(NBTTagCompound tag) {
-		if (tag.hasKey("mana")) {
-			mana = tag.getFloat("mana");
-		}
-		//		if (tag.hasKey("max_mana")) {
-		//			maxMana = tag.getFloat("max_mana");
-		//		}
-		//		if (tag.hasKey("racial_bonus")) {
-		//			racialBonus = tag.getInteger("racial_bonus");
-		//		}
-		if (tag.hasKey("bonus_mana")) {
-			bonusMana = tag.getInteger("bonus_mana");
-		}
-	}
+    @Override
+    public void onLogoff() {
+    }
+
+    @Override
+    public void onChangedDimension(int from, int to) {
+
+    }
+
+    public void sendInformationToPlayer() {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(this.getEntity(), this.saveToNBT(new NBTTagCompound()));
+        }
+    }
+
+    public void sendInformationToPlayer(EntityLivingBase receiver) {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(receiver, this.saveToNBT(new NBTTagCompound()));
+        }
+    }
+
+    public void sendInformationToPlayer(EntityLivingBase receiver, NBTTagCompound tag) {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote && (receiver instanceof EntityPlayerMP)) {
+            NetworkHandler.sendTo(new SyncManaStatsPacket(this.getEntity(), tag), (EntityPlayerMP) receiver);
+        }
+    }
+
+    public void sendInformationToTracking(NBTTagCompound tag) {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote && (world instanceof WorldServer)) {
+            final WorldServer w = (WorldServer) world;
+            NetworkHandler.sendToClients(w, this.getEntity().getPosition(), new SyncManaStatsPacket(this.getEntity(), tag));
+        }
+    }
+
+    public void syncToManaCostToHud(float cost) {
+        if ((this.getEntity() instanceof EntityPlayer) && !this.getEntity().world.isRemote) {
+            NetworkHandler.sendTo(new SyncManaCostToHudPacket(cost), (EntityPlayerMP) this.getEntity());
+        }
+    }
+
+    /**
+     * Handle NBT
+     */
+    @Override
+    public void copyFrom(@Nonnull MagicStats stats, boolean wasDeath, boolean keepInv) {
+        this.bonusMana = stats.bonusMana;
+        if (wasDeath) {
+            if (keepInv) {
+                this.mana = stats.mana;
+            } else {
+                this.mana = this.getMaxMana();
+            }
+        } else {
+            this.mana = stats.mana;
+        }
+        this.sync = true;
+    }
+
+    @Override
+    public NBTTagCompound saveToNBT(@Nonnull NBTTagCompound tag) {
+        tag.setFloat("mana", this.getMana());
+        tag.setDouble("bonus_mana", this.getBonusMana());
+        return tag;
+    }
+
+    @Override
+    public void loadFromNBT(@Nonnull NBTTagCompound tag) {
+        if (tag.hasKey("mana")) {
+            this.mana = tag.getFloat("mana");
+        }
+        if (tag.hasKey("bonus_mana")) {
+            this.bonusMana = tag.getDouble("bonus_mana");
+        }
+    }
 
 }

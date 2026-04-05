@@ -1,154 +1,101 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityEnderQueen;
+import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsStatic;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
-import xzeroair.trinkets.util.config.trinkets.shared.ConfigAttribs;
 
-//@formatter:off
 public class ConfigEnderCrown {
 
-	private final String name = ModItems.EnderTiara;
-	private final String PREFIX = Reference.MODID + ".config." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_ENDER_CROWN;
 
-	@Config.Comment("If while wearing this should the player take damage while wet")
-	@Name("01. Water Hurts")
-	@LangKey(PREFIX + ".waterhurts")
-	public boolean water_hurts = false;
+    public ConfigEnderCrown() {
+    }
 
-	@Config.Comment("If while wearing this you should have a chance of Ignoring Damage")
-	@Name("02. Chance to Ignore Damage")
-	@LangKey(PREFIX + ".ignoredamage")
-	public boolean dmgChance = true;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.Comment("If while wearing this you should have a chance of Summoning an Enderman to protect you")
-	@Name("03. Chance for Enderman")
-	@LangKey(PREFIX + ".ignoredamage.spawn")
-	public boolean spawnChance = true;
+    public class ConfigAbilities {
 
-	@Config.Comment("1 in 'num' chance to ignore damage and summon an Enderman to protect you")
-	@Name("04. Chance")
-	@LangKey(PREFIX + ".ignoredamage.spawn.chance")
-	public int chance = 50;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENDER_QUEEN_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENDER_QUEEN_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENDER_QUEEN)
+        public ConfigAbilityEnderQueen ENDER_QUEEN = new ConfigAbilityEnderQueen();
 
-	@Config.RequiresWorldRestart
-	@Name("05. Endermen Follow")
-	@LangKey(PREFIX + ".endermen.follow")
-	public boolean Follow = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_EXTERNAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_EXTERNAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_EXTERNAL)
+        public ConfigExternal EXTERNAL = new ConfigExternal();
 
-	@Name("06. Enderman Retaliate")
-	@LangKey(PREFIX + ".endermen.retaliate")
-	public boolean attackBack = false;
+        public class ConfigExternal {
 
-	@Name("07. Enderman drop exp")
-	@LangKey(PREFIX + ".endermen.exp")
-	public boolean expDrop = false;
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_ENDER_EYES_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_ENDER_EYES_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_ENDER_EYES)
+            public ConfigAbilityEnhancedVisualsStatic ENDER_EYES = new ConfigAbilityEnhancedVisualsStatic();
 
-	@Name("08. Enderman drop Items")
-	@LangKey(PREFIX + ".endermen.items")
-	public boolean itemDrop = false;
+        }
 
-	@Name("09. teleport")
-	@LangKey(PREFIX + ".endermen.ignoredamage.teleport")
-	public boolean teleport = false;
+    }
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
-	public class Compatability {
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		public TANCompat tan = new TANCompat();
-		public class TANCompat {
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
 
-			@Config.Comment("If Tough as Nails is Installed, Should the player be immune to Cold")
-			@Name("00. Immune to Cold")
-			@LangKey(PREFIX + ".toughasnails.immunity.cold")
-			public boolean immuneToCold = true;
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
-		}
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {};
 
-		@Name("Baubles Compatability")
-		@Config.Comment({
-			"If the mod Baubles is installed what bauble slot should it use",
-			"Available Types:",
-			"Trinket, Any, All",
-			"Amulet, Necklace, Pendant",
-			"Ring, Rings",
-			"Belt",
-			"Head, Hat",
-			"Body, Chest",
-			"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("head");
-	}
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
 
-	private final boolean 	armor = false;
-	private final double 	armorAmount = 0;
-	private final int		armorOperation = 0;
-	private final boolean 	attackSpeed = false;
-	private final double 	attackSpeedAmount = 0;
-	private final int		attackSpeedOperation = 0;
-	private final boolean 	damage = false;
-	private final double 	damageAmount = 0;
-	private final int		damageOperation = 0;
-	private final boolean 	health = false;
-	private final double 	healthAmount = 0;
-	private final int		healthOperation = 0;
-	private final boolean 	knockback = false;
-	private final double 	knockbackAmount = 0;
-	private final int		knockbackOperation = 0;
-	private final boolean 	speed = false;
-	private final double 	speedAmount = 0;
-	private final int		speedOperation = 0;
-	private final boolean 	swimSpeed = false;
-	private final double 	swimSpeedAmount = 0;
-	private final int		swimSpeedOperation = 0;
-	private final boolean 	toughness = false;
-	private final double 	toughnessAmount = 0;
-	private final int		toughnessOperation = 0;
-	private final boolean	luck = false;
-	private final double	luckAmount = 0;
-	private final int		luckOperation = 0;
-	private final boolean	reach = false;
-	private final double	reachAmount = 0;
-	private final int		reachOperation = 0;
-	private final boolean	jump = false;
-	private final double	jumpAmount = 0;
-	private final int		jumpOperation = 0;
-	private final boolean	stepHeight = false;
-	private final double	stepHeightAmount = 0;
-	private final int		stepHeightOperation = 0;
+    public class Compatibility {
 
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat().setImmuneToCold();
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public ConfigAttribs Attributes = new ConfigAttribs(
-			armor, 			armorAmount, 		armorOperation,
-			attackSpeed, 	attackSpeedAmount, 	attackSpeedOperation,
-			damage, 		damageAmount, 		damageOperation,
-			health, 		healthAmount, 		healthOperation,
-			knockback, 		knockbackAmount, 	knockbackOperation,
-			speed, 			speedAmount, 		speedOperation,
-			swimSpeed, 		swimSpeedAmount, 	swimSpeedOperation,
-			toughness, 		toughnessAmount, 	toughnessOperation,
-			luck,			luckAmount,			luckOperation,
-			reach,			reachAmount,		reachOperation,
-			jump, 			jumpAmount, 		jumpOperation,
-			stepHeight,		stepHeightAmount, 	stepHeightOperation
-			);
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+				"If the mod Baubles is installed what bauble slot should it use",
+				"Available Types:",
+				"Trinket, Any, All",
+				"Amulet, Necklace, Pendant",
+				"Ring, Rings",
+				"Belt",
+				"Head, Hat",
+				"Body, Chest",
+				"Charm"
+				//@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("head");
+    }
 
 }

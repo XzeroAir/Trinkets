@@ -6,34 +6,35 @@ import xzeroair.trinkets.util.Reference;
 
 public class EntityRaces {
 
-	public static final EntityRace none;
-	public static final EntityRace human;
-	public static final EntityRace fairy;
-	public static final EntityRace dwarf;
-	public static final EntityRace titan;
-	public static final EntityRace goblin;
-	public static final EntityRace elf;
-	public static final EntityRace faelis;
-	//	public static final EntityRace slime;
-	public static final EntityRace dragon;
-	//	public static final EntityRace orc;
-	//	public static final EntityRace succubus;
-	//	public static final EntityRace incubus;
-	//	public static final EntityRace nymph;
-	//	public static final EntityRace siren;
-	//	public static final EntityRaceMixed mixed;
+    public static final EntityRace none;
+    public static final EntityRace human;
+    public static final EntityRace fairy;
+    public static final EntityRace dwarf;
+    public static final EntityRace titan;
+    public static final EntityRace goblin;
+    public static final EntityRace elf;
+    public static final EntityRace faelis;
+    //    public static final EntityRace slime;
+    public static final EntityRace dragon;
+    public static final EntityRace taurus;
+//    public static final EntityRace orc;
+//    public static final EntityRace succubus;
+//    public static final EntityRace incubus;
+//    public static final EntityRace nymph;
+//    public static final EntityRace siren;
+//    	public static final EntityRaceMixed mixed;
 
-	private static EntityRace getRegisteredRace(String name) {
-		EntityRace race = EntityRace.Registry.getObject(new ResourceLocation(Reference.MODID, name));
+    private static EntityRace getRegisteredRace(String name) {
+        EntityRace race = EntityRace.Registry.getValue(new ResourceLocation(Reference.MODID, name));
 
-		if (race == null) {
-			throw new IllegalStateException("Invalid Race requested: " + name);
-		} else {
-			return race;
-		}
-	}
+        if (race == null) {
+            throw new IllegalStateException("Invalid Race requested: " + name);
+        } else {
+            return race;
+        }
+    }
 
-	//@formatter:off
+    //@formatter:off
 	static {
 		none 		= 	getRegisteredRace("none");
 		human 		= 	getRegisteredRace("human");
@@ -45,6 +46,7 @@ public class EntityRaces {
 		faelis 		= 	getRegisteredRace("faelis");
 //		slime 		= 	getRegisteredRace("slime");
 		dragon 		= 	getRegisteredRace("dragon");
+		taurus 		= 	getRegisteredRace("taurus");
 //		orc 		= 	getRegisteredRace("orc");
 //		succubus 	= 	getRegisteredRace("succubus");
 //		incubus 	= 	getRegisteredRace("incubus");

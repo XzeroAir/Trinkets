@@ -1,13 +1,9 @@
 package xzeroair.trinkets.events;
 
-import java.util.List;
-
 import com.google.common.base.Predicates;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
@@ -19,9 +15,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,116 +22,111 @@ import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.entity.ai.EnderAiEdit;
 import xzeroair.trinkets.entity.ai.EnderMoveAI;
 import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
-import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+
+import java.util.List;
 
 public class EnderQueenHandler {
 
-	private ConfigEnderCrown serverConfig = TrinketsConfig.SERVER.Items.ENDER_CROWN;
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void soundEvent(PlaySoundEvent event) {
+        if (!event.getSound().getSoundLocation().toString().contentEquals(Reference.MINECRAFT_ENDER_MAN_SCREAM)) {
+            return;
+        }
+        final EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if ((player == null) || (player.world == null)) {
+            return;
+        }
+        boolean hasAbility = TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN);
+        if (hasAbility) {
+            event.setResultSound(null);
+            return;
+        }
+        boolean hasArmorEquipped = !(TrinketHelper.getHead(player, stack -> (stack.getItem().getRegistryName().toString().compareTo(Reference.MODID + ":" + TrinketsRegistryNames.ModItems.ENDER_TIARA) == 0)).isEmpty());
+        if (hasArmorEquipped) {
+            event.setResultSound(null);
+            return;
+        }
+        if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
+            event.setResultSound(null);
+        }
+    }
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void soundEvent(PlaySoundEvent event) {
-		final EntityPlayerSP player = Minecraft.getMinecraft().player;
-		if ((player != null) && (player.world != null)) {
-			if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) || TrinketHelper.entityHasAbility(Abilities.enderQueen, player)) {
-				if (event.getSound().getSoundLocation().toString().contentEquals("minecraft:entity.endermen.stare")) {
-					event.setResultSound(null);
-				}
-			}
-		}
-	}
+    @SubscribeEvent
+    public void EndermanJoinWorld(EntityJoinWorldEvent event) {
+        //Add Tiara AI to Enderman
+        if (event.getEntity() instanceof EntityEnderman) {
+            final EntityEnderman enderman = (EntityEnderman) event.getEntity();
+            if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ENABLED && TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENABLED) {
+//                final NBTTagCompound tag = NBTHelper.getEntityTag(enderman);
+//                if (tag != null) {
+//                    tag.setBoolean("isFollower", false);
+//                }
+                for (final Object a : enderman.targetTasks.taskEntries.toArray()) {
+                    final EntityAIBase ai = ((EntityAITaskEntry) a).action;
+                    if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
+                        enderman.targetTasks.removeTask(ai);
+                    }
+                }
+                enderman.targetTasks.addTask(1, new EnderAiEdit(enderman));
+                enderman.targetTasks.addTask(2, new EnderQueensKnightAI(enderman));
+                if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENDERMAN_FOLLOW) {
+                    enderman.targetTasks.addTask(3, new EnderMoveAI(enderman));
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent
-	public void EndermanJoinWorld(EntityJoinWorldEvent event) {
-		//Add Tiara AI to Enderman
-		if (event.getEntity() instanceof EntityEnderman) {
-			final EntityEnderman ender = (EntityEnderman) event.getEntity();
+    @SubscribeEvent
+    public void EnderTeleportEvent(EnderTeleportEvent event) {
+        if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.BLOCK_TELEPORTATION) {
+            return;
+        }
+        final Entity entity = event.getEntity();
+        if ((entity == null) || entity.isInWater()) {
+            return;
+        }
 
-			for (final Object a : ender.targetTasks.taskEntries.toArray()) {
-				final EntityAIBase ai = ((EntityAITaskEntry) a).action;
-				if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
-					ender.targetTasks.removeTask(ai);
-				}
-			}
-			ender.targetTasks.addTask(1, new EnderAiEdit(ender));
-			ender.targetTasks.addTask(2, new EnderQueensKnightAI(ender));
-			if (serverConfig.Follow) {
-				ender.targetTasks.addTask(3, new EnderMoveAI(ender));
-			}
-		}
-	}
+        if (this.blockEntityTeleport(entity) || (this.blockPlayerTeleport(entity))) {
+            final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
+            //@formatter:off
+            final List<EntityLivingBase> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, bBox,
+                    Predicates.and(EntitySelectors.NOT_SPECTATING, e -> e != entity &&
+                    (TrinketHelper.isEntityBoss(e) ||
+                    !(TrinketHelper.getHead(e, stack ->
+                    (stack.getItem().getRegistryName().toString().compareTo(Reference.MODID + ":" + TrinketsRegistryNames.ModItems.ENDER_TIARA) == 0))
+                    .isEmpty()) ||
+                    TrinketHelper.entityHasAbility(e, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN) ||
+                    TrinketHelper.AccessoryCheck(e, ModItems.trinkets.TrinketEnderTiara))));
+            //@formatter:on
+            if (!entLivList.isEmpty()) {
+                event.setCanceled(true);
+            }
+        }
+    }
 
-	@SubscribeEvent
-	public void EnderTeleportEvent(EnderTeleportEvent event) {
-		final Entity entity = event.getEntity();
-		if (entity == null) {
-			return;
-		}
-		final boolean isPlayer = entity instanceof EntityPlayer;
-		boolean pvpEnabled = false;
-		if (isPlayer) {
-			try {
-				if (entity instanceof EntityPlayerMP) {
-					pvpEnabled = ((EntityPlayerMP) entity).getServer().isPVPEnabled();
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		}
-		if ((entity instanceof EntityEnderman) || (isPlayer && pvpEnabled)) {
-			final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
-			//			final List<EntityPlayer> entLivList = event.getEntity().getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, bBox);
-			final List<EntityPlayer> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(
-					EntityPlayer.class, bBox,
-					Predicates.and(
-							EntitySelectors.NOT_SPECTATING,
-							player -> ((player != null) && TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) || TrinketHelper.entityHasAbility(Abilities.enderQueen, player)
-					)
-			);
-			if (!entLivList.isEmpty()) {
-				if (!entity.isInWater()) {
-					event.setCanceled(true);
-				}
-			}
-		}
-	}
+    protected boolean blockPlayerTeleport(Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            try {
+                if (entity instanceof EntityPlayerMP) {
+                    return ((EntityPlayerMP) entity).getServer().isPVPEnabled();
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
-	@SubscribeEvent
-	public void TargetEvent(LivingSetAttackTargetEvent event) {
-		if (!serverConfig.attackBack && (event.getEntity() instanceof EntityEnderman)) {
-			if (event.getTarget() instanceof EntityPlayer) {
-				final EntityPlayer player = (EntityPlayer) event.getTarget();
-				if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara) || TrinketHelper.entityHasAbility(Abilities.enderQueen, player)) {
-					((EntityLiving) event.getEntity()).setAttackTarget(null);
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void experienceDropEvent(LivingExperienceDropEvent event) {
-		if (!serverConfig.expDrop && (event.getAttackingPlayer() != null)) {
-			if (event.getEntityLiving() instanceof EntityEnderman) {
-				if (TrinketHelper.AccessoryCheck(event.getAttackingPlayer(), ModItems.trinkets.TrinketEnderTiara) || TrinketHelper.entityHasAbility(Abilities.enderQueen, event.getAttackingPlayer())) {
-					event.setDroppedExperience(0);
-				}
-			}
-		}
-	}
-
-	//TODO Do better with Casts
-	@SubscribeEvent
-	public void ItemDropEvent(LivingDropsEvent event) {
-		if (!serverConfig.itemDrop && (event.getSource().getTrueSource() instanceof EntityPlayer)) {
-			if (event.getEntityLiving() instanceof EntityEnderman) {
-				if (TrinketHelper.AccessoryCheck((EntityPlayer) event.getSource().getTrueSource(), ModItems.trinkets.TrinketEnderTiara) || TrinketHelper.entityHasAbility(Abilities.enderQueen, (EntityLivingBase) event.getSource().getTrueSource())) {
-					event.setCanceled(true);
-				}
-			}
-		}
-	}
+    protected boolean blockEntityTeleport(Entity entity) {
+        if (!(entity instanceof EntityPlayer) && (entity instanceof EntityLivingBase)) {
+            return true;
+        }
+        return false;
+    }
 
 }

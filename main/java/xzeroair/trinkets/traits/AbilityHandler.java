@@ -1,356 +1,643 @@
 package xzeroair.trinkets.traits;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
+import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.race.RaceCache;
+import xzeroair.trinkets.network.AbilityCacheSyncPacket;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.traits.abilities.interfaces.*;
+import xzeroair.trinkets.util.Reference;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.traits.abilities.IAbilityHandler;
-import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.IItemHeldAbility;
-import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
-import xzeroair.trinkets.util.helpers.CallHelper;
+import java.util.TreeMap;
 
 public class AbilityHandler {
 
-	protected EntityLivingBase entity;
-	protected Map<IAbilityInterface, Storage> abilities;
-	// Maybe Add Ability Storage, Like nbt or something?
+    public static final String capKey = Reference.MODID + ":abilities";
+    public static final String KILL_ORDER = "DISABLED";
+    public static final String REMOVE_KILL_ORDER = "ENABLED";
+    private final EntityProperties parentProperties;
+    protected Map<String, AbilityHolder> active = new TreeMap<>();
+    protected List<String> removedAbilities = new ArrayList<>();
+    protected boolean hasChanged = false;
 
-	public static class Storage {
-		String source;
-		IAbilityHandler abilityHandler;
+    public AbilityHandler(EntityProperties properties) {
+        this.parentProperties = properties;
+    }
 
-		public Storage(String source, IAbilityHandler handler) {
-			this.source = source;
-			abilityHandler = handler;
-		}
+    public Map<String, AbilityHolder> getActiveAbilities() {
+        return this.active;
+    }
 
-		public Storage(AbilitySource Type, String source, IAbilityHandler handler) {
-			this(Type.getName() + ";" + source, handler);
-		}
+    public void registerAbilities(EntityLivingBase entity, String source, @Nonnull List<? extends IAbilityInterface> abilities) {
+        for (IAbilityInterface ability : abilities) {
+            this.registerAbility(entity, source, new SlotInformation(ItemHandlerType.OTHER), ability);
+        }
+    }
 
-		public IAbilityHandler handler() {
-			return abilityHandler;
-		}
+    public void registerAbilities(EntityLivingBase entity, String source, SlotInformation info, @Nonnull List<? extends IAbilityInterface> abilities) {
+        for (IAbilityInterface ability : abilities) {
+            this.registerAbility(entity, source, info, ability);
+        }
+    }
 
-		public String getSource() {
-			return source;
-		}
-	}
+    public IAbilityInterface registerRaceAbility(EntityLivingBase entity, String source, IAbilityInterface ability) {
+        return this.replaceAbility(entity, source, new SlotInformation(ItemHandlerType.RACE), ability);
+    }
 
-	public static enum AbilitySource {
+    /**
+     * Returns the ability if it failed to replace the ability
+     * Returns null if it successfully added the ability
+     * Returns the old Ability if it was replaced
+     *
+     * @param source
+     * @param info
+     * @param ability
+     * @return
+     */
+    public IAbilityInterface replaceAbility(@Nonnull EntityLivingBase entity, String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
+        final String key = ability.getRegistryName().toString();
+        if (!entity.world.isRemote) {
+            if (!ability.isAbilityEnabled()) {
+                if (!this.hasKillOrder(key)) {
+                    this.addKillOrder(key);
+                    this.sendKillOrder(entity, key);
+                }
+                return ability;
+            } else {
+                if (this.hasKillOrder(key)) {
+                    this.removeKillOrder(key);
+                }
+            }
+        } else {
+            if (this.hasKillOrder(key)) {
+                return ability;
+            }
+        }
+        if (ability.shouldRemove()) {
+            return ability;
+        }
+        if (info == null) {
+            info = new SlotInformation(ItemHandlerType.OTHER);
+        }
+        AbilityHolder value = this.active.get(key);
+        if (value == null) {
+            AbilityHolder holder = new AbilityHolder(source, info, ability);
+            holder.getAbility().setFirstUpdate(true);
+            this.active.put(key, holder);
+            return null;
+        } else {
+            if (!value.compare(source, info, ability)) {
+                value.getAbility().onAbilityRemoved(entity);
+                AbilityHolder holder = new AbilityHolder(source, info, ability);
+                holder.getAbility().setFirstUpdate(true);
+                this.active.put(key, holder);
+                return value.getAbility();
+            }
+        }
+        return ability;
+    }
 
-		OTHER(0, "Other"),
-		RACE(1, "Race"),
-		EQUIPPED(2, "Equipped");
+    @Nullable
+    public IAbilityInterface registerAbility(EntityLivingBase entity, String source, IAbilityInterface ability) {
+        return this.registerAbility(entity, source, new SlotInformation(ItemHandlerType.OTHER), ability);
+    }
 
-		private static final AbilitySource[] ID = new AbilitySource[values().length];
+    @Nullable
+    public IAbilityInterface registerAbility(EntityLivingBase entity, String source, SlotInformation info, IAbilityInterface ability) {
+        final String key = ability.getRegistryName().toString();
+        if (!entity.world.isRemote) {
+            if (!ability.isAbilityEnabled()) {
+                if (!this.hasKillOrder(key)) {
+                    this.addKillOrder(key);
+                    this.sendKillOrder(entity, key);
+                }
+                return ability;
+            } else {
+                if (this.hasKillOrder(key)) {
+                    this.removeKillOrder(key);
+                }
+            }
+        } else {
+            if (this.hasKillOrder(key)) {
+                return ability;
+            }
+        }
+        if (ability.shouldRemove()) {
+            return ability;
+        }
+        if (info == null) {
+            info = new SlotInformation(ItemHandlerType.OTHER);
+        }
+        if (!this.active.containsKey(key)) {
+            AbilityHolder holder = new AbilityHolder(source, info, ability);
+            holder.getAbility().setFirstUpdate(true);
+            this.active.put(key, holder);
+            return null;
+        }
+        return ability;
+    }
 
-		private int id;
-		private String name;
+    @Nullable
+    public IAbilityInterface removeAbility(String ability) {
+        if (this.active.containsKey(ability)) {
+            AbilityHolder oldHolder = this.active.remove(ability);
+            IAbilityInterface oldAbility = oldHolder.getAbility();
+            oldAbility.onAbilityRemoved(this.parentProperties.getEntity());
+            return oldAbility;
+        }
+        return null;
+    }
 
-		private AbilitySource(int id, String name) {
-			this.id = id;
-			this.name = name;
-		}
+    @Nullable
+    public AbilityHolder getAbilityHolder(String ability) {
+        if (this.active.containsKey(ability)) {
+            return this.active.get(ability);
+        }
+        return null;
+    }
 
-		public int getType() {
-			return id;
-		}
+    @Nullable
+    public IAbilityInterface getAbility(String ability) {
+        AbilityHolder holder = this.getAbilityHolder(ability);
+        if (holder != null) {
+            return holder.getAbility();
+        }
+        return null;
+    }
 
-		public String getName() {
-			return name;
-		}
+    public void onUpdatePre(EntityLivingBase entity) {
+//        for (Entry<String, AbilityHolder> entry : active.entrySet()) {
+//            final String key = entry.getKey();
+//            if (this.removedAbilities.contains(key)) {
+//                entry.getValue().getAbility().scheduleRemoval();
+//                this.removedAbilities.remove(key);
+//            }
+//        }
+        this.active.values().removeIf(cache -> cache.getAbility().shouldRemove());
+    }
 
-		public static AbilitySource Type(int value) {
-			if ((value < 0) || (value >= ID.length)) {
-				value = 0;
-			}
+    public void onUpdate(EntityLivingBase entity) {
+        for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
+            final String key = entry.getKey();
+            final AbilityHolder cache = entry.getValue();
+            final String source = cache.getSourceID();
+            final SlotInformation sourceInfo = cache.getInfo();
+            final IAbilityInterface ability = cache.getAbility();
+            if (ability.shouldRemove()) {
+                ability.onAbilityRemoved(entity);
+            } else {
+                if (ability.isFirstUpdate()) {
+                    this.loadAbilityFromEntityOnFirstUpdate(this.parentProperties.getEntity(), ability);
+                    ability.onAbilityAdded(this.parentProperties.getEntity());
+                }
+                this.processAbility(ability, this.parentProperties.getEntity());
+                if (ability.hasChanged()) {
+                    this.saveInfoOnChange(this.parentProperties.getEntity(), ability);
+                    this.sendNBTToPlayerOnChange(this.parentProperties.getEntity(), ability);
+                    ability.setChanged(false);
+                }
+                ability.setFirstUpdate(false);
+                if (this.shouldRemove(entry, this.parentProperties.getEntity())) {
+                    ability.scheduleRemoval();
+                }
+                if (ability.shouldRemove()) {
+                    ability.onAbilityRemoved(entity);
+                }
+            }
+        }
+    }
 
-			return ID[value];
-		}
+    public void onUpdatePost(EntityLivingBase entity) {
+        if (this.hasChanged) {
+            this.hasChanged = false;
+        }
+    }
 
-		public static int ID(String name) {
-			for (final AbilitySource ore : AbilitySource.values()) {
-				if (ore.getName().contentEquals(name)) {
-					return ore.getType();
-				}
-			}
-			return OTHER.getType();
-		}
+    public boolean hasChanged() {
+        return this.hasChanged;
+    }
 
-	}
+    private void processAbility(IAbilityInterface ability, EntityLivingBase entity) {
+        try {
+            final AbilityHolder holder = this.getAbilityHolder(ability.getRegistryName().toString());
+            final SlotInformation info = holder != null ? holder.getInfo() : null;
+            if (ability instanceof ITickableAbility) {
+                ((ITickableAbility) ability).tickAbility(entity);
+            }
+            if (ability instanceof IEquippedAbility) {
+                final IEquippedAbility a = ((IEquippedAbility) ability);
+                a.head(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD), entity);
+                a.chest(entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST), entity);
+                a.legs(entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS), entity);
+                a.feet(entity.getItemStackFromSlot(EntityEquipmentSlot.FEET), entity);
+            }
+            if (ability instanceof IHeldAbility) {
+                final IHeldAbility a = ((IHeldAbility) ability);
+                a.heldMainHand(entity.getHeldItemMainhand(), entity);
+                a.heldOffhand(entity.getHeldItemOffhand(), entity);
+            }
+            if (entity instanceof EntityPlayer) {
+                final EntityPlayer player = (EntityPlayer) entity;
+                if (ability instanceof IContainerAbility) {
+                    final IContainerAbility a = ((IContainerAbility) ability);
+                    a.inventoryContainer(player.inventoryContainer);
+                    a.openContainer(player.openContainer);
+                    a.playerInventory(player.inventory);
+                }
+                if (ability instanceof ITickableInventoryAbility) {
+                    final ITickableInventoryAbility a = ((ITickableInventoryAbility) ability);
+                    final int inHand = player.inventory.currentItem;
+                    if (info != null) {
+                        final ItemStack stack = info.getStackFromHandler(player);
+                        if (!stack.isEmpty()) {
+                            final int slot = info.getSlot();
+                            final boolean selected = info.getHandlerType().equals(ItemHandlerType.MAINHAND) && (inHand == slot);
+                            a.onUpdate(stack, player.world, player, slot, selected);
+                        } else {
+                            final NonNullList<ItemStack> inventory = player.inventory.mainInventory;
+                            for (int index = 0; index < inventory.size(); index++) {
+                                final ItemStack IStack = inventory.get(index);
+                                if (!IStack.isEmpty()) {
+                                    a.onUpdate(IStack, player.world, player, index, inHand == index);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            Trinkets.LOGGER.error("Error with ability:{}", ability.getRegistryName().toString());
+            e.printStackTrace();
+        }
+    }
 
-	public AbilityHandler(EntityLivingBase entity) {
-		abilities = new HashMap<>();
-		this.entity = entity;
-	}
+    private boolean shouldRemove(Entry<String, AbilityHolder> entry, EntityLivingBase entity) {
+        final String key = entry.getKey();
+        if (this.hasKillOrder(key)) {
+            return true;
+        }
+        final AbilityHolder cache = entry.getValue();
+        final String source = cache.getSourceID();
+        final SlotInformation sourceInfo = cache.getInfo();
+        final IAbilityInterface ability = cache.getAbility();
+        switch (sourceInfo.getHandlerType()) {
+            case NONE:
+                return true;
+            case OTHER:
+                return false;
+            case RACE:
+                RaceCache raceCache = this.parentProperties.getCurrentRace();
+                boolean eleReq = (ability.getRequiredElement() != null && !(raceCache.comparePrimaryElement(ability.getRequiredElement())));
+                boolean race = raceCache.getRace().getRegistryName().toString().contentEquals(source);
+                return !race || raceCache.getRace().isNone() || eleReq;
+            case POTION:
+                Potion potion = Potion.getPotionFromResourceLocation(source);
+                return potion == null || !entity.isPotionActive(potion);
+            default:
+                ItemStack s = sourceInfo.getStackFromHandler(entity);
+                if (s.isEmpty()) {
+                    return true;
+                }
+//                final Element raceEle = Capabilities.getEntityProperties(entity, Elements.NEUTRAL, (prop, rtn) -> prop.getCurrentRace().getElement());
+                boolean remove = Capabilities.getTrinketProperties(s, false, (prop, bool) -> {
+                    boolean sameSource = prop.getItem().getRegistryName().toString().contentEquals(sourceInfo.getItemID());
+                    if (sameSource) {
+                        boolean sameInfo = sourceInfo.compare(prop.getSlotInfo());
+                        return !sameInfo;
+                    }
+                    return !sameSource;// || (ability.getRequiredElement() != null && (raceEle != ability.getRequiredElement()));
+                });
+                return remove;
+        }
+    }
+//    private boolean shouldRemove(SlotInformation info, String source, EntityLivingBase entity) {
+// 		case TRINKETS:
+//			final ITrinketContainerHandler TrinketHandler = getTrinketHandler(entity);
+//			return TrinketHandler != null ? getTrinketHandler(entity).getStackInSlot(this.getSlot()) : ItemStack.EMPTY;
+//		case BAUBLES:
+//			if (Trinkets.Baubles) {
+//				IItemHandler BaublesHandler = BaublesHelper.getBaublesHandler(entity);
+//				if (BaublesHandler != null)
+//					return BaublesHandler.getStackInSlot(this.getSlot());
+//			}
+//			return ItemStack.EMPTY;
+//		case HEAD:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+//		case CHEST:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+//		case LEGS:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+//		case FEET:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+//		case OFFHAND:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+//		case MAINHAND:
+//			return entity.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+//		case HOTBAR:
+//			return (entity instanceof EntityPlayer) && InventoryPlayer.isHotbar(this.getSlot()) ? ((EntityPlayer) entity).inventory.getStackInSlot(this.getSlot()) : ItemStack.EMPTY;
+//		case INVENTORY:
+//			return (entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.getStackInSlot(this.getSlot()) : ItemStack.EMPTY;
+//}
 
-	public void tickAbilities(EntityLivingBase entity) {
-		for (final IAbilityInterface ability : this.getAbilitiesList()) {
-			try {
-				final IAbilityHandler handler = this.getAbilityInstance(ability);
-				if ((handler != null) && (handler instanceof IItemHeldAbility)) {
-					final IItemHeldAbility a = ((IItemHeldAbility) handler);
-					a.head(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
-					a.chest(entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
-					a.legs(entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS));
-					a.feet(entity.getItemStackFromSlot(EntityEquipmentSlot.FEET));
-					a.heldMainHand(entity.getHeldItemMainhand());
-					a.heldOffhand(entity.getHeldItemOffhand());
-					if (entity instanceof EntityPlayer) {
-						final EntityPlayer player = (EntityPlayer) entity;
-						a.playerInventory(player.inventory);
-					}
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				final IAbilityHandler handler = this.getAbilityInstance(ability);
-				if ((handler != null) && (handler instanceof ITickableAbility)) {
-					((ITickableAbility) handler).tickAbility(entity);
-				}
-			} catch (final Exception e) {
-				Trinkets.log.error("Error with ability:" + ability.getName());
-				e.printStackTrace();
-			}
-		}
-	}
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+    public void copyFrom(AbilityHandler source, boolean wasDeath, boolean keepInv) {
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+        if (wasDeath) {
 
-	public Map<IAbilityInterface, Storage> getAbilities() {
-		return abilities;
-	}
+        } else {
+        }
+        this.active = source.active;
+        this.hasChanged = true;
+    }
 
-	public Set<IAbilityInterface> getAbilitiesList() {
-		return abilities.keySet();
-	}
 
-	public void cleanUp() {
-		final List<IAbilityInterface> removal = new ArrayList<>();
-		for (final Entry<IAbilityInterface, Storage> entry : abilities.entrySet()) {
-			if (entry.getValue().handler() != null) {
-				if (entry.getValue().handler().shouldRemove()) {
-					removal.add(entry.getKey());
-				}
-			}
-		}
-		removal.forEach((ability) -> {
-			this.removeAbility(ability, "");
-		});
-	}
+    public boolean hasKillOrder(String ability) {
+        if (ability == null || ability.isEmpty()) {
+            return false;
+        }
+        NBTTagCompound tag = this.parentProperties.getTag();
+        if (tag.hasKey(capKey)) {
+            NBTTagCompound playerCap = tag.getCompoundTag(capKey);
+            if (playerCap.hasKey(ability)) {
+                return playerCap.getCompoundTag(ability).hasKey(KILL_ORDER);
+            }
+        }
+        return false;
+    }
 
-	public void accessoriesCheck(Map<String, ItemStack> equipped) {
-		if ((equipped != null) && !equipped.isEmpty()) {
-			if (!abilities.isEmpty()) {
-				for (final IAbilityInterface ability : this.getAbilitiesList()) {
-					final Storage storage = this.getAbilityStorage(ability);
-					if (storage != null) {
-						final String source = storage.getSource();
-						if (source.startsWith(AbilitySource.EQUIPPED.getName())) {
-							final String srcObj = CallHelper.getStringFromArray(source.split(";"), 1);
-							if (!srcObj.isEmpty()) {
-								boolean keep = false;
-								for (final Entry<String, ItemStack> stack : equipped.entrySet()) {
-									if (stack.getValue().getItem().getRegistryName().toString().contentEquals(srcObj)) {
-										keep = true;
-										break;
-									}
-								}
-								if (!keep && (storage.handler() != null)) {
-									storage.handler().scheduleRemoval();
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    public void removeKillOrder(String ability) {
+        if (ability == null || ability.isEmpty()) {
+            return;
+        }
+        NBTTagCompound tag = this.parentProperties.getTag();
+        if (tag.hasKey(capKey)) {
+            NBTTagCompound playerCap = tag.getCompoundTag(capKey);
+            if (playerCap.hasKey(ability)) {
+                NBTTagCompound playerAbilityTag = playerCap.getCompoundTag(ability);
+                if (playerAbilityTag.hasKey(KILL_ORDER)) {
+                    playerAbilityTag.removeTag(KILL_ORDER);
+                    if (playerAbilityTag.isEmpty()) {
+                        playerCap.removeTag(ability);
+                    }
+                    World world = this.parentProperties.getEntity().getEntityWorld();
+                    if (world instanceof WorldServer && this.parentProperties.getEntity() instanceof EntityPlayerMP) {
+                        NBTTagCompound syncTag = new NBTTagCompound();
+                        syncTag.setString("Ability", ability);
+                        syncTag.setBoolean("ENABLED", true);
+                        NetworkHandler.sendToClients((WorldServer) world, this.parentProperties.getEntity().getPosition(), new AbilityCacheSyncPacket(this.parentProperties.getEntity(), syncTag));
+                    }
+                }
+            }
+        }
+    }
 
-	public boolean hasAbility(IAbilityInterface ability) {
-		return (ability != null) && !abilities.isEmpty() && abilities.containsKey(ability);
-	}
+    public void addKillOrder(String ability) {
+        NBTTagCompound tag = this.parentProperties.getTag();
+        if (!tag.hasKey(capKey)) {
+            tag.setTag(capKey, new NBTTagCompound());
+        }
+        NBTTagCompound abilitiesCap = tag.getCompoundTag(capKey);
+        if (!abilitiesCap.hasKey(ability)) {
+            NBTTagCompound disabledTag = new NBTTagCompound();
+            disabledTag.setBoolean(KILL_ORDER, true);
+            abilitiesCap.setTag(ability, disabledTag);
+        } else {
+            NBTTagCompound playerAbilityTag = abilitiesCap.getCompoundTag(ability);
+            playerAbilityTag.setBoolean(KILL_ORDER, true);
+        }
+    }
 
-	public boolean isSource(IAbilityInterface ability, String source) {
-		if (this.hasAbility(ability)) {
-			if (abilities.get(ability) != null) {
-				if (abilities.get(ability).getSource().contentEquals(source)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public void sendKillOrder(EntityLivingBase entity, String ability) {
+        if (ability == null || ability.isEmpty()) {
+            return;
+        }
+        World world = entity.getEntityWorld();
+        if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
+            NBTTagCompound syncTag = new NBTTagCompound();
+            syncTag.setString("Ability", ability);
+            syncTag.setBoolean("DISABLED", true);
+            NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), new AbilityCacheSyncPacket(entity, syncTag));
+        }
+    }
 
-	public boolean isSource(IAbilityInterface ability, AbilitySource type, String source) {
-		return this.isSource(ability, type.getName() + ";" + source);
-	}
+    private void sendNBTToPlayerOnChange(EntityLivingBase entity, IAbilityInterface ability) {
+        this.sendNBTToPlayer(entity, ability);
+    }
 
-	public IAbilityHandler getAbilityInstance(IAbilityInterface ability) {
-		if (this.hasAbility(ability)) {
-			if (abilities.get(ability) != null) {
-				if (abilities.get(ability).handler() != null) {
-					final IAbilityHandler handler = abilities.get(ability).handler();
-					return handler;
-				}
-			}
-		}
-		return null;
-	}
+    private void sendNBTToPlayer(EntityLivingBase entity, IAbilityInterface ability) {
+        World world = entity.getEntityWorld();
+        if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
+            String key = ability.getRegistryName().toString();
+            NBTTagCompound sync = new NBTTagCompound();
+            NBTTagCompound tag = ability.saveStorage(new NBTTagCompound());
+            NBTTagCompound data = ability.sendAbilityData();
+            if (data != null && !data.isEmpty()) {
+                sync.setTag("data", data);
+            }
+            if (tag != null && !tag.isEmpty()) {
+                sync.setTag(key, tag);
+            }
+            if (!sync.isEmpty()) {
+                sync.setString("Ability", key);
+                AbilityCacheSyncPacket packet = new AbilityCacheSyncPacket(entity, sync);
+                NetworkHandler.sendTo(packet, (EntityPlayerMP) entity);
+                NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), packet);
+            }
+        }
+    }
 
-	public String getAbilitySource(IAbilityInterface ability) {
-		if (this.hasAbility(ability)) {
-			if (abilities.get(ability) != null) {
-				return abilities.get(ability).getSource();
-			}
-		}
-		return null;
-	}
+    private void saveInfoOnChange(EntityLivingBase entity, IAbilityInterface ability) {
+        if (!entity.world.isRemote) {
+            this.saveInfoToEntity(entity, ability);
+        }
+    }
 
-	public Storage getAbilityStorage(IAbilityInterface ability) {
-		if (this.hasAbility(ability)) {
-			return abilities.get(ability);
-		}
-		return null;
-	}
+    private void saveInfoToEntity(EntityLivingBase entity, IAbilityInterface ability) {
+        final String key = ability.getRegistryName().toString();
+        World world = entity.getEntityWorld();
+        if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
+            NBTTagCompound tag = this.parentProperties.getTag();
+            if (!tag.hasKey(capKey)) {
+                tag.setTag(capKey, new NBTTagCompound());
+            }
+            NBTTagCompound abilitiesTag = tag.getCompoundTag(capKey);
+            if (!abilitiesTag.hasKey(key)) {
+                if (!ability.isAbilityEnabled()) {
+                    NBTTagCompound disabledTag = new NBTTagCompound();
+                    disabledTag.setBoolean(KILL_ORDER, true);
+                    abilitiesTag.setTag(key, disabledTag);
+                    return;
+                }
+                NBTTagCompound abilityTag = ability.saveStorage(new NBTTagCompound());
+                if (abilityTag != null && !abilityTag.isEmpty()) {
+                    abilitiesTag.setTag(key, abilityTag);
+                }
+            }
+            if (abilitiesTag.hasKey(key)) {
+                NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(key);
+                if (!ability.isAbilityEnabled()) {
+                    abilitiesTag.setBoolean(KILL_ORDER, true);
+                    return;
+                }
+                if (abilitiesTag.hasKey(KILL_ORDER)) {
+                    abilitiesTag.removeTag(KILL_ORDER);
+                }
+                ability.saveStorage(abilityTag);
+            }
+        }
+    }
 
-	public IAbilityInterface getAbilityByName(String name) {
-		for (final IAbilityInterface ability : this.getAbilitiesList()) {
-			if (ability.getName().contentEquals(name)) {
-				return ability;
-			}
-		}
-		return null;
-	}
+    public void loadAbilityFromEntityOnFirstUpdate(EntityLivingBase entity, IAbilityInterface ability) {
+        if (!entity.world.isRemote) {
+            this.loadAbilityFromEntity(entity, ability);
+        }
+    }
 
-	public void addAbility(IAbilityInterface ability, String source, IAbilityHandler handler) {
-		if (ability == null) {
-			Trinkets.log.error("Trinkets had an Error adding an Ability from:" + source);
-			return;
-		}
-		if (!this.hasAbility(ability)) {
-			abilities.put(ability, new Storage(source, handler));
-		} else {
-			if (source.startsWith(AbilitySource.RACE.getName())) {
-				this.replaceAbility(ability, source, handler);
-			} else {
-			}
-		}
-	}
+    public void loadAbilityFromEntity(EntityLivingBase entity, IAbilityInterface ability) {
+        String key = ability.getRegistryName().toString();
+        NBTTagCompound entityTag = this.parentProperties.getTag();
+        if (!entityTag.hasKey(capKey)) {
+            entityTag.setTag(capKey, new NBTTagCompound());
+        }
+        NBTTagCompound abilitiesTag = entityTag.getCompoundTag(capKey);
+        if (abilitiesTag.hasKey(key)) {
+            NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(key);
+            if (abilityTag.hasKey(KILL_ORDER)) {
+                ability.scheduleRemoval();
+                ability.setAbilityEnabled(false);
+                return;
+            }
+            if (!abilityTag.isEmpty()) {
+                ability.loadStorage(abilityTag);
+            }
+        }
+    }
 
-	public void replaceAbility(IAbilityInterface ability, String source, IAbilityHandler handler) {
-		if (ability == null) {
-			Trinkets.log.error("Trinkets had an Error adding an Ability from:" + source);
-			return;
-		}
-		if (this.hasAbility(ability)) {
-			if (!this.isSource(ability, source)) {
-				abilities.replace(ability, new Storage(source, handler));
-			}
-		} else {
-			this.addAbility(ability, source, handler);
-		}
-	}
+    public void loadAbilityFromNBT(IAbilityInterface ability, NBTTagCompound compound) {
+        String key = ability.getRegistryName().toString();
+        if (compound.hasKey(key)) {
+            ability.loadStorage(compound.getCompoundTag(key));
+        }
+    }
 
-	public void removeAbility(IAbilityInterface ability, String source) {
-		if (ability == null) {
-			Trinkets.log.error("Trinkets had an Error adding an Ability from:" + source + " Ability can not be null");
-			return;
-		}
-		if (entity == null) {
-			return;
-		}
-		if (this.hasAbility(ability)) {
-			if (this.isSource(ability, source) || source.isEmpty()) {
-				final Storage storage = abilities.get(ability);
-				if (storage != null) {
-					final IAbilityHandler handler = storage.handler();
-					if (handler != null) {
-						handler.removeAbility(entity);
-					}
-				}
-				abilities.remove(ability);
-			}
-		}
-	}
+    public NBTTagCompound saveAbilitiesToNBT(NBTTagCompound compound) {
+        if (!compound.hasKey(capKey)) {
+            compound.setTag(capKey, new NBTTagCompound());
+        }
+        for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
+            String key = entry.getKey();
+            AbilityHolder value = entry.getValue();
+            NBTTagCompound tag = compound.getCompoundTag(capKey);
+            if (!tag.hasKey(key)) {
+                NBTTagCompound abilityTag = value.getAbility().saveStorage(new NBTTagCompound());
+                if (!abilityTag.isEmpty()) {
+                    tag.setTag(key, abilityTag);
+                }
+            } else {
+                try {
+                    NBTTagCompound ability = value.getAbility().saveStorage(new NBTTagCompound());
+                    if (!ability.isEmpty()) {
+                        tag.setTag(key, ability);
+                    }
+                } catch (final Exception e) {
+                    Trinkets.LOGGER.error("Error when saving ability:" + key);
+                    e.printStackTrace();
+                }
+            }
+        }
+        return compound;
+    }
 
-	public void clearAbilities(String source) {
-		if (entity == null) {
-			return;
-		}
-		if (!abilities.isEmpty()) {
-			final List<IAbilityInterface> removal = new ArrayList<>();
-			for (final Entry<IAbilityInterface, Storage> entry : abilities.entrySet()) {
-				if (entry.getValue() != null) {
-					final String src = entry.getValue().getSource();
-					if (source.isEmpty() || source.contentEquals(src)) {
-						final IAbilityHandler handler = entry.getValue().handler();
-						if (handler != null) {
-							handler.removeAbility(entity);
-						}
-						removal.add(entry.getKey());
-					}
-				}
-			}
-			for (final IAbilityInterface ability : removal) {
-				this.removeAbility(ability, "");
-			}
-		}
-	}
+    public void loadAbilitiesFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey(capKey)) {
+            final NBTTagCompound tag = compound.getCompoundTag(capKey);
+            for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
+                String key = entry.getKey();
+                if (tag.hasKey(key)) {
+                    AbilityHolder value = entry.getValue();
+                    try {
+                        this.loadAbilityFromNBT(value.getAbility(), tag.getCompoundTag(key));
+                    } catch (final Exception e) {
+                        Trinkets.LOGGER.error("Error when loading ability:" + key);
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Call Methods~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    public NBTTagCompound saveToNBT(NBTTagCompound compound) {
+        if (!compound.hasKey(capKey)) {
+            compound.setTag(capKey, new NBTTagCompound());
+        }
+        NBTTagCompound tag = compound.getCompoundTag(capKey);
+        return compound;
+    }
 
-	//	public void jump(IAbilityInterface ability) {
-	//		IAbilityHandler handler = this.getAbilityInstance(ability);
-	//		if (handler instanceof IJumpAbility) {
-	//			((IJumpAbility) handler).jump(entity);
-	//		}
-	//	}
-	//
-	//	public boolean fall(IAbilityInterface ability, float distance, float damage, boolean cancel) {
-	//		IAbilityHandler handler = this.getAbilityInstance(ability);
-	//		if (handler instanceof IJumpAbility) {
-	//			return ((IJumpAbility) handler).fall(distance, damage, cancel);
-	//		}
-	//		return cancel;
-	//	}
-	//
-	//	public boolean attack(IAbilityInterface ability, EntityLivingBase target, DamageSource source, float damage, boolean cancel) {
-	//		IAbilityHandler handler = this.getAbilityInstance(ability);
-	//		if (handler instanceof IAttackAbility) {
-	//			return ((IAttackAbility) handler).attackEntity(target, source, damage, cancel);
-	//		}
-	//		return cancel;
-	//	}
-	//
-	//	public boolean attacked(IAbilityInterface ability, DamageSource source, float damage, boolean cancel) {
-	//		IAbilityHandler handler = this.getAbilityInstance(ability);
-	//		if (handler instanceof IAttackAbility) {
-	//			return ((IAttackAbility) handler).attacked(entity, source, damage, cancel);
-	//		}
-	//		return cancel;
-	//	}
-	//
-	//	/**
-	//	 * @param ability expects an {@value IPotionAbility}
-	//	 * @return will return false if the ability is not
-	//	 */
-	//	public boolean immuneToPotion(IAbilityInterface ability, PotionEffect effect, boolean cancel) {
-	//		IAbilityHandler handler = this.getAbilityInstance(ability);
-	//		if (handler instanceof IPotionAbility) {
-	//			return ((IPotionAbility) handler).potionApplied(effect, cancel);
-	//		}
-	//		return cancel;
-	//	}
+    public void loadFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey(capKey)) {
+            NBTTagCompound tag = compound.getCompoundTag(capKey);
+
+        }
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Call Methods~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+
+    public static class AbilityHolder {
+        protected String source;
+        protected SlotInformation info;
+        protected IAbilityInterface ability;
+
+        public AbilityHolder(String source, SlotInformation info, IAbilityInterface ability) {
+            this.source = source;
+            this.info = info;
+            this.ability = ability.cacheAbilityHolder(this);
+        }
+
+        public final String getSourceID() {
+            return this.source;
+        }
+
+        public final SlotInformation getInfo() {
+            return this.info;
+        }
+
+        public final IAbilityInterface getAbility() {
+            return this.ability;
+        }
+
+        public final boolean compare(AbilityHolder other) {
+            return this.compare(other.getSourceID(), other.getInfo(), other.getAbility());
+        }
+
+        public final boolean compare(String otherSource, SlotInformation otherInfo, IAbilityInterface otherAbility) {
+            boolean isRaceAbility = this.getInfo().getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
+            boolean isOtherRaceAbility = otherInfo.getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
+            boolean check = isRaceAbility && !isOtherRaceAbility;
+            boolean sameSource = this.getSourceID().contentEquals(otherSource);
+            boolean sameElementRequired = this.getAbility().getRequiredElement() == otherAbility.getRequiredElement();
+            boolean sameInfo = this.getInfo().compare(otherInfo);
+            boolean isSame = (sameSource && sameElementRequired);
+            return !check || isSame && sameInfo;
+        }
+    }
 }

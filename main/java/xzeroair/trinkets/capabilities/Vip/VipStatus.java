@@ -1,183 +1,172 @@
 package xzeroair.trinkets.capabilities.Vip;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Session;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.Side;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.capabilities.CapabilityBase;
+import xzeroair.trinkets.capabilities.CapabilityEntityPlayerBase;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.vip.VipStatusPacket;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.vip.VIPHandler;
 import xzeroair.trinkets.vip.VipPackage;
 import xzeroair.trinkets.vip.VipUser;
 
-public class VipStatus extends CapabilityBase<VipStatus, EntityPlayer> {
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
-	boolean first_login = true;
-	boolean login = false;
-	EntityPlayer player;
-	int status = 0;
-	boolean checkStatus;
-	List<String> Quotes;
-	private VipUser user;
+public class VipStatus extends CapabilityEntityPlayerBase<VipStatus, EntityPlayer> {
 
-	public VipStatus(EntityPlayer player) {
-		super(player);
-		this.player = player;
-		Quotes = new ArrayList<>();
-	}
+    public static final String TAG_KEY = Reference.MODID + ":vip";
 
-	@Override
-	public NBTTagCompound getTag() {
-		//		if (player.getEntityData() != null) {
-		//			tag = player.getEntityData();
-		//		}
-		return super.getTag();
-	}
+    private int status = 0;
+    private boolean checkStatus;
+    private List<String> quotes;
 
-	@Override
-	public void onUpdate() {
-		if ((player.world == null) || player.isDead) {
-			return;
-		}
-		if ((checkStatus != true)) {
-			if (Trinkets.proxy.getSide() == Side.CLIENT) {
-				try {
-					if (Minecraft.getMinecraft().getSession() != null) {
-						final Session session = Minecraft.getMinecraft().getSession();
-						final boolean hasPlayer = VIPHandler.Vips.containsKey(session.getPlayerID().toString().replaceAll("-", ""));
-						if (hasPlayer) {
-							this.confirmedStatus();
-							this.sendStatusToServer(player);
-						}
-						//							if (session.getProfile() != null) {
-						//								final GameProfile profile = session.getProfile();
-						//							System.out.println(hasPlayer + " | Player Exists in VIP List");
-						//							System.out.println(session.getUsername() + " with ID:" + session.getPlayerID());
-						//							System.out.println(profile.getName() + " with ID:" + profile.getId());
-						//							}
-					}
-				} catch (final Exception e) {
+    public VipStatus(EntityPlayer player) {
+        super(player);
+        this.quotes = new ArrayList<>();
+    }
 
-				}
-			}
-			checkStatus = true;
-		}
-	}
+    @Override
+    public NBTTagCompound getTag() {
+        final NBTTagCompound tag = NBTHelper.getEntityTag(this.getPlayer());
+        if (tag != null) {
+            if (!tag.hasKey(TAG_KEY)) {
+                tag.setTag(TAG_KEY, new NBTTagCompound());
+            }
+            return tag.getCompoundTag(TAG_KEY);
+        } else {
+            return super.getTag();
+        }
+    }
 
-	public void confirmedStatus() {
-		final String id = player.getUniqueID().toString().replaceAll("-", "");
-		if (VIPHandler.Vips.containsKey(id)) {
-			user = VIPHandler.Vips.get(id);
-			if (user != null) {
-				if (!user.getGroups().isEmpty()) {
-					final VipPackage group1 = user.getGroups().get(0);
-					if (group1 != null) {
-						status = group1.getGroupID();
-					}
-				}
-				Quotes = user.getQuotes();
-			}
-		}
-	}
+    @Override
+    public void onUpdate() {
+        if ((!this.checkStatus)) {
+            final World world = this.getPlayer().getEntityWorld();
+            if (world == null) {
+                return;
+            }
+            if (!world.isRemote) {
+                try {
+                    final TreeMap<String, VipUser> list = VIPHandler.instance.getVips();
+                    if ((list != null) && !list.isEmpty()) {
+                        this.confirmedStatus();
+                        this.sendInformationToPlayer();
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+            this.checkStatus = true;
+        }
+    }
 
-	public void sendStatusToServer(EntityPlayer player) {
-		final World world = player.getEntityWorld();
-		if (world.isRemote) {
-			if (tag == null) {
-				tag = new NBTTagCompound();
-			}
-			this.saveToNBT(tag);
-			NetworkHandler.sendToServer(new VipStatusPacket(player, tag));
-		}
-	}
+    @Override
+    public void onLogin() {
+//        this.sendInformationToPlayer(this.getPlayer(), this.getTag());
+    }
 
-	public void sendStatusToPlayer(EntityPlayer reciever) {
-		if (reciever instanceof EntityPlayerMP) {
-			final World world = player.getEntityWorld();
-			try {
-				if (tag == null) {
-					tag = new NBTTagCompound();
-				}
-				this.saveToNBT(tag);
-				NetworkHandler.sendTo(new VipStatusPacket(player, tag), (EntityPlayerMP) reciever);
-			} catch (final Exception e) {
-			}
-		}
-	}
+    @Override
+    public void onJoinWorld() {
+        final World world = this.getPlayer().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(this.getPlayer());
+        }
+    }
 
-	public void syncStatusToTracking() {
-		final World world = player.getEntityWorld();
-		if ((player instanceof EntityPlayerMP) && (world instanceof WorldServer)) {
-			if (tag == null) {
-				tag = new NBTTagCompound();
-			}
-			this.saveToNBT(tag);
-			NetworkHandler.sendToClients((WorldServer) world, player.getPosition(), new VipStatusPacket(player, tag));
-		}
-	}
+    @Override
+    public void onLogoff() {
 
-	public List<String> getQuotes() {
-		return Quotes;
-	}
+    }
 
-	public String getRandomQuote() {
-		if (!Quotes.isEmpty()) {
-			final int rand = Reference.random.nextInt(Quotes.size());
-			return Quotes.get(rand);
-		} else {
-			return "";
-		}
-	}
+    @Override
+    public void onChangedDimension(int from, int to) {
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    private void confirmedStatus() {
+        final String id = this.getPlayer().getUniqueID().toString().replaceAll("-", "");
+        if (VIPHandler.instance.getVips().containsKey(id)) {
+            VipUser user = VIPHandler.instance.getVips().get(id);
+            if (user != null) {
+                if (!user.getGroups().isEmpty()) {
+                    final VipPackage group1 = user.getGroups().get(0);
+                    if (group1 != null) {
+                        this.status = group1.getGroupID();
+                    }
+                }
+                this.quotes = user.getQuotes();
+            }
+        }
+    }
 
-	public boolean isFirstLogin() {
-		return first_login;
-	}
 
-	public boolean isLogin() {
-		return login;
-	}
+    public void sendInformationToPlayer() {
+        final World world = this.getPlayer().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(this.getPlayer(), this.saveToNBT(new NBTTagCompound()));
+        }
+    }
 
-	public void setLogin(boolean login) {
-		this.login = login;
-	}
+    public void sendInformationToPlayer(EntityPlayer receiver) {
+        final World world = this.getPlayer().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToPlayer(receiver, this.saveToNBT(new NBTTagCompound()));
+        }
+    }
 
-	@Override
-	public void copyFrom(VipStatus source, boolean wasDeath, boolean keepInv) {
-	}
+    public void sendInformationToPlayer(EntityPlayer receiver, NBTTagCompound tag) {
+        final World world = this.getPlayer().getEntityWorld();
+        if (!world.isRemote && (receiver instanceof EntityPlayerMP)) {
+            NetworkHandler.sendTo(new VipStatusPacket(this.getPlayer(), tag), (EntityPlayerMP) receiver);
+        }
+    }
 
-	@Override
-	public void saveToNBT(NBTTagCompound compound) {
-		compound.setInteger("status", status);
-		compound.setBoolean("login", login);
-		compound.setString("uuid", player.getCachedUniqueIdString());
-	}
+    public void sendInformationToTracking(NBTTagCompound tag) {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote && (world instanceof WorldServer)) {
+            final WorldServer w = (WorldServer) world;
+            NetworkHandler.sendToClients(w, this.getEntity().getPosition(), new VipStatusPacket(this.getEntity(), tag));
+        }
+    }
 
-	@Override
-	public void loadFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("status")) {
-			status = compound.getInteger("status");
-		}
-		if (compound.hasKey("login")) {
-			login = compound.getBoolean("login");
-		}
-		first_login = false;
-	}
+    public List<String> getQuotes() {
+        return this.quotes;
+    }
+
+    public String getRandomQuote() {
+        if (!this.quotes.isEmpty()) {
+            final int rand = Reference.random.nextInt(this.quotes.size());
+            return this.quotes.get(rand);
+        } else {
+            return "";
+        }
+    }
+
+    public int getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public void copyFrom(@Nonnull VipStatus source, boolean wasDeath, boolean keepInv) {
+        this.status = source.status;
+    }
+
+    @Override
+    public NBTTagCompound saveToNBT(@Nonnull NBTTagCompound compound) {
+        compound.setInteger("status", this.status);
+        return compound;
+    }
+
+    @Override
+    public void loadFromNBT(@Nonnull NBTTagCompound compound) {
+        if (compound.hasKey("status")) {
+            this.status = compound.getInteger("status");
+        }
+    }
 }
