@@ -2,7 +2,6 @@ package xzeroair.trinkets.util;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
@@ -10,148 +9,91 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.config.ClientConfig;
 import xzeroair.trinkets.util.config.ClientConfigStore;
 import xzeroair.trinkets.util.config.ServerConfig;
-import xzeroair.trinkets.util.config.compat.CompatabilityConfigs;
+import xzeroair.trinkets.util.config.compat.CompatibilityConfigs;
 import xzeroair.trinkets.util.helpers.NBTHelper;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 @Config(name = Reference.configPath, modid = Reference.MODID)
-@LangKey("xat.config.title")
+@Config.LangKey("xat.config.title")
 public class TrinketsConfig {
 
-    private final static String cfgPrefix = Reference.MODID + ".config";
-
-    @Config.Name("Client Settings")
-    @LangKey(cfgPrefix + ".client.settings")
+    @Config.Name(ConstantsConfigLang.CONFIG_CLIENT_SETTINGS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_CLIENT_SETTINGS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_CLIENT_SETTINGS)
     public static ClientConfig CLIENT = new ClientConfig();
 
-    @Config.Name("Server Settings")
-    @LangKey(cfgPrefix + ".server.settings")
+    @Config.Name(ConstantsConfigLang.CONFIG_SERVER_SETTINGS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_SERVER_SETTINGS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_SERVER_SETTINGS)
     public static ServerConfig SERVER = new ServerConfig();
 
-    @Config.Name("Compatibility Settings")
-    @LangKey(cfgPrefix + ".compatibility")
-    public static CompatabilityConfigs compat = new CompatabilityConfigs();
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS)
+    public static CompatibilityConfigs compat = new CompatibilityConfigs();
 
     public static ClientConfigStore getClientStore() {
         return ClientConfigStore.INSTANCE;
     }
 
+    @Nonnull
     public static NBTTagCompound writeConfigMap() {
         final NBTTagCompound tag = new NBTTagCompound();
         // Needs Synced because it effects client rendering
-        tag.setBoolean("TRINKET_CONTAINER", TrinketsConfig.SERVER.GUI.guiEnabled);
-        tag.setBoolean("OF_ENABLED", TrinketsConfig.SERVER.Items.DRAGON_EYE.oreFinder);
+        tag.setBoolean("TRINKET_CONTAINER", TrinketsConfig.SERVER.GUI.ENABLED);
 
         NBTTagCompound races = new NBTTagCompound();
         int index = 0;
-        for (String race : TrinketsConfig.SERVER.races.selectionBlacklist) {
-            races.setString(index + "", race);
+        for (String race : TrinketsConfig.SERVER.RACES.BLACKLIST) {
+            races.setString(index++ + "", race);
         }
         tag.setTag("RACE_BLACKLIST", races);
 
-        // Climbable blocks sync.
-        tag.setBoolean("FAIRY_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
-        tag.setBoolean("GOBLIN_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
-        tag.setBoolean("FAELIS_CLIMBING_ENABLED", TrinketsConfig.SERVER.races.fairy.climbing);
-
-//        NBTTagCompound climbableBlocks = new NBTTagCompound();
-//        int index1 = 0;
-//        for (String block : TrinketsConfig.SERVER.races.fairy.allowedBlocks) {
-//            climbableBlocks.setString(index1 + "", block);
-//        }
-//        tag.setTag("CLIMB_BLOCKS", climbableBlocks);
         // Most of these are probably not needed.
         if (Trinkets.MOD_COMPAT.ToughAsNails) {
-            tag.setBoolean("COMPAT_TAN", TrinketsConfig.compat.toughasnails);
+            tag.setBoolean("COMPAT_TAN", TrinketsConfig.compat.TOUGH_AS_NAILS);
         }
         if (Trinkets.MOD_COMPAT.SimpleDifficulty) {
-            tag.setBoolean("COMPAT_SD", TrinketsConfig.compat.simpledifficulty);
+            tag.setBoolean("COMPAT_SD", TrinketsConfig.compat.SIMPLE_DIFFICULTY);
         }
         if (Trinkets.MOD_COMPAT.ElenaiDodge1) {
-            tag.setBoolean("COMPAT_ELENAI1", TrinketsConfig.compat.elenaiDodge);
+            tag.setBoolean("COMPAT_ELENAI1", TrinketsConfig.compat.ELENAI_DODGE);
         }
-//        if (Trinkets.MOD_COMPAT.ElenaiDodge2) {
-//            tag.setBoolean("COMPAT_ELENAI2", TrinketsConfig.compat.elenaiDodge);
-//        }
         if (Trinkets.MOD_COMPAT.EnhancedVisuals) {
-            tag.setBoolean("COMPAT_EV", TrinketsConfig.compat.enhancedvisuals);
+            tag.setBoolean("COMPAT_EV", TrinketsConfig.compat.ENHANCED_VISUALS);
         }
-//        configMap.put("compatLycanites", "" + TrinketsConfig.compat.lycanites);
-//        configMap.put("compatDefiledLands", "" + TrinketsConfig.compat.defiledlands);
         if (Trinkets.MOD_COMPAT.BetterDiving) {
-            tag.setBoolean("COMPAT_BD", TrinketsConfig.compat.betterdiving);
+            tag.setBoolean("COMPAT_BD", TrinketsConfig.compat.BETTER_DIVING);
         }
-        tag.setBoolean("MISC_MOVEMENT", TrinketsConfig.SERVER.misc.movement);
-        tag.setBoolean("MISC_REACH_FIX", TrinketsConfig.SERVER.misc.reach);
+        tag.setBoolean("MISC_MOVEMENT", TrinketsConfig.SERVER.MISC.MOVEMENT);
+        tag.setBoolean("MISC_REACH_FIX", TrinketsConfig.SERVER.MISC.REACH);
         return tag;
     }
 
     public static void readConfigMap(NBTTagCompound tag) {
         if ((tag != null) && !tag.isEmpty()) {
-            Trinkets.log.info("Found Server Config");
-            try {
-                NBTHelper.hasBoolean(tag, "TRINKET_CONTAINER", (bool) -> {
-                    ClientConfigStore.INSTANCE.TRINKET_CONTAINER_ENABLED = bool;
-                });
-                NBTHelper.hasBoolean(tag, "OF_ENABLED", (bool) -> {
-                    ClientConfigStore.INSTANCE.DRAGON_EYE_OF_ENABLED = bool;
-                });
-                NBTHelper.hasTag(tag, "RACE_BLACKLIST", (t) -> {
-                    List<String> list = new ArrayList<>();
-                    for (int i = 0; i < t.getSize(); i++) {
-                        if (t.hasKey(i + "")) {
-                            list.add(t.getString(i + ""));
-                        }
+            Trinkets.LOGGER.info("Found Server Config");
+            NBTHelper.hasBoolean(tag, "TRINKET_CONTAINER", (bool) -> ClientConfigStore.INSTANCE.TRINKET_CONTAINER_ENABLED = bool);
+            NBTHelper.hasTag(tag, "RACE_BLACKLIST", (t) -> {
+                List<String> list = new ArrayList<>();
+                for (int i = 0; i < t.getSize(); i++) {
+                    if (t.hasKey(i + "")) {
+                        list.add(t.getString(i + ""));
                     }
-                    ClientConfigStore.INSTANCE.RACE_SELECTION_BLACKLIST = list.toArray(new String[0]);
-                });
-                NBTHelper.hasBoolean(tag, "FAIRY_CLIMBING_ENABLED", (bool) -> {
-                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
-                });
-                NBTHelper.hasBoolean(tag, "GOBLIN_CLIMBING_ENABLED", (bool) -> {
-                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
-                });
-                NBTHelper.hasBoolean(tag, "FAELIS_CLIMBING_ENABLED", (bool) -> {
-                    ClientConfigStore.INSTANCE.CLIMBING_ENABLED = bool;
-                });
-//                NBTHelper.hasTag(tag, "CLIMB_BLOCKS", (t) -> {
-//                    List<String> list = new ArrayList<>();
-//                    for (int i = 0; i < t.getSize(); i++) {
-//                        if (t.hasKey(i + "")) {
-//                            list.add(t.getString(i + ""));
-//                        }
-//                    }
-//                    ClientConfigStore.INSTANCE.CLIMB_BLOCKS = list.toArray(new String[0]);
-//                });
-                NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool;
-                });
-                NBTHelper.hasBoolean(tag, "COMPAT_SD", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = bool;
-                });
-                NBTHelper.hasBoolean(tag, "COMPAT_ELENAI1", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool;
-                });
-                NBTHelper.hasBoolean(tag, "COMPAT_ELENAI2", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool;
-                });
-                NBTHelper.hasBoolean(tag, "COMPAT_EV", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_ENHANCED_VISUALS = bool;
-                });
-                NBTHelper.hasBoolean(tag, "COMPAT_BD", (bool) -> {
-                    ClientConfigStore.INSTANCE.MOD_COMPAT_BETTER_DIVING = bool;
-                });
-                NBTHelper.hasBoolean(tag, "MISC_MOVEMENT", (bool) -> {
-                    ClientConfigStore.INSTANCE.BLOCK_MOVEMENT = bool;
-                });
-                NBTHelper.hasBoolean(tag, "MISC_REACH_FIX", (bool) -> {
-                    ClientConfigStore.INSTANCE.REACH_FIX = bool;
-                });
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+                }
+                ClientConfigStore.INSTANCE.RACE_SELECTION_BLACKLIST = list.toArray(new String[0]);
+            });
+            NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_SD", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_ELENAI1", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_ELENAI2", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_EV", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ENHANCED_VISUALS = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_BD", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_BETTER_DIVING = bool);
+            NBTHelper.hasBoolean(tag, "MISC_MOVEMENT", (bool) -> ClientConfigStore.INSTANCE.BLOCK_MOVEMENT = bool);
+            NBTHelper.hasBoolean(tag, "MISC_REACH_FIX", (bool) -> ClientConfigStore.INSTANCE.REACH_FIX = bool);
         }
     }
 
@@ -172,7 +114,7 @@ public class TrinketsConfig {
         try {
             cfg.load();
         } catch (final Exception e1) {
-            Trinkets.log.error("Xat had a problem loading it's configuration");
+            Trinkets.LOGGER.error("Trinkets & Baubles(xat) had a problem loading it's configuration");
         } finally {
             if (cfg.hasChanged()) {
                 cfg.save();

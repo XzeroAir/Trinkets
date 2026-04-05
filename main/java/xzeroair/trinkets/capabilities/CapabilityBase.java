@@ -9,37 +9,33 @@ import java.util.Random;
 public abstract class CapabilityBase<T, E> implements ITrinketCapability<T> {
 
     protected Random random = Reference.random;
-    protected NBTTagCompound tag;
-    protected TickHandler tickHandler;
+    private NBTTagCompound tag;
+    private TickHandler tickHandler;
 
-    protected E object;
+    private final E object;
 
     public CapabilityBase(E object) {
-        tickHandler = new TickHandler();
-        tag = new NBTTagCompound();
+        this.tickHandler = new TickHandler();
+        this.tag = new NBTTagCompound();
         this.object = object;
     }
 
     public NBTTagCompound getTag() {
-        if (tag == null) {
-            tag = new NBTTagCompound();
+        if (this.tag == null) {
+            this.tag = new NBTTagCompound();
         }
-        return tag;
+        return this.tag;
     }
 
     public E getObject() {
-        return object;
+        return this.object;
     }
 
     public TickHandler getTickHandler() {
-        if (tickHandler == null) {
-            tickHandler = new TickHandler();
+        if (this.tickHandler == null) {
+            this.tickHandler = new TickHandler();
         }
-        return tickHandler;
-    }
-
-    @Override
-    public void onUpdate() {
+        return this.tickHandler;
     }
 
     @Override

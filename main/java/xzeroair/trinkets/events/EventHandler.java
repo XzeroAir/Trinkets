@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
@@ -83,13 +82,15 @@ public class EventHandler extends EventBaseHandler {
             try {
                 Capabilities.getEntityProperties(entity, EntityProperties::onUpdatePre);
             } catch (final Exception e) {
+                Trinkets.LOGGER.fatal("Crash on Entity Capability Pre Update");
                 e.printStackTrace();
             }
         } else {
-            if (TrinketsConfig.SERVER.misc.retrieveVIP) {
+            if (TrinketsConfig.SERVER.MISC.VIPS) {
                 try {
                     Capabilities.getVipStatus(entity, VipStatus::onUpdate);
                 } catch (final Exception e) {
+                    Trinkets.LOGGER.fatal("Crash on VIP Capability Update");
                     e.printStackTrace();
                 }
             }
@@ -101,15 +102,15 @@ public class EventHandler extends EventBaseHandler {
 
     @SubscribeEvent
     public void EntityUpdate(LivingUpdateEvent event) {
-        final EntityLivingBase entity = event.getEntityLiving();
-        if (!(entity instanceof EntityPlayer)) {
-            this.raceHandlerTick(entity);
-            this.effectHandlerTick(entity);
-            if (!TrinketsConfig.SERVER.mana.players_only) {
-                // TODO ADD MAGIC TO ENTITIES?
-                this.magicHandlerTick(entity);
-            }
-        }
+//        final EntityLivingBase entity = event.getEntityLiving();
+//        if (!(entity instanceof EntityPlayer)) {
+//            this.raceHandlerTick(entity);
+//            this.effectHandlerTick(entity);
+//            if (!TrinketsConfig.SERVER.mana.players_only) {
+//                // TODO ADD MAGIC TO ENTITIES?
+//                this.magicHandlerTick(entity);
+//            }
+//        }
     }
 
     private void raceHandlerTick(EntityLivingBase entity) {
@@ -135,7 +136,6 @@ public class EventHandler extends EventBaseHandler {
     /**
      * TODO, Remove self made effects and just use the Potion Effect System.
      *
-     * @param entity
      */
     private void effectHandlerTick(EntityLivingBase entity) {
         try {
@@ -150,7 +150,6 @@ public class EventHandler extends EventBaseHandler {
     /**
      * This doesn't seem to work at all. TODO
      *
-     * @param event
      */
     @SubscribeEvent
     public void makeNoise(PlaySoundAtEntityEvent event) {
@@ -177,7 +176,6 @@ public class EventHandler extends EventBaseHandler {
     /**
      * Is run on both Side.CLIENT and Side.SERVER, Game is checking if the Entity is allowed to have a potion effect applied.
      *
-     * @param event
      */
     @SubscribeEvent
     public void potionApply(PotionApplicableEvent event) {
@@ -193,15 +191,15 @@ public class EventHandler extends EventBaseHandler {
             }
             if (!cancel) {
                 for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
-                    String key = entry.getKey();
-                    AbilityHolder holder = entry.getValue();
+                    final String key = entry.getKey();
+                    final AbilityHolder holder = entry.getValue();
                     try {
                         final IAbilityInterface handler = holder.getAbility();
                         if (handler instanceof IPotionAbility) {
                             cancel = ((IPotionAbility) handler).potionApplied(entity, event.getPotionEffect(), cancel);
                         }
                     } catch (final Exception e) {
-                        Trinkets.log.error("Trinkets had an Error with Potion Ability:" + key);
+                        Trinkets.LOGGER.error("Trinkets had an Error with Potion Ability:{}", key);
                         e.printStackTrace();
                     }
                 }
@@ -377,7 +375,7 @@ public class EventHandler extends EventBaseHandler {
                         }
                     }
                 } catch (final Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
@@ -408,7 +406,7 @@ public class EventHandler extends EventBaseHandler {
                         }
                     }
                 } catch (final Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
@@ -435,7 +433,7 @@ public class EventHandler extends EventBaseHandler {
                         ((IItemUseAbility) handler).onItemUseStop(entity, stack, duration);
                     }
                 } catch (final Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
@@ -455,13 +453,12 @@ public class EventHandler extends EventBaseHandler {
 
     @SubscribeEvent
     public void onItemFinishUseEvent(LivingEntityUseItemEvent.Finish event) {
-
         final EntityLivingBase entity = event.getEntityLiving();
         final ItemStack stack = event.getItem();
-        final Item item = stack.getItem();
-        final String regName = item.getRegistryName().toString();
-        final String ModID = item.getRegistryName().getNamespace();
-        final String ItemID = item.getRegistryName().getPath();
+//        final Item item = stack.getItem();
+//        final String regName = item.getRegistryName().toString();
+//        final String ModID = item.getRegistryName().getNamespace();
+//        final String ItemID = item.getRegistryName().getPath();
         final int duration = event.getDuration();
         Capabilities.getEntityProperties(entity, prop -> {
             Map<String, AbilityHolder> abilities = prop.getAbilityHandler().getActiveAbilities();
@@ -474,16 +471,16 @@ public class EventHandler extends EventBaseHandler {
                         ((IItemUseAbility) handler).onItemUseFinish(entity, stack, duration);
                     }
                 } catch (final Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
             try {
-                final FaelisConfig faelisConfig = TrinketsConfig.SERVER.races.faelis;
-                if (prop.getCurrentRace().compareRace(EntityRaces.faelis) && faelisConfig.Invigorated) {
+                final FaelisConfig faelisConfig = TrinketsConfig.SERVER.RACES.FAELIS;
+                if (prop.getCurrentRace().compareRace(EntityRaces.faelis) && faelisConfig.MILK_BONUS) {
                     final StatusHandler status = Capabilities.getStatusHandler(entity);
                     if (status != null) {
-                        final String[] milkList = faelisConfig.milk;
+                        final String[] milkList = faelisConfig.MILK;
                         for (final String milk : milkList) {
                             final String[] itemConfig = milk.split(";");
                             final String itemString = StringUtils.getStringFromArray(itemConfig, 0);
@@ -494,14 +491,14 @@ public class EventHandler extends EventBaseHandler {
                             //							if (potion.getPotion() != null) {
                             //
                             //							}
-                            if (event.getItem().getItem().getRegistryName().toString().equalsIgnoreCase(itemString)) {
+                            if (stack.getItem().getRegistryName().toString().equalsIgnoreCase(itemString)) {
                                 final int meta = metaString.isEmpty() ? OreDictionary.WILDCARD_VALUE : Integer.parseInt(metaString);
                                 final int level = levelString.isEmpty() ? 0 : Integer.parseInt(levelString);
-                                final int Iduration = durationString.isEmpty() ? faelisConfig.Invigorated_Duration : Integer.parseInt(durationString);
-                                if ((meta == OreDictionary.WILDCARD_VALUE) || (event.getItem().getMetadata() == meta)) {
+                                final int Iduration = durationString.isEmpty() ? faelisConfig.MILK_BONUS_DURATION : Integer.parseInt(durationString);
+                                if ((meta == OreDictionary.WILDCARD_VALUE) || (stack.getMetadata() == meta)) {
                                     status.apply(new TrinketStatusEffect("Invigorated", Iduration, level, null));
                                     if (!entity.world.isRemote) {
-                                        for (final String potID : faelisConfig.buffs) {
+                                        for (final String potID : faelisConfig.MILK_BUFFS) {
                                             final PotionHolder potion = PotionHelper.getPotionHolder(potID);
                                             if (potion.getPotion() != null) {
                                                 entity.addPotionEffect(potion.getPotionEffect());
@@ -518,7 +515,7 @@ public class EventHandler extends EventBaseHandler {
                 e.printStackTrace();
             }
         });
-        if (TrinketsConfig.SERVER.mana.mana_enabled) {
+        if (TrinketsConfig.SERVER.MAGIC.mana_enabled) {
             try {
                 Map<String, MPRecoveryItem> MagicRecoveryItems = ConfigHelper.TrinketConfigStorage.MagicRecoveryItems;
                 float amount = 0;

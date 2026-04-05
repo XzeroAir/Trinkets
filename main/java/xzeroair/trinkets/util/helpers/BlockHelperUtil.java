@@ -31,6 +31,7 @@ import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.Reference;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.TreeMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -196,7 +197,7 @@ public class BlockHelperUtil {
         return toolLevel >= block.getHarvestLevel(state);
     }
 
-    public static boolean isToolEffective(ItemStack stack, IBlockState state) {
+    public static boolean isToolEffective(@Nonnull ItemStack stack, IBlockState state) {
         for (String type : stack.getItem().getToolClasses(stack)) {
             if ((type != null) && type.equals(state.getBlock().getHarvestTool(state))) {
                 return true;
@@ -215,7 +216,7 @@ public class BlockHelperUtil {
     /*
      * Do not call event when used in getBreakSpeed Event
      */
-    public static float getEntityDigSpeed(EntityLivingBase entity, ItemStack itemstack, IBlockState state, BlockPos pos, boolean callDigSpeedEvent) {
+    public static float getEntityDigSpeed(EntityLivingBase entity, @Nonnull ItemStack itemstack, IBlockState state, BlockPos pos, boolean callDigSpeedEvent) {
         float f = 1.0F;
 
         if (!itemstack.isEmpty()) {
@@ -277,7 +278,7 @@ public class BlockHelperUtil {
         return getBlockList(stack, world, player, origin, width, height, depth, distance, null);
     }
 
-    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance, Predicate<BlockPos> predicate) {
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, @Nonnull World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance, @Nullable Predicate<BlockPos> predicate) {
         IBlockState state = world.getBlockState(origin);
 
         if ((state.getMaterial() == Material.AIR) || !canToolHarvestBlock(stack, state)) {
@@ -437,7 +438,7 @@ public class BlockHelperUtil {
         breakBlock(entity, harvestTool, world, harvestedBlockState, harvestedPos, targetPos, callBreakEvent, bonusToolLevel, null);
     }
 
-    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, Function<Integer, Integer> handleXP) {
+    public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, @Nullable Function<Integer, Integer> handleXP) {
         if (!canBreakBlock(harvestTool, world, entity, harvestedPos, targetPos, bonusToolLevel)) {
             return;
         }

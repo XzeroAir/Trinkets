@@ -3,6 +3,7 @@ package xzeroair.trinkets.init;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class Elements {
 
@@ -34,17 +35,17 @@ public class Elements {
 
     static {
         EMPTY = new Element[0];
-        NEUTRAL = getRegisteredElement("Neutral");
-        ICE = getRegisteredElement("Ice");
-        FIRE = getRegisteredElement("Fire");
-        WATER = getRegisteredElement("Water");
-        EARTH = getRegisteredElement("Earth");
-        AIR = getRegisteredElement("Air");
-        LIGHTNING = getRegisteredElement("Lightning");
-        POISON = getRegisteredElement("Poison");
-        LIGHT = getRegisteredElement("Light");
-        DARK = getRegisteredElement("Dark");
-        VOID = getRegisteredElement("Void");
+        NEUTRAL = getRegisteredElement(TrinketsRegistryNames.ModElements.NEUTRAL);
+        ICE = getRegisteredElement(TrinketsRegistryNames.ModElements.ICE);
+        FIRE = getRegisteredElement(TrinketsRegistryNames.ModElements.FIRE);
+        WATER = getRegisteredElement(TrinketsRegistryNames.ModElements.WATER);
+        EARTH = getRegisteredElement(TrinketsRegistryNames.ModElements.EARTH);
+        AIR = getRegisteredElement(TrinketsRegistryNames.ModElements.AIR);
+        LIGHTNING = getRegisteredElement(TrinketsRegistryNames.ModElements.LIGHTNING);
+        POISON = getRegisteredElement(TrinketsRegistryNames.ModElements.POISON);
+        LIGHT = getRegisteredElement(TrinketsRegistryNames.ModElements.LIGHT);
+        DARK = getRegisteredElement(TrinketsRegistryNames.ModElements.DARK);
+        VOID = getRegisteredElement(TrinketsRegistryNames.ModElements.VOID);
     }
 
 }

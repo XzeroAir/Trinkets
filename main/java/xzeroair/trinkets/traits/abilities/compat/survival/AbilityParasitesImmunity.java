@@ -3,36 +3,29 @@ package xzeroair.trinkets.traits.abilities.compat.survival;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.enums.EnumRenderLocation;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.config.abilities.external.survival.ConfigAbilitySurvivalParasites;
 
-public class AbilityParasitesImmunity extends Ability implements ITickableAbility, IPotionAbility {
+public class AbilityParasitesImmunity extends AbilitySurvivalMod implements ITickableAbility, IPotionAbility {
+
+    private final ConfigAbilitySurvivalParasites CONFIG;
 
     public AbilityParasitesImmunity() {
-        super(Abilities.survivalParasitesImmunity);
+        this(true);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        if (renderID == EnumRenderLocation.GUI_BEFORE.getId()) {
-            final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-            final String modifier = sdEnabled ? "itemGroup.tabSimpleDifficulty" : "";
-            final String string = helper.getLangTranslation(modifier);
-            if (!helper.isStringEmpty(string)) {
-                return (helper.gold + "(" + string + helper.gold + ")");
-            }
-        }
-        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
+    public AbilityParasitesImmunity(boolean enabled) {
+        this(TrinketsConfig.SERVER.ABILITIES.EXTERNAL.IMMUNITY_PARASITES, enabled);
+    }
+
+    public AbilityParasitesImmunity(ConfigAbilitySurvivalParasites config, boolean enabled) {
+        super(TrinketsRegistryNames.ModAbilities.SURVIVAL_PARASITES_IMMUNITY);
+        this.CONFIG = config;
+        this.setAbilityEnabled(enabled);
     }
 
     @Override

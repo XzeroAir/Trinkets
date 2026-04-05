@@ -40,19 +40,19 @@ public interface IRenderRaceHandler<T> {
     }
 
     @SideOnly(Side.CLIENT)
-    default <T extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+    default <E extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
     }
 
     @SideOnly(Side.CLIENT)
-    default <T extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+    default <E extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
     }
 
     @SideOnly(Side.CLIENT)
-    default <T extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+    default <E extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
     }
 
     @SideOnly(Side.CLIENT)
-    default <T extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<T> renderer, float partialTick) {
+    default <E extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
     }
 
     @SideOnly(Side.CLIENT)
@@ -62,5 +62,7 @@ public interface IRenderRaceHandler<T> {
     @SideOnly(Side.CLIENT)
     default void onClientTick() {
     }
+
+    IRenderRaceHandler<T> getRaceRenderer();
 
 }

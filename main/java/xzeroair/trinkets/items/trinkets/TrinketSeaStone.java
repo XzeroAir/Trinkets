@@ -12,24 +12,28 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.AbilityWaterAffinity;
-import xzeroair.trinkets.traits.abilities.compat.survival.AbilityParasitesImmunity;
-import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstImmunity;
+import xzeroair.trinkets.traits.abilities.AbilitySkilledSwimmer;
+import xzeroair.trinkets.traits.abilities.compat.enhancedvisuals.AbilityEnhancedVisualsBlur;
+import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstAbsorption;
+import xzeroair.trinkets.traits.abilities.elements.water.AbilityWaterAffinity;
+import xzeroair.trinkets.traits.abilities.elements.water.AbilityWaterImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.compat.SurvivalCompat;
+import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsCompat;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigSeaStone;
 import xzeroair.trinkets.util.config.trinkets.ConfigSeaStone;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrinketSeaStone extends AccessoryBase {
 
-    public static final ConfigSeaStone serverConfig = TrinketsConfig.SERVER.Items.SEA_STONE;
-    public static final ClientConfigSeaStone clientConfig = TrinketsConfig.CLIENT.items.SEA_STONE;
+    protected final ConfigSeaStone CONFIG = TrinketsConfig.SERVER.ITEMS.SEA_STONE;
+    protected final ClientConfigSeaStone clientConfig = TrinketsConfig.CLIENT.ITEMS.SEA_STONE;
 
     public TrinketSeaStone(String name) {
         super(name);
@@ -37,28 +41,53 @@ public class TrinketSeaStone extends AccessoryBase {
     }
 
     @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityWaterAffinity(this.CONFIG.ABILITIES.WATER_AFFINITY));
+        abilities.add(new AbilityWaterImmunity(this.CONFIG.ABILITIES.WATER_IMMUNITY));
+        abilities.add(new AbilitySkilledSwimmer(this.CONFIG.ABILITIES.SKILLED_SWIMMER));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
+        if (SurvivalCompat.isSurvivalModsActive()) {
+            abilities.add(new AbilityThirstAbsorption(this.CONFIG.ABILITIES.EXTERNAL.WATER_ABSORPTION));
+        }
+        if (EnhancedVisualsCompat.isModActive()) {
+            abilities.add(new AbilityEnhancedVisualsBlur(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
+        }
     }
 
     @Override
-    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        abilities.add(new AbilityWaterAffinity());
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean tan = tanEnabled || sdEnabled;
-        if (tan && serverConfig.compat.tan.prevent_thirst) {
-            abilities.add(new AbilityThirstImmunity());
-            if (sdEnabled) {
-                abilities.add(new AbilityParasitesImmunity());
-            }
-        }
+    public Element getPrimaryElement() {
+        return Elements.WATER;
+    }
+
+    @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
+    public boolean ItemEnabled() {
+        return this.CONFIG.ENABLED;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void playerRenderLayer(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale) {
-        if (!clientConfig.doRender) {
+        if (!this.clientConfig.RENDER) {
             return;
         }
         final float offsetY = 0.16F;
@@ -77,16 +106,6 @@ public class TrinketSeaStone extends AccessoryBase {
         GlStateManager.scale(scale * bS, scale * bS, scale * bS);
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
         GlStateManager.popMatrix();
-    }
-
-    @Override
-    public Element getPrimaryElement() {
-        return Elements.WATER;
-    }
-
-    @Override
-    public boolean ItemEnabled() {
-        return serverConfig.enabled;
     }
 
     @Override

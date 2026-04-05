@@ -1,31 +1,33 @@
 package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IJumpAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
+import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityWeightless;
+
+import javax.annotation.Nonnull;
 
 public class AbilityWeightless extends Ability implements ITickableAbility, IPotionAbility, IJumpAbility {
 
+    protected final ConfigAbilityWeightless CONFIG;
+
     public AbilityWeightless() {
-        super(Abilities.weightless);
+        this(TrinketsConfig.SERVER.ABILITIES.WEIGHTLESS);
+    }
+
+    public AbilityWeightless(ConfigAbilityWeightless config) {
+        super(TrinketsRegistryNames.ModAbilities.WEIGHTLESS);
+        this.CONFIG = config;
+        this.setAbilityEnabled(config.ENABLED);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
-    }
-
-    @Override
-    public void tickAbility(EntityLivingBase entity) {
+    public void tickAbility(@Nonnull EntityLivingBase entity) {
         if (!entity.onGround) {
             entity.motionY = 0;
             if ((!(entity.isSneaking())) && entity.isSwingInProgress) {
@@ -39,9 +41,9 @@ public class AbilityWeightless extends Ability implements ITickableAbility, IPot
 
     @Override
     public boolean potionApplied(EntityLivingBase entity, PotionEffect effect, boolean cancel) {
-        final String e = effect.getPotion().getRegistryName().toString();
-        final Potion weight = LycanitesCompat.getPotionEffectByName("weight");
-        if ((weight != null) && e.contentEquals(weight.getRegistryName().toString())) return true;
+        if (LycanitesCompat.isWeight(effect)) {
+            return true;
+        }
         return cancel;
     }
 

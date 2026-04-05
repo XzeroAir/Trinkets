@@ -4,12 +4,12 @@ import net.minecraft.item.ItemStack;
 
 public interface ITrinketInterface {
 
-	default String getAccessoryType() {
-		return "trinket";
-	}
+    default String getAccessoryType() {
+        return "trinket";
+    }
 
-	public int getSlot(ItemStack stack);
-
-	public String getItemHandler(ItemStack stack);
+    int getSlot(ItemStack stack);
+ 
+    String getItemHandler(ItemStack stack);
 
 }

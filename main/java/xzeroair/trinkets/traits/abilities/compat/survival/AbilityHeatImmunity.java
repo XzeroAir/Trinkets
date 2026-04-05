@@ -3,45 +3,31 @@ package xzeroair.trinkets.traits.abilities.compat.survival;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.enums.EnumRenderLocation;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
-import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
+import xzeroair.trinkets.util.config.abilities.external.survival.ConfigAbilitySurvivalHeat;
 
 import java.util.List;
 
-public class AbilityHeatImmunity extends Ability implements ITickableAbility, IPotionAbility {
+public class AbilityHeatImmunity extends AbilitySurvivalMod implements ITickableAbility, IPotionAbility {
 
-    public static ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
+    private final ConfigAbilitySurvivalHeat CONFIG;
 
     public AbilityHeatImmunity() {
-        super(Abilities.survivalHeatImmunity);
+        this(true);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        if (renderID == EnumRenderLocation.GUI_BEFORE.getId()) {
-            final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-            final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-            final boolean survival = tanEnabled || sdEnabled;
-            final String modifier = sdEnabled ? "itemGroup.tabSimpleDifficulty" : tanEnabled ? "itemGroup.tabToughAsNails" : "";
-            if (survival) {
-                final String string = helper.getLangTranslation(modifier);
-                if (!helper.isStringEmpty(string)) {
-                    return (helper.gold + "(" + string + helper.gold + ")");
-                }
-            }
-        }
-        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
+    public AbilityHeatImmunity(boolean enabled) {
+        this(TrinketsConfig.SERVER.ABILITIES.EXTERNAL.IMMUNITY_HEAT, enabled);
+    }
+
+    public AbilityHeatImmunity(ConfigAbilitySurvivalHeat config, boolean enabled) {
+        super(TrinketsRegistryNames.ModAbilities.SURVIVAL_HEAT_IMMUNITY);
+        this.CONFIG = config;
+        this.setAbilityEnabled(enabled);
     }
 
     @Override

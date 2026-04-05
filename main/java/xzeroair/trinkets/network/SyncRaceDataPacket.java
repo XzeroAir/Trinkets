@@ -12,49 +12,58 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.capabilities.Capabilities;
 
 public class SyncRaceDataPacket extends ThreadSafePacket {
-	//	// A default constructor is always required
-	public SyncRaceDataPacket() {
-	}
+    //	// A default constructor is always required
+    public SyncRaceDataPacket() {
+    }
 
-	private int entityID;
-	private NBTTagCompound tag;
+    private int entityID;
+    private NBTTagCompound tag;
+    private boolean sync;
 
-	public SyncRaceDataPacket(EntityLivingBase entity, NBTTagCompound tag) {
-		entityID = entity.getEntityId();
-		this.tag = tag;
-	}
+    public SyncRaceDataPacket(EntityLivingBase entity, NBTTagCompound tag) {
+        this(entity, tag, true);
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-		ByteBufUtils.writeTag(buf, tag);
-	}
+    public SyncRaceDataPacket(EntityLivingBase entity, NBTTagCompound tag, boolean sync) {
+        this.entityID = entity.getEntityId();
+        this.tag = tag;
+        this.sync = sync;
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		entityID = buf.readInt();
-		tag = ByteBufUtils.readTag(buf);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(this.entityID);
+        buf.writeBoolean(this.sync);
+        ByteBufUtils.writeTag(buf, this.tag);
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
-		final Minecraft mc = Minecraft.getMinecraft();
-		final World world = mc.player.getEntityWorld();
-		final Entity entity = world.getEntityByID(entityID);
-		Capabilities.getEntityProperties(
-				entity, prop -> {
-					prop.loadFromNBT(tag);
-				}
-		);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.entityID = buf.readInt();
+        this.sync = buf.readBoolean();
+        this.tag = ByteBufUtils.readTag(buf);
+    }
 
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
-		final Entity entity = server.player.getEntityWorld().getEntityByID(entityID);
-		Capabilities.getEntityProperties(entity, prop -> {
-			prop.loadFromNBT(tag);
-			prop.scheduleResync();
-		});
-	}
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        final World world = mc.player.getEntityWorld();
+        final Entity entity = world.getEntityByID(this.entityID);
+        Capabilities.getEntityProperties(entity, prop -> {
+            prop.loadFromNBT(this.tag);
+        });
+    }
+
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
+        final World world = server.player.getEntityWorld();
+        final Entity entity = world.getEntityByID(this.entityID);
+        Capabilities.getEntityProperties(entity, prop -> {
+            prop.loadFromNBT(this.tag);
+            if (this.sync) {
+                prop.sendInformationToTracking(this.tag);
+            }
+        });
+    }
 
 }

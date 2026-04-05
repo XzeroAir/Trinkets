@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -26,7 +27,7 @@ public class Utils {
         return TypeToken.get(object).getType();
     }
 
-    public static <T> Type getClassTypeToken(T object) {
+    public static <T> Type getClassTypeToken(@Nonnull T object) {
         return getClassTypeToken(object.getClass());
     }
 
@@ -34,6 +35,7 @@ public class Utils {
         return TypeToken.getParameterized(classObj, typeObj).getType();
     }
 
+    @Nullable
     public static <T> T loadJson(File file, Type type) {
         try {
             T loadedClass;
@@ -41,9 +43,7 @@ public class Utils {
             loadedClass = gson.fromJson(reader, type);
             reader.close();
             return loadedClass;
-        } catch (final FileNotFoundException e) {
-            System.out.println("Failed to find file: " + file.getPath());
-            //			e.printStackTrace();
+        } catch (final FileNotFoundException ignored) {
         } catch (final IOException e) {
             e.printStackTrace();
         }
@@ -77,8 +77,6 @@ public class Utils {
                 stream.close();
                 http.disconnect();
                 return output;
-            } catch (final FileNotFoundException e) {
-                e.printStackTrace();
             } catch (final IOException e) {
                 e.printStackTrace();
             }
@@ -93,8 +91,6 @@ public class Utils {
                 final byte[] output = readAllBytes(stream);
                 stream.close();
                 return output;
-            } catch (final FileNotFoundException e) {
-                e.printStackTrace();
             } catch (final IOException e) {
                 e.printStackTrace();
             }
@@ -134,16 +130,16 @@ public class Utils {
         protected B second;
 
         public TempCache(A first, B second) {
-            setFirst(first);
-            setSecond(second);
+            this.setFirst(first);
+            this.setSecond(second);
         }
 
         public A getFirst() {
-            return first;
+            return this.first;
         }
 
         public B getSecond() {
-            return second;
+            return this.second;
         }
 
         protected void setFirst(A first) {
@@ -162,11 +158,11 @@ public class Utils {
 
         public TempTupleCache(A first, B second, C third) {
             super(first, second);
-            setThird(third);
+            this.setThird(third);
         }
 
         public C getThird() {
-            return third;
+            return this.third;
         }
 
         protected void setThird(C third) {

@@ -1,24 +1,24 @@
 package xzeroair.trinkets.container;
 
-import baubles.api.IBauble;
-import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 public class TrinketContainerHandler extends ItemStackHandler implements ITrinketContainerHandler {
 
-    private static int slots = TrinketsConfig.SERVER.GUI.guiSlotsRows;
-    private boolean[] changed = new boolean[slots];
-    private boolean blockEvents = false;
+    private final int slots;
+    private boolean[] changed;
+    private boolean blockEvents;
     private EntityLivingBase player;
 
     public TrinketContainerHandler() {
-        super(slots);
+        super(TrinketsConfig.SERVER.GUI.SLOTS);
+        slots = TrinketsConfig.SERVER.GUI.SLOTS;
+        changed = new boolean[slots];
+        blockEvents = false;
     }
 
     @Override
@@ -65,15 +65,15 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
         if ((stack.getItem() instanceof IAccessoryInterface)) {
             final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
             return trinket.canEquipAccessory(stack, player);
-        } else if (TrinketsConfig.compat.baubles && Trinkets.MOD_COMPAT.Baubles && (stack.getItem() instanceof IBauble)) {
-            final IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-            boolean valid = true;
-            try {
-                valid = bauble.canEquip(stack, player);
-            } catch (Exception e) {
-                return false;
-            }
-            return valid;//bauble.canEquip(stack, player);// && bauble.getBaubleType(stack).hasSlot(slot);
+//        } else if (TrinketsConfig.compat.baubles && Trinkets.MOD_COMPAT.Baubles && (stack.getItem() instanceof IBauble)) {
+//            final IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+//            boolean valid = true;
+//            try {
+//                valid = bauble.canEquip(stack, player);
+//            } catch (Exception e) {
+//                return false;
+//            }
+//            return valid;//bauble.canEquip(stack, player);// && bauble.getBaubleType(stack).hasSlot(slot);
         } else {
             return false;
         }

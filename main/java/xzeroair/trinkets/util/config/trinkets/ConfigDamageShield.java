@@ -1,135 +1,108 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilitySafeGuard;
+import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsBlur;
+import xzeroair.trinkets.util.config.abilities.external.firstaid.ConfigAbilityHardHead;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 
-//@formatter:off
 public class ConfigDamageShield {
 
-	private final String name = ModItems.DamageShield;
-	private final String PREFIX = Reference.MODID + ".config.server." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_SHIELD_OF_HONOR;
 
-	@Name("01. ignore damage System")
-	@LangKey(PREFIX + ".ignore.damage")
-	public boolean damage_ignore = true;
+    public ConfigDamageShield() {
 
-	@Config.Comment("How many hits required before you ignore the next hit. Hits only count if the damage is at least 1 whole heart")
-	@Name("02. Requred Hits")
-	@LangKey(PREFIX + ".ignore.damage.hits")
-	public int hits = 3;
+    }
 
-	@Config.Comment("Do you Take less damage from Explosions. IE Creeper Explosions")
-	@Name("03. Explosion Resistance")
-	@LangKey(PREFIX + ".explosion.resist")
-	public boolean explosion_resist = true;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.Comment("1 Means you Take Full Damage, 0.25 Means you take 1/4 damage")
-	@Name("04. Explosion Reistance Amount")
-	@Config.RangeDouble(min = 0, max = 1f)
-	@LangKey(PREFIX + ".explosion.resist.amount")
-	public float explosion_amount = 0.25f;
+    public class ConfigAbilities {
 
-	@Config.Comment("The Resistance level given when worn")
-	@Name("05. Resistance Level")
-	@Config.RangeInt(min = 0)
-	@LangKey(PREFIX + ".resistance.level")
-	public int resistance_level = 0;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_SAFE_GUARD_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_SAFE_GUARD_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_SAFE_GUARD)
+        public ConfigAbilitySafeGuard SAFE_GUARD = new ConfigAbilitySafeGuard();
 
-	@Config.Comment("Does Resistance stack with Resistance from other sources")
-	@Name("06. Resistance stacks")
-	@LangKey(PREFIX + ".resistance.stacks")
-	public boolean resistance_stacks = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_EXTERNAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_EXTERNAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_EXTERNAL)
+        public ExternalAbilities EXTERNAL = new ExternalAbilities();
 
-	@Config.Comment("Max level Resistance can stack")
-	@Name("07. Max Stackable")
-	@Config.RangeInt(min = 0)
-	@LangKey(PREFIX + ".resistance.stacks.max")
-	public int resistance_stacks_max = 3;
+        public class ExternalAbilities {
 
-	@Config.Comment("Option to change what 'Resistance' is")
-	@Name("08. Resistance potion")
-	@LangKey(PREFIX + ".resistance")
-	public String potionEffect = "minecraft:resistance";
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_FIRST_AID_HARD_HEAD_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_FIRST_AID_HARD_HEAD_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_FIRST_AID_HARD_HEAD)
+            public ConfigAbilityHardHead HARD_HEAD = new ConfigAbilityHardHead();
 
-	@Config.Comment("Only Disable this if You're the Epic Pro Gamer")
-	@Name("69. Epic Pro Gamer")
-	@LangKey(PREFIX + ".epic.gamer")
-	public boolean special = true;
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION)
+            public ConfigAbilityEnhancedVisualsBlur CLEAR_VISION = new ConfigAbilityEnhancedVisualsBlur();
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+        }
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
-	public class Compatability {
+    }
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
-		public class TANCompat {
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
 
-		}
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-		@Name("First Aid Compatability")
-		@LangKey(Reference.MODID + ".config.firstaid")
-		public FirstAidCompat firstaid = new FirstAidCompat();
-		public class FirstAidCompat {
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
 
-			@Config.Comment("If First Aid is Installed. This ONLY Triggers if the Next headshot was supposed to kill you")
-			@Name("01. Chance to Ignore Headshots")
-			@LangKey(PREFIX + ".firstaid.ignore.headshots")
-			public boolean chance_ignore = true;
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
-			@Config.Comment("If First Aid is Installed. 1 in How many Chance to Trigger Ignore Headshot")
-			@Name("02. Headshots Ignore Chance")
-			@LangKey(PREFIX + ".firstaid.ignore.headshots.chance")
-			public int chance_headshots = 100;
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {};
 
-		}
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
 
-		@Name("Baubles Compatability")
-		@Config.Comment({
-			"If the mod Baubles is installed what bauble slot should it use",
-			"Available Types:",
-			"Trinket, Any, All",
-			"Amulet, Necklace, Pendant",
-			"Ring, Rings",
-			"Belt",
-			"Head, Hat",
-			"Body, Chest",
-			"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("body");
-	}
+    public class Compatibility {
 
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public String[] attributes = {
-			"Name:generic.maxHealth, Amount:0, Operation:0",
-			"Name:generic.knockbackResistance; Amount:0; Operation:0",
-			"Name:generic.movementSpeed, Amount:0, Operation:0",
-			"Name:generic.attackDamage, Amount:0, Operation:0",
-			"Name:generic.attackSpeed, Amount:0, Operation:0",
-			"Name:generic.armor, Amount:0, Operation:0",
-			"Name:generic.armorToughness, Amount:0, Operation:0",
-			"Name:generic.luck, Amount:0, Operation:0",
-			"Name:forge.swimSpeed, Amount:0, Operation:0",
-			"Name:xat.entityMagic.regen, Amount:0, Operation:0",
-			"Name:xat.entityMagic.regen.cooldown, Amount:0, Operation:0",
-			"Name:xat.entityMagic.affinity, Amount:0, Operation:0",
-			"Name:xat.jump, Amount:0, Operation:0",
-			"Name:xat.stepheight, Amount:0, Operation:0"
-	};
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+                "If the mod Baubles is installed what bauble slot should it use",
+                "Available Types:",
+                "Trinket, Any, All",
+                "Amulet, Necklace, Pendant",
+                "Ring, Rings",
+                "Belt",
+                "Head, Hat",
+                "Body, Chest",
+                "Charm"
+                //@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("body");
+    }
 
 }

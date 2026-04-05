@@ -8,35 +8,35 @@ import xzeroair.trinkets.capabilities.TileEntityCap.TileEntityProperties;
 
 public class TileEntityMoonRose extends TileEntity implements ITickable {
 
-	public TileEntityMoonRose() {
-	}
+    public TileEntityMoonRose() {
+    }
 
-	@Override
-	public void update() {
-		if ((world != null) && !world.isRemote) {
-			Capabilities.getTEProperties(this, TileEntityProperties::onUpdate);
-		}
-	}
+    @Override
+    public void update() {
+        if ((this.world != null) && !this.world.isRemote) {
+            Capabilities.getTEProperties(this, TileEntityProperties::onUpdate);
+        }
+    }
 
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return Capabilities.getTEProperties(this, super.getUpdateTag(), TileEntityProperties::saveToNBT);
-	}
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return Capabilities.getTEProperties(this, super.getUpdateTag(), TileEntityProperties::saveToNBT);
+    }
 
-	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
-		super.handleUpdateTag(tag);
-		Capabilities.getTEProperties(this, prop -> prop.loadFromNBT(tag));
-	}
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        Capabilities.getTEProperties(this, prop -> prop.loadFromNBT(tag));
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		return Capabilities.getTEProperties(this, super.writeToNBT(compound), TileEntityProperties::saveToNBT);
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        return Capabilities.getTEProperties(this, super.writeToNBT(compound), TileEntityProperties::saveToNBT);
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-		Capabilities.getTEProperties(this, prop -> prop.loadFromNBT(compound));
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        Capabilities.getTEProperties(this, prop -> prop.loadFromNBT(compound));
+    }
 }

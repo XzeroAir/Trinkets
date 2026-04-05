@@ -12,12 +12,14 @@ import xzeroair.trinkets.client.entityRenders.RenderThrownProjectile;
 import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.entity.EntityRangedAttack;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class ModEntities {
 
     public static void registerEntities() {
-        registerEntity("AlphaWolf", AlphaWolf.class, 120, 50);
-        registerEntity("DragonBreath", EntityRangedAttack.class, 121, 50);
+        registerEntity(TrinketsRegistryNames.ModEntities.ALPHA_WOLF, AlphaWolf.class, 120, 50);
+        registerEntity(TrinketsRegistryNames.ModEntities.DRAGON_BREATH, EntityRangedAttack.class, 121, 50);
+//        registerEntity(TrinketsRegistryNames.ModEntities.AREA_EFFECT, AreaEffectEntity.class, 122, 50);
         //		EntityEntryBuilder.create().
     }
 
@@ -33,6 +35,7 @@ public class ModEntities {
     public static void registerEntityRenders() {
         RenderingRegistry.registerEntityRenderingHandler(AlphaWolf.class, RenderAlphaWolf.FACTORY);
         RenderingRegistry.registerEntityRenderingHandler(EntityRangedAttack.class, RenderThrownProjectile.FACTORY);
+//        RenderingRegistry.registerEntityRenderingHandler(AreaEffectEntity.class, RenderAreaEffectEntity.FACTORY);
     }
 
 }

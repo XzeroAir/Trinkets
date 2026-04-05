@@ -1,9 +1,6 @@
 package xzeroair.trinkets.events;
 
-import java.util.List;
-
 import com.google.common.base.Predicates;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
@@ -25,104 +22,111 @@ import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.entity.ai.EnderAiEdit;
 import xzeroair.trinkets.entity.ai.EnderMoveAI;
 import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
-import xzeroair.trinkets.init.Abilities;
 import xzeroair.trinkets.init.ModItems;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+
+import java.util.List;
 
 public class EnderQueenHandler {
 
-	private ConfigEnderCrown serverConfig = TrinketsConfig.SERVER.Items.ENDER_CROWN;
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void soundEvent(PlaySoundEvent event) {
+        if (!event.getSound().getSoundLocation().toString().contentEquals(Reference.MINECRAFT_ENDER_MAN_SCREAM)) {
+            return;
+        }
+        final EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if ((player == null) || (player.world == null)) {
+            return;
+        }
+        boolean hasAbility = TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN);
+        if (hasAbility) {
+            event.setResultSound(null);
+            return;
+        }
+        boolean hasArmorEquipped = !(TrinketHelper.getHead(player, stack -> (stack.getItem().getRegistryName().toString().compareTo(Reference.MODID + ":" + TrinketsRegistryNames.ModItems.ENDER_TIARA) == 0)).isEmpty());
+        if (hasArmorEquipped) {
+            event.setResultSound(null);
+            return;
+        }
+        if (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
+            event.setResultSound(null);
+        }
+    }
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void soundEvent(PlaySoundEvent event) {
-		if (!event.getSound().getSoundLocation().toString().contentEquals("minecraft:entity.endermen.stare")) {
-			return;
-		}
-		final EntityPlayerSP player = Minecraft.getMinecraft().player;
-		if ((player == null) || (player.world == null)) {
-			return;
-		}
-		if (TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player) ||
-				(TrinketHelper.getSlotInfoForArmor(
-						player,
-						stack -> !stack.isEmpty() &&
-								stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
-				) != null) ||
-				TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)) {
-			event.setResultSound(null);
-		}
-	}
+    @SubscribeEvent
+    public void EndermanJoinWorld(EntityJoinWorldEvent event) {
+        //Add Tiara AI to Enderman
+        if (event.getEntity() instanceof EntityEnderman) {
+            final EntityEnderman enderman = (EntityEnderman) event.getEntity();
+            if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ENABLED && TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENABLED) {
+//                final NBTTagCompound tag = NBTHelper.getEntityTag(enderman);
+//                if (tag != null) {
+//                    tag.setBoolean("isFollower", false);
+//                }
+                for (final Object a : enderman.targetTasks.taskEntries.toArray()) {
+                    final EntityAIBase ai = ((EntityAITaskEntry) a).action;
+                    if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
+                        enderman.targetTasks.removeTask(ai);
+                    }
+                }
+                enderman.targetTasks.addTask(1, new EnderAiEdit(enderman));
+                enderman.targetTasks.addTask(2, new EnderQueensKnightAI(enderman));
+                if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENDERMAN_FOLLOW) {
+                    enderman.targetTasks.addTask(3, new EnderMoveAI(enderman));
+                }
+            }
+        }
+    }
 
-	@SubscribeEvent
-	public void EndermanJoinWorld(EntityJoinWorldEvent event) {
-		//Add Tiara AI to Enderman
-		if (event.getEntity() instanceof EntityEnderman) {
-			final EntityEnderman ender = (EntityEnderman) event.getEntity();
+    @SubscribeEvent
+    public void EnderTeleportEvent(EnderTeleportEvent event) {
+        if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.BLOCK_TELEPORTATION) {
+            return;
+        }
+        final Entity entity = event.getEntity();
+        if ((entity == null) || entity.isInWater()) {
+            return;
+        }
 
-			for (final Object a : ender.targetTasks.taskEntries.toArray()) {
-				final EntityAIBase ai = ((EntityAITaskEntry) a).action;
-				if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
-					ender.targetTasks.removeTask(ai);
-				}
-			}
-			ender.targetTasks.addTask(1, new EnderAiEdit(ender));
-			ender.targetTasks.addTask(2, new EnderQueensKnightAI(ender));
-			if (serverConfig.Follow) {
-				ender.targetTasks.addTask(3, new EnderMoveAI(ender));
-			}
-		}
-	}
+        if (this.blockEntityTeleport(entity) || (this.blockPlayerTeleport(entity))) {
+            final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
+            //@formatter:off
+            final List<EntityLivingBase> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, bBox,
+                    Predicates.and(EntitySelectors.NOT_SPECTATING, e -> e != entity &&
+                    (TrinketHelper.isEntityBoss(e) ||
+                    !(TrinketHelper.getHead(e, stack ->
+                    (stack.getItem().getRegistryName().toString().compareTo(Reference.MODID + ":" + TrinketsRegistryNames.ModItems.ENDER_TIARA) == 0))
+                    .isEmpty()) ||
+                    TrinketHelper.entityHasAbility(e, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN) ||
+                    TrinketHelper.AccessoryCheck(e, ModItems.trinkets.TrinketEnderTiara))));
+            //@formatter:on
+            if (!entLivList.isEmpty()) {
+                event.setCanceled(true);
+            }
+        }
+    }
 
-	@SubscribeEvent
-	public void EnderTeleportEvent(EnderTeleportEvent event) {
-		if (TrinketsConfig.SERVER.Items.ENDER_CROWN.teleport) {
-			return;
-		}
-		final Entity entity = event.getEntity();
-		if ((entity == null) || entity.isInWater()) {
-			return;
-		}
+    protected boolean blockPlayerTeleport(Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            try {
+                if (entity instanceof EntityPlayerMP) {
+                    return ((EntityPlayerMP) entity).getServer().isPVPEnabled();
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
-		if (this.blockEntityTeleport(entity) || (this.blockPlayerTeleport(entity))) {
-			final AxisAlignedBB bBox = entity.getEntityBoundingBox().grow(16, 4, 16);
-			final List<EntityLivingBase> entLivList = entity.getEntityWorld().getEntitiesWithinAABB(
-					EntityLivingBase.class, bBox,
-					Predicates.and(
-							EntitySelectors.NOT_SPECTATING,
-							player -> TrinketHelper.entityHasAbility(Abilities.enderQueen.toString(), player) ||
-									(TrinketHelper.getSlotInfoForArmor(
-											player,
-											stack -> !stack.isEmpty() &&
-													stack.getItem().getRegistryName().toString().contentEquals(ModItems.trinkets.TrinketEnderTiara.toString())
-									) != null) || TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketEnderTiara)
-					)
-			);
-			if (!entLivList.isEmpty()) {
-				event.setCanceled(true);
-			}
-		}
-	}
-
-	protected boolean blockPlayerTeleport(Entity entity) {
-		if (entity instanceof EntityPlayer) {
-			try {
-				if (entity instanceof EntityPlayerMP) {
-					return ((EntityPlayerMP) entity).getServer().isPVPEnabled();
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-
-	protected boolean blockEntityTeleport(Entity entity) {
-		if (!(entity instanceof EntityPlayer) && (entity instanceof EntityLivingBase)) {
-			return true;
-		}
-		return false;
-	}
+    protected boolean blockEntityTeleport(Entity entity) {
+        if (!(entity instanceof EntityPlayer) && (entity instanceof EntityLivingBase)) {
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -4,7 +4,11 @@ import net.minecraftforge.fml.common.Loader;
 
 public class ModCompat {
 
-    public static ModCompat instance = new ModCompat();
+    public static final ModCompat INSTANCE = new ModCompat();
+
+    public ModCompat() {
+        this.preInitChecks();
+    }
 
     public boolean Baubles = false;
     public boolean ArtemisLib = false;
@@ -20,23 +24,49 @@ public class ModCompat {
     public boolean SoManyEnchantments = false;
     public boolean MoBends = false;
     public boolean LycanitesMobs = false;
+    public boolean DefiledLands = false;
+
+    // Unnecessary fixes on my end.
+    public boolean InventoryHUD = false;
 
     public void preInitChecks() {
 
-        Baubles = Loader.isModLoaded("baubles");
-        ArtemisLib = Loader.isModLoaded("artemislib");
-        ToughAsNails = Loader.isModLoaded("toughasnails");
-        SimpleDifficulty = Loader.isModLoaded("simpledifficulty");
-        FirstAid = Loader.isModLoaded("firstaid");
-        ElenaiDodge1 = Loader.isModLoaded("elenaidodge");
-        ElenaiDodge2 = Loader.isModLoaded("elenaidodge2");
-        EnhancedVisuals = Loader.isModLoaded("enhancedvisuals");
-        IceAndFire = Loader.isModLoaded("iceandfire");
-        FireResistanceTiers = Loader.isModLoaded("fireresistancetiers");
-        BetterDiving = Loader.isModLoaded("better_diving");
-        SoManyEnchantments = Loader.isModLoaded("somanyenchantments");
-        MoBends = Loader.isModLoaded("mobends");
-        LycanitesMobs = Loader.isModLoaded("lycanitesmobs");
+        this.Baubles = Loader.isModLoaded("baubles");
+        this.ArtemisLib = Loader.isModLoaded("artemislib");
+        this.ToughAsNails = Loader.isModLoaded("toughasnails");
+        this.SimpleDifficulty = Loader.isModLoaded("simpledifficulty");
+        this.FirstAid = Loader.isModLoaded("firstaid");
+        this.ElenaiDodge1 = Loader.isModLoaded("elenaidodge");
+        this.ElenaiDodge2 = Loader.isModLoaded("elenaidodge2");
+        this.EnhancedVisuals = Loader.isModLoaded("enhancedvisuals");
+        this.IceAndFire = Loader.isModLoaded("iceandfire");
+        this.FireResistanceTiers = Loader.isModLoaded("fireresistancetiers");
+        this.BetterDiving = Loader.isModLoaded("better_diving");
+        this.SoManyEnchantments = Loader.isModLoaded("somanyenchantments");
+        this.MoBends = Loader.isModLoaded("mobends");
+        this.LycanitesMobs = Loader.isModLoaded("lycanitesmobs");
+        this.DefiledLands = Loader.isModLoaded("defiledlands");
 
+        this.InventoryHUD = Loader.isModLoaded("inventoryhud");
+
+    }
+
+    public class ModNames {
+        public static final String LANG_NAME_BAUBLES = "Baubles";
+        public static final String LANG_NAME_ARTEMIS = "Artemis Lib";
+        public static final String LANG_NAME_TOUGH_AS_NAILS = "itemGroup.tabToughAsNails";
+        public static final String LANG_NAME_SIMPLE_DIFFICULTY = "itemGroup.tabSimpleDifficulty";
+        public static final String LANG_NAME_FIRST_AID = "itemGroup.firstaid";
+        public static final String LANG_NAME_ELENAI_DODGE = "Elenai Dodge";
+        public static final String LANG_NAME_ELENAI_DODGE_2 = "Elenai Dodge 2";
+        public static final String LANG_NAME_ENHANCED_VISUALS = "Enhanced Visuals";
+        public static final String LANG_NAME_ICE_AND_FIRE = "Ice and Fire";
+        public static final String LANG_NAME_BETTER_DIVING = "Better Diving";
+        public static final String LANG_NAME_FIRE_RESISTANCE_TIERS = "Fire Resistance Tiers";
+        public static final String LANG_NAME_SO_MANY_ENCHANTS = "So Many Enchantments";
+        public static final String LANG_NAME_MO_BENDS = "Mo Bends";
+        public static final String LANG_NAME_LYCANITES_MOBS = "Lycanites Mobs";
+        public static final String LANG_NAME_INVENTORY_HUD = "Inventory Hud";
+        public static final String LANG_NAME_DEFILED_LANDS = "Defiled Lands";
     }
 }

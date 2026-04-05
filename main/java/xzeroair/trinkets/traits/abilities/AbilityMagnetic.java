@@ -2,59 +2,66 @@ package xzeroair.trinkets.traits.abilities;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.items.trinkets.TrinketPolarized;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.trinkets.ConfigPolarizedStone;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityMagnetic;
+import xzeroair.trinkets.util.helpers.Kinetics;
+import xzeroair.trinkets.util.helpers.StringUtils;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.LangEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldAbility, ITickableInventoryAbility, IToggleAbility, IKeyBindInterface {
 
-    private static final ConfigPolarizedStone serverConfig = TrinketsConfig.SERVER.Items.POLARIZED_STONE;
+    protected final ConfigAbilityMagnetic CONFIG;
+
+    protected boolean toggled;
+    protected int mode;
 
     public AbilityMagnetic() {
-        super(Abilities.magnetic);
+        this(TrinketsConfig.SERVER.ABILITIES.MAGNETIC);
     }
 
+    public AbilityMagnetic(ConfigAbilityMagnetic config) {
+        super(TrinketsRegistryNames.ModAbilities.MAGNETIC);
+        this.CONFIG = config;
+        this.setAbilityEnabled(config.ENABLED);
+        this.toggled = false;
+        this.mode = -1;
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        String langKey = getTranslationKey();
+    protected String addCustomDescriptionTags(@Nonnull TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = this.getTranslationKey();
         final KeyEntry key1 = new LangEntry(langKey, "collect");
-        final KeyEntry key2 = new LangEntry(langKey, "collectxp", serverConfig.collectXP);
-        final KeyEntry key4 = new OptionEntry("collecttoggle", serverConfig.collectXP, helper.toggleCheckTranslation(abilityEnabled()));
+        final KeyEntry key2 = new LangEntry(langKey, "collectxp", this.CONFIG.PICKUP_XP);
+        final KeyEntry key4 = new OptionEntry("collecttoggle", this.CONFIG.PICKUP_XP, helper.toggleCheckTranslation(this.isAbilityToggled()));
         final KeyEntry key6 = new KeyBindEntry("magnetkb", ModKeyBindings.POLARIZED_STONE_ABILITY.getDisplayName());
         final KeyEntry key7 = new KeyBindEntry("auxkb", ModKeyBindings.AUX_KEY.getDisplayName());
         return helper.formatAddVariables(key, renderID, key1, key2, key4, key6, key7);
@@ -62,34 +69,54 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
 
     @Override
     public void tickAbility(EntityLivingBase entity) {
-        if (this.abilityEnabled()) {
+        if (this.isAbilityToggled() && !entity.world.isRemote) {
             this.collectDrops(entity);
         }
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean inHand) {
-        Capabilities.getTrinketProperties(stack, prop -> this.toggleAbility(prop.mainAbility()));
+    public void onUpdate(@Nonnull ItemStack stack, World world, Entity entity, int itemSlot, boolean inHand) {
+        if (stack.getItem() instanceof TrinketPolarized) {
+            Capabilities.getTrinketProperties(stack, prop -> {
+                if (this.isAbilityToggled() != prop.mainAbility()) {
+                    this.toggleAbility(prop.mainAbility());
+                    this.sendMessageToPlayer(entity);
+                }
+            });
+        }
     }
 
-    public void collectDrops(EntityLivingBase entity) {
+    protected void collectDrops(EntityLivingBase entity) {
         final Predicate<EntityLivingBase> filter = Predicates.and(EntitySelectors.CAN_AI_TARGET, EntitySelectors.IS_ALIVE);
         final boolean flag = filter.apply(entity);
         if (flag) {
+            if (this.CONFIG.COST > 0F) {
+                final MagicStats magic = Capabilities.getMagicStats(entity);
+                if (magic != null) {
+                    if (magic.getMana() < this.CONFIG.COST) {
+                        this.toggleAbility(false);
+                        return;
+                    }
+                    if (entity.ticksExisted % this.CONFIG.FREQUENCY == 0 && !magic.spendMana(this.CONFIG.COST)) {
+                        this.toggleAbility(false);
+                        return;
+                    }
+                }
+            }
             final AxisAlignedBB bBox = entity.getEntityBoundingBox();
-            final Predicate<Entity> lootPredicate = Predicates.and(EntitySelectors.IS_ALIVE, ent -> (ent instanceof EntityItem) || ((ent instanceof EntityXPOrb) && serverConfig.collectXP));
-            final Predicate<EntityPlayer> otherPlayerPredicate = Predicates.and(EntitySelectors.CAN_AI_TARGET, EntitySelectors.IS_ALIVE, ent -> {
+//            final List<String> cfg = Arrays.asList(CONFIG.WHITELIST);
+            final Predicate<Entity> lootPredicate = Predicates.and(EntitySelectors.IS_ALIVE, ent -> (ent instanceof EntityItem) || ((ent instanceof EntityXPOrb) && this.CONFIG.PICKUP_XP));
+            final Predicate<EntityPlayer> otherPlayerPredicate = Predicates.and(EntitySelectors.IS_ALIVE, ent -> {
                 if ((ent == null) || (entity == ent) || (entity.getEntityId() == ent.getEntityId())) {
                     return false;
                 }
-                if ((ent.getHeldItemMainhand().getItem() instanceof TrinketPolarized) || TrinketHelper.AccessoryCheck(ent, ModItems.trinkets.TrinketPolarized)) {
-                    return true;
-                }
-                return false;
+                return Capabilities.getEntityProperties(ent, false, (prop, rtn) -> {
+                    IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + TrinketsRegistryNames.ModAbilities.MAGNETIC);
+                    return ability != null && ability instanceof IToggleAbility && ability.isAbilityEnabled();
+                });
             });
-            final List<Entity> Loot = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(serverConfig.PR.HD, serverConfig.PR.VD, serverConfig.PR.HD), lootPredicate);
-            final List<EntityPlayer> others = entity.world.getEntitiesWithinAABB(EntityPlayer.class, bBox.grow(serverConfig.PR.HD, serverConfig.PR.VD, serverConfig.PR.HD), otherPlayerPredicate);
-
+            final List<Entity> Loot = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(this.CONFIG.RANGE.RANGE_HORIZONTAL, this.CONFIG.RANGE.RANGE_VERTICAL, this.CONFIG.RANGE.RANGE_HORIZONTAL), lootPredicate);
+            final List<EntityPlayer> others = entity.world.getEntitiesWithinAABB(EntityPlayer.class, bBox.grow(this.CONFIG.RANGE.RANGE_HORIZONTAL, this.CONFIG.RANGE.RANGE_VERTICAL, this.CONFIG.RANGE.RANGE_HORIZONTAL), otherPlayerPredicate);
             for (final Entity loot : Loot) {
                 final double distance = loot.getDistance(entity.posX, entity.posY, entity.posZ);
                 boolean someonesCloser = false;
@@ -106,196 +133,167 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
         }
     }
 
-    private void handleLoot(Entity entity, Entity drop) {
-        if ((drop instanceof EntityItem) || (serverConfig.collectXP && (drop instanceof EntityXPOrb))) {
+    protected void handleLoot(Entity entity, Entity drop) {
+        if ((drop instanceof EntityItem) || (this.CONFIG.PICKUP_XP && (drop instanceof EntityXPOrb))) {
             if ((entity instanceof EntityPlayer)) {
                 final EntityPlayer player = (EntityPlayer) entity;
                 if (!player.world.isRemote) {
                     if (drop instanceof EntityItem) {
-                        if (serverConfig.instant_pickup) {
+                        if (this.CONFIG.PICKUP_INSTANT) {
                             this.pickupItem(player, drop);
                         } else {
-                            this.pull(drop, entity.posX, entity.posY, entity.posZ);
+                            Kinetics.applyForce(entity, drop, true, this.CONFIG.FORCE, 0.8D, 0.85D);
+//                            this.applyForce(drop, entity.getPositionVector(), true);
+//                            this.pull(drop, entity.posX, entity.posY, entity.posZ);
                         }
-                    } else if (serverConfig.collectXP && (drop instanceof EntityXPOrb)) {
-                        if (serverConfig.instant_xp) {
+                    } else if (drop instanceof EntityXPOrb) {
+                        if (this.CONFIG.PICKUP_INSTANT_XP) {
                             this.pickupXP(player, drop);
                         } else {
-                            this.pull(drop, entity.posX, entity.posY, entity.posZ);
+                            Kinetics.applyForce(entity, drop, true, this.CONFIG.FORCE, 0.8D, 0.85D);
+//                            this.applyForce(drop, entity.getPositionVector(), true);
+//                            this.pull(drop, entity.posX, entity.posY, entity.posZ);
                         }
-                    } else {
-                        this.pull(drop, entity.posX, entity.posY, entity.posZ);
                     }
                 }
             } else {
-                this.pull(drop, entity.posX, entity.posY, entity.posZ);
+                Kinetics.applyForce(entity, drop, true, this.CONFIG.FORCE, 0.8D, 0.85D);
+//                this.applyForce(drop, entity.getPositionVector(), true);
+//                            this.pull(drop, entity.posX, entity.posY, entity.posZ);
             }
         }
     }
 
-    private void pickupItem(EntityPlayer player, Entity itemEntity) {
+    protected void pickupItem(EntityPlayer player, Entity itemEntity) {
         if (itemEntity instanceof EntityItem) {
             final EntityItem item = (EntityItem) itemEntity;
             if (!(item.getItem().getItem() instanceof TrinketPolarized)) {
                 item.onCollideWithPlayer(player);
-                //				for (final ItemStack slotStack : player.inventory.mainInventory) {
-                //					if (slotStack.isEmpty()) {
-                //						player.addItemStackToInventory(item.getItem());
-                //					} else if (slotStack.isItemEqual(item.getItem())) {
-                //						if (slotStack.isStackable()) {
-                //							// if (item.getItem().areItemStackShareTagsEqual(slotStack, item.getItem())) {
-                //							if (ItemStack.areItemStackShareTagsEqual(slotStack, item.getItem())) {
-                //								if ((slotStack.getCount() + item.getItem().getCount()) <= slotStack.getMaxStackSize()) {
-                //									player.addItemStackToInventory(item.getItem());
-                //								} else {
-                //									if ((slotStack.getMaxStackSize() - slotStack.getCount()) > 0) {
-                //										player.addItemStackToInventory(item.getItem().splitStack((slotStack.getMaxStackSize() - slotStack.getCount())));
-                //									}
-                //								}
-                //							}
-                //						}
-                //					}
-                //				}
             }
         }
     }
 
-    private void pickupXP(EntityPlayer player, Entity xpOrb) {
+    protected void pickupXP(EntityPlayer player, Entity xpOrb) {
         if (xpOrb instanceof EntityXPOrb) {
-            final EntityXPOrb xp = (EntityXPOrb) xpOrb;
             player.xpCooldown = 0;
+            final EntityXPOrb xp = (EntityXPOrb) xpOrb;
+            xp.delayBeforeCanPickup = 0;
             xp.onCollideWithPlayer(player);
-            //			final ItemStack itemstack = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, player);
-            //
-            //			if (!itemstack.isEmpty() && itemstack.isItemDamaged()) {
-            //				final float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
-            //				final int iE = Math.min(this.roundAverage(xp.xpValue * ratio), itemstack.getItemDamage());
-            //				xp.xpValue -= this.roundAverage(iE / ratio);
-            //				itemstack.setItemDamage(itemstack.getItemDamage() - iE);
-            //			}
-            //
-            //			if (xp.xpValue > 0) {
-            //				player.addExperience(xp.xpValue);
-            //			}
-            //			if (!xp.isDead) {
-            //				xp.setDead();
-            //			}
         }
     }
 
-    public ItemStack getEnchantedItem(Enchantment enchantment, EntityLivingBase entity) {
-        List<ItemStack> list = enchantment.getEntityEquipment(entity);
+    protected void applyForce(Entity targetEntity, Vec3d to, boolean isPull) {
+        if (!targetEntity.onGround) {
+            return;
+        }
+        boolean test = false;
+        if (test) {
+            Vec3d from = targetEntity.getPositionVector();
 
-        if (list.isEmpty()) {
-            return ItemStack.EMPTY;
-        } else {
-            List<ItemStack> list1 = Lists.<ItemStack>newArrayList();
+            double lerp = 0.2D; // config (0.05–0.2 is typical)
 
-            for (ItemStack itemstack : list) {
-                if (!itemstack.isEmpty() && (EnchantmentHelper.getEnchantmentLevel(enchantment, itemstack) > 0)) {
-                    list1.add(itemstack);
+            targetEntity.setPositionAndUpdate(from.x + (to.x - from.x) * lerp, from.y + (to.y - from.y) * lerp, from.z + (to.z - from.z) * lerp);
+        }
+        if (!test) {
+            Vec3d from = targetEntity.getPositionVector();
+
+            Vec3d delta = to.subtract(from);
+            double distance = delta.length();
+
+            if (distance > 0.001D) {
+                Vec3d dir = delta.normalize();
+
+                // Configurable values
+                double force = this.CONFIG.FORCE;     // base strength
+                double maxSpeed = 0.8D;   // clamp to prevent jitter/explosions
+                double damping = 0.85D;   // stabilizer
+
+                // Pull = +force, Push = -force
+                double signedForce = isPull ? force : -force;
+
+                // Optional: scale by distance (feels more "magnetic")
+                double scaledForce = signedForce * Math.min(distance, 1.0D);
+
+                targetEntity.motionX += dir.x * scaledForce;
+                targetEntity.motionY += dir.y * scaledForce;
+                targetEntity.motionZ += dir.z * scaledForce;
+
+                // Damping to reduce oscillation
+                targetEntity.motionX *= damping;
+                targetEntity.motionY *= damping;
+                targetEntity.motionZ *= damping;
+
+                // Clamp velocity
+                double speed = Math.sqrt(targetEntity.motionX * targetEntity.motionX + targetEntity.motionY * targetEntity.motionY + targetEntity.motionZ * targetEntity.motionZ);
+
+                if (speed > maxSpeed) {
+                    double scale = maxSpeed / speed;
+                    targetEntity.motionX *= scale;
+                    targetEntity.motionY *= scale;
+                    targetEntity.motionZ *= scale;
                 }
+                targetEntity.velocityChanged = true;
             }
-
-            return list1.isEmpty() ? ItemStack.EMPTY : (ItemStack) list1.get(entity.getRNG().nextInt(list1.size()));
-        }
-    }
-
-    public List<ItemStack> getEnchantedItems(Enchantment enchantment, EntityLivingBase entity) {
-        List<ItemStack> list = enchantment.getEntityEquipment(entity);
-        List<ItemStack> list1 = Lists.<ItemStack>newArrayList();
-        for (ItemStack itemstack : list) {
-            if (!itemstack.isEmpty() && (EnchantmentHelper.getEnchantmentLevel(enchantment, itemstack) > 0)) {
-                list1.add(itemstack);
-            }
-        }
-        return list1;
-    }
-
-    protected int roundAverage(float value) {
-        final double floor = Math.floor(value);
-        return (int) floor + (Math.random() < (value - floor) ? 1 : 0);
-    }
-
-    protected void pull(Entity ent, double x, double y, double z) {
-        final double spd = TrinketsConfig.SERVER.Items.POLARIZED_STONE.Polarized_Stone_Speed;
-        final double dX = (x - 0.5) - ent.getPosition().getX();
-        final double dY = y - ent.getPosition().getY();
-        final double dZ = (z - 0.5) - ent.getPosition().getZ();
-        final double dist = Math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
-
-        double vel = 1.0 - (dist / 15.0);
-        if ((vel > 0.0D) && (vel < 0.95D)) {
-            vel *= vel;
-            ent.motionX += (dX / dist) * vel * (spd * MathHelper.clamp(dist - 0.5, 0, 1));
-            ent.motionY += (dY / dist) * vel * ((spd * 1.25) * MathHelper.clamp(dist - 0.5, 0, 1));
-            ent.motionZ += (dZ / dist) * vel * (spd * MathHelper.clamp(dist - 0.5, 0, 1));
-        }
-    }
-
-    protected void push(Entity ent, double x, double y, double z) {
-        final double spd = TrinketsConfig.SERVER.Items.POLARIZED_STONE.Polarized_Stone_Speed;
-        final double dX = x - ent.posX;
-        final double dY = y - ent.posY;
-        final double dZ = z - ent.posZ;
-        final double dist = Math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
-
-        double vel = 1.0 - (dist / 15.0);
-        if (vel > 0.0D) {
-            vel *= vel;
-            ent.motionX -= (dX / dist) * vel * spd;
-            ent.motionY -= (dY / dist) * vel * spd;
-            ent.motionZ -= (dZ / dist) * vel * spd;
         }
     }
 
     @Override
-    public boolean abilityEnabled() {
-        return enabled;
+    public boolean isAbilityToggled() {
+        return this.toggled;
+    }
+
+    @Override
+    public int getToggleMode() {
+        return this.mode;
     }
 
     @Override
     public IToggleAbility toggleAbility(boolean enabled) {
-        if (this.enabled != enabled) {
-            this.enabled = enabled;
+        if (this.toggled != enabled) {
+            this.toggled = enabled;
+            this.setChanged(true);
         }
         return this;
     }
 
     @Override
     public IToggleAbility toggleAbility(int value) {
-        if (this.value != value) {
-            this.value = value;
+        if (this.mode != value) {
+            this.mode = value;
+            this.setChanged(true);
         }
-        return this;
+        return this.toggleAbility(value > 0);
+    }
+
+    @Override
+    public boolean sendMessageToPlayer(@Nonnull Entity entity) {
+        final boolean client = entity.world.isRemote;
+        if (!client && (entity instanceof EntityPlayer)) {
+            final TranslationHelper helper = TranslationHelper.INSTANCE;
+            final String magnetMode = new TextComponentTranslation(this.getTranslationKey() + ".magnetmode").getFormattedText();
+            final KeyEntry key = new OptionEntry("collecttoggle", this.CONFIG.PICKUP_XP, helper.toggleCheckTranslation(this.isAbilityToggled()));
+            StringUtils.sendStatusMessageToPlayer(entity, helper.formatAddVariables(magnetMode, key), true);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean onKeyPress(Entity entity, boolean Aux) {
         if (!Aux) {
-            final boolean enabled = this.abilityEnabled();
-            final boolean client = entity.world.isRemote;
+            final boolean enabled = this.isAbilityToggled();
             this.toggleAbility(!enabled);
-            if (client && (entity instanceof EntityPlayer)) {
-                final TranslationHelper helper = TranslationHelper.INSTANCE;
-                final ItemStack s = new ItemStack(ModItems.trinkets.TrinketPolarized);
-                final String magnetMode = new TextComponentTranslation(s.getTranslationKey() + ".magnetmode").getFormattedText();
-                final KeyEntry key = new OptionEntry("collecttoggle", serverConfig.collectXP, helper.toggleCheckTranslation(!enabled));
-                ((EntityPlayer) entity).sendStatusMessage(new TextComponentString(helper.formatAddVariables(magnetMode, key)), true);
-            }
-            Capabilities.getEntityProperties(entity, prop -> {
-                final AbilityHolder holder = prop.getAbilityHandler().getAbilityHolder(this.getRegistryName().toString());
-                final SlotInformation info = holder != null ? holder.getInfo() : null;
-                if ((info != null) && (entity instanceof EntityLivingBase)) {
-                    final ItemStack stack = info.getStackFromHandler((EntityLivingBase) entity);
-                    if (stack.getItem() instanceof TrinketPolarized) {
-                        Capabilities.getTrinketProperties(stack, cap -> {
-                            cap.toggleMainAbility(this.abilityEnabled());
-                            cap.sendInformationToPlayer((EntityLivingBase) entity, ((EntityPlayer) entity));
-                        });
-                    }
+            this.sendMessageToPlayer(entity);
+            AbilityHolder holder = this.getAbilityHolder();
+            if ((entity instanceof EntityLivingBase)) {
+                final ItemStack stack = holder.getInfo().getStackFromHandler((EntityLivingBase) entity);
+                if (!stack.isEmpty() && stack.getItem() instanceof TrinketPolarized) {
+                    Capabilities.getTrinketProperties(stack, cap -> {
+                        cap.toggleMainAbility(this.isAbilityToggled());
+                        cap.sendInformationToPlayer(((EntityPlayer) entity));
+                    });
                 }
-            });
+            }
         }
         return true;
     }
@@ -310,19 +308,6 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
     @SideOnly(Side.CLIENT)
     public String getAuxKey() {
         return ModKeyBindings.AUX_KEY.getDisplayName();
-    }
-
-    @Override
-    public NBTTagCompound saveStorage(NBTTagCompound compound) {
-        compound.setBoolean("enabled", enabled);
-        return compound;
-    }
-
-    @Override
-    public void loadStorage(NBTTagCompound compound) {
-        if (compound.hasKey("enabled")) {
-            enabled = compound.getBoolean("enabled");
-        }
     }
 
 }

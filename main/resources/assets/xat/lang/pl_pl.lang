@@ -1,16 +1,17 @@
 #
 xat.mod.name=Trinkets and Baubles
-itemGroup.trinketstab=Trinkets
-xat.config.title=Trinkets and Baubles
+itemGroup.trinketstab=Trinket
+xat.config.title=Trinkets & Baubles
 
-#xat.exampletext.start= These are informational example text, they do not show up in game.
-#xat.exampletext.1= Tooltips for Items go up to 10
-#xat.exampletext.2= item.item.glow_ring.0.tooltip1, item.glow_ring.0.tooltip2, etc.
+#xat.exampletext.start= To są przykładowe teksty informacyjne, nie pojawiają się w grze.
+#xat.exampletext.1= Podpowiedzi dla przedmiotów mogą mieć do 10 linii
+#xat.exampletext.2= item.glow_ring.tooltip1, item.glow_ring.tooltip2, itd.
 #xat.exampletext.end=~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xat.holdshift=<Przytrzymaj Shift>
 xat.holdctrl=<Przytrzymaj Ctrl>
-xat.noattributes=Ten przedmiot nie zapewnia żadnych modyfikatorów atrybutów.
+xat.holdalt=<Przytrzymaj Alt>
+xat.noattributes=Ten przedmiot nie daje żadnych modyfikatorów atrybutów.
 xat.onequip=Po założeniu:
 xat.tooltip.attackspeed=Szybkość ataku
 xat.tooltip.attackdamage=Obrażenia ataku
@@ -24,216 +25,246 @@ xat.tooltip.swimspeed=Prędkość pływania
 xat.tooltip.reach=Zasięg
 xat.tooltip.stepheight=Wysokość kroku
 xat.tooltip.jumpheight=Wysokość skoku
-xat.tooltip.on=§r(§aWłączone§r)
-xat.tooltip.off=§r(§cWyłączone§r)
+xat.tooltip.on=§r(§aWł.§r)
+xat.tooltip.off=§r(§cWył.§r)
 xat.tooltip.enabled=§r[§aWłączone§r]
 xat.tooltip.disabled=§r[§cWyłączone§r]
 xat.tooltip.weight=Waga:
 
-key.xat.category=Trinkety i Bauble
-key.xat.trinket_target.desc=Smocze Oko: Przełącz cel
+key.xat.category=Trinkets and Baubles
+key.xat.trinket_target.desc=Smocze Oko: Zmień cel
 key.xat.trinket_toggle_effect.desc=Smocze Oko: Widzenie w ciemności
 key.xat.magnet_toggle_effect.desc=Spolaryzowany Kamień: Magnes
 key.xat.aux_key.desc=Klawisz pomocniczy
 key.xat.trinket_gui.desc=Interfejs Trinketów
 
 key.xat.trinket_arcing_attack.desc=Łukowa Kula: Atak
-key.xat.race_ability.desc=Zdolność rasy
+key.xat.trinket_ender_crown.desc=Korona Królowej Endu: Aktywacja
+key.xat.race_ability.desc=Rasa: Aktywna zdolność
 
 gui.xat.button.open=Otwórz
 gui.xat.button.close=Zamknij
 
-#################################### Entities ####################################
+gui.xat.race.trait.main=Ukryj cechę
+gui.xat.race.trait.main.variant=Typ
+gui.xat.race.trait.alt=Ukryj drugą
+gui.xat.race.trait.alt.variant=Typ
+gui.xat.race.stats=Informacje
+gui.xat.race.flip=Obróć
 
-entity.AlphaWolf.name=Król Wilków
+##################################### Entities ####################################
 
-#################################### Abilities ####################################
+xat.entity.AlphaWolf.name=Król Wilków
 
-ability.creative_flight.name=§6Latanie
-ability.creative_flight.tooltip1=§6Zapewnia kreatywne latanie
-ability.creative_flight.tooltip2=$gui:Kliknij dwukrotnie skok, aby zacząć latać, kliknij ponownie dwukrotnie, aby przestać
-ability.creative_flight.tooltip3=$gui:Czyni cię odpornym na obrażenia od upadku
+##################################### Abilities ####################################
 
-ability.block_detection.name=§aChciwe Oczy
-ability.block_detection.tooltip1=§6Daje zdolność znajdowania pobliskich skarbów
-ability.block_detection.tooltip2=@treasurefinder:
-ability.block_detection.tooltip3=$gui:Naciśnij *deofkb: = Następny cel
-ability.block_detection.tooltip4=$gui:Naciśnij *auxkb:+*deofkb: = Poprzedni cel
-ability.block_detection.treasurefinder=§6Obecny cel: §3§n$target:§r <§e*deofkb:§r>
-ability.block_detection.treasurefinder.on=§6Potrzebuję więcej§f $target:§6 do mojego skarbca $looking:
-ability.block_detection.treasurefinder.notfound=§6Nie jestem pewien, czego obecnie potrzebuje mój skarbiec. §c(Przedmiot nie znaleziony, zwrócono jako $target:)
-ability.block_detection.treasurefinder.off=Myślę, że mój skarbiec jest już wystarczająco pełny $looking:
+xat.ability.creative_flight.name=§6Latanie
+xat.ability.creative_flight.tooltip1=§6Zapewnia kreatywne latanie
+xat.ability.creative_flight.tooltip2=$gui:Kliknij dwukrotnie skok, aby zacząć latać, kliknij ponownie dwukrotnie, aby przestać
+xat.ability.creative_flight.tooltip3=$gui:Czyni cię odpornym na obrażenia od upadku
 
-ability.night_vision.name=§eWidzenie w ciemności
-ability.night_vision.tooltip1=§2Zapewnia widzenie w ciemności §r<§e*denvkb:§r>
-ability.night_vision.tooltip2=
+xat.ability.greedy_eyes.name=§aChciwe Oczy
+xat.ability.greedy_eyes.tooltip1=§6Daje zdolność wykrywania pobliskich skarbów
+xat.ability.greedy_eyes.tooltip2=@treasurefinder:
+xat.ability.greedy_eyes.tooltip3=$gui:Naciśnij *deofkb: = Następny cel
+xat.ability.greedy_eyes.tooltip4=$gui:Naciśnij *auxkb:+*deofkb: = Poprzedni cel
+xat.ability.greedy_eyes.treasurefinder=§6Aktualny cel: §3§n$target:§r <§e*deofkb:§r>
+xat.ability.greedy_eyes.treasurefinder.on=§6Potrzebuję więcej§f $target:§6 do mojego skarbca $looking:
+xat.ability.greedy_eyes.treasurefinder.notfound=§6Nie jestem pewien, czego obecnie potrzebuje mój skarbiec. §c(Nie znaleziono przedmiotu, zwrócono jako $target:)
+xat.ability.greedy_eyes.treasurefinder.off=§6Myślę, że mój skarbiec jest już wystarczająco pełny $looking:
 
-ability.fire_breath.name=§cOgnisty oddech
-ability.fire_breath.tooltip1=$gui:§6Zapewnia ognisty oddech
-ability.fire_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć ogniem §3$fbcost: MP
+xat.ability.night_vision.name=§eWidzenie w ciemności
+xat.ability.night_vision.tooltip1=§2Zapewnia widzenie w ciemności §r<§e*denvkb:§r>
+xat.ability.night_vision.tooltip2=
 
-ability.ice_breath.name=§bLodowy oddech
-ability.ice_breath.tooltip1=$gui:§6Zapewnia lodowy oddech
-ability.ice_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć lodem §3$fbcost: MP
+xat.ability.breath_fire.name=§cOgnisty oddech
+xat.ability.breath_fire.tooltip1=$gui:§6Zapewnia ognisty oddech
+xat.ability.breath_fire.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć ogniem §3$fbcost: MP
 
-ability.lightning_breath.name=§cPiorunowy oddech
-ability.lightning_breath.tooltip1=Zapewnia piorunowy oddech
-ability.lightning_breath.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć piorunem §3$fbcost: MP
+xat.ability.breath_ice.name=§bLodowy oddech
+xat.ability.breath_ice.tooltip1=$gui:§6Zapewnia lodowy oddech
+xat.ability.breath_ice.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć lodem §3$fbcost: MP
 
-ability.fire_immunity.name=§cOdporność na ogień
-ability.fire_immunity.tooltip1=§2Zapewnia §c$potion:
-ability.fire_immunity.tooltip2=$gui:§6Odporność na ogień i lawę
-ability.fire_immunity.tooltip3=$gui:Nie można zostać podpalonym
-ability.fire_immunity.tooltip4=$gui:Nie można otrzymać obrażeń od większości ataków opartych na ogniu
-ability.fire_immunity.tooltip5=$gui:§6Odporność na §c$smouldering:
+xat.ability.breath_lightning.name=§dPiorunowy oddech
+xat.ability.breath_lightning.tooltip1=$gui:§6Zapewnia piorunowy oddech
+xat.ability.breath_lightning.tooltip2=§6Naciśnij §r<§e*breathkb:§r>§6, aby zionąć piorunem §3$fbcost: MP
 
-ability.heat_immunity.name=§cOdporność na przegrzanie
-ability.heat_immunity.tooltip1=§6Odporność na §chipertermię
+xat.ability.immunity_fire.name=§cOdporność na ogień
+xat.ability.immunity_fire.tooltip1=§2Zapewnia §c$potion:
+xat.ability.immunity_fire.tooltip2=$gui:§6Odporność na ogień i lawę
+xat.ability.immunity_fire.tooltip3=$gui:§6Nie można cię podpalić
+xat.ability.immunity_fire.tooltip4=$gui:Odporność na większość ataków opartych na ogniu
+xat.ability.immunity_fire.tooltip5=$gui:§6Odporność na §c$smouldering:
 
-ability.ice_immunity.name=§bOdporność na lód
-ability.ice_immunity.tooltip1=§2Zapewnia §b$potion:
-ability.ice_immunity.tooltip2=$gui:§6Nie można otrzymać obrażeń od większości ataków opartych na lodzie
+xat.ability.immunity_ice.name=§bOdporność na lód
+xat.ability.immunity_ice.tooltip1=§2Zapewnia §b$potion:
+xat.ability.immunity_ice.tooltip2=$gui:§6Odporność na większość ataków opartych na lodzie
 
-ability.cold_immunity.name=§bOdporność na zimno
-ability.cold_immunity.tooltip1=§6Odporność na §bhipotermię
+xat.ability.immunity_lightning.name=§dOdporność na pioruny
+xat.ability.immunity_lightning.tooltip1=§2Zapewnia §d$potion:
+xat.ability.immunity_lightning.tooltip2=@paralysis:
+xat.ability.immunity_lightning.paralysis=§6Odporność na §dparaliż
 
-ability.frost_walker.name=Mroźny wędrowiec
-ability.frost_walker.tooltip1=§6Zapewnia §bMroźnego wędrowca
+xat.ability.immunity_dark.name=§8Odporność na mrok
+xat.ability.immunity_dark.tooltip1=$heal:§6Leczy od §8$wither:
+xat.ability.immunity_dark.tooltip2=§6Leczy §3$dark_heal: §6otrzymanych obrażeń od §8mroku
+xat.ability.immunity_dark.tooltip3=§6Zmniejsza wszystkie obrażenia od §8mroku§6 o §3$amount:
+xat.ability.immunity_dark.tooltip4=$not_dark_heal:§6Odporność na obrażenia od §8mroku
 
-ability.lightning_immunity.name=Odporność na pioruny
-ability.lightning_immunity.tooltip1=§2Zapewnia §d$potion1:
-ability.lightning_immunity.tooltip2=@paralysis:
-ability.lightning_immunity.paralysis=§6Odporność na §dparaliż
-ability.lightning_immunity.compat.lycanites=$gui:Usuwa $potion2:
+xat.ability.immunity_poison.name=§2Odporność na truciznę
+xat.ability.immunity_poison.tooltip1=§6Odporność na obrażenia od §2trucizny
 
-ability.lightning_bolt.name=§3Powinowactwo piorunów
-ability.lightning_bolt.tooltip1=§6Może strzelać piorunami kosztem MP
-ability.lightning_bolt.tooltip2=§6Przytrzymaj §r<§e*arckb:§r>§6, aby rzucić atak piorunem §3$boltcost: MP
-ability.lightning_bolt.tooltip3=§3$boltdamage:§6 obrażeń zależnie od zużytego MP
+xat.ability.immunity_water.name=§9Odporność na wodę
+xat.ability.immunity_water.tooltip1=§6Odporność na obrażenia od §9wody
 
-ability.dodging.name=Unik
-ability.dodging.tooltip1=@dodge:
-ability.dodging.tooltip2=@dodge.stun:
-ability.dodging.dodge=§2Zapewnia unik po dwukrotnym naciśnięciu
-ability.dodging.dodge.stun=§6Ogłusza pobliskich wrogów podczas uniku §3$dodgecost: MP
+xat.ability.affinity_dark.name=§8Powinowactwo mroku
+xat.ability.affinity_dark.tooltip2=§6Ma §3$wither_chance: §6szansy na nałożenie §8$wither:§6 na cel na §3$wither_duration:§6 sekund
+xat.ability.affinity_dark.tooltip3=§6Wysysa §3$leech_amount: §6serc z celów dotkniętych §8$wither:
+xat.ability.affinity_dark.tooltip4=$true_leech:§6Wysysa §3$amount: §6obrażeń zadanych celom dotkniętym §8$wither:
 
-ability.block_climbing.name=Wspinaczka
-ability.block_climbing.tooltip1=§6Może wspinać się po blokach
+xat.ability.affinity_poison.name=§2Powinowactwo trucizny
+xat.ability.affinity_poison.tooltip1=§6Podczas ataku ma §3$chance: §6szansy zatruć cel
+xat.ability.affinity_poison.tooltip2=§6Atakując zatrutego wroga, zadajesz $bonus: obrażeń.
 
-ability.wither_immunity.name=Odporność na Wither
-ability.wither_immunity.tooltip1=§6Odporność na Wither
-ability.wither_immunity.tooltip2=§6Podczas ataku ma §3$chance: §6szansy na nałożenie Wither na cel
-ability.wither_immunity.tooltip3=§6Leczy §3$amount: §6serca podczas ataku celu z efektem Wither
+xat.ability.affinity_water.name=§9Powinowactwo wody
+xat.ability.affinity_water.tooltip1=§6Nieskończony tlen przy §r[§3$bubbles:§r]§6 bąbelkach
+xat.ability.affinity_water.tooltip2=$vanilla:§2Zapewnia §d$potion:
 
-ability.poison_affinity.name=§2Powinowactwo trucizny
-ability.poison_affinity.tooltip1=§6Odporność na truciznę
-ability.poison_affinity.tooltip2=$gui:§6Odporność na głód
-ability.poison_affinity.tooltip3=§6Podczas ataku ma §3$chance: §6szansy na zatrucie celu
-ability.poison_affinity.tooltip4=§6Ataki przeciw zatrutym wrogom zadają dodatkowe §3$bonus:§6 obrażeń
+xat.ability.skilled_swimmer.name=Wytrawny pływak
+xat.ability.skilled_swimmer.tooltip1=§2Zapewnia ulepszone pływanie
+xat.ability.skilled_swimmer.tooltip2=$gui:§2Czujesz się, jakbyś pływał całe życie
 
-ability.water_affinity.name=§9Powinowactwo wody
-ability.water_affinity.tooltip1=@bubbles:
-ability.water_affinity.tooltip2=@betterswimming:
-ability.water_affinity.bubbles=§6Nieskończony tlen przy §r[§3$bubbles:§r]§6 bąbelkach
-ability.water_affinity.betterswimming=§2Zapewnia ulepszone pływanie
-ability.water_affinity.compat.enhancedvisuals=Wyłącza efekt rozmycia widzenia po wejściu do wody
+xat.ability.reduce_kinetic.name=Odporność na upadek
+xat.ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
+xat.ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
 
-ability.thirst_immunity.name=Odporność na zatrucie pragnieniem
-ability.thirst_immunity.tooltip1=$item:§6Odporność na efekt zatrucia pragnieniem
-ability.thirst_immunity.tooltip2=$gui:Odporność na efekt zatrucia pragnieniem
+xat.ability.nullify_kinetic.name=Neutralizacja kinetyczna
+xat.ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
+xat.ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
 
-ability.parasites_immunity.name=Odporność na pasożyty
-ability.parasites_immunity.tooltip1=$item:§6Odporność na pasożyty
-ability.parasites_immunity.tooltip2=$gui:Odporność na efekt pasożytów z picia brudnej wody
+xat.ability.frost_walker.name=§bMroźny Wędrowiec
+xat.ability.frost_walker.tooltip1=§6Zapewnia §bMroźnego Wędrowca
 
-ability.reduce_kinetic.name=Odporność na upadek
-ability.reduce_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
-ability.reduce_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
+xat.ability.lightning_bolt.name=§3Powinowactwo piorunów
+xat.ability.lightning_bolt.tooltip1=§6Może wystrzeliwać pioruny kosztem MP
+xat.ability.lightning_bolt.tooltip2=§6Przytrzymaj §r<§e*arckb:§r>§6, aby rzucić błyskawicę §3$boltcost: MP
+xat.ability.lightning_bolt.tooltip3=§3$boltdamage:§6 obrażeń zależnie od zużytego MP
 
-ability.nullify_kinetic.name=Neutralizacja kinetyczna
-ability.nullify_kinetic.tooltip1=§3$fdpercent:§6 odporności na obrażenia od upadku
-ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 odporności na obrażenia kinetyczne
+xat.ability.dodging.name=Unik
+xat.ability.dodging.tooltip1=@dodge:
+xat.ability.dodging.tooltip2=@dodge.stun:
+xat.ability.dodging.dodge=§2Zapewnia unik po dwukrotnym naciśnięciu
+xat.ability.dodging.dodge.stun=§6Ogłusza pobliskich wrogów podczas uniku §3$dodgecost: MP
 
-ability.ender_queen.name=§5Królewskość Endu
-ability.ender_queen.tooltip1=§6Królewskość
-ability.ender_queen.tooltip2=§2Endermany walczą za ciebie @endermenfollow:
-ability.ender_queen.tooltip3=@damageignored:
-ability.ender_queen.tooltip4=@endermenchance:
-ability.ender_queen.tooltip5=§3$tpchance: §5szansy na teleportację przy trafieniu pośrednim §3$tpcost: MP
-ability.ender_queen.tooltip6=@waterhurts:
-ability.ender_queen.damageignored=§3$chance: §6Szansy na zignorowanie obrażeń
-ability.ender_queen.endermenchance=§3$chance: §6Szansy na przywołanie Endermana
-ability.ender_queen.endermenfollow=i podążają za tobą
-ability.ender_queen.waterhurts=§cSłabość do wody
-ability.ender_queen.compat.enhancedvisuals=Wyłącza efekt zakłóceń Endermanów
+xat.ability.climbing.name=Wspinaczka
+xat.ability.climbing.tooltip1=§6Może wspinać się po blokach
 
-ability.vicious_strike.name=§4Brutalne uderzenie
-ability.vicious_strike.tooltip1=§6$chance: szansy na krwawienie przy ataku wręcz
-ability.vicious_strike.tooltip2=§aKrwawienie zadaje 1 obrażenie na sekundę przez §3$duration:§a sekund
-ability.vicious_strike.tooltip3=§cCzas trwania zmniejszony do §3$reduceddur: §csekund dla ras innych niż Faelis
+xat.ability.ender_queen.name=§5Królewskość Endu
+xat.ability.ender_queen.tooltip1=$gui:§6Królewskość
+xat.ability.ender_queen.tooltip2=§3$dmgchance: §6szansy na zignorowanie obrażeń
+xat.ability.ender_queen.tooltip3=§3$spawnchance: §6szansy na przywołanie Endermana do walki za ciebie
+xat.ability.ender_queen.tooltip4=$follow:§2Endermany będą za tobą podążać
+xat.ability.ender_queen.tooltip5=§3$tpchance: §5szansy na teleportację przy obrażeniach pośrednich §3$hurtcost: MP
+xat.ability.ender_queen.tooltip6=$waterhurts:§cSłabość do wody
+xat.ability.ender_queen.tooltip7=$gui:$chest:§6Zdalny dostęp do Skrzyni Kresu po naciśnięciu §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
+xat.ability.ender_queen.tooltip8=$gui:§6Losowo teleportuje w pobliże po naciśnięciu §r<§e*tpkey:§r> §3$tpcost: MP
+xat.ability.ender_queen.tooltip9=§6Zapobiega $instability:
+xat.ability.ender_queen.teleport=§2Teleportacja $toggle:
+xat.ability.ender_queen.teleport.failed=§cCoś uniemożliwia ci przemieszczanie się przez pustkę.
 
-ability.magnetic.name=Magnetyzm
-ability.magnetic.tooltip1=@collect:
-ability.magnetic.tooltip2=§r<§e*magnetkb:§r lub §ePrawy przycisk myszy§r>
-ability.magnetic.collect=§6Przyciąga pobliskie przedmioty @collectxp:
-ability.magnetic.collectxp=i kule doświadczenia $collecttoggle:
-ability.magnetic.magnetmode=Tryb zbierania $collecttoggle:
+xat.ability.vicious_strike.name=§4Okrutne Uderzenie
+xat.ability.vicious_strike.tooltip1=§6$chance: szansy na wywołanie krwawienia w walce wręcz
+xat.ability.vicious_strike.tooltip2=§aKrwawienie zadaje 1 obrażenie co sekundę przez §3$duration:§a sekund
+xat.ability.vicious_strike.tooltip3=§cCzas trwania skrócony do §3$reduceddur: §csekund dla ras innych niż Faelis
 
-ability.repel.name=Siła odpychająca
-ability.repel.tooltip1=@repel:
-ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r lub §eSkradanie§r + §ePrawy przycisk myszy§r>
-ability.repel.repel=§6Odpycha strzały $repeltoggle:
-ability.repel.repelmode=Tryb odpychania $repeltoggle:
+xat.ability.magnetic.name=Magnetyzm
+xat.ability.magnetic.tooltip1=@collect:
+xat.ability.magnetic.tooltip2=§r<§e*magnetkb:§r lub §ePrawy przycisk myszy§r>
+xat.ability.magnetic.collect=§6Przyciąga pobliskie przedmioty @collectxp:
+xat.ability.magnetic.collectxp=i kule doświadczenia $collecttoggle:
+xat.ability.magnetic.magnetmode=Tryb zbierania $collecttoggle:
 
-ability.skilled_miner.name=Wykwalifikowany górnik
-ability.skilled_miner.tooltip1=§6Dodatkowe PD podczas kopania
-ability.skilled_miner.tooltip2=$gui:Prędkość kopania ustawiona na Twardość Bloku * 4
+xat.ability.repel.name=Siła odpychania
+xat.ability.repel.tooltip1=@repel:
+xat.ability.repel.tooltip2=§r<§e*auxkb:§r + §e*magnetkb:§r lub §eSkradanie§r + §ePrawy przycisk myszy§r>
+xat.ability.repel.repel=§6Odpycha strzały $repeltoggle:
+xat.ability.repel.repelmode=Tryb odpychania $repeltoggle:
 
-ability.psudo_fortune.name=§6Pseudo Fortuna
-ability.psudo_fortune.tooltip1=Zyskujesz efekt fortuny bez zaklęcia
+xat.ability.skilled_miner.name=Wykwalifikowany górnik
+xat.ability.skilled_miner.tooltip1=§6Dodatkowe PD podczas kopania
+xat.ability.skilled_miner.tooltip2=$gui:$fortune:§6Wygląda na to, że podczas kopania zdobywasz więcej surowców.
+xat.ability.skilled_miner.tooltip3=$gui:Prędkość kopania jest ustawiona na Twardość Bloku * 4
 
-ability.charged_shot.name=Wykwalifikowany łucznik
-ability.charged_shot.tooltip1=§6Skradanie się podczas używania łuku aktywuje potężny strzał
-ability.charged_shot.tooltip2=$gui:Może używać many do wzmocnienia strzały
-ability.charged_shot.tooltip3=$gui:Skradaj się przed naciągnięciem łuku, aby aktywować
-ability.charged_shot.tooltip4=$gui:Anulowane po zaprzestaniu skradania się
-ability.charged_shot.tooltip5=$gui:Powoduje małą eksplozję przy trafieniu przy pełnym naładowaniu, zadając obrażenia obszarowe
+xat.ability.skilled_archer.name=Wykwalifikowany łucznik
+xat.ability.skilled_archer.tooltip1=§6Skradanie podczas używania łuku aktywuje potężny strzał kosztem MP
+xat.ability.skilled_archer.tooltip2=$gui:Możesz używać many, aby nasycić strzałę mocą
+xat.ability.skilled_archer.tooltip3=$gui:Przykucnij przed naciągnięciem łuku, aby aktywować
+xat.ability.skilled_archer.tooltip4=$gui:Przy pełnym naciągnięciu powoduje małą eksplozję z obrażeniami obszarowymi
 
-ability.large_hands.name=Duże dłonie
-ability.large_hands.tooltip1=§6Kopie w obszarze 3x3x3
-ability.large_hands.tooltip2=§eSkradaj się §2podczas kopania, aby wyłączyć
+xat.ability.large_hands.name=Wielkie dłonie
+xat.ability.large_hands.tooltip1=§6Kopie obszar 3x3x3
+xat.ability.large_hands.tooltip2=§eSkradaj się §2podczas kopania, aby wyłączyć
 
-ability.heavy.name=§cCiężki
-ability.heavy.tooltip1=§cToniesz w wodzie
-ability.heavy.tooltip2=§cNiszczysz rośliny, chodząc po nich
+xat.ability.heavy.name=§cCiężki
+xat.ability.heavy.tooltip1=§cToniesz w wodzie
+xat.ability.heavy.tooltip2=§cNiszczysz rośliny, chodząc po nich
 
-ability.weightless.name=§dNieważkość
-ability.weightless.tooltip1=§6Stajesz się nieważki
-ability.weightless.tooltip2=<§eLewy przycisk myszy§r> aby lecieć §2w górę
-ability.weightless.tooltip3=<§eSkradanie§r> + <§eLewy przycisk myszy§r> aby lecieć §2w dół
-#ability.weightless.tooltip4=§aZapewnia lewitację podczas trzymania
+xat.ability.weightless.name=§dNieważkość
+xat.ability.weightless.tooltip1=§6Stajesz się nieważki
+xat.ability.weightless.tooltip2=<§eLewy przycisk myszy§r> aby lecieć §2w górę
+xat.ability.weightless.tooltip3=<§eSkradanie§r> + <§eLewy przycisk myszy§r> aby lecieć §2w dół
+#xat.ability.weightless.tooltip4=§aZapewnia lewitację podczas trzymania
 
-ability.safe_guard.name=§6Ochrona
-ability.safe_guard.tooltip1=§6Zapewnia efekt mikstury $soheffect:
-ability.safe_guard.tooltip2=@explosionresist:
-ability.safe_guard.tooltip3=§6Może zignorować obrażenia co §3$cfghitcount: §6trafień
-ability.safe_guard.tooltip4=@damageignored:
-ability.safe_guard.damageignored=§6Otrzymane trafienia: §3$hitcount:/$cfghitcount:
-ability.safe_guard.explosionresist=§3$explosionresistamount: §6odporności na obrażenia od eksplozji
-ability.safe_guard.compat.enhancedvisuals=Wyłącza rozmycie eksplozji
+xat.ability.safe_guard.name=§6Ochrona
+xat.ability.safe_guard.tooltip1=§6Zapewnia efekt mikstury $soheffect:
+xat.ability.safe_guard.tooltip2=@explosionresist:
+xat.ability.safe_guard.tooltip3=§6Może zignorować obrażenia co §3$cfghitcount: §6trafień
+xat.ability.safe_guard.tooltip4=@damageignored:
+xat.ability.safe_guard.damageignored=§6Otrzymane trafienia: §3$hitcount:/$cfghitcount:
+xat.ability.safe_guard.explosionresist=§3$explosionresistamount: §6odporności na obrażenia od eksplozji
 
-ability.well_rested.name=§bDobrze wypoczęty
-ability.well_rested.tooltip1=§6Zapewnia wzmocnienia podczas snu, jeśli jest trzymany
-ability.well_rested.tooltip2=§6Usuwa $fear: §6i usuwa $insomnia:
+xat.ability.well_rested.name=§bDobrze wypoczęty
+xat.ability.well_rested.tooltip1=§6Zapewnia wzmocnienia, jeśli jest trzymany podczas snu
 
-ability.firstaid_reflex.name=Szybki refleks
-ability.firstaid_reflex.tooltip1=§3$headshotchance:§6 szansy na zignorowanie trafienia w głowę
+xat.ability.stampede.name=§6Szarża
+xat.ability.stampede.tooltip1=§6Przytrzymaj §r<§e*rkey:§r>§6, aby wykonać szarżę
+xat.ability.stampede.tooltip2=§6Istoty na twojej drodze otrzymają obrażenia
 
-#################################### Elements ####################################
+xat.ability.wolf_rider.name=Wilczy Jeździec
+xat.ability.skilled_rider.name=Wytrawny Jeździec
+
+xat.ability.blessing_of_life.name=§6Błogosławieństwo Życia
+xat.ability.blessing_of_life.tooltip1=$gui:§6Masz szansę zablokować śmiertelny cios i uleczyć się do pełnego zdrowia
+
+##################################### External Mod Abilities ####################################
+# SURVIVAL MODS
+
+xat.ability.immunity_heat.name=§cOdporność na gorąco
+xat.ability.immunity_heat.tooltip1=§6Odporność na §chipertermię
+xat.ability.immunity_cold.name=§bOdporność na zimno
+xat.ability.immunity_cold.tooltip1=§6Odporność na §bhipotermię
+xat.ability.immunity_thirst.name=Odporność na zatrucie pragnieniem
+xat.ability.immunity_thirst.tooltip1=$item:§6Odporność na zatrucie pragnieniem
+xat.ability.immunity_thirst.tooltip2=$gui:Odporność na efekt zatrucia pragnieniem po wypiciu brudnej wody
+xat.ability.immunity_parasites.name=Odporność na pasożyty
+xat.ability.immunity_parasites.tooltip1=$item:§6Odporność na pasożyty
+xat.ability.immunity_parasites.tooltip2=$gui:Odporność na efekt pasożytów po wypiciu brudnej wody
+xat.ability.absorption_thirst.name=§9Absorpcja wody
+xat.ability.absorption_thirst.tooltip1=§6Pasywnie uzupełnia pragnienie podczas przebywania w wodzie
+# FIRST AID
+xat.ability.hard_head.name=§6Twarda głowa
+xat.ability.hard_head.tooltip1=§3$headshotchance:§6 szansy na zignorowanie trafienia w głowę
+# ENHANCED VISUALS
+xat.ability.clear_vision.name=Czysty wzrok
+xat.ability.clear_vision.tooltip1=$gui:Usuwa efekt rozmycia
+xat.ability.ender_eyes.name=Oczy Endu
+xat.ability.ender_eyes.tooltip1=$gui:Usuwa efekt zakłóceń Endermana
+
+##################################### Elements ####################################
 
 xat.element.neutral.name=§fNeutralny
 xat.element.air.name=§3Powietrze
-xat.element.dark.name=§8Ciemność
+xat.element.dark.name=§8Mrok
 xat.element.earth.name=§2Ziemia
 xat.element.fire.name=§cOgień
 xat.element.ice.name=§bLód
@@ -243,7 +274,7 @@ xat.element.poison.name=§2Trucizna
 xat.element.void.name=§5Pustka
 xat.element.water.name=§9Woda
 
-#################################### Races ####################################
+##################################### Races ####################################
 
 xat.race.human.name=Człowiek
 xat.race.human.tooltip1=Jesteś człowiekiem żywiołu $element:
@@ -261,32 +292,31 @@ xat.race.goblin.name=Goblin
 xat.race.goblin.tooltip1=Jesteś goblinem żywiołu $element:
 xat.race.dragon.name=Smok
 xat.race.dragon.tooltip1=Jesteś smokiem żywiołu $element:
+xat.race.taurus.name=Taurus
+xat.race.taurus.tooltip1=Jesteś Taurianinem żywiołu $element:
 
-#################################### Damage Types ####################################
+##################################### Damage Types ####################################
 
-damagetype.xat.water=woda
-death.attack.xat.water=%1$s zginął przez %2$s podczas noszenia Korony Królowej Endu
+xat.damagetype.damage_water=woda
+xat.damagetype.damage_water.attack=%1$s zginął przez %2$s
+xat.damagetype.damage_water.attack.crown=%1$s zginął przez %2$s, nosząc Koronę Królowej Endu
+xat.danagetype.damage_poison=trucizna
+xat.damagetype.damage_poison.attack=%1$s zginął przez %2$s
+xat.danagetype.damage_bleed=Krwawienie
+xat.damagetype.damage_bleed.attack=%1$s zginął przez %2$s
 
-#################################### Attributes ####################################
-
-xat.jump=Skok
-xat.stepheight=Wysokość kroku
-xat.entityMagic.maxMana=Maksymalna mana
-xat.entityMagic.regen=Regeneracja MP
-xat.entityMagic.regen.cooldown=Czas odnowienia regeneracji MP
-xat.entityMagic.affinity=Powinowactwo z magią
-xat.flyspeed=Prędkość lotu
+##################################### Attributes ####################################
 
 attribute.name.xat.jump=Skok
 attribute.name.xat.stepheight=Wysokość kroku
 attribute.name.xat.entityMagic.maxMana=Maksymalna mana
 attribute.name.xat.entityMagic.regen=Regeneracja MP
 attribute.name.xat.entityMagic.regen.cooldown=Czas odnowienia regeneracji MP
-attribute.name.xat.entityMagic.affinity=Powinowactwo z magią
+attribute.name.xat.entityMagic.affinity=Powinowactwo magiczne
 attribute.name.xat.flyspeed=Prędkość lotu
-attribute.name.xat.entityRace=Zaklęta rasa
+attribute.name.xat.entityRace=Zaczarowana rasa
 
-#################################### Materials ####################################
+##################################### Materials ####################################
 
 item.glowing_powder.name=Świecący proszek
 item.glowing_powder.tooltip1=Materiał rzemieślniczy poziomu 1
@@ -297,80 +327,105 @@ item.glowing_ingot.tooltip1=§eMateriał rzemieślniczy poziomu 2
 item.glowing_gem.name=§6Świecący klejnot
 item.glowing_gem.tooltip1=§6Materiał rzemieślniczy poziomu 3
 
-#################################### Materials End ####################################
+item.spark_powder.name=§6Iskrzący proszek
+item.spark_powder.tooltip1=§6Materiał rzemieślniczy poziomu 3
 
-#################################### Trinkets ####################################
+##################################### Materials End ###############################
+#
+##################################### Trinkets ####################################
 
-item.arcing_orb.0.name=Łukowa kula
-item.damage_shield.0.name=Tarcza honoru
+item.arcing_orb.name=Łukowa Kula
+item.damage_shield.name=Tarcza Honoru
 
-item.dragons_eye.0.name=§6Smocze Oko
-item.dragons_eye.0.fire.name=§cOgniste Smocze Oko
-item.dragons_eye.0.ice.name=§bLodowe Smocze Oko
-item.dragons_eye.0.lightning.name=§dPiorunowe Smocze Oko
+item.dragons_eye.name=§6Smocze Oko
+item.dragons_eye.fire.name=§cOgniste Smocze Oko
+item.dragons_eye.ice.name=§bLodowe Smocze Oko
+item.dragons_eye.lightning.name=§dPiorunowe Smocze Oko
 
-item.ender_tiara.0.name=Korona Królowej Endu
-item.ender_tiara.0.tooltip1=§6Królewskość
-item.faelis_claw.0.name=Szpon Faelis
-item.glow_ring.0.name=§6Pierścień Zaklętych Oczu
-item.greater_inertia_stone.0.name=Kamień Większej Inercji
-item.inertia_null_stone.0.name=Kamień Zerowej Inercji
-item.poison_stone.0.name=Kamień Trucizny
-item.polarized_stone.0.name=Spolaryzowany kamień
-item.sea_stone.0.name=Kamień Morza
-item.teddy_bear.0.name=Pluszowy miś
-item.weightless_stone.0.name=Kamień Ujemnej Grawitacji
-item.wither_ring.0.name=Pierścień Wither
+item.ender_tiara.name=Korona Królowej Endu
+item.ender_tiara.tooltip1=§6Królewskość
 
-#################################### Trinkets Transformations ####################################
+item.faelis_claw.name=Szpon Faelis
+item.glow_ring.name=§6Pierścień Zaklętych Oczu
+item.greater_inertia_stone.name=Kamień Większej Inercji
+item.inertia_null_stone.name=Kamień Zerowej Inercji
+item.poison_stone.name=Kamień Trucizny
+item.polarized_stone.name=Spolaryzowany Kamień
+item.sea_stone.name=Kamień Morza
+item.teddy_bear.name=Pluszowy miś
+item.weightless_stone.name=Kamień Nieważkości
+item.wither_ring.name=Pierścień Witheru
 
-item.dwarf_ring.0.name=§6Pierścień Krasnoludów
-item.dwarf_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.cosmetic.0.name=Przedmiot kosmetyczny
+item.cosmetic.1.name=Skrzydła wróżki
+item.cosmetic.2.name=Broda krasnoluda
+item.cosmetic.3.name=Uszy elfa
+item.cosmetic.4.name=Uszy goblina
+item.cosmetic.5.name=Uszy Faelis
+item.cosmetic.6.name=Tytaniczne coś
+item.cosmetic.7.name=Skrzydła smoka
+item.cosmetic.8.name=Rogi Taurusa
+item.cosmetic.9.name=Rogi Taurusa i dzwonek
+item.cosmetic.10.name=Rogi Taurusa (F)
+item.cosmetic.11.name=Rogi Taurusa (F) i dzwonek
+item.cosmetic.12.name=Krowi dzwonek
+item.cosmetic.13.name=Rogi sukkuba
+item.cosmetic.14.name=Rogi
+item.cosmetic.15.name=Odwrócone rogi
+item.cosmetic.16.name=Smocze rogi
 
-item.elf_ring.0.name=§6Pierścień Elfów
-item.elf_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
-item.elf_ring.0.tooltip2=§6Zwiększona prędkość ruchu i ataku w lasach
+##################################### Trinkets Transformations ####################################
 
-item.fairy_ring.0.name=§6Pierścień Wróżek
-item.fairy_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.dwarf_ring.name=§6Pierścień Krasnoludów
+item.dwarf_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-item.faelis_ring.0.name=§6Pierścień Faelis
-item.faelis_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
-item.faelis_ring.0.tooltip2=§aZwiększone obrażenia bez broni
-item.faelis_ring.0.tooltip3=§aWzmocnienie po wypiciu mleka
-item.faelis_ring.0.tooltip4=§cKara do prędkości ruchu podczas noszenia ciężkiego pancerza
+item.elf_ring.name=§6Pierścień Elfów
+item.elf_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.elf_ring.tooltip2=§6Zwiększa prędkość ruchu i ataku w lasach
 
-item.goblin_ring.0.name=§6Pierścień Goblinów
-item.goblin_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
-item.goblin_ring.0.tooltip2=§6Może jeździć na oswojonych wilkach
-item.goblin_ring.0.tooltip3=§6Zwiększona siła i regeneracja podczas jazdy na wilkach
-item.goblin_ring.0.tooltip4=§aNiewielka odporność na eksplozje i ogień
-item.goblin_ring.0.tooltip5=§aCreepery będą cię ignorować
+item.fairy_ring.name=§6Pierścień Wróżek
+item.fairy_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-item.titan_ring.0.name=§6Pierścień Tytanów
-item.titan_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.faelis_ring.name=§6Pierścień Faelis
+item.faelis_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.faelis_ring.tooltip2=§aZwiększone obrażenia bez broni
+item.faelis_ring.tooltip3=§aWzmocnienie po wypiciu mleka
+item.faelis_ring.tooltip4=§cKara do ruchu podczas noszenia ciężkiego pancerza
 
-item.dragon_ring.0.name=§6Pierścień Smoków
-item.dragon_ring.0.fire.name=§6Pierścień §cOgnistych §6Smoków
-item.dragon_ring.0.ice.name=§6Pierścień §bLodowych §6Smoków
-item.dragon_ring.0.lightning.name=§6Pierścień §dPiorunowych §6Smoków
-item.dragon_ring.0.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.goblin_ring.name=§6Pierścień Goblinów
+item.goblin_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+item.goblin_ring.tooltip2=§6Może dosiadać oswojonych wilków
+item.goblin_ring.tooltip3=§6Zwiększa siłę i regenerację podczas jazdy na wilkach
+item.goblin_ring.tooltip4=§aNiewielka odporność na eksplozje i ogień
+item.goblin_ring.tooltip5=§aCreepery będą cię ignorować
 
-#################################### Trinkets End ####################################
+item.titan_ring.name=§6Pierścień Tytanów
+item.titan_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
 
-#################################### Food ####################################
+item.dragon_ring.name=§6Pierścień Smoków
+item.dragon_ring.fire.name=§6Pierścień §cOgnistych §6Smoków
+item.dragon_ring.ice.name=§6Pierścień §bLodowych §6Smoków
+item.dragon_ring.lightning.name=§6Pierścień §dPiorunowych §6Smoków
+item.dragon_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+
+item.taurus_ring.name=§6Pierścień Taurusa
+item.taurus_ring.tooltip1=§6Rozmiar istoty: $rsize: normalnego
+
+##################################### Trinkets End ############################
+#
+##################################### Food ####################################
 
 xat.food.item.tooltip1=
 xat.food.item.tooltip2=
 xat.food.item.tooltip3=
 
 item.mana_candy.food.name=§bCukierek Many
-item.mana_candy.food.tooltip1=§6Przywraca część many
+item.mana_candy.food.tooltip1=§6Przywraca trochę many
 
 item.mana_crystal.food.name=§6Kryształ Many
 item.mana_crystal.food.tooltip1=§6+§b$mpmax:§6 maksymalnej many
 
-item.mana_reagent.food.name=§6Reagent Many
+item.mana_reagent.food.name=§6Odczynnik Many
 item.mana_reagent.food.tooltip1=§cSzkodliwy po spożyciu
 item.mana_reagent.food.tooltip2=§c-§b$mpmax:§c maksymalnej many
 
@@ -378,811 +433,161 @@ item.restoration_serum.food.name=§6Serum Przywrócenia
 item.restoration_serum.food.tooltip1=Odwraca trwałe efekty transformacji
 item.restoration_serum.food.tooltip2=§cSzkodliwy po spożyciu
 
-xat.transformation.food.tooltip1=§3Może będę w stanie usunąć efekty
-xat.transformation.food.tooltip2=§3pijąc jakiś rodzaj mikstury
+xat.transformation.food.tooltip1=§3Być może uda mi się usunąć te efekty
+xat.transformation.food.tooltip2=§3po wypiciu jakiegoś rodzaju mikstury
 xat.transformation.food.tooltip3=§r<§9Użyj Serum Przywrócenia, aby cofnąć§r>
 
 item.dwarf_stout.food.name=Krasnoludzkie Piwo
-item.dwarf_stout.food.tooltip1=§6Transformuje w Krasnoluda
+item.dwarf_stout.food.tooltip1=§6Transformuje w krasnoluda
 
 item.fairy_dew.food.name=Rosą Wróżki
-item.fairy_dew.food.tooltip1=§6Transformuje w Wróżkę
+item.fairy_dew.food.tooltip1=§6Transformuje we wróżkę
 
 item.titan_spirit.food.name=Duch Tytana
-item.titan_spirit.food.tooltip1=§6Transformuje w Tytana
+item.titan_spirit.food.tooltip1=§6Transformuje w tytana
 
 item.elf_sap.food.name=Sok Elfa
-item.elf_sap.food.tooltip1=§6Transformuje w Elfa
+item.elf_sap.food.tooltip1=§6Transformuje w elfa
 
 item.goblin_soup.food.name=Zupa Goblina
-item.goblin_soup.food.tooltip1=§6Transformuje w Goblina
+item.goblin_soup.food.tooltip1=§6Transformuje w goblina
 
 item.faelis_food.food.name=Faelis Nip
 item.faelis_food.food.tooltip1=§6Transformuje w Faelis
 
 item.dragon_gem.food.name=§6Smoczy Klejnot
-item.dragon_gem.food.tooltip1=§6Transformuje w Smoka.
+item.dragon_gem.food.tooltip1=§6Transformuje w smoka.
 item.dragon_gem.food.fire.name=§cOgnisty Smoczy Klejnot
-item.dragon_gem.food.fire.tooltip1=§6Transformuje w §cOgnistego §6Smoka.
+item.dragon_gem.food.fire.tooltip1=§6Transformuje w §cognistego §6smoka.
 item.dragon_gem.food.ice.name=§bLodowy Smoczy Klejnot
-item.dragon_gem.food.ice.tooltip1=§6Transformuje w §bLodowego §6Smoka.
+item.dragon_gem.food.ice.tooltip1=§6Transformuje w §blodowego §6smoka.
 item.dragon_gem.food.lightning.name=§dPiorunowy Smoczy Klejnot
-item.dragon_gem.food.lightning.tooltip1=§6Transformuje w §dPiorunowego §6Smoka.
+item.dragon_gem.food.lightning.tooltip1=§6Transformuje w §dpiorunowego §6smoka.
 
-#################################### Food End ####################################
+item.taurus_tea.food.name=Herbata z Trawy Taurusa
+item.taurus_tea.food.tooltip1=§6Transformuje w Taurusa
 
+##################################### Food End ###################################
+#
+#
+##################################### Potions ####################################
 
-#################################### Potions ####################################
-
-potion.effect.xat.sparkling=Musująca Mikstura
-splash_potion.effect.xat.sparkling=Musująca Mikstura Miotana
-lingering_potion.effect.xat.sparkling=Musująca Mikstura Trwała
 tipped_arrow.effect.xat.sparkling=Strzała Musowania
+lingering_potion.effect.xat.sparkling=Trwała Mikstura Musowania
+splash_potion.effect.xat.sparkling=Miotana Mikstura Musowania
+potion.effect.xat.sparkling=Mikstura Musowania
 xat.effect.sparkling=Musowanie
-xat.item.potion.sparkling.tooltip1=§6Przywraca 25% maksymalnego zdrowia
+xat.item.potion.sparkling.tooltip1=§6Leczy 25% maksymalnego zdrowia
 xat.item.potion.sparkling.tooltip2=§6Przywraca 25% many
 
-potion.effect.xat.glittering=Migocząca Mikstura
-splash_potion.effect.xat.glittering=Migocząca Mikstura Miotana
-lingering_potion.effect.xat.glittering=Migocząca Mikstura Trwała
 tipped_arrow.effect.xat.glittering=Strzała Migotania
+lingering_potion.effect.xat.glittering=Trwała Mikstura Migotania
+splash_potion.effect.xat.glittering=Miotana Mikstura Migotania
+potion.effect.xat.glittering=Mikstura Migotania
 xat.effect.glittering=Migotanie
-xat.item.potion.glittering.tooltip1=§6Przywraca 50% maksymalnego zdrowia
+xat.item.potion.glittering.tooltip1=§6Leczy 50% maksymalnego zdrowia
 xat.item.potion.glittering.tooltip2=§6Przywraca 50% many
 
-potion.effect.xat.glowing=Świecąca Mikstura
-splash_potion.effect.xat.glowing=Świecąca Mikstura Miotana
-lingering_potion.effect.xat.glowing=Świecąca Mikstura Trwała
 tipped_arrow.effect.xat.glowing=Strzała Świecenia
+lingering_potion.effect.xat.glowing=Trwała Mikstura Świecenia
+splash_potion.effect.xat.glowing=Miotana Mikstura Świecenia
+potion.effect.xat.glowing=Mikstura Świecenia
 xat.effect.glowing=Świecenie
-xat.item.potion.glowing.tooltip1=§6Przywraca 100% zdrowia
+xat.item.potion.glowing.tooltip1=§6Leczy 100% zdrowia
 xat.item.potion.glowing.tooltip2=§6Przywraca 100% many
 
-potion.effect.xat.ice_resistance=Mikstura Odporności na Lód
-splash_potion.effect.xat.ice_resistance=Miotana Mikstura Odporności na Lód
-lingering_potion.effect.xat.ice_resistance=Trwała Mikstura Odporności na Lód
 tipped_arrow.effect.xat.ice_resistance=Strzała Odporności na Lód
+lingering_potion.effect.xat.ice_resistance=Trwała Mikstura Odporności na Lód
+splash_potion.effect.xat.ice_resistance=Miotana Mikstura Odporności na Lód
+potion.effect.xat.ice_resistance=Mikstura Odporności na Lód
 xat.effect.ice_resistance=Odporność na lód
 
-potion.effect.xat.lightning_resistance=Mikstura Odporności na Pioruny
-splash_potion.effect.xat.lightning_resistance=Miotana Mikstura Odporności na Pioruny
-lingering_potion.effect.xat.lightning_resistance=Trwała Mikstura Odporności na Pioruny
 tipped_arrow.effect.xat.lightning_resistance=Strzała Odporności na Pioruny
+lingering_potion.effect.xat.lightning_resistance=Trwała Mikstura Odporności na Pioruny
+splash_potion.effect.xat.lightning_resistance=Miotana Mikstura Odporności na Pioruny
+potion.effect.xat.lightning_resistance=Mikstura Odporności na Pioruny
 xat.effect.lightning_resistance=Odporność na pioruny
 
-potion.effect.xat.restorative=Mikstura Przywrócenia
-splash_potion.effect.xat.restorative=Miotana Mikstura Przywrócenia
-lingering_potion.effect.xat.restorative=Trwała Mikstura Przywrócenia
-tipped_arrow.effect.xat.restorative=Strzała Przywrócenia
-xat.effect.restorative=Przywrócenie
-xat.item.potion.restorative.tooltip1=§6Przywraca 100% zdrowia
-xat.item.potion.restorative.tooltip2=§6Usuwa efekty mikstur
-xat.item.potion.restorative.tooltip3=§6Usuwa efekty transformacji z zaklętego jedzenia
-
-potion.effect.xat.human=Mikstura Transformacji w Człowieka
-splash_potion.effect.xat.human=Miotana Mikstura Transformacji w Człowieka
-lingering_potion.effect.xat.human=Trwała Mikstura Transformacji w Człowieka
 tipped_arrow.effect.xat.human=Strzała Transformacji w Człowieka
+lingering_potion.effect.xat.human=Trwała Mikstura Transformacji w Człowieka
+splash_potion.effect.xat.human=Miotana Mikstura Transformacji w Człowieka
+potion.effect.xat.human=Mikstura Transformacji w Człowieka
 xat.effect.human=Człowiek
-xat.item.potion.human.tooltip1=Stajesz się Człowiekiem na $humanticks: sekund
 
-potion.effect.xat.fairy=Mikstura Transformacji we Wróżkę
-splash_potion.effect.xat.fairy=Miotana Mikstura Transformacji we Wróżkę
-lingering_potion.effect.xat.fairy=Trwała Mikstura Transformacji we Wróżkę
 tipped_arrow.effect.xat.fairy=Strzała Transformacji we Wróżkę
+lingering_potion.effect.xat.fairy=Trwała Mikstura Transformacji we Wróżkę
+splash_potion.effect.xat.fairy=Miotana Mikstura Transformacji we Wróżkę
+potion.effect.xat.fairy=Mikstura Transformacji we Wróżkę
 xat.effect.fairy=Wróżka
-xat.item.potion.fairy.tooltip1=Stajesz się Wróżką na $fairyticks: sekund
 
-potion.effect.xat.dwarf=Mikstura Transformacji w Krasnoluda
-splash_potion.effect.xat.dwarf=Miotana Mikstura Transformacji w Krasnoluda
-lingering_potion.effect.xat.dwarf=Trwała Mikstura Transformacji w Krasnoluda
 tipped_arrow.effect.xat.dwarf=Strzała Transformacji w Krasnoluda
+lingering_potion.effect.xat.dwarf=Trwała Mikstura Transformacji w Krasnoluda
+splash_potion.effect.xat.dwarf=Miotana Mikstura Transformacji w Krasnoluda
+potion.effect.xat.dwarf=Mikstura Transformacji w Krasnoluda
 xat.effect.dwarf=Krasnolud
-xat.item.potion.dwarf.tooltip1=Stajesz się Krasnoludem na $dwarfticks: sekund
 
-potion.effect.xat.titan=Mikstura Transformacji w Tytana
-splash_potion.effect.xat.titan=Miotana Mikstura Transformacji w Tytana
-lingering_potion.effect.xat.titan=Trwała Mikstura Transformacji w Tytana
 tipped_arrow.effect.xat.titan=Strzała Transformacji w Tytana
+lingering_potion.effect.xat.titan=Trwała Mikstura Transformacji w Tytana
+splash_potion.effect.xat.titan=Miotana Mikstura Transformacji w Tytana
+potion.effect.xat.titan=Mikstura Transformacji w Tytana
 xat.effect.titan=Tytan
-xat.item.potion.titan.tooltip1=Stajesz się Tytanem na $titanticks: sekund
 
-potion.effect.xat.goblin=Mikstura Transformacji w Goblina
-splash_potion.effect.xat.goblin=Miotana Mikstura Transformacji w Goblina
-lingering_potion.effect.xat.goblin=Trwała Mikstura Transformacji w Goblina
 tipped_arrow.effect.xat.goblin=Strzała Transformacji w Goblina
+lingering_potion.effect.xat.goblin=Trwała Mikstura Transformacji w Goblina
+splash_potion.effect.xat.goblin=Miotana Mikstura Transformacji w Goblina
+potion.effect.xat.goblin=Mikstura Transformacji w Goblina
 xat.effect.goblin=Goblin
-xat.item.potion.goblin.tooltip1=Stajesz się Goblinem na $goblinticks: sekund
 
-potion.effect.xat.elf=Mikstura Transformacji w Elfa
-splash_potion.effect.xat.elf=Miotana Mikstura Transformacji w Elfa
-lingering_potion.effect.xat.elf=Trwała Mikstura Transformacji w Elfa
 tipped_arrow.effect.xat.elf=Strzała Transformacji w Elfa
+lingering_potion.effect.xat.elf=Trwała Mikstura Transformacji w Elfa
+splash_potion.effect.xat.elf=Miotana Mikstura Transformacji w Elfa
+potion.effect.xat.elf=Mikstura Transformacji w Elfa
 xat.effect.elf=Elf
-xat.item.potion.elf.tooltip1=Stajesz się Elfem na $elfticks: sekund
 
-potion.effect.xat.faelis=Mikstura Transformacji w Faelis
-splash_potion.effect.xat.faelis=Miotana Mikstura Transformacji w Faelis
-lingering_potion.effect.xat.faelis=Trwała Mikstura Transformacji w Faelis
 tipped_arrow.effect.xat.faelis=Strzała Transformacji w Faelis
+lingering_potion.effect.xat.faelis=Trwała Mikstura Transformacji w Faelis
+splash_potion.effect.xat.faelis=Miotana Mikstura Transformacji w Faelis
+potion.effect.xat.faelis=Mikstura Transformacji w Faelis
 xat.effect.faelis=Faelis
-xat.item.potion.faelis.tooltip1=Stajesz się Faelis na $faelisticks: sekund
 
-potion.effect.xat.dragon=Mikstura Transformacji w Smoka
-splash_potion.effect.xat.dragon=Miotana Mikstura Transformacji w Smoka
-lingering_potion.effect.xat.dragon=Trwała Mikstura Transformacji w Smoka
 tipped_arrow.effect.xat.dragon=Strzała Transformacji w Smoka
+lingering_potion.effect.xat.dragon=Trwała Mikstura Transformacji w Smoka
+splash_potion.effect.xat.dragon=Miotana Mikstura Transformacji w Smoka
+potion.effect.xat.dragon=Mikstura Transformacji w Smoka
 xat.effect.dragon=Smok
-xat.item.potion.dragon.tooltip1=Stajesz się Smokiem na $dragonticks: sekund
 
-#################################### Potions End ####################################
+tipped_arrow.effect.xat.dragon_fire=Strzała Transformacji w Ognistego Smoka
+lingering_potion.effect.xat.dragon_fire=Trwała Mikstura Transformacji w Ognistego Smoka
+splash_potion.effect.xat.dragon_fire=Miotana Mikstura Transformacji w Ognistego Smoka
+potion.effect.xat.dragon_fire=Mikstura Transformacji w Ognistego Smoka
+xat.effect.dragon_fire=Ognisty Smok
 
-#################################### Blocks ####################################
+tipped_arrow.effect.xat.dragon_ice=Strzała Transformacji w Lodowego Smoka
+lingering_potion.effect.xat.dragon_ice=Trwała Mikstura Transformacji w Lodowego Smoka
+splash_potion.effect.xat.dragon_ice=Miotana Mikstura Transformacji w Lodowego Smoka
+potion.effect.xat.dragon_ice=Mikstura Transformacji w Lodowego Smoka
+xat.effect.dragon_ice=Lodowy Smok
 
-tile.moon_rose.name=Księżycowa Róża
-tile.moon_rose.tooltip1=§bZaklęty kwiat
-tile.moon_rose.tooltip2=§b<Czujesz silne magiczne wibracje emanujące z tego>
+tipped_arrow.effect.xat.dragon_lightning=Strzała Transformacji w Piorunowego Smoka
+lingering_potion.effect.xat.dragon_lightning=Trwała Mikstura Transformacji w Piorunowego Smoka
+splash_potion.effect.xat.dragon_lightning=Miotana Mikstura Transformacji w Piorunowego Smoka
+potion.effect.xat.dragon_lightning=Mikstura Transformacji w Piorunowego Smoka
+xat.effect.dragon_lightning=Piorunowy Smok
+
+tipped_arrow.effect.xat.taurus=Strzała Transformacji w Taurusa
+lingering_potion.effect.xat.taurus=Trwała Mikstura Transformacji w Taurusa
+splash_potion.effect.xat.taurus=Miotana Mikstura Transformacji w Taurusa
+potion.effect.xat.taurus=Mikstura Transformacji w Taurusa
+xat.effect.taurus=Taurus
+
+##################################### Potions End ##################################
+#
+##################################### Blocks #######################################
+
+xat.tile.moon_rose.name=Księżycowa Róża
+xat.tile.moon_rose.tooltip1=§bZaklęty kwiat
+xat.tile.moon_rose.tooltip2=§b<Czujesz, że emanują z niego silne magiczne fluktuacje>
 
 #################################### Blocks End ####################################
 
-####################################[Configuration Begin]####################################
-
-######################################## Client Settings ##########################################
-
-xat.config.client.settings=Ustawienia klienta
-xat.config.client.settings.tooltip=Ustawienia efektów wizualnych
-
-xat.config.client.debug.settings=Narzędzia debugowania
-xat.config.client.debug.materials=Pokaż materiały zbroi
-xat.config.client.debug.slots=Pokaż ID slotów
-xat.config.client.debug.oredict=Pokaż wpisy OreDict
-xat.config.client.debug.speed=Pokaż szybkość ruchu
-
-xat.config.client.gui.settings=Ustawienia menu trinkets
-xat.config.client.gui.settings.tooltip=Ustawienia dotyczące menu Trinkets na kliencie.
-
-xat.config.client.magic.hud.settings=Ustawienia paska many
-xat.config.client.magic.hud.settings.tooltip=Konfiguracja renderowania paska many.
-xat.config.client.magic.hud.shown=Wyświetlaj pasek many?
-xat.config.client.magic.hud.shown.always=Zawsze wyświetlaj pasek many?
-xat.config.client.magic.hud.horizontal=Renderuj w poziomie?
-xat.config.client.magic.hud.text.shown=Ukryj tekst?
-xat.config.client.magic.hud.location.x=Pozycja X
-xat.config.client.magic.hud.location.y=Pozycja Y
-xat.config.client.magic.hud.width=Długość
-xat.config.client.magic.hud.height=Wysokość
-
-xat.config.client.camera.adjustments=Poprawki ustawienia kamery?
-xat.config.client.camera.adjustments.tooltip=Poprawia wysokość oczu gracza, jeżeli przemieniony
-
-xat.config.client.render.trinkets.all=Wyświetlaj talizmany?
-xat.config.client.render.trinkets.all.tooltip=Główny przełącznik wyświetlania wszystkich talizmanów
-xat.config.client.render.trinket=Wyświetlaj talizman?
-xat.config.client.render.trinket.tooltip=Wyświetlaj talizman na graczu
-
-xat.config.client.render.entity.renderer.replace=Zamień EntityRenderer?
-xat.config.client.render.entity.renderer.replace.tooltip=Czy podczas używania pierścieni zaklętych ras, Trinkets and Baubles powinno zamieniać EntityRenderera aby rozwiązać niektóre problemy z kamerą?
-xat.config.client.render.entity.renderer.replace.fog=Mgła EntityRenderera?
-xat.config.client.render.entity.renderer.replace.fog.tooltip=Kiedy EntityRenderer z Trinkets and Baubles psuje niektóre ustawienia Optifine, konkretniej mgłę, użyj tego do przełączania mgły dla kompatybilności.
-
-xat.config.client.race.properties.gui.settings=Menu właściwości ras
-xat.config.client.race.properties.gui.shown=Przycisk właściwości ras
-xat.config.client.race.properties.gui.shown.tooltip=Włączyć przycisk Interfejs właściwości rasy?
-
-#####################################[Food Configs]#####################################
-
-xat.config.server.food.settings=Ustawienia zaklętych potraw
-xat.config.server.food.settings.tooltip=Ustawienia dotyczące przemieniających potraw.
-
-xat.config.server.food.registry.enabled=Potrawy dozwolone?
-xat.config.server.food.registry.enabled.tooltip=Czy ten mod powinien dodawać do rejestru przedmioty związane z jedzeniem podczas uruchamiania gry?
-xat.config.server.food.transformation.effect=Efekty przemian?
-xat.config.server.food.transformation.effect.tooltip=Czy magiczne potrawy powinny przemieniać gracza po zjedzeniu?
-xat.config.server.food.transformation.effect.keep=Zatrzymaj efekty?
-xat.config.server.food.transformation.effect.keep.tooltip=Czy przemiany w inne rasy powinny być zachowane po śmierci?
-
-#####################################[Food Configs End]#####################################
-
-#####################################[Potion Configs]#####################################
-
-xat.config.server.potion.registry.enabled=Mikstury włączone?
-xat.config.server.potion.registry.enabled.tooltip=Czy ten mod powinien dodawać do rejestru mikstury przy uruchamianiu gry?
-xat.config.server.potion.toughasnails.water=Mikstury odnawiają pragnienie?
-xat.config.server.potion.toughasnails.water.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana, czy mikstury powinny odnawiać pragnienie?
-
-xat.config.server.potion.catalyst=Katalizator
-xat.config.server.potion.catalyst.tooltip=Ten przedmiot jest używany przy tworzeniu mikstur w statywie alchemicznym.
-xat.config.server.potion.duration=Czas trwania
-xat.config.server.potion.duration.tooltip=Jak długo (w tickach) powinna trwać przemiana?
-
-xat.config.server.potion.restore.catalyst=Katalizator mikstury przywracania
-xat.config.server.potion.restore.catalyst.tooltip=Ten przedmiot jest używany w statywie alchemicznym aby stworzyć tą miksturę.
-
-xat.config.server.potion.dwarf=Mikstura przemiany w krasnoluda
-xat.config.server.potion.dwarf.tooltip=
-xat.config.server.potion.elf=Mikstura przemiany w elfa
-xat.config.server.potion.elf.tooltip=
-xat.config.server.potion.fairy=Mikstura przemiany we wróżkę
-xat.config.server.potion.fairy.tooltip=
-xat.config.server.potion.goblin=Mikstura przemiany w goblina
-xat.config.server.potion.goblin.tooltip=
-xat.config.server.potion.titan=Mikstura przemiany w tytana
-xat.config.server.potion.titan.tooltip=
-xat.config.server.potion.faelis=Mikstura przemiany w kotowatego
-xat.config.server.potion.faelis.tooltip=
-xat.config.server.potion.dragon=Mikstura przemiany w smoka
-xat.config.server.potion.dragon.tooltip=
-xat.config.server.potion.human=Mikstura przemiany w człowieka
-xat.config.server.potion.human.tooltip=
-
-xat.config.server.potion.playersonly=Mikstury działają tylko na graczy?
-xat.config.server.potion.playersonly.tooltip=Czy mikstury powinny działać tylko na graczy, czy na wszystkie moby? Mikstury przemiany mogą być zepsute kiedy użyte na bytach innych niż gracze.
-
-#####################################[Potion Configs End]#####################################
-
-#####################################[Item Configs]#####################################
-
-xat.config.items=Ustawienia przedmiotów
-xat.config.items.tooltip=Konfiguracja drobiazgów
-xat.config.items.transformation=Przedmioty przemian
-
-xat.config.glow_ring=Ustawienia pierścienia zaklętych oczu
-xat.config.glow_ring.tooltip=
-
-xat.config.weightless_stone=Ustawienia kamienia odwróconej grawitacji
-xat.config.weightless_stone.tooltip=
-
-xat.config.dragons_eye=Ustawienia oka smoka
-xat.config.dragons_eye.tooltip=
-
-xat.config.server.dragons_eye.orefinder=Wyszukiwacz skarbów?
-xat.config.server.dragons_eye.orefinder.tooltip=Czy oko smoka może wskazywać pobliskie bloki?
-xat.config.server.dragons_eye.orefinder.range=Zasięg wyszukiwacza skarbów
-xat.config.server.dragons_eye.orefinder.range.tooltip=OSTRZEŻENIE! USTAWIENIE ZBYT WYSOKICH WARTOŚCI MOŻE WYWOŁYWAĆ LAGI. Spróbuj utrzymywać je w przedziale 4-16.
-xat.config.server.dragons_eye.orefinder.range.vertical=Pionowy zasięg
-xat.config.server.dragons_eye.orefinder.range.vertical.tooltip=Jak daleko w pionie (góra, dół) efekt oka smoka się aktywuje (w blokach). Domyślnie 6, minimalnie: 0, maksymalnie: 32.
-xat.config.server.dragons_eye.orefinder.range.horizontal=Poziomy zasięg
-xat.config.server.dragons_eye.orefinder.range.horizontal.tooltip=Jak daleko w poziomie (północ, południe, wschód, zachód) efekt oka smoka się aktywuje (w blokach). Domyślnie 12, minimalnie 0, maksymalnie 32.
-xat.config.server.dragons_eye.orefinder.blocks=Ustawienia bloków
-xat.config.server.dragons_eye.orefinder.blocks.tooltip=
-xat.config.server.dragons_eye.orefinder.blocks.list=Lista bloków wyszukiwacza skarbów
-xat.config.server.dragons_eye.orefinder.blocks.list.tooltip=Lista bloków wskazywanych przez wyszukiwacz skarbów
-xat.config.server.dragons_eye.toughasnails.immunity.heat=Niewrażliwość na ciepło?
-xat.config.server.dragons_eye.toughasnails.immunity.heat.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana, czy gracz powinien być niewrażliwy na ciepło?
-xat.config.server.dragons_eye.toughasnails.immunity.cold=Immune to Cold
-xat.config.server.dragons_eye.toughasnails.immunity.cold.tooltip=If Tough as Nails or Simple Difficulty is Installed Should the player be Immune to Cold
-
-xat.config.server.dragons_eye.iceandfire.recipe.stage=Wiek czaszki
-xat.config.server.dragons_eye.iceandfire.recipe.stage.tooltip=Jeżeli modyfikacja "Ice and Fire" jest zainstalowana, czy oko smoka powinno wymagać konkretego wieku czaszki do receptury? Ustawienie wartości 0 akceptuje każdy wiek.
-xat.config.server.dragons_eye.iceandfire.fire.variant=Fire Variant
-xat.config.server.dragons_eye.iceandfire.fire.variant.tooltip=Should there be an Fire Variant of the Dragons eye
-xat.config.server.dragons_eye.iceandfire.ice.variant=Lodowy wariant?
-xat.config.server.dragons_eye.iceandfire.ice.variant.tooltip=Czy powinien być dodany lodowy wariant oka smoka?
-xat.config.server.dragons_eye.iceandfire.ice.frostwalker=Mroźny piechur?
-xat.config.server.dragons_eye.iceandfire.ice.frostwalker.tooltip=Czy lodowy wariant powinien pasywnie dawać efekt zaklęcia mroźny piechur?
-xat.config.server.dragons_eye.iceandfire.lightning.variant=Elektryczny wariant?
-xat.config.server.dragons_eye.iceandfire.lightning.variant.tooltip=Czy powinien być dodany elektryczny wariant oka smoka?
-xat.config.server.dragons_eye.iceandfire.lightning.paralysis=Niewrażliwość na paraliż?
-xat.config.server.dragons_eye.iceandfire.lightning.paralysis.tooltip=Czy elektryczny wariant powinien dawać niewrażliwość na paraliż?
-xat.config.server.dragons_eye.iceandfire.default.resist=Default Resist
-xat.config.server.dragons_eye.iceandfire.default.resist.tooltip=Should the Base Dragons Eye have Fire Resistance
-
-xat.config.client.dragons_eye.growl.enabled=Smoczy ryk?
-xat.config.client.dragons_eye.growl.enabled.tooltip=Jeżeli wyszukiwacz skarbów jest włączony, czy powinien występować ryk wskazujący, że wyszukiwać coś znalazł?
-xat.config.client.dragons_eye.growl.activation=Wywoływanie ryku smoka
-xat.config.client.dragons_eye.growl.activation.tooltip=Decyduje kiedy ryk smoka występuje \nOpcje:\nSNEAK\nSTAND\nBOTH
-xat.config.client.dragons_eye.growl.volume=Głośność ryku smoka
-xat.config.client.dragons_eye.growl.volume.tooltip=Sterowanie głośnością ryku smoka
-xat.config.client.dragons_eye.orefinder.refresh.rate=Częstotliwość odświeżania
-xat.config.client.dragons_eye.orefinder.refresh.rate.tooltip=Czas odstępu (w tickach) między pojedynczymi wskazaniami wyszukiwacza skarbów
-xat.config.client.dragons_eye.orefinder.particles=Max Particles
-xat.config.client.dragons_eye.orefinder.particles.tooltip=Ore Finder Max Particle Count
-
-xat.config.ender_tiara=Ustawienia korony królowej Enderu
-xat.config.ender_tiara.tooltip=
-
-xat.config.client.ender_tiara.helmet=Wyświetlaj jako hełm?
-xat.config.client.ender_tiara.helmet.tooltip=
-
-xat.config.server.ender_tiara.waterhurts=Woda szkodzi?
-xat.config.server.ender_tiara.waterhurts.tooltip=Czy gracz powinien otrzymywać obrażenia w wodzie lub gdy jest wystawiony na deszcz?
-xat.config.server.ender_tiara.ignoredamage=Szansa na zignorowanie obrażeń?
-xat.config.server.ender_tiara.ignoredamage.tooltip=Czy powinna być szansa na zignorowanie otrzymanych obrażeń?
-xat.config.server.ender_tiara.ignoredamage.spawn=Szansa na przywołanie endermana?
-xat.config.server.ender_tiara.ignoredamage.spawn.tooltip=Czy otrzymywanie obrażeń powinno dawać szansę na przywołanie endermana?
-xat.config.server.ender_tiara.ignoredamage.spawn.chance=Prawdopodobieństwo przywołania endermana
-xat.config.server.ender_tiara.ignoredamage.spawn.chance.tooltip=1 na x szans, na zignorowanie obrażeń i przywołanie endermana, który będzie dla ciebie walczył
-xat.config.server.ender_tiara.ignoredamage.teleport=Obrażenia teleportują?
-xat.config.server.ender_tiara.ignoredamage.teleport.tooltip=Czy gracz powinien zostać przeteleportowany losowo, gdy obrażenia zostaną zignorowane?
-xat.config.server.ender_tiara.ignoredamage.teleport.chance=Szansa na przeteleportowanie
-xat.config.server.ender_tiara.ignoredamage.teleport.chance.tooltip=1 na X szans aby przeteleportować gracza po otrzymaniu obrażeń dystansowych
-xat.config.server.ender_tiara.endermen.follow=Endermany podążają?
-xat.config.server.ender_tiara.endermen.follow.tooltip=Czy pobliskie endermany powinny za tobą podążać?
-xat.config.server.ender_tiara.endermen.retaliate=Endermany się mszczą?
-xat.config.server.ender_tiara.endermen.retaliate.tooltip=Czy po zaatakowaniu endermana, powinien on walczyć przeciwko tobie?
-xat.config.server.ender_tiara.endermen.exp=Endermany upuszczają doświadczenie?
-xat.config.server.ender_tiara.endermen.exp.tooltip=Czy po zabiciu endermana powinien on upuścić punkty doświadczenia?
-xat.config.server.ender_tiara.endermen.items=Endermany upuszczają przedmioty?
-xat.config.server.ender_tiara.endermen.items.tooltip=Czy po zabiciu endermana powinien on upuścić przedmioty?
-xat.config.server.ender_tiara.endermen.teleport=Enderman teleportują się?
-xat.config.server.ender_tiara.endermen.teleport.tooltip=Czy endermany mogą się teleportować?
-xat.config.server.ender_tiara.toughasnails.immunity.cold=Niewrażliwość na zimno?
-xat.config.server.ender_tiara.toughasnails.immunity.cold.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana, czy gracz powinien być niewrażliwy na zimno?
-
-xat.config.dwarf_ring=Ustawienia pierścienia krasnoludów
-xat.config.dwarf_ring.tooltip=
-
-xat.config.elf_ring=Ustawienia pierścienia elfów
-xat.config.elf_ring.tooltip=
-
-xat.config.fairy_ring=Ustawienia pierścienia wróżek
-xat.config.fairy_ring.tooltip=
-
-xat.config.faelis_ring=Ustawienia pierścienia kotowatych
-xat.config.faelis_ring.tooltip=
-
-xat.config.goblin_ring=Ustawienia pierścienia goblinów
-xat.config.goblin_ring.tooltip=
-
-xat.config.titan_ring=Ustawienia pierścienia tytanów
-xat.config.titan_ring.tooltip=
-
-xat.config.dragon_ring=Ustawienia pierścienia smoków
-xat.config.dragon_ring.tooltip=
-
-xat.config.damage_shield=Ustawienia tarczy honoru
-xat.config.damage_shield.tooltip=
-
-xat.config.server.damage_shield.ignore.damage=Ignoruj obrażenia?
-xat.config.server.damage_shield.ignore.damage.tooltip=Jeżeli włączone, co X trafień zignoruj następny atak
-xat.config.server.damage_shield.ignore.damage.hits=Wymagane trafienia
-xat.config.server.damage_shield.ignore.damage.hits.tooltip=Ile trafień trzeba przyjąć przed następnym zignorowaniem ataku?
-xat.config.server.damage_shield.explosion.resist=Odporność na wybuchy
-xat.config.server.damage_shield.explosion.resist.tooltip=Czy na gracza powinna zostać nałożona dodatkowa odporność na wybuchy?
-xat.config.server.damage_shield.explosion.resist.amount=Siła odporności na wybuchy
-xat.config.server.damage_shield.explosion.resist.amount.tooltip=Pomnóż przychodzące obrażenia od wybuchów o tą liczbę
-xat.config.server.damage_shield.resistance=Efekt odporności
-xat.config.server.damage_shield.resistance.tooltip=Opcja pozwalająca zmienić, co tarcza honoru traktuje jako "efekt odporności"
-xat.config.server.damage_shield.resistance.level=Poziom odporności
-xat.config.server.damage_shield.resistance.level.tooltip=Poziom efektu odporności nakładanego na gracza. Domyślnie 0.
-xat.config.server.damage_shield.resistance.stacks=Odporność kumuluje się?
-xat.config.server.damage_shield.resistance.stacks.tooltip=Czy efekt odporności z tarczy honoru powinien kumulować się z efektem odporności z innych źródeł?
-xat.config.server.damage_shield.resistance.stacks.max=Maksimum kumulowania się odporności
-xat.config.server.damage_shield.resistance.stacks.max.tooltip=Maksymalny poziom, do którego odporność może się kumulować
-xat.config.server.damage_shield.epic.gamer=Epic Pro Gamer
-xat.config.server.damage_shield.epic.gamer.tooltip=Wyłącz to tylko jeżeli jesteś "Tym" Epic Pro Gamerem (Easter Egg)
-xat.config.server.damage_shield.firstaid.ignore.headshots=Ignoruj strzały w głowę?
-xat.config.server.damage_shield.firstaid.ignore.headshots.tooltip=Jeżeli modyfikacja First aid jest zainstalowana, czy tarcza honoru powinna ignorować również śmiertelne strzały w głowę?\nSzansa aktywuje się tylko wtedy, jeżeli następny atak cię zabije.
-xat.config.server.damage_shield.firstaid.ignore.headshots.chance=Szansa na zignorowanie strzału w głowę
-xat.config.server.damage_shield.firstaid.ignore.headshots.chance.tooltip=1 na X szans, aby zignorować śmiertelne trafienie w głowę
-
-xat.config.client.damage_shield.volume=Głośność efektu
-xat.config.client.damage_shield.volume.tooltip=Głośność dźwięku wywoływanego gdy tarcza honoru zablokuje obrażenia.
-
-xat.config.inertia_null_stone=Ustawienia kamienia braku bezwładności
-xat.config.inertia_null_stone.tooltip=
-xat.config.server.inertia_null_stone.falldamage=Modyfikuj obrażenia od upadku?
-xat.config.server.inertia_null_stone.falldamage.tooltip=czy kamień braku bezwładności powinien modyfikować obrażenia od upadku?
-xat.config.server.inertia_null_stone.falldamage.amount=Zmodyfikowana wartość obrażeń od upadku
-xat.config.server.inertia_null_stone.falldamage.amount.tooltip=Pomnóż wartość obrażeń od upadku przez tą liczbę
-
-xat.config.greater_inertia_stone=Ustawienia kamienia większej bezwładności
-xat.config.greater_inertia_stone.tooltip=
-xat.config.server.greater_inertia_stone.falldamage=Modyfikuj obrażenia od upadku?
-xat.config.server.greater_inertia_stone.falldamage.tooltip=Czy kamień większej bezwładności powinien modyfikować obrażenia od upadku?
-xat.config.server.greater_inertia_stone.falldamage.amount=Zmodyfikowana wartość obrażeń od upadku
-xat.config.server.greater_inertia_stone.falldamage.amount.tooltip=Pomnóż wartość obrażeń od upadku przez tą liczbę
-xat.config.server.greater_inertia_stone.jumpheight=Modyfikuj wysokość skoku?
-xat.config.server.greater_inertia_stone.jumpheight.tooltip=Czy kamień większej bezwładności powinien modyfikować wysokość skoku?
-xat.config.server.greater_inertia_stone.jumpheight.amount=Zmodyfikowana wysokość skoku
-xat.config.server.greater_inertia_stone.jumpheight.amount.tooltip=Pomnóż wartość wysokość skoku przez tą liczbę
-
-xat.config.poison_stone=Ustawienia kamienia trucizn
-xat.config.poison_stone.tooltip=
-xat.config.server.poison_stone.damagebonus=Bonusowe obrażenia?
-xat.config.server.poison_stone.damagebonus.tooltip=Jeżeli przeciwnik jest zatruty, czy zadawać dodatkowe obrażenia?
-xat.config.server.poison_stone.damagebonus.amount=Ilość zadawanych obrażeń?
-xat.config.server.poison_stone.damagebonus.amount.tooltip=Jeżeli przeciwnik jest zatruty, pomnóż obrażenia zadawane przez tą liczbę
-xat.config.server.poison_stone.poison=Zatruwa?
-xat.config.server.poison_stone.poison.tooltip=Czy kamień trucizn może zatruć przeciwników?
-xat.config.server.poison_stone.poison.chance=Szansa na zatrucie
-xat.config.server.poison_stone.poison.chance.tooltip=1 na X szans, na zatrucie przeciwnika przy trafieniu na ustawiony czas zatrucia, który domyślnie wynosi 40 ticków.
-xat.config.server.poison_stone.poison.duration=Długość zatrucia?
-xat.config.server.poison_stone.poison.duration.tooltip=Jak długo (w tickach) powinien trwać efekt zatrucia?
-
-xat.config.polarized_stone=Ustawienia spolaryzowanego kamienia
-xat.config.polarized_stone.tooltip=
-xat.config.server.polarized_stone.collection.instant=Natychmiastowe podniesienie?
-xat.config.server.polarized_stone.collection.instant.tooltip=Czy spolaryzowany kamień powinien natychmiast podnosić przedmioty?
-xat.config.server.polarized_stone.collection.instant.xp=Podnoś doświadczenie natychmiast?
-xat.config.server.polarized_stone.collection.instant.xp.tooltip=Czy spolaryzowany kamień powinien natychmiast podnosić orby doświadczenia?
-xat.config.server.polarized_stone.collection.range=Zasięg zbierania
-xat.config.server.polarized_stone.collection.range.tooltip=OSTRZEŻENIE! USTAWIENIE ZBYT WYSOKICH WARTOŚCI MOŻE WYWOŁYWAĆ LAGI. Spróbuj utrzymywać je w przedziale 4-16.
-xat.config.server.polarized_stone.collection.range.vertical=Pionowy zasięg
-xat.config.server.polarized_stone.collection.range.vertical.tooltip=Jak daleko w pionie (góra, dół; w blokach) przedmioty są przyciągane. Domyślnie 6, minimalnie: 0, maksymalnie: 32.
-xat.config.server.polarized_stone.collection.range.horizontal=Poziomy zasięg
-xat.config.server.polarized_stone.collection.range.horizontal.tooltip=Jak daleko w poziomie (północ, południe, wschód, zachód; w blokach) przedmioty są przyciągane. Domyślnie 12, minimalnie 0, maksymalnie 32.
-xat.config.server.polarized_stone.collection.xp=Przyciągaj orby doświadczenia?
-xat.config.server.polarized_stone.collection.xp.tooltip=Czy spolaryzowany kamień powinien przyciągać orby doświadczenia?
-xat.config.server.polarized_stone.collection.speed=Siła przyciągania
-xat.config.server.polarized_stone.collection.speed.tooltip=Jeżeli natychmiastowe podniesienie jest wyłączone, ile siły jest użyte na obiekty przyciągane?
-xat.config.server.polarized_stone.repel=Odpychaj pociski?
-xat.config.server.polarized_stone.repel.tooltip=Czy spolaryzowany kamień powinien odpychać pociski?
-xat.config.server.polarized_stone.repel.range=Zasięg odpychania
-xat.config.server.polarized_stone.repel.range.tooltip=W jakiej odległości spolaryzowany kamień powinien odpychać pociski
-xat.config.server.polarized_stone.repel.exhaust=Odpychanie kosztuje manę?
-xat.config.server.polarized_stone.repel.exhaust.tooltip=Czy tryb odpychania powinien zużywać manę?
-xat.config.server.polarized_stone.repel.exhaust.amount=Koszt many
-xat.config.server.polarized_stone.repel.exhaust.amount.tooltip=Ile many jest zużywane na raz?
-xat.config.server.polarized_stone.repel.exhaust.speed=Częstotliwość zużycia many
-xat.config.server.polarized_stone.repel.exhaust.speed.tooltip=Jeżeli tryb odpychania jest włączony, z jaką częstotliwością (w tickach) zużywana jest mana?
-xat.config.server.polarized_stone.repel.entity.whitelist=Odpychane pociski
-xat.config.server.polarized_stone.repel.entity.whitelist.tooltip=Lista bytów, które może odpychać spolaryzowany kamień
-
-xat.config.sea_stone=Ustawienia kamienia morza
-xat.config.sea_stone.tooltip=
-xat.config.server.sea_stone.betterswimming=Lepsze pływanie?
-xat.config.server.sea_stone.betterswimming.tooltip=Czy implementować zmiany mające na celu sprawienie, by pływanie było łatwiejsze?
-xat.config.server.sea_stone.betterswimming.old=Stara poprawka?
-xat.config.server.sea_stone.betterswimming.old.tooltip=Czy używać starszej wersji poprawionego poprawionego pływania?
-xat.config.server.sea_stone.waterbreathing=Oddychanie pod wodą?
-xat.config.server.sea_stone.waterbreathing.tooltip=Czy dawać graczom nielimitowane powietrze?
-xat.config.server.sea_stone.waterbreathing.bubbles=Pełne bąbelki?
-xat.config.server.sea_stone.waterbreathing.bubbles.tooltip=Jeżeli oddychanie pod wodą jest włączone, to czy efekt powinien zachodzić przy pierwszym czy ostatnim bąbelku tlenu?
-xat.config.server.sea_stone.toughasnails.thirst=Zapobiegaj pragnieniu z TAN?
-xat.config.server.sea_stone.toughasnails.thirst.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana, czy kamień morza powinien zapobiegać efektowi "Thirst"?
-
-xat.config.wither_ring=Ustawienia pierścienia Withera
-xat.config.wither_ring.tooltip=
-xat.config.server.wither_ring.leech=Pijawka
-xat.config.server.wither_ring.leech.tooltip=Jeżeli przeciwnik ma na sobie efekt obumierania, czy zadawanie mu obrażeń powinno leczyć?
-xat.config.server.wither_ring.leech.amount=Ilość leczenia
-xat.config.server.wither_ring.leech.amount.tooltip=Ile zdrowia (w połowach serc) odnawia efekt pijawki?
-xat.config.server.wither_ring.wither=Nadawać przeciwnikowi obumarcie?
-xat.config.server.wither_ring.wither.tooltip=Czy przy trafieniu jest szansa, na nadanie przeciwnikowi efektu obumierania?
-xat.config.server.wither_ring.wither.chance=Szansa na nadanie przeciwnikowi efektu obumierania
-xat.config.server.wither_ring.wither.chance.tooltip=1 na X szans, na nadanie przeciwnikowi efektu obumierania przy trafieniu na ustawiony czas, który domyślnie wynosi 2 sekundy?
-xat.config.server.wither_ring.wither.duration=Czas trwania obumarcia
-xat.config.server.wither_ring.wither.duration.tooltip=Jak długo (w tickach) powinien trwać efekt obumierania?
-
-xat.config.arcing_orb=Ustawienia iskrzącego orbu
-xat.config.arcing_orb.tooltip=
-
-xat.config.teddy_bear=Ustawienia pluszowego misia
-xat.config.teddy_bear.tooltip=
-
-xat.config.server.teddy_bear.sleepbonus=Wzmocnienie po spaniu?
-xat.config.server.teddy_bear.sleepbonus.tooltip=Czy dawać wzmocnienie po spaniu?
-xat.config.server.teddy_bear.sleepbonus.buff=Wzmocnienia
-xat.config.server.teddy_bear.sleepbonus.buff.tooltip=Jakie wzmocnienia należy nadać graczowi?
-xat.config.server.teddy_bear.sleepbonus.buff.random=Losowe wzmocnienia
-xat.config.server.teddy_bear.sleepbonus.buff.random.tooltip=Jeżeli ta wartość jest większa od 0, zamiast dawać każde wzmocnienie z listy, daje X losowych wzmocnień
-
-xat.config.faelis_claw=Ustawienia pazura kotowatych
-xat.config.faelis_claw.tooltip=
-
-xat.config.server.faelis_claw.bleeding=Krwawienie?
-xat.config.server.faelis_claw.bleeding.tooltip=Czy ten przedmiot powinien wywoływać krwawienie przy ataku?
-xat.config.server.faelis_claw.bleeding.duration=Czas krwawienia
-xat.config.server.faelis_claw.bleeding.duration.tooltip=Jak długo (w tickach) trwa efekt krwawienia?
-xat.config.server.faelis_claw.bleeding.chance=Szansa na krwawienie
-xat.config.server.faelis_claw.bleeding.chance.tooltip=1 na X szans aby wywołać krwawienie, ustawienie tego na 0 zawsze wywołuje krwawienie.
-
-#####################################[Item Configs End]#####################################
-
-#####################################[Magic Configs]#####################################
-
-xat.config.magic=Ustawienia magii
-xat.config.magic.tooltip=
-
-xat.config.magic.moon_rose.essence=Esencja księżycowej róży?
-xat.config.magic.moon_rose.essence.tooltip=Ile magicznej esencji ma księżycowa róża?
-xat.config.magic.moon_rose.cooldown=Czas przyswajania
-xat.config.magic.moon_rose.cooldown.tooltip=Ile czasu (w tickach) zajmuje przyswojenie 1 magicznej esencji z księżycowej róży?
-xat.config.magic.mana_crystal.explodes=Kryształ many wybucha?
-xat.config.magic.mana_crystal.explodes.tooltip=Will Mana Crystals explode when struck against stone, producing Mana Reagent?
-xat.config.magic.mana_reagent.harmful=Odczynnik many wybucha?
-xat.config.magic.mana_reagent.harmful.tooltip=Will the Mana reagent harm you when you consume it?
-
-xat.config.magic.mana.enabled=Mana włączona?
-xat.config.magic.mana.enabled.tooltip=
-xat.config.magic.mana.regen.ticks=Częstotliwość regeneracji many
-xat.config.magic.mana.regen.ticks.tooltip=Co ile czasu (w tickach) mana się zregeneruje 1 raz?
-xat.config.magic.mana.regen.timeout=Czas odnawiania regeneracji many?
-xat.config.magic.mana.regen.timeout.tooltip=Jak długo trzeba czekać po użyciu many, aby zaczęła się odnawiać?
-xat.config.magic.mana.cap=Limit many?
-xat.config.magic.mana.cap.tooltip=Czy maksymalna wartość many, jaką może mieć gracz, powinna być ograniczona?
-xat.config.magic.mana.cap.max=Maksymalna mana
-xat.config.magic.mana.cap.max.tooltip=Nie ma to wpływu, jeżeli wyłączona jest opcja "Limit many"
-xat.config.magic.mana.cap.affinity=Limit podobieństwa many?
-xat.config.magic.mana.cap.affinity.tooltip=Czy limit many powinien nastąpić przed czy po uwzględnieniu zdolności ras do many?
-xat.config.magic.mana.bonus=Dodatkowa mana
-xat.config.magic.mana.bonus.tooltip=Ile dodatkowej many jest otrzymywane z kryształów many i księżycowych roż?
-xat.config.magic.mana.cap.bonus=Limit dodatkowej many
-xat.config.magic.mana.cap.bonus.tooltip=Limit bonusowej many otrzymywanej z kryształów many i księżycowych róż, ustaw na 0 żeby wyłączyć.
-xat.config.magic.mana.recovery.list=Przedmioty odnawiające manę
-xat.config.magic.mana.recovery.list.tooltip=Składnia:\n modid:nazwa_przedmiotu;wariant;ilość
-xat.config.magic.mana.players_only=Tylko gracze?
-xat.config.magic.mana.players_only.tooltip=Czy tylko gracze mogą mieć manę?
-
-#####################################[Magic Configs End]#####################################
-
-#####################################[Race Configs]#####################################
-
-xat.config.races=Ustawienia ras
-xat.config.race.size=Ustawienia rozmiaru
-xat.config.race.size.tooltip=Size Configuration
-
-xat.config.races.resistances=Potion Resistances
-xat.config.races.resistances.tooltip=What potion effects is the player immune to
-
-xat.config.races.immunities=Damage Type Immunity
-xat.config.races.immunities.tooltip=What DamageTypes is the player immune to
-xat.config.races.immunities.fire=Fire Damage
-xat.config.races.immunities.fire.tooltip=Immune to All Fire Damage Types
-xat.config.races.immunities.explosion=Explosion Damage
-xat.config.races.immunities.explosion.tooltip=Immune to All Explosion Damage Types
-xat.config.races.immunities.magic=Magic Damage
-xat.config.races.immunities.magic.tooltip=Immune to All Magic Damage Types
-xat.config.races.immunities.projectile=Projectile Damage
-xat.config.races.immunities.projectile.tooltip=Immune to All Projectile Damage Types
-xat.config.races.immunities.indirect=Indirect Damage
-xat.config.races.immunities.indirect.tooltip=Immune to All Indirect Damage Types
-xat.config.races.immunities.types=DamageTypes
-xat.config.races.immunities.types.tooltip=DamageTypes the player is immune to
-
-xat.config.races.effects=Potion Effects
-xat.config.races.effects.tooltip=What effects to add to the player
-
-xat.config.races.human=Ustawienia rasy ludzkiej
-xat.config.races.human.tooltip=
-
-xat.config.races.dwarf=Ustawienia krasnoluda
-xat.config.races.dwarf.tooltip=
-xat.config.races.dwarf.blocks=Ustawienia bloków
-xat.config.races.dwarf.blocks.tooltip=
-xat.config.races.dwarf.blocks.xp=Bloki dają doświadczenie?
-xat.config.races.dwarf.blocks.xp.tooltip=Czy bloki po wykopaniu powinny dawać dodatkowe punkty doświadczenia?
-xat.config.races.dwarf.blocks.xp.min=Minimum dodatkowego doświadczenia
-xat.config.races.dwarf.blocks.xp.min.tooltip=
-xat.config.races.dwarf.blocks.xp.max=Maksimum dodatkowego doświadczenia
-xat.config.races.dwarf.blocks.xp.max.tooltip=
-xat.config.races.dwarf.blocks.xp.list=Lista bloków dających dodatkowe doświadczenie
-xat.config.races.dwarf.blocks.xp.list.tooltip=Bloki z tej listy będą dawały dodatkowe doświadczenie z wartości pomiędzy minimum a maksimum
-xat.config.races.dwarf.blocks.minimum.xp=Bloki minimum doświadczenia?
-xat.config.races.dwarf.blocks.minimum.xp.tooltip=Czy bloki powinny dawać przynajmniej 1 punkt doświadczenia?
-xat.config.races.dwarf.blocks.minimum.xp.list=Lista bloków dających minimalne doświadczenie
-xat.config.races.dwarf.blocks.minimum.xp.list.tooltip=Bloki z tej listy zawsze wyrzucą 1 punk doświadczenia przy zniszczeniu
-xat.config.races.dwarf.fortune=Naturalne szczęście?
-xat.config.races.dwarf.fortune.tooltip=Czy pierścień krasnoludów powinien dawać umiejętność naturalnego szczęścia?
-xat.config.races.dwarf.fortune.stacking=Naturalne szczęście się kumuluje?
-xat.config.races.dwarf.fortune.stacking.tooltip=Czy naturalne szczęście kumuluje się z zaklęciem szczęścia?
-xat.config.races.dwarf.fortune.blocks.list=Lista bloków naturalnego szczęścia
-xat.config.races.dwarf.fortune.blocks.list.tooltip=Umiejętność naturalnego szczęścia działa tylko na bloki wymienione w tej liście
-xat.config.races.dwarf.skilledminer=Wprawny górnik
-xat.config.races.dwarf.skilledminer.tooltip=Czy pierścień krasnoludów powinien obniżać wymagania dot. poziomu kilofów, tj. żelazny kilof wykopie obsydian itp.
-xat.config.races.dwarf.static_mining=Stała szybkość kopania?
-xat.config.races.dwarf.static_mining.tooltip=Przy kopaniu, szybkość kopania będzie ustawiona na Block Hardness * 4, nie uwzględniając innych modyfikatorów.
-
-xat.config.races.elf=Ustawienia elfa
-xat.config.races.elf.tooltip=
-xat.config.races.elf.chargeshot.enabled=Strzał mocy?
-xat.config.races.elf.chargeshot.enabled.tooltip=Czy elfy powinny mieć możliwość wzmacniania strzałów z łuku maną?
-xat.config.races.elf.chargeshot.cost=Koszt strzału mocy?
-xat.config.races.elf.chargeshot.cost.tooltip=Ile many kosztuje strzał mocy?
-xat.config.races.elf.chargeshot.base.multiplier=Bazowy mnożnik obrażeń
-xat.config.races.elf.chargeshot.base.multiplier.tooltip=Strzał mocy zadaje 'obrażenia * bazowy mnożnik * długość ładowania' obrażeń
-xat.config.races.elf.chargeshot.minimum.damage.multiplier=Minimalny mnożnik obrażeń
-xat.config.races.elf.chargeshot.minimum.damage.multiplier.tooltip=Jeżeli 'obrażenia * bazowy mnożnik < X', to obrażenia wyniosą 'X * bazowy mnożnik * długość ładowania'
-xat.config.races.elf.chargeshot.max.time=Maksymalna długość ładowania
-xat.config.races.elf.chargeshot.max.time.tooltip=Jak długo (w tickach) zajmuje pełne naładowanie strzału mocy?
-xat.config.races.elf.chargeshot.bow.blacklist=Czarna lista łuków
-xat.config.races.elf.chargeshot.bow.blacklist.tooltip=Łuki, na których nie można używać strzału mocy
-xat.config.races.elf.chargeshot.explode=Pełne naładowanie wybucha?
-xat.config.races.elf.chargeshot.explode.tooltip=Jeżeli strzał mocy jest w pełni naładowany, czy strzała powinna wybuchnąć przy kontakcie i zadać obrażenia obszarowe?
-
-xat.config.races.fairy=Ustawienia wróżki
-xat.config.races.fairy.tooltip=
-xat.config.races.fairy.flight=Latanie?
-xat.config.races.fairy.flight.tooltip=Pozwolić graczowi na latanie z trybu kreatywnego?
-xat.config.races.fairy.flight.speed=Zmieniona szybkość latania?
-xat.config.races.fairy.flight.speed.tooltip=Czy szybkość latanie powinna być zmieniona względem Minecrafta Vanilla? Domyślne dla Minecrafta jest 0.05.
-xat.config.races.fairy.flight.speed.amount=Szybkość latania
-xat.config.races.fairy.flight.speed.amount.tooltip=Pozwala na ustawienie szybkości latania.
-xat.config.races.fairy.flight.cost=Koszt latania
-xat.config.races.fairy.flight.cost.tooltip=Koszt many/sekundę podczas latania
-xat.config.races.fairy.climbing=Wspinaczka?
-xat.config.races.fairy.climbing.tooltip=Czy gracz powinien być w stanie wspinać się po niektórych blokach?
-xat.config.races.fairy.climbing.whitelist=Biała lista bloków na wspinaczkę?
-xat.config.races.fairy.climbing.whitelist.tooltip=Czy traktować listę bloków wspinaczkowych jako białą czy czarną listę?
-xat.config.races.fairy.climbing.blocks.list=Bloki na które da się wspinać
-xat.config.races.fairy.climbing.blocks.list.tooltip=Lista bloków gracz może się wspinać podczas noszenia pierścienia wróżek
-xat.config.races.fairy.jumpheight=Poprawki wysokości skoku?
-xat.config.races.fairy.jumpheight.tooltip=Czy poprawić wysokość skoku i wysokość wchodzenia na bloki gracza, aby zgadzały się z rozmiarem gracza?
-xat.config.races.fairy.mount.enabled=Możliwość ujeżdżania bytów?
-xat.config.races.fairy.mount.enabled.tooltip=Czy gracz jest w stanie ujeżdżać byty, tj. konie, łódki, wagoniki itp.
-xat.config.races.fairy.mount.boat.control=Kontrolowanie łódek?
-xat.config.races.fairy.mount.boat.control.tooltip=Czy gracz jest w stanie pływać w łódce jako kierowca?
-xat.config.races.fairy.mount.whitelist=Biała lista ujeżdżanych bytów?
-xat.config.races.fairy.mount.whitelist.tooltip=Czy lista ujeżdżanych bytów to powinna być biała czy czarna lista?
-xat.config.races.fairy.mount.blacklist=Lista ujeżdżalnych bytów
-xat.config.races.fairy.mount.blacklist.tooltip=W zależności od opcji "Biała lista ujeżdżanych bytów", tylko te byty można ujeżdżać lub tylko tych nie można.
-
-xat.config.races.goblin=Ustawienia goblina
-xat.config.races.goblin.tooltip=
-xat.config.races.goblin.rider=Gobliński jeździec?
-xat.config.races.goblin.rider.tooltip=Czy gobliny są w stanie ujeżdżać oswojone wilki?
-xat.config.races.goblin.creeper=Przyjazne creepery?
-xat.config.races.goblin.creeper.tooltip=Czy creepery powinny ignorować gobliny?
-xat.config.races.goblin.creeper.explode=Creepery wybuchają?
-xat.config.races.goblin.creeper.explode.tooltip=Czy creepery powinny wybuchać po uderzeniu?
-xat.config.races.goblin.natural_resistance=Naturalna odporność?
-xat.config.races.goblin.natural_resistance.tooltip=Czy gobliny powinny być odporne na ogień i wybuchy?
-
-xat.config.races.titan=Ustawienia tytana
-xat.config.races.titan.tooltip=
-xat.config.races.titan.jumpheight=Poprawki wysokości skoku?
-xat.config.races.titan.jumpheight.tooltip=Czy poprawić wysokość skoku i wysokość wchodzenia na bloki gracza, aby zgadzały się z rozmiarem gracza?
-xat.config.races.titan.heavy=Ciężki?
-xat.config.races.titan.heavy.tooltip=Czy utrudnić graczowi wypływanie z wody (w górę)?
-xat.config.races.titan.trample=Niszcz uprawy?
-xat.config.races.titan.trample.tooltip=Czy gracz powinien niszczyć bloki upraw oraz deptać bloki pola uprawnego pod sobą, na obszarze 3x3 bloki?
-xat.config.races.titan.mining.extended=Obszarowe kopanie?
-xat.config.races.titan.mining.extended.tooltip=Czy gracz powinien być w stanie wykopać obszar 3x3x3?
-xat.config.races.titan.mining.extended.inverted=Odwrócone kopanie?
-xat.config.races.titan.mining.extended.inverted.tooltip=Jeżeli włączone, gracz musi kucać, aby aktywować obszarowe kopanie
-xat.config.races.titan.mining.extended.blacklist=Czarna lista obszarowego kopania
-xat.config.races.titan.mining.extended.blacklist.tooltip=Bloki, których nie można wykopać przy pomocy obszarowego kopania
-xat.config.races.titan.mount.enabled=Możliwość ujeżdżania bytów?
-xat.config.races.titan.mount.enabled.tooltip=Czy gracz jest w stanie ujeżdżać byty, tj. konie, łódki, wagoniki itp.
-xat.config.races.titan.mount.whitelist=Biała lista ujeżdżanych bytów?
-xat.config.races.titan.mount.whitelist.tooltip=Czy lista ujeżdżanych bytów to powinna być biała czy czarna lista?
-xat.config.races.titan.mount.blacklist=Lista ujeżdżalnych bytów
-xat.config.races.titan.mount.blacklist.tooltip=W zależności od opcji "Biała lista ujeżdżanych bytów", tylko te byty można ujeżdżać lub tylko tych nie można.
-
-xat.config.races.faelis=Ustawienia kotowatego
-xat.config.races.faelis.tooltip=
-xat.config.races.faelis.claw.bonus=Bonus pazurów?
-xat.config.races.faelis.claw.bonus.tooltip=Czy gracz powinien zadawać dodatkowe obrażenia przy ataku pustą ręką?
-xat.config.races.faelis.claw.bonus.amount=Wartość dodatkowych obrażeń
-xat.config.races.faelis.claw.bonus.amount.tooltip=Dodatkowe obrażenia zadawane pustą ręką. Domyślne obrażenia rąk to 0.75, jeżeli ta wartość wynosi 0. Na tą wartość nie wpływają modyfikatory.
-xat.config.races.faelis.armor.heavy.list=Ciężkie zbroje
-xat.config.races.faelis.armor.heavy.list.tooltip=Lista zbrój uznawanych za ciężkie
-xat.config.races.faelis.armor.penalties=Kara za zbroję?
-xat.config.races.faelis.armor.penalties.tooltip=Czy gracz powinien być karany za noszenie ciężkiej zbroi poprzez zmniejszoną szybkość ruchu?
-xat.config.races.faelis.armor.penalties.amount=Wartość kary?
-xat.config.races.faelis.armor.penalties.amount.tooltip=Wartość o którą zmniejszyć szybkość gracza za każdy ubrany element ciężkiej zbroi
-xat.config.races.faelis.milk.buff=Wzmocnienie mlekiem?
-xat.config.races.faelis.milk.buff.tooltip=Czy kotowate powinny otrzymywać wzmocnienie po wypiciu mleka?
-xat.config.races.faelis.milk.buff.list=Wzmocnienia
-xat.config.races.faelis.milk.buff.list.tooltip=Wzmocnienia otrzymywane po wypiciu mleka
-xat.config.races.faelis.milk.buff.duration=Czas trwania wzmocnienia
-xat.config.races.faelis.milk.buff.duration.tooltip=Jak długo powinno trwać wzmocnienie? Nie wpływa na długość efektów, np. siły.
-xat.config.races.faelis.milk.buff.immunity=Niewrażliwość na zbroję podczas wzmocnienia?
-xat.config.races.faelis.milk.buff.immunity.tooltip=Czy kotowate powinny być niewrażliwe na karę wynikającą z ciężkiej zbroi, kiedy wzmocnienie jest aktywne?
-xat.config.races.faelis.milk.list=Mleko
-xat.config.races.faelis.milk.list.tooltip=Lista przedmiotów uznawanych za mleko
-xat.config.races.faelis.barehand.list=Barehanded weapons
-xat.config.races.faelis.barehand.list.tooltip=List of Items that count as Bare Handed
-
-xat.config.races.dragon=Ustawienia smoka
-xat.config.races.dragon.tooltip=
-xat.config.races.dragon.flight=Latanie?
-xat.config.races.dragon.flight.tooltip=Pozwolić graczowi na latanie z trybu kreatywnego?
-xat.config.races.dragon.flight.speed=Zmieniona szybkość latania?
-xat.config.races.dragon.flight.speed.tooltip=Czy szybkość latanie powinna być zmieniona względem Minecrafta Vanilla? Domyślne dla Minecrafta jest 0.05.
-xat.config.races.dragon.flight.speed.amount=Szybkość latania
-xat.config.races.dragon.flight.speed.amount.tooltip=Pozwala na ustawienie szybkości latania.
-xat.config.races.dragon.flight.cost=Koszt latania
-xat.config.races.dragon.flight.cost.tooltip=Koszt many/sekundę podczas latania
-xat.config.races.dragon.breath.damage=Obrażenia oddechu smoka
-xat.config.races.dragon.breath.damage.tooltip=Ile obrażeń powininno zadawać 1 trafienie oddechem smoka?
-xat.config.races.dragon.breath.cost=Koszt oddechu smoka
-xat.config.races.dragon.breath.cost.tooltip=Ile many powinien kosztować 1 oddech smoka?
-xat.config.races.dragon.breath.terrain=Breath effects environment
-xat.config.races.dragon.breath.terrain.tooltip=Does the breath attack effect the environment
-xat.config.races.dragon.breath.effects=Dragon Breath Effects
-xat.config.races.dragon.breath.effects.tooltip=What effects does the breath attack apply to targets
-xat.config.races.dragon.resistances=Dragon Resistances
-xat.config.races.dragon.resistances.tooltip=What effects are dragons immune to
-
-#################################### Elemental Configs ####################################
-
-xat.config.element=Elemental Settings
-xat.config.element.tooltip=Settings for Elemental configurations
-xat.config.element.fire=Fire Settings
-xat.config.element.fire.tooltip=Settings for Fire Elemental Effects
-xat.config.element.ice=Ice Settings
-xat.config.element.ice.tooltip=Settings for Ice Elemental Effects
-xat.config.element.lightning=Lightning Settings
-xat.config.element.lightning.tooltip=Settings for Lightning Elemental Effects
-xat.config.element.air=Air Settings
-xat.config.element.air.tooltip=Settings for Air Elemental Effects
-xat.config.element.dark=Dark Settings
-xat.config.element.dark.tooltip=Settings for Dark Elemental Effects
-xat.config.element.earth=Earth Settings
-xat.config.element.earth.tooltip=Settings for Earth Elemental Effects
-xat.config.element.light=Light Settings
-xat.config.element.light.tooltip=Settings for Light Elemental Effects
-xat.config.element.poison=Poison Settings
-xat.config.element.poison.tooltip=Settings for Poison Elemental Effects
-xat.config.element.void=Void Settings
-xat.config.element.void.tooltip=Settings for Void Elemental Effects
-xat.config.element.water=Water Settings
-xat.config.element.water.tooltip=Settings for Water Elemental Effects
-
-#################################### Misc Configs ####################################
-
-xat.config.potion.settings=Ustawienia mikstur
-xat.config.potion.settings.tooltip=
-
-xat.config.server.settings=Ustawienia serwera
-xat.config.server.settings.tooltip=Ustawienia mające wpływ na grę.
-
-xat.config.server.container.settings=Ustawienia miejsc na talizmany
-xat.config.server.container.settings.tooltip=Ustawienia dotyczące miejsc na talizmany na serwerze
-xat.config.server.container.enabled=Miejsca na talizmany włączone?
-xat.config.server.container.enabled.tooltip=Czy miejsca na talizmany z tego moda powinny być odblokowane? Jeżeli je zablokujesz, wskazane jest zainstalowanie modyfikacji "Baubles" autorstwa Azanora, inaczej nie będziesz w stanie używać tego moda.
-xat.config.server.container.slots=Ilość miejsc
-xat.config.server.container.slots.tooltip=Ile miejsc na talizmany powinno zostać dodane?
-
-xat.config.registry.enabled=Rejestrować przedmiot?
-xat.config.registry.enabled.tooltip=Czy ten przedmiot powinien być dodany do rejestru przy ładowaniu gry?
-
-xat.config.misc=Pozostałe ustawienia
-xat.config.misc.tooltip=
-
-xat.config.misc.depth=Głębinowy wędrowiec się kumuluje?
-xat.config.misc.depth.tooltip=Czy zaklęcie głębinowy wędrowiec powinno kumulować się z atrybutami szybkości pływania?
-xat.config.misc.sme.underwaterstrider=Underwater Strider się kumuluje?
-xat.config.misc.sme.underwaterstrider.tooltip=Jeżeli modyfikacja Rin's So Many Enchantments jest zainstalowana, czy zaklęcie underwater strider powinno kumulować się z atrybutami szybkości pływania?
-xat.config.misc.movement=Uniemożliwiaj poruszanie się podczas przemiany?
-xat.config.misc.movement.tooltip=Jeżeli włączone, gracz nie będzie mógł się ruszyć podczas przemian z jednej rasy w inną
-xat.config.misc.interaction.fix=Poprawka zasięgu interakcji?
-xat.config.misc.interaction.fix.tooltip=Minecraft Vanilla nie radzi sobie z interacjami, jeżeli gracz ma zwiększony zasięg, ta opcja to naprawia.
-xat.config.misc.vip=VIP Włączony?
-xat.config.misc.vip.tooltip=Lista VIP może być niedostępna w pewnych okolicznościach. Użyj tego aby skrócić czas uruchamiania gry.
-
-xat.config.compatibility=Ustawienia kompatybilności
-xat.config.compatibility.tooltip=Ustawienia mające wpływ na zachowanie tej modyfikacji w połączeniu z innymi
-
-xat.config.toughasnails=Tough as Nails
-xat.config.toughasnails.tooltip=Jeżeli modyfikacja Tough as Nails jest zainstalowana
-
-xat.config.iceandfire=Ice and Fire
-xat.config.iceandfire.tooltip=
-
-xat.config.firstaid=Ustawienia First Aid
-xat.config.firstaid.tooltip=
-
-xat.config.fire_resistance_tiers=Poziom odporności na ogień
-xat.config.fire_resistance_tiers.tooltip=
-
-xat.config.baubles=Baubles
-xat.config.baubles.tooltip=Jeżeli modyfikacja "Baubles" jest zainstalowana, w którym miejscu w ekwipunku baubles może być wyposażony przedmiot \nDostępne typy:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
-
-xat.config.baubles.type=Typ biżuterii
-xat.config.baubles.type.tooltip=Jeżeli modyfikacja "Baubles" jest zainstalowana, w którym miejscu w ekwipunku baubles może być wyposażony przedmiot\nDostępne typy:\nTrinket, Any, All\nAmulet, Necklace, Pendant\nRing, Rings\nBelt\nHead, Hat\nBody, Chest\nCharm
-
-xat.config.immunities.potions=Niezdobywalne mikstury
-xat.config.immunities.potions.tooltip=Mikstury z tej listy nie mogą być uzyskane
-
-xat.config.attributes=Atrybuty
-xat.config.attributes.tooltip="Więcej informacji znajdziesz tu"\n"https://minecraft.gamepedia.com/Attribute"
-
-##Translated by KJEntytek303
-##Extra stuff that used to work
-
-xat.config.attributes.jump.tooltip=Odblokuj modyfikowanie atrybutu?
-xat.config.attributes.jump=Wysokość skoku
-xat.config.attributes.jump.amount.tooltip=Wartość modyfikacji atrybutu
-xat.config.attributes.jump.amount=Wartość wysokości skoku
-xat.config.attributes.jump.operation.tooltip=Ustala sposób liczenia nowych wartości atrybutu
-xat.config.attributes.jump.operation=Operacja dla wysokości skoku
-
-xat.config.attributes.stepheight.tooltip=Odblokuj modyfikowanie atrybutu?
-xat.config.attributes.stepheight=Wysokość wchodzenia
-xat.config.attributes.stepheight.amount.tooltip=Wartość modyfikacji atrybutu
-xat.config.attributes.stepheight.amount=Wartość wysokości wchodzenia na bloki
-xat.config.attributes.stepheight.operation.tooltip=Ustala sposób liczenia nowych wartości atrybutu
-xat.config.attributes.stepheight.operation=Operacja dla wysokości wchodzenia na bloki
+##################################### Config Begins ################################=

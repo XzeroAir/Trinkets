@@ -30,10 +30,11 @@ import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.BlockHelperUtil;
 import xzeroair.trinkets.util.helpers.PotionHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
@@ -41,15 +42,16 @@ import java.util.function.Consumer;
 
 public class EntityRangedAttack extends EntityArrow {
 
-    private int xTile;
-    private int yTile;
-    private int zTile;
+    private final int xTile;
+    private final int yTile;
+    private final int zTile;
     private Block inTile;
     private int ticksInGround;
     private int ticksInAir;
+    @Nullable
     public Entity ignoreEntity;
     private int ignoreTime;
-    int color;
+    protected int color;
     protected Element element;
 
     public EntityLivingBase shootingEntity;
@@ -59,6 +61,9 @@ public class EntityRangedAttack extends EntityArrow {
     public double accelerationZ;
 
     private boolean ignoreBlocks = false;
+    protected boolean interactWithTerrain;
+
+    protected String[] EFFECTS;
 
     public EntityRangedAttack(World world) {
         super(world);
@@ -66,33 +71,35 @@ public class EntityRangedAttack extends EntityArrow {
         this.yTile = -1;
         this.zTile = -1;
         this.setSize(1F, 1F);
-        color = 12582912;
-        element = Elements.NEUTRAL;
-        this.setDamage(TrinketsConfig.SERVER.races.dragon.elementConfig.fire.breath_damage);
+        this.color = 12582912;
+        this.element = Elements.NEUTRAL;
+        this.setDamage(1);
+        this.interactWithTerrain = false;
+        this.EFFECTS = new String[0];
     }
 
     public EntityRangedAttack(World world, double x, double y, double z, double accelX, double accelY, double accelZ) {
         this(world);
-        this.setLocationAndAngles(x, y, z, rotationYaw, rotationPitch);
+        this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
         this.setPosition(x, y, z);
-        motionX = 0.0D;
-        motionY = 0.0D;
-        motionZ = 0.0D;
+        this.motionX = 0.0D;
+        this.motionY = 0.0D;
+        this.motionZ = 0.0D;
         final double d0 = MathHelper.sqrt((accelX * accelX) + (accelY * accelY) + (accelZ * accelZ));
-        accelerationX = (accelX / d0) * 0.1D;
-        accelerationY = (accelY / d0) * 0.1D;
-        accelerationZ = (accelZ / d0) * 0.1D;
+        this.accelerationX = (accelX / d0) * 0.1D;
+        this.accelerationY = (accelY / d0) * 0.1D;
+        this.accelerationZ = (accelZ / d0) * 0.1D;
     }
 
     public EntityRangedAttack(World world, EntityLivingBase shooter, double accelX, double accelY, double accelZ, int color) {
         //		this(worldIn, shooter.posX, (shooter.posY + shooter.getEyeHeight()) - 0.10000000149011612D, shooter.posZ);
         this(world);
-        shootingEntity = shooter;
+        this.shootingEntity = shooter;
         this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
-        this.setPosition(posX, posY, posZ);
-        motionX = 0.0D;
-        motionY = 0.0D;
-        motionZ = 0.0D;
+        this.setPosition(this.posX, this.posY, this.posZ);
+        this.motionX = 0.0D;
+        this.motionY = 0.0D;
+        this.motionZ = 0.0D;
         //		isImmuneToFire = true;
         final float f = -MathHelper.sin(shooter.rotationYaw * 0.017453292F) * MathHelper.cos(shooter.rotationPitch * 0.017453292F);
         final float f1 = -MathHelper.sin((shooter.rotationPitch + 0) * 0.017453292F);
@@ -100,10 +107,9 @@ public class EntityRangedAttack extends EntityArrow {
         //		final float f = MathHelper.sqrt((x * x) + (y * y) + (z * z));
         final double d0 = MathHelper.sqrt((f * f) + (f1 * f1) + (f2 * f2));
         //		//MathHelper.sqrt((accelX * accelX) + (accelY * accelY) + (accelZ * accelZ));
-        accelerationX = (accelX / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
-        accelerationY = (accelY / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
-        accelerationZ = (accelZ / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
-
+        this.accelerationX = (accelX / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
+        this.accelerationY = (accelY / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
+        this.accelerationZ = (accelZ / d0) * (0.1D * (this.isFlying(shooter) ? 4 : 1));
         this.color = color;
     }
 
@@ -135,23 +141,30 @@ public class EntityRangedAttack extends EntityArrow {
             this.element = Elements.NEUTRAL;
         } else {
             this.element = element;
-            if (element == Elements.ICE) {
-                setDamage(TrinketsConfig.SERVER.races.dragon.elementConfig.ice.breath_damage);
-            } else if (element == Elements.LIGHTNING) {
-                setDamage(TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.breath_damage);
-            }
         }
+        return this;
+    }
+
+    public EntityRangedAttack setEffects(String[] effects) {
+        if (effects != null) {
+            this.EFFECTS = effects;
+        }
+        return this;
+    }
+
+    public EntityRangedAttack setAllowTerrainInteraction(boolean can) {
+        this.interactWithTerrain = can;
         return this;
     }
 
     @Override
     public void onUpdate() {
         //		super.onUpdate();
-        if (world.isRemote || (((shootingEntity == null) || !shootingEntity.isDead) && world.isBlockLoaded(new BlockPos(this)))) {
-            lastTickPosX = posX;
-            lastTickPosY = posY;
-            lastTickPosZ = posZ;
-            if (!world.isRemote) {
+        if (this.world.isRemote || (((this.shootingEntity == null) || !this.shootingEntity.isDead) && this.world.isBlockLoaded(new BlockPos(this)))) {
+            this.lastTickPosX = this.posX;
+            this.lastTickPosY = this.posY;
+            this.lastTickPosZ = this.posZ;
+            if (!this.world.isRemote) {
                 this.setFlag(6, this.isGlowing());
             }
 
@@ -159,49 +172,51 @@ public class EntityRangedAttack extends EntityArrow {
 
             //			this.setFire(1);
 
-            if (arrowShake > 0) {
-                --arrowShake;
+            if (this.arrowShake > 0) {
+                --this.arrowShake;
             }
 
-            if (inGround) {
-                if (world.getBlockState(new BlockPos(xTile, yTile, zTile)).getBlock() == inTile) {
-                    ++ticksInGround;
+            if (this.inGround) {
+                if (this.world.getBlockState(new BlockPos(this.xTile, this.yTile, this.zTile)).getBlock() == this.inTile) {
+                    ++this.ticksInGround;
 
-                    if (ticksInGround == 1200) {
+                    if (this.ticksInGround == 1200) {
                         this.setDead();
                     }
 
                     return;
                 }
 
-                inGround = false;
-                motionX *= rand.nextFloat() * 0.2F;
-                motionY *= rand.nextFloat() * 0.2F;
-                motionZ *= rand.nextFloat() * 0.2F;
-                ticksInGround = 0;
-                ticksInAir = 0;
+                this.inGround = false;
+                this.motionX *= this.rand.nextFloat() * 0.2F;
+                this.motionY *= this.rand.nextFloat() * 0.2F;
+                this.motionZ *= this.rand.nextFloat() * 0.2F;
+                this.ticksInGround = 0;
+                this.ticksInAir = 0;
             } else {
-                ++ticksInAir;
+                ++this.ticksInAir;
             }
 
-            if (element == Elements.ICE && TrinketsConfig.SERVER.races.dragon.elementConfig.ice.terrain) {
-                if (this.isInsideOfMaterial(Material.WATER) || this.isInWater()) {
-                    BlockHelperUtil.freezeWater(world, posX, posY, posZ, 0, 1.0D);
-                    this.setDead();
-                    return;
-                }
-                if (this.isInsideOfMaterial(Material.LAVA) || this.isInLava()) {
-                    BlockHelperUtil.freezeLava(world, posX, posY, posZ, 0, 1.0D);
-                    this.setDead();
-                    return;
+            if (this.interactWithTerrain) {
+                if (Elements.ICE.equals(this.element)) {
+                    if (this.isInsideOfMaterial(Material.WATER) || this.isInWater()) {
+                        BlockHelperUtil.freezeWater(this.world, this.posX, this.posY, this.posZ, 0, 1.0D);
+                        this.setDead();
+                        return;
+                    }
+                    if (this.isInsideOfMaterial(Material.LAVA) || this.isInLava()) {
+                        BlockHelperUtil.freezeLava(this.world, this.posX, this.posY, this.posZ, 0, 1.0D);
+                        this.setDead();
+                        return;
+                    }
                 }
             }
 
-            Vec3d vec3d = new Vec3d(posX, posY, posZ);
-            Vec3d vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
-            RayTraceResult raytraceresult = world.rayTraceBlocks(vec3d, vec3d1);
-            vec3d = new Vec3d(posX, posY, posZ);
-            vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+            Vec3d vec3d = new Vec3d(this.posX, this.posY, this.posZ);
+            Vec3d vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            RayTraceResult raytraceresult = this.world.rayTraceBlocks(vec3d, vec3d1);
+            vec3d = new Vec3d(this.posX, this.posY, this.posZ);
+            vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
             if (raytraceresult != null) {
                 vec3d1 = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
@@ -214,16 +229,16 @@ public class EntityRangedAttack extends EntityArrow {
             //		);
             Entity entity = null;
             //		final List<Entity> list = world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D), Targets);
-            final List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D));
+            final List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(this.motionX, this.motionY, this.motionZ).grow(1.0D));
             double d0 = 0.0D;
             boolean flag = false;
 
             for (final Entity entity1 : list) {
                 if (entity1.canBeCollidedWith()) {
-                    if (entity1 == ignoreEntity) {
+                    if (entity1 == this.ignoreEntity) {
                         flag = true;
-                    } else if ((shootingEntity != null) && (ticksExisted < 2) && (ignoreEntity == null)) {
-                        ignoreEntity = entity1;
+                    } else if ((this.shootingEntity != null) && (this.ticksExisted < 2) && (this.ignoreEntity == null)) {
+                        this.ignoreEntity = entity1;
                         flag = true;
                     } else {
                         flag = false;
@@ -241,71 +256,70 @@ public class EntityRangedAttack extends EntityArrow {
                     }
                 }
             }
-            if (ignoreEntity != null) {
+            if (this.ignoreEntity != null) {
                 if (flag) {
-                    ignoreTime = 2;
-                } else if (ignoreTime-- <= 0) {
-                    ignoreEntity = null;
+                    this.ignoreTime = 2;
+                } else if (this.ignoreTime-- <= 0) {
+                    this.ignoreEntity = null;
                 }
             }
             if (entity != null) {
                 raytraceresult = new RayTraceResult(entity);
             }
             if (raytraceresult != null) {
-                if ((raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) && (world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL)) {
+                if ((raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) && (this.world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL)) {
                     this.setPortal(raytraceresult.getBlockPos());
                 } else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
                     this.onHit(raytraceresult);
                 }
             }
-            posX += motionX;
-            posY += motionY;
-            posZ += motionZ;
-            final float f = MathHelper.sqrt((motionX * motionX) + (motionZ * motionZ));
-            rotationYaw = (float) (MathHelper.atan2(motionX, motionZ) * (180D / Math.PI));
+            this.posX += this.motionX;
+            this.posY += this.motionY;
+            this.posZ += this.motionZ;
+            final float f = MathHelper.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
+            this.rotationYaw = (float) (MathHelper.atan2(this.motionX, this.motionZ) * (180D / Math.PI));
 
-            for (rotationPitch = (float) (MathHelper.atan2(motionY, f) * (180D / Math.PI)); (rotationPitch - prevRotationPitch) < -180.0F; prevRotationPitch -= 360.0F) {
-
+            for (this.rotationPitch = (float) (MathHelper.atan2(this.motionY, f) * (180D / Math.PI)); (this.rotationPitch - this.prevRotationPitch) < -180.0F; this.prevRotationPitch -= 360.0F) {
             }
 
-            while ((rotationPitch - prevRotationPitch) >= 180.0F) {
-                prevRotationPitch += 360.0F;
+            while ((this.rotationPitch - this.prevRotationPitch) >= 180.0F) {
+                this.prevRotationPitch += 360.0F;
             }
 
-            while ((rotationYaw - prevRotationYaw) < -180.0F) {
-                prevRotationYaw -= 360.0F;
+            while ((this.rotationYaw - this.prevRotationYaw) < -180.0F) {
+                this.prevRotationYaw -= 360.0F;
             }
 
-            while ((rotationYaw - prevRotationYaw) >= 180.0F) {
-                prevRotationYaw += 360.0F;
+            while ((this.rotationYaw - this.prevRotationYaw) >= 180.0F) {
+                this.prevRotationYaw += 360.0F;
             }
 
-            rotationPitch = prevRotationPitch + ((rotationPitch - prevRotationPitch) * 0.2F);
-            rotationYaw = prevRotationYaw + ((rotationYaw - prevRotationYaw) * 0.2F);
+            this.rotationPitch = this.prevRotationPitch + ((this.rotationPitch - this.prevRotationPitch) * 0.2F);
+            this.rotationYaw = this.prevRotationYaw + ((this.rotationYaw - this.prevRotationYaw) * 0.2F);
             float f1 = 0.99F;
             final float f2 = 0.03F;//this.getGravityVelocity();
 
             if (this.isInWater()) {
                 for (int j = 0; j < 4; ++j) {
                     final float f3 = 0.25F;
-                    world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - (motionX * 0.25D), posY - (motionY * 0.25D), posZ - (motionZ * 0.25D), motionX, motionY, motionZ);
+                    this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, this.posX - (this.motionX * 0.25D), this.posY - (this.motionY * 0.25D), this.posZ - (this.motionZ * 0.25D), this.motionX, this.motionY, this.motionZ);
                 }
                 f1 = 0.8F;
             }
 
-            motionX *= f1;
-            motionY *= f1;
-            motionZ *= f1;
+            this.motionX *= f1;
+            this.motionY *= f1;
+            this.motionZ *= f1;
 
             if (!this.hasNoGravity()) {
-                motionY -= f2;
+                this.motionY -= f2;
             }
 
             final int life = 30;
-            this.setPosition(posX, posY, posZ);
+            this.setPosition(this.posX, this.posY, this.posZ);
             this.spawnParticle();
 
-            if (ticksExisted >= life) {
+            if (this.ticksExisted >= life) {
                 this.setDead();
             }
             if (this.isInWater()) {
@@ -324,14 +338,14 @@ public class EntityRangedAttack extends EntityArrow {
             final double d2 = (random.nextFloat() * 2.0F) - 1.0F;
 
             if (((d0 * d0) + (d1 * d1) + (d2 * d2)) <= 1.0D) {
-                final double d3 = posX + ((d0 * 1F) / 4.0D);
-                final double d4 = posY + (1F / 2.0F) + ((d1 * 1F) / 4.0D);
-                final double d5 = posZ + ((d2 * 1F) / 4.0D);
-                if ((world instanceof WorldServer)) {
-                    if (element.equals(Elements.LIGHTNING)) {
-                        NetworkHandler.sendToClients((WorldServer) world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, color, 7, 0.8F, 1F));
+                final double d3 = this.posX + ((d0 * 1F) / 4.0D);
+                final double d4 = this.posY + (1F / 2.0F) + ((d1 * 1F) / 4.0D);
+                final double d5 = this.posZ + ((d2 * 1F) / 4.0D);
+                if ((this.world instanceof WorldServer)) {
+                    if (Elements.LIGHTNING.equals(this.element)) {
+                        NetworkHandler.sendToClients((WorldServer) this.world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, this.color, 7, 0.8F, 1F));
                     } else {
-                        NetworkHandler.sendToClients((WorldServer) world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, color, 4, 1F, 1F));
+                        NetworkHandler.sendToClients((WorldServer) this.world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, this.color, 4, 1F, 1F));
                     }
                 }
             }
@@ -342,15 +356,15 @@ public class EntityRangedAttack extends EntityArrow {
 
     @Override
     protected void onHit(RayTraceResult movingObject) {
-        final boolean flag = world.getGameRules().getBoolean("mobGriefing");
+        final boolean flag = this.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING);
         final Entity hitEntity = movingObject.entityHit;
-        if ((world == null) || (world.isRemote) || (hitEntity instanceof EntityRangedAttack)) {
+        if ((this.world == null) || (this.world.isRemote) || (hitEntity instanceof EntityRangedAttack)) {
             return;
         }
         boolean pvpEnabled = false;
-        MinecraftServer server = world.getMinecraftServer();
-        if ((server == null) && (shootingEntity instanceof EntityPlayerMP)) {
-            server = shootingEntity.getServer();
+        MinecraftServer server = this.world.getMinecraftServer();
+        if ((server == null) && (this.shootingEntity instanceof EntityPlayerMP)) {
+            server = this.shootingEntity.getServer();
         }
         if (server != null) {
             pvpEnabled = server.isPVPEnabled();
@@ -358,13 +372,12 @@ public class EntityRangedAttack extends EntityArrow {
         Type hitType = movingObject.typeOfHit;
         if (hitType == Type.BLOCK) {
             final BlockPos hitBlock = movingObject.getBlockPos();
-            if (flag) {
-                final IBlockState state = world.getBlockState(hitBlock);
+            if (flag && this.interactWithTerrain) {
+                final IBlockState state = this.world.getBlockState(hitBlock);
                 final Block block = state.getBlock();
                 final BlockPos blockpos = hitBlock.offset(movingObject.sideHit);
-                if (element.equals(Elements.LIGHTNING) && TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.terrain) {
-                    String[] effects = TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.effects;
-                    if (effects.length > 0) {
+                if (Elements.LIGHTNING.equals(this.element)) {
+                    if (this.EFFECTS.length > 0) {
                         EntityAreaEffectCloud entityareaeffectcloud = new EntityAreaEffectCloud(this.world, this.posX, this.posY, this.posZ);
                         entityareaeffectcloud.setOwner(this.shootingEntity);
                         entityareaeffectcloud.setRadius(3.0F);
@@ -374,7 +387,7 @@ public class EntityRangedAttack extends EntityArrow {
                         entityareaeffectcloud.setRadiusPerTick(-entityareaeffectcloud.getRadius() / (float) entityareaeffectcloud.getDuration());
 //                        entityareaeffectcloud.setPotion(type);
 
-                        for (String str : effects) {
+                        for (String str : this.EFFECTS) {
                             final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(str);
                             if (potion.getPotion() != null) {
                                 entityareaeffectcloud.addEffect(potion.getPotionEffect());
@@ -383,24 +396,24 @@ public class EntityRangedAttack extends EntityArrow {
                         entityareaeffectcloud.setColor(this.color);
                         this.world.spawnEntity(entityareaeffectcloud);
                     }
-                } else if (element.equals(Elements.ICE) && TrinketsConfig.SERVER.races.dragon.elementConfig.ice.terrain) {
+                } else if (Elements.ICE.equals(this.element)) {
                     Consumer<BlockPos> func = (i) -> {
-                        final IBlockState s = world.getBlockState(i);
+                        final IBlockState s = this.world.getBlockState(i);
                         final Block b = s.getBlock();
                         if (b instanceof BlockSnow) {
                             try {
                                 int layers = b.getMetaFromState(s);
                                 if (layers < 7) {
-                                    world.setBlockState(i, b.getStateFromMeta(layers + 1));
-                                    world.neighborChanged(i, Blocks.SNOW_LAYER, i);
+                                    this.world.setBlockState(i, b.getStateFromMeta(layers + 1));
+                                    this.world.neighborChanged(i, Blocks.SNOW_LAYER, i);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            if (world.isAirBlock(i)) {
-                                world.setBlockState(i, Blocks.SNOW_LAYER.getDefaultState());
-                                world.neighborChanged(i, Blocks.SNOW_LAYER, i);
+                            if (this.world.isAirBlock(i)) {
+                                this.world.setBlockState(i, Blocks.SNOW_LAYER.getDefaultState());
+                                this.world.neighborChanged(i, Blocks.SNOW_LAYER, i);
                             }
                         }
                     };
@@ -411,7 +424,7 @@ public class EntityRangedAttack extends EntityArrow {
                     func.accept(blockpos.south());
                     func.accept(blockpos.north());
                     func.accept(blockpos.down());
-                } else if (element.equals(Elements.FIRE) && TrinketsConfig.SERVER.races.dragon.elementConfig.fire.terrain) {
+                } else if (this.element == Elements.FIRE) {
 //                        if ((block instanceof BlockStone) || (block == Blocks.COBBLESTONE)) {
 //                            world.setBlockState(hitBlock, Blocks.MAGMA.getDefaultState());
 //                            world.neighborChanged(hitBlock, Blocks.MAGMA, hitBlock);
@@ -420,85 +433,54 @@ public class EntityRangedAttack extends EntityArrow {
 //                            world.neighborChanged(hitBlock, Blocks.GLASS, hitBlock);
 //                        } else
                     if (block instanceof BlockIce) {
-                        if (world.provider.doesWaterVaporize()) {
-                            world.setBlockToAir(hitBlock);
+                        if (this.world.provider.doesWaterVaporize()) {
+                            this.world.setBlockToAir(hitBlock);
                         } else {
-                            world.setBlockState(hitBlock, Blocks.WATER.getDefaultState());
-                            world.neighborChanged(hitBlock, Blocks.WATER, hitBlock);
+                            this.world.setBlockState(hitBlock, Blocks.WATER.getDefaultState());
+                            this.world.neighborChanged(hitBlock, Blocks.WATER, hitBlock);
                         }
                     }
-                    if (world.isAirBlock(blockpos)) {
-                        world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
-                        world.neighborChanged(blockpos, Blocks.FIRE, blockpos);
-                    }
-                } else {
-                    if (TrinketsConfig.SERVER.Items.DRAGON_EYE.compat.iaf.DE_FIRE_RESIST && TrinketsConfig.SERVER.races.dragon.elementConfig.fire.terrain) {
-                        if (world.isAirBlock(blockpos)) {
-                            world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
-                            world.neighborChanged(blockpos, Blocks.FIRE, blockpos);
-                        }
+                    if (this.world.isAirBlock(blockpos)) {
+                        this.world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
+                        this.world.neighborChanged(blockpos, Blocks.FIRE, blockpos);
                     }
                 }
             }
         } else if (hitType == Type.ENTITY) {
             if (hitEntity != null) {
                 final AxisAlignedBB bb1 = this.getEntityBoundingBox().grow(1);
-                final Predicate<Entity> Targets = Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith() && (ent != shootingEntity) && !(ent instanceof EntityRangedAttack) && !ent.isImmuneToFire());
+                final Predicate<Entity> Targets = Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith() && (ent != this.shootingEntity) && !(ent instanceof EntityRangedAttack) && !ent.isImmuneToFire());
                 //
-                final List<Entity> splash = world.getEntitiesInAABBexcluding(this, bb1, Targets);
+                final List<Entity> splash = this.world.getEntitiesInAABBexcluding(this, bb1, Targets);
                 for (final Entity e : splash) {
-                    if ((e instanceof EntityPlayer) && !pvpEnabled) {
-
-                    } else {
-                        this.applyEnchantments(shootingEntity, e);
-                        if (element.equals(Elements.LIGHTNING)) {
-                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.LIGHTNING_BOLT.damageType, this, shootingEntity).setDamageBypassesArmor().setMagicDamage(), (float) this.getDamage());
-                            if (e instanceof EntityLivingBase) {
-                                for (final String potID : TrinketsConfig.SERVER.races.dragon.elementConfig.lightning.effects) {
-                                    final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
-                                    if (potion.getPotion() != null) {
-                                        ((EntityLivingBase) e).addPotionEffect(potion.getPotionEffect());
-                                    }
-                                }
-                            }
+                    if ((!(e instanceof EntityPlayer)) || pvpEnabled) {
+                        this.applyEnchantments(this.shootingEntity, e);
+                        if (Elements.LIGHTNING.equals(this.element)) {
+                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.LIGHTNING_BOLT.damageType, this, this.shootingEntity).setDamageBypassesArmor().setMagicDamage(), (float) this.getDamage());
                             e.setFire(1);
-                        } else if (element.equals(Elements.ICE)) {
-                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.DRAGON_BREATH.damageType, this, shootingEntity).setDamageBypassesArmor().setMagicDamage(), (float) this.getDamage());
-                            if (e instanceof EntityLivingBase) {
-                                if (e instanceof EntityLivingBase) {
-                                    for (final String potID : TrinketsConfig.SERVER.races.dragon.elementConfig.ice.effects) {
-                                        final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
-                                        if (potion.getPotion() != null) {
-                                            ((EntityLivingBase) e).addPotionEffect(potion.getPotionEffect());
-                                        }
-                                    }
-                                }
-                            }
+                        } else if (Elements.ICE.equals(this.element)) {
+                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.DRAGON_BREATH.damageType, this, this.shootingEntity).setDamageBypassesArmor().setMagicDamage(), (float) this.getDamage());
                         } else {
-                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.DRAGON_BREATH.damageType, this, shootingEntity).setDamageBypassesArmor().setFireDamage().setMagicDamage(), (float) this.getDamage());
-                            if (e instanceof EntityLivingBase) {
-                                if (e instanceof EntityLivingBase) {
-                                    for (final String potID : TrinketsConfig.SERVER.races.dragon.elementConfig.fire.effects) {
-                                        final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
-                                        if (potion.getPotion() != null) {
-                                            ((EntityLivingBase) e).addPotionEffect(potion.getPotionEffect());
-                                        }
-                                    }
+                            e.attackEntityFrom(new EntityDamageSourceIndirect(DamageSource.DRAGON_BREATH.damageType, this, this.shootingEntity).setDamageBypassesArmor().setFireDamage().setMagicDamage(), (float) this.getDamage());
+                            e.setFire(5);
+                        }
+                        if (e instanceof EntityLivingBase) {
+                            for (final String potID : this.EFFECTS) {
+                                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                                if (potion.getPotion() != null) {
+                                    ((EntityLivingBase) e).addPotionEffect(potion.getPotionEffect());
                                 }
                             }
-                            e.setFire(5);
                         }
                     }
                 }
             }
-        } else {
-
         }
         this.setDead();
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) {
+    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
         return !this.isEntityInvulnerable(source);
     }
 
@@ -509,7 +491,7 @@ public class EntityRangedAttack extends EntityArrow {
 
     public interface HitResult extends Serializable {
 
-        public static class EmptyResult implements HitResult, Serializable {
+        class EmptyResult implements HitResult, Serializable {
             @Override
             public void onHit(EntityRangedAttack entity, RayTraceResult result, boolean isServer) {
             }
@@ -522,17 +504,13 @@ public class EntityRangedAttack extends EntityArrow {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("BreathColor")) {
-            color = compound.getInteger("BreathColor");
+            this.color = compound.getInteger("BreathColor");
         }
-        //		if (compound.hasKey("frame")) {
-        //			frame = compound.getInteger("frame");
-        //		}
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setInteger("BreathColor", color);
-        //		compound.setInteger("frame", frame);
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+        compound.setInteger("BreathColor", this.color);
         return super.writeToNBT(compound);
     }
 

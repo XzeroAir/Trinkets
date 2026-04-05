@@ -1,0 +1,33 @@
+{
+  "type": "xat:shapeless",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ],
+  "ingredients": [
+    {
+      "type": "xat:nbt",
+      "item": "iceandfire:dragon_skull",
+      "nbt": {
+        "Stage": 5,
+        "DragonAge": 0
+      },
+      "data": 0
+    },
+    {
+      "item": "xat:dragons_eye",
+      "data": 32767
+    }
+  ],
+  "result": {
+    "item": "xat:dragons_eye",
+    "data": 1,
+    "nbt": {
+      "Elements": {
+        "primary": "xat:fire"
+      }
+    }
+  }
+}

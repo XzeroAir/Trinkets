@@ -19,6 +19,8 @@ import xzeroair.trinkets.items.base.FoodBase;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.MagicHelper;
 
+import javax.annotation.Nonnull;
+
 public class Restore_Item extends FoodBase {
 
     public Restore_Item(String name) {
@@ -28,12 +30,12 @@ public class Restore_Item extends FoodBase {
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
+    public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
         return 32;
     }
 
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity) {
+    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase entity) {
         if (entity instanceof EntityPlayer) {
             final EntityPlayer entityplayer = (EntityPlayer) entity;
             entityplayer.getFoodStats().addStats(this, stack);
@@ -52,7 +54,7 @@ public class Restore_Item extends FoodBase {
 //            prop.setOriginalRace(null);
         });
         MagicHelper.refillMana(entity);
-        if (TrinketsConfig.SERVER.mana.reagentHarmful) {
+        if (TrinketsConfig.SERVER.MAGIC.MAGIC_ITEMS.MAGIC_REAGENT.reagentHarmful) {
             if (!entity.isPotionActive(MobEffects.POISON)) {
                 entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 400, 1, false, false));
             }
@@ -75,7 +77,7 @@ public class Restore_Item extends FoodBase {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
+    public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
         return EnumAction.DRINK;
     }
 

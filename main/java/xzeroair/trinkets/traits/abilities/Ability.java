@@ -2,18 +2,17 @@ package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.enums.EnumModCompat;
 import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.handlers.TickHandler;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
@@ -27,41 +26,146 @@ public class Ability implements IAbilityInterface {
 
     //	public static final TrinketRegistry<ResourceLocation, IAbilityInterface> Registry = Trinkets.abilityRegistry;
 
-    private ResourceLocation regName;
-    private String uuid;
-    private String translationKey;
+    protected static final String UNKNOWN_SOURCE = "UNKNOWN_SOURCE";
+    protected static final String REMOVE_TAG = "BEGONE_THOT";
+    protected static final String COST_TAG = "COST";
+    protected static final String DAMAGE_TAG = "DAMAGE";
+    protected static final String FREQUENCY_TAG = "FREQUENCY";
+    protected static final String COOLDOWN_TAG = "COOLDOWN";
 
-    private boolean removeAbility;
+    protected ResourceLocation regName;
+    private String uuid, translationKey;
+    private boolean enabled, changed, firstUpdate, removeAbility;
     protected Random random = Reference.random;
     protected TickHandler tickHandler;
-    protected boolean enabled;
-    protected int value;
     protected AbilityHolder abilityHolder;
     protected Element requiredElement;
+    protected String SOURCE;
 
     public Ability() {
-        tickHandler = new TickHandler();
+        this.tickHandler = new TickHandler();
+        this.enabled = true;
+        this.firstUpdate = true;
+        this.changed = false;
+        this.SOURCE = UNKNOWN_SOURCE;
+        this.removeAbility = false;
         this.setTranslationKey(this.getClass().getSimpleName());
         this.setRegistryName(this.getClass().getCanonicalName());
     }
 
     public Ability(String name) {
-        tickHandler = new TickHandler();
-        this.setTranslationKey(name);
-        this.setRegistryName(name);
+        this(Reference.MODID, name);
     }
 
     public Ability(String modID, String name) {
-        tickHandler = new TickHandler();
+        this.tickHandler = new TickHandler();
+        this.enabled = true;
+        this.firstUpdate = true;
+        this.changed = false;
+        this.SOURCE = UNKNOWN_SOURCE;
+        this.removeAbility = false;
         this.setTranslationKey(name);
         this.setRegistryName(modID, name);
+    }
+
+
+    @Override
+    public boolean hasChanged() {
+        return this.changed;
+    }
+
+    @Override
+    public IAbilityInterface setChanged(boolean change) {
+        if (this.changed != change) {
+            this.changed = change;
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isAbilityEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public IAbilityInterface setAbilityEnabled(boolean enabled) {
+        if (this.enabled != enabled) {
+            this.enabled = enabled;
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isFirstUpdate() {
+        return this.firstUpdate;
+    }
+
+    @Override
+    public IAbilityInterface setFirstUpdate(boolean firstUpdate) {
+        if (this.firstUpdate != firstUpdate) {
+            this.firstUpdate = firstUpdate;
+        }
+        return this;
+    }
+
+
+    @Override
+    public Ability setRequiredElement(Element requiredElement) {
+        if (this.requiredElement != requiredElement) {
+            this.requiredElement = requiredElement;
+        }
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public Element getRequiredElement() {
+        return this.requiredElement;
+    }
+
+    @Override
+    public boolean shouldRemove() {
+        return this.removeAbility;
+    }
+
+    @Override
+    public Ability scheduleRemoval() {
+        this.removeAbility = true;
+        return this;
+    }
+
+    @Override
+    public Ability cacheAbilityHolder(AbilityHolder holder) {
+        if (this.abilityHolder == null) {
+            this.abilityHolder = holder;
+        }
+        return this;
+    }
+
+    @Override
+    public AbilityHolder getAbilityHolder() {
+        return this.abilityHolder;
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound sendAbilityData() {
+        return null;
+    }
+
+    public boolean sendMessageToPlayer(Entity entity) {
+        return false;
+    }
+
+    @Override
+    public void loadStorage(NBTTagCompound compound) {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
     @Override
     public ResourceLocation getRegistryName() {
-        return regName;
+        return this.regName;
     }
 
     protected Ability setRegistryName(String name) {
@@ -96,7 +200,7 @@ public class Ability implements IAbilityInterface {
 
     @Override
     public String getUUID() {
-        return uuid;
+        return this.uuid;
     }
 
     protected Ability setUUID(String uuid) {
@@ -111,7 +215,7 @@ public class Ability implements IAbilityInterface {
 
     @Override
     public String getTranslationKey() {
-        return "ability." + translationKey;
+        return Reference.MODID + ".ability." + this.translationKey;
     }
 
     @Override
@@ -165,45 +269,6 @@ public class Ability implements IAbilityInterface {
         } else {
 
         }
-
-        if (Trinkets.MOD_COMPAT.IceAndFire) {
-            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.iaf", (lang) -> {
-                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.IceAndFire.getId());
-            });
-            if (!helper.isStringEmpty(string)) {
-                tooltips.add(string);
-//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
-                tooltips.add(helper.gold + "(" + helper.getLangTranslation("itemGroup.iceandfire") + helper.gold + ")");
-//                }
-            }
-        }
-        if (Trinkets.MOD_COMPAT.LycanitesMobs) {
-            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.lycanites", (lang) -> {
-                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.Lycanites.getId());
-            });
-            if (!helper.isStringEmpty(string)) {
-                tooltips.add(string);
-//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
-                tooltips.add(helper.gold + "(" + helper.getLangTranslation("lycanitesmobs.name") + helper.gold + ")");
-//                }
-            }
-        }
-
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean survival = tanEnabled || sdEnabled;
-        if (survival) {
-            final String string = helper.getLangTranslation(this.getTranslationKey() + ".compat.survival", (lang) -> {
-                return addCustomDescriptionTags(helper, lang, rendMod, rendID, EnumModCompat.SURVIVAL.getId());
-            });
-            if (!helper.isStringEmpty(string)) {
-                tooltips.add(string);
-//                if (id == EnumRenderLocation.ITEM_CTRL.getId()) {
-                final String modifier = sdEnabled ? "itemGroup.tabSimpleDifficulty" : tanEnabled ? "itemGroup.tabToughAsNails" : "";
-                tooltips.add(helper.gold + "(" + helper.getLangTranslation(modifier) + helper.gold + ")");
-//                }
-            }
-        }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -236,44 +301,6 @@ public class Ability implements IAbilityInterface {
     public boolean isSpectator(@Nonnull EntityPlayer player) {
         final boolean flag = player.isSpectator();
         return flag;
-    }
-
-    @Override
-    public Ability setRequiredElement(Element requiredElement) {
-        if (this.requiredElement != requiredElement) {
-            this.requiredElement = requiredElement;
-        }
-        return this;
-    }
-
-    @Nullable
-    @Override
-    public Element getRequiredElement() {
-        return requiredElement;
-    }
-
-    @Override
-    public boolean shouldRemove() {
-        return removeAbility;
-    }
-
-    @Override
-    public Ability scheduleRemoval() {
-        removeAbility = true;
-        return this;
-    }
-
-    @Override
-    public Ability cacheAbilityHolder(AbilityHolder holder) {
-        if (abilityHolder == null) {
-            abilityHolder = holder;
-        }
-        return this;
-    }
-
-    @Override
-    public AbilityHolder getAbilityHolder() {
-        return abilityHolder;
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //

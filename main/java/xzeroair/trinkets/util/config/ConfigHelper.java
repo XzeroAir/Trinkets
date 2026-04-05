@@ -35,13 +35,16 @@ public class ConfigHelper {
     private static String doubleRegexOptional = "(;" + doubleRegex + ")?";
     private static String optionalWordRegex = "(;[a-zA-Z]*)?";
 
-    public static String cleanConfigEntry(String config) {
-        final String configEntry = config.replaceAll("([\\[\\]\\|,;] ?)|(  )", " ").trim().replace(" ", ";");
-        return configEntry;
+    public static String cleanConfigEntry(final String config) {
+        if (!config.isEmpty()) {
+            final String configEntry = config.replaceAll("([\\[\\]\\|,;] ?)|(  )", " ").trim().replace(" ", ";");
+            return configEntry;
+        }
+        return config;
     }
 
     private static final HashMap<String, ConfigHelper.AttributeEntry> attributeCacheMap = new HashMap<>();
-    private static final ConfigHelper.AttributeEntry NULL_ENTRY = new ConfigHelper.AttributeEntry("null", 0, 0, false);
+    private static final AttributeEntry NULL_ENTRY = new AttributeEntry("null", 0, 0, false);
 
     public static HashMap<String, ConfigHelper.AttributeEntry> getAttributeCacheMap() {
         return attributeCacheMap;
@@ -112,24 +115,26 @@ public class ConfigHelper {
     public static class TrinketConfigStorage {
 
         public static TreeMap<String, MPRecoveryItem> MagicRecoveryItems = new TreeMap();
-        public static LinkedHashMap<String, ArmorEntry> ArmorWeightValues = new LinkedHashMap();
-        public static LinkedHashMap<String, ArmorEntry> BareHandedItems = new LinkedHashMap();
+        public static LinkedHashMap<String, ConfigEquipmentObject> ArmorWeightValues = new LinkedHashMap();
+        public static LinkedHashMap<String, ConfigEquipmentObject> BareHandedItems = new LinkedHashMap();
+        public static LinkedHashMap<String, ConfigEquipmentObject> BowWeights = new LinkedHashMap();
 
         public static void init() {
             initRecoveryItems();
-            initArmorWeightValues();
-            initBareHanded();
+            initBareHandedEquipment();
+            initEquipmentWeight();
+            initBowWeights();
         }
 
-        public static ArmorEntry getEquipmentEntry(String... strings) {
-            return getEquipmentEntry((Predicate<ArmorEntry>) null, strings);
+        public static ConfigEquipmentObject getEquipmentEntry(String... strings) {
+            return getEquipmentEntry((Predicate<ConfigEquipmentObject>) null, strings);
         }
 
-        public static ArmorEntry getEquipmentEntry(Predicate<ArmorEntry> predicate, String... strings) {
+        public static ConfigEquipmentObject getEquipmentEntry(Predicate<ConfigEquipmentObject> predicate, String... strings) {
             return getListEntry(ArmorWeightValues, predicate, strings);
         }
 
-        public static ArmorEntry getEquipmentEntry(BiPredicate<String, ArmorEntry> predicate, String... strings) {
+        public static ConfigEquipmentObject getEquipmentEntry(BiPredicate<String, ConfigEquipmentObject> predicate, String... strings) {
             return getListEntry(ArmorWeightValues, predicate, strings);
         }
 
@@ -179,32 +184,58 @@ public class ConfigHelper {
             return null;
         }
 
-        public static void initArmorWeightValues() {
+        public static void initBareHandedEquipment() {
             if (!BareHandedItems.isEmpty()) {
                 BareHandedItems.clear();
             }
-            final String[] weightValues = TrinketsConfig.SERVER.races.faelis.barehanded;
-            for (String entry : weightValues) {
-                ArmorEntry weightValue = new ArmorEntry(entry);
-                if (!weightValue.isEmpty()) {
-                    String equipSlot = weightValue.getEquipmentSlot();
-                    String toolType = weightValue.getEquipmentType();
-                    BareHandedItems.put(weightValue.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), weightValue);
+            final String[] list = TrinketsConfig.SERVER.RACES.FAELIS.BARE_HANDS;
+            for (String entry : list) {
+                ConfigEquipmentObject config = new ConfigEquipmentObject(entry);
+                if (!config.isEmpty()) {
+                    String equipSlot = config.getEquipmentSlot();
+                    String toolType = config.getEquipmentType();
+                    BareHandedItems.put(config.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), config);
                 }
             }
         }
 
-        public static void initBareHanded() {
+        public static void initEquipmentWeight() {
             if (!ArmorWeightValues.isEmpty()) {
                 ArmorWeightValues.clear();
             }
-            final String[] weightValues = TrinketsConfig.SERVER.races.faelis.heavyArmor;
+            final String[] list = TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR;
+            for (String entry : list) {
+                ConfigEquipmentObject config = new ConfigEquipmentObject(entry);
+                if (!config.isEmpty()) {
+                    String equipSlot = config.getEquipmentSlot();
+                    String toolType = config.getEquipmentType();
+                    ArmorWeightValues.put(config.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), config);
+                }
+            }
+        }
+
+        public static void initBowWeights() {
+            if (!BowWeights.isEmpty()) {
+                BowWeights.clear();
+            }
+            final String[] weightValues = TrinketsConfig.SERVER.RACES.ELF.ABILITIES.SKILLED_ARCHER.BOWS;
             for (String entry : weightValues) {
-                ArmorEntry weightValue = new ArmorEntry(entry);
-                if (!weightValue.isEmpty()) {
-                    String equipSlot = weightValue.getEquipmentSlot();
-                    String toolType = weightValue.getEquipmentType();
-                    ArmorWeightValues.put(weightValue.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), weightValue);
+                ConfigEquipmentObject bowWeightObject = new ConfigEquipmentObject(entry);
+                if (!bowWeightObject.isEmpty()) {
+                    boolean blacklistedBow = false;
+                    final String[] blacklist = TrinketsConfig.SERVER.RACES.ELF.ABILITIES.SKILLED_ARCHER.BOW_BLACKLIST;
+                    for (final String s : blacklist) {
+                        ConfigHelper.ConfigObject object = new ConfigHelper.ConfigObject(s);
+                        if (object.doesConfigObjectMatch(bowWeightObject)) {
+                            blacklistedBow = true;
+                            break;
+                        }
+                    }
+                    if (!blacklistedBow) {
+                        String equipSlot = bowWeightObject.getEquipmentSlot();
+                        String toolType = bowWeightObject.getEquipmentType();
+                        BowWeights.put(bowWeightObject.getObjectRegistryName() + (equipSlot.isEmpty() ? "" : ":" + equipSlot) + (toolType.isEmpty() ? "" : ":" + toolType), bowWeightObject);
+                    }
                 }
             }
         }
@@ -213,7 +244,7 @@ public class ConfigHelper {
             if (!MagicRecoveryItems.isEmpty()) {
                 MagicRecoveryItems.clear();
             }
-            final String[] recovery = TrinketsConfig.SERVER.mana.recovery;
+            final String[] recovery = TrinketsConfig.SERVER.MAGIC.recovery;
             for (String entry : recovery) {
                 final MPRecoveryItem recoveryItem = new MPRecoveryItem(entry);
                 if (!recoveryItem.isEmpty()) {
@@ -224,12 +255,15 @@ public class ConfigHelper {
 
     }
 
-    public static class TreasureEntry extends ConfigObject {
+
+    /// CONFIG OBJECTS
+
+    public static class ConfigTreasureObject extends ConfigObject {
 
         protected int color;
-        public static TreasureEntry EMPTY = new TreasureEntry("");
+        public static ConfigTreasureObject EMPTY = new ConfigTreasureObject("");
 
-        public TreasureEntry(String configEntry) {
+        public ConfigTreasureObject(String configEntry) {
             super(configEntry);
             color = 16766720;
             this.initValues(this.getObjectArgs());
@@ -239,11 +273,9 @@ public class ConfigHelper {
             String Color = StringUtils.getStringFromArray(args, 0);
             if (!Color.isEmpty()) {
                 try {
-                    // TODO this causing a parsing Error for Entity Entries
-//                    color = Integer.parseInt(Color.replace("*", OreDictionaryCompat.wildcard + ""));
                     color = ColorHelper.getColorFromString(Color.replace("*", OreDictionaryCompat.wildcard + ""));
                 } catch (Exception e) {
-                    Trinkets.log.error("Invalid format for entry: " + this.getOriginalEntry());
+                    Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
                     color = 16766720;
                 }
@@ -258,7 +290,7 @@ public class ConfigHelper {
             return parseTargetName(this).trim();
         }
 
-        public String parseTargetName(final TreasureEntry treasure) {
+        public String parseTargetName(final ConfigTreasureObject treasure) {
             if (treasure == null || treasure.isEmpty()) {
                 return "";
             }
@@ -347,7 +379,7 @@ public class ConfigHelper {
                 try {
                     amount = Float.parseFloat(Amount);
                 } catch (Exception e) {
-                    Trinkets.log.error("Invalid format for entry: " + this.getOriginalEntry());
+                    Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
                     amount = 0;
                 }
@@ -364,7 +396,7 @@ public class ConfigHelper {
 
     }
 
-    public static class ArmorEntry extends ConfigObject {
+    public static class ConfigEquipmentObject extends ConfigObject {
 
         public static final Set<String> validHandTypes = new HashSet<>(Arrays.asList("mainhand", "offhand"));
         public static final Set<String> validArmorTypes = new HashSet<>(Arrays.asList("feet", "legs", "chest", "head"));
@@ -376,7 +408,7 @@ public class ConfigHelper {
         protected String slotType;
         protected String equipmentType;
 
-        public ArmorEntry(String configEntry) {
+        public ConfigEquipmentObject(String configEntry) {
             super(configEntry);
         }
 
@@ -488,7 +520,7 @@ public class ConfigHelper {
                     equipmentWeight = Double.parseDouble(entry);
                     return true;
                 } catch (Exception e) {
-                    Trinkets.log.error("Invalid format for entry: " + this.getOriginalEntry());
+                    Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
                 }
             }
@@ -887,6 +919,34 @@ public class ConfigHelper {
             return false;
         }
 
+        protected boolean doesConfigObjectMatch(@Nonnull ConfigObject object) {
+            String mod = object.getModID();
+            String item = object.getObjectID();
+            if (modID.contentEquals("*") || modID.contentEquals(mod)) {
+                boolean metaMatches = (meta == OreDictionaryCompat.wildcard) || (object.getMeta() == meta);
+                if (objectID.contentEquals(item) && metaMatches) {
+                    return true;
+                }
+                String objectEntry = objectID.replace("*", "");
+                final boolean startWildcard = objectID.startsWith("*");
+                final boolean endWildcard = objectID.endsWith("*");
+                if (startWildcard && endWildcard) {
+                    if (item.contains(objectEntry) && metaMatches) {
+                        return true;
+                    }
+                } else if (endWildcard) {
+                    if (item.startsWith(objectEntry) && metaMatches) {
+                        return true;
+                    }
+                } else if (startWildcard) {
+                    if (item.endsWith(objectEntry) && metaMatches) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         protected boolean doesOreDictMatch(@Nonnull ItemStack stack) {
             for (final String oreDictionary : OreDictionaryCompat.getOreNames(stack)) {
                 if (oreDictionary.equalsIgnoreCase(objectID)) {
@@ -899,12 +959,12 @@ public class ConfigHelper {
         protected boolean doesMaterialMatch(@Nonnull ItemStack stack) {
             String[] checkForType = objectID.split(":");
             String mat = StringUtils.getStringFromArray(checkForType, 0);
-            String ItemMaterial = ConfigHelper.ArmorEntry.getItemMaterial(stack).toLowerCase();
+            String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack).toLowerCase();
             return !ItemMaterial.isEmpty() && mat.equalsIgnoreCase(ItemMaterial);
         }
 
         public boolean doesBlockMatchEntry(@Nonnull IBlockState state) {
-            if ((state == null) || this.isEmpty()) {
+            if (this.isEmpty()) {
                 return false;
             }
             final ItemStack blockStack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));

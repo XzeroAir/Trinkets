@@ -2,17 +2,23 @@ package xzeroair.trinkets.api;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.FakePlayer;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
+import xzeroair.trinkets.races.EntityRace;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.compat.baubles.BaublesHelper;
 
 import javax.annotation.Nonnull;
@@ -26,9 +32,7 @@ import java.util.function.Predicate;
 public class TrinketHelper {
 
     public static ItemStack getTrinketInSlot(EntityLivingBase entity, final int slot) {
-        return getTrinketHandler(entity, ItemStack.EMPTY, (handler, rtn) -> {
-            return handler.getStackInSlot(slot);
-        });
+        return getTrinketHandler(entity, ItemStack.EMPTY, (handler, rtn) -> handler.getStackInSlot(slot));
     }
 
     /**
@@ -50,7 +54,6 @@ public class TrinketHelper {
 
     /**
      * @param entity
-     * @param function
      * @return function return
      */
     public static <R> R getTrinketHandler(EntityLivingBase entity, R ret, BiFunction<ITrinketContainerHandler, R, R> func) {
@@ -92,33 +95,39 @@ public class TrinketHelper {
                 stack = ItemStack.EMPTY;
             }
             this.stack = stack;
-            setChanged(false);
-            setSlot(slot);
-            setHandler(handler);
+            this.setChanged(false);
+            this.setSlot(slot);
+            this.setHandler(handler);
         }
 
         public void setSlot(int slot) {
-            Slot = slot;
+            if (this.Slot != slot) {
+                this.Slot = slot;
+//                this.setChanged(true);
+            }
         }
 
         public int getSlot() {
-            return Slot;
+            return this.Slot;
         }
 
         public void setHandler(ItemHandlerType handler) {
-            this.handler = handler.getName();
+            this.setHandler(handler.getName());
         }
 
         public void setHandler(String handler) {
-            this.handler = handler;
+            if (this.handler == null || this.handler.compareToIgnoreCase(handler) != 0) {
+                this.handler = handler;
+//                this.setChanged(true);
+            }
         }
 
         public boolean changed() {
-            return hasChanged;
+            return this.hasChanged;
         }
 
         public void setChanged() {
-            setChanged(true);
+            this.setChanged(true);
         }
 
         public void setChanged(boolean bool) {
@@ -126,19 +135,19 @@ public class TrinketHelper {
         }
 
         public String getItemID() {
-            return stack.isEmpty() ? "EMPTY" : stack.getItem().getRegistryName().toString();
+            return this.stack.isEmpty() ? "EMPTY" : this.stack.getItem().getRegistryName().toString();
         }
 
         public String getHandler() {
-            return handler;
+            return this.handler;
         }
 
         public ItemHandlerType getHandlerType() {
-            return ItemHandlerType.byName(handler);
+            return ItemHandlerType.byName(this.handler);
         }
 
         public ItemStack getSourceStack() {
-            return stack;
+            return this.stack;
         }
 
         public ItemStack getStackFromHandler(EntityLivingBase entity) {
@@ -147,10 +156,10 @@ public class TrinketHelper {
             }
             switch (this.getHandlerType()) {
                 case TRINKETS:
-                    return getTrinketInSlot(entity, getSlot());
+                    return getTrinketInSlot(entity, this.getSlot());
                 case BAUBLES:
                     if (Trinkets.MOD_COMPAT.Baubles) {
-                        return BaublesHelper.getBaubleInSlot(entity, getSlot());
+                        return BaublesHelper.getBaubleInSlot(entity, this.getSlot());
                     }
                     return ItemStack.EMPTY;
                 case HEAD:
@@ -179,8 +188,8 @@ public class TrinketHelper {
             NONE(0, "None"), RACE(1, "Race"), TRINKETS(2, "Trinkets"), BAUBLES(3, "Baubles"), INVENTORY(4, "Inventory"), HOTBAR(5, "Hotbar"), HEAD(6, "Head"), CHEST(7, "Chest"), LEGS(8, "Legs"), FEET(9, "Feet"), OFFHAND(10, "OffHand"), MAINHAND(11, "MainHand"), POTION(12, "Potion"), OTHER(13, "Other");
 
             private static final ItemHandlerType[] ID = new ItemHandlerType[values().length];
-            private int id;
-            private String name;
+            private final int id;
+            private final String name;
 
             ItemHandlerType(int id, String name) {
                 this.id = id;
@@ -188,11 +197,11 @@ public class TrinketHelper {
             }
 
             public int getId() {
-                return id;
+                return this.id;
             }
 
             public String getName() {
-                return name;
+                return this.name;
             }
 
             public static ItemHandlerType byName(String name) {
@@ -210,6 +219,14 @@ public class TrinketHelper {
                 }
                 return values()[value];
             }
+        }
+
+        public boolean compare(ItemStack stack, int slot, ItemHandlerType handler) {
+            return this.getSourceStack().isItemEqual(stack) && this.getSlot() == slot && this.getHandlerType().compareTo(handler) == 0;
+        }
+
+        public boolean compare(SlotInformation other) {
+            return this.compare(other.getSourceStack(), other.getSlot(), other.getHandlerType());
         }
 
         @Override
@@ -239,11 +256,7 @@ public class TrinketHelper {
     public static SlotInformation getSlotInfoForItemFromAccessory(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         final SlotInformation info = getTrinketSlotInformation(entity, predicate);
         if (info == null) {
-            final SlotInformation baubleInfo = getBaubleSlotInformation(entity, predicate);
-            if (baubleInfo == null) {
-                return null;
-            }
-            return baubleInfo;
+            return getBaubleSlotInformation(entity, predicate);
         }
         return info;
     }
@@ -295,7 +308,7 @@ public class TrinketHelper {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 final ItemStack stack = inventory.getStackInSlot(i);
                 final boolean isHotBar = InventoryPlayer.isHotbar(i);
-                final boolean flag = onHotbar ? isHotBar : !isHotBar;
+                final boolean flag = onHotbar == isHotBar;
                 if (predicate.test(stack) && flag) {
                     final String type = isHotBar ? ItemHandlerType.HOTBAR.getName() : ItemHandlerType.INVENTORY.getName();
                     return getSlotInfo(stack, type, i);
@@ -379,7 +392,7 @@ public class TrinketHelper {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 final ItemStack stack = inventory.getStackInSlot(i);
                 final boolean isHotBar = InventoryPlayer.isHotbar(i);
-                final boolean flag = onHotbar ? isHotBar : !isHotBar;
+                final boolean flag = onHotbar == isHotBar;
                 if (predicate.test(stack) && flag) {
                     final String type = isHotBar ? ItemHandlerType.HOTBAR.getName() : ItemHandlerType.INVENTORY.getName();
                     final SlotInformation info = getSlotInfo(stack, type, i);
@@ -392,6 +405,54 @@ public class TrinketHelper {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    public static ItemStack getHead(EntityLivingBase entity) {
+        return getHead(entity, null);
+    }
+
+    public static ItemStack getChest(EntityLivingBase entity) {
+        return getChest(entity, null);
+    }
+
+    public static ItemStack getLegs(EntityLivingBase entity) {
+        return getLegs(entity, null);
+    }
+
+    public static ItemStack getFeet(EntityLivingBase entity) {
+        return getFeet(entity, null);
+    }
+
+    public static ItemStack getHead(EntityLivingBase entity, @Nullable Predicate<ItemStack> predicate) {
+        final ItemStack item = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        if (predicate != null && !item.isEmpty() && !predicate.test(item)) {
+            return ItemStack.EMPTY;
+        }
+        return item;
+    }
+
+    public static ItemStack getChest(EntityLivingBase entity, @Nullable Predicate<ItemStack> predicate) {
+        final ItemStack item = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (predicate != null && !item.isEmpty() && !predicate.test(item)) {
+            return ItemStack.EMPTY;
+        }
+        return item;
+    }
+
+    public static ItemStack getLegs(EntityLivingBase entity, @Nullable Predicate<ItemStack> predicate) {
+        final ItemStack item = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        if (predicate != null && !item.isEmpty() && !predicate.test(item)) {
+            return ItemStack.EMPTY;
+        }
+        return item;
+    }
+
+    public static ItemStack getFeet(EntityLivingBase entity, @Nullable Predicate<ItemStack> predicate) {
+        final ItemStack item = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        if (predicate != null && !item.isEmpty() && !predicate.test(item)) {
+            return ItemStack.EMPTY;
+        }
+        return item;
+    }
+
     public static boolean AccessoryCheck(EntityLivingBase entity, Item item) {
         if (item == null) {
             return false;
@@ -402,22 +463,25 @@ public class TrinketHelper {
     public static boolean AccessoryCheck(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         if (!getTrinketStack(entity, predicate).isEmpty()) {
             return true;
-        } else if (!getBaubleStack(entity, predicate).isEmpty()) {
-            return true;
-        } else {
-            return false;
+        } else return !getBaubleStack(entity, predicate).isEmpty();
+    }
+
+    public static boolean AccessoryCheck(EntityLivingBase entity, Item... items) {
+        for (final Item item : items) {
+            if (AccessoryCheck(entity, item)) {
+                return true;
+            }
         }
+        return false;
     }
 
     public static boolean AccessoryCheck(EntityLivingBase entity, List<Item> items) {
-        boolean found = false;
         for (final Item item : items) {
             if (AccessoryCheck(entity, item)) {
-                found = true;
-                break;
+                return true;
             }
         }
-        return found;
+        return false;
     }
 
     public static ItemStack getAccessory(EntityLivingBase entity, Item item) {
@@ -501,6 +565,7 @@ public class TrinketHelper {
         return ret;
     }
 
+    @Nullable
     public static SlotInformation getTrinketSlotInformation(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         final ITrinketContainerHandler Trinket = getTrinketHandler(entity);
         if (Trinket != null) {
@@ -595,6 +660,7 @@ public class TrinketHelper {
         return ret;
     }
 
+    @Nullable
     public static SlotInformation getBaubleSlotInformation(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
             final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
@@ -634,7 +700,6 @@ public class TrinketHelper {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public static ItemStack getItemStackFromSlot(EntityLivingBase player, int slot, int handler) {
-        //TODO this is causing a crash from the Trinkets Container because the slot is somehow -1
         if ((player instanceof EntityPlayer) && (slot >= 0)) {
             if (handler == 1) {
                 final ITrinketContainerHandler Trinket = getTrinketHandler(player);
@@ -660,15 +725,58 @@ public class TrinketHelper {
         return tagCompound;
     }
 
-    public static boolean entityHasAbility(String ability, EntityLivingBase entity) {
-        return Capabilities.getEntityProperties(entity, false, (prop, rtn) -> {
-            try {
-                return prop.getAbilityHandler().getAbility(ability) != null;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+    public static boolean entityHasAbility(EntityLivingBase entity, IAbilityInterface... abilities) {
+        for (IAbilityInterface ability : abilities) {
+            if (entityHasAbility(entity, ability)) {
+                return true;
             }
-        });
+        }
+        return false;
+    }
+
+    public static boolean entityHasAbility(EntityLivingBase entity, IAbilityInterface ability) {
+        if (ability == null) {
+            return false;
+        }
+        return entityHasAbility(entity, ability.getRegistryName().toString());
+    }
+
+    public static boolean entityHasAbility(EntityLivingBase entity, String... abilities) {
+        for (String ability : abilities) {
+            if (entityHasAbility(entity, ability)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean entityHasAbility(EntityLivingBase entity, String ability) {
+        return Capabilities.getEntityProperties(entity, false, (prop, rtn) -> prop.getAbilityHandler().getAbility(ability) != null);
+    }
+
+    public static boolean isEntityRace(final EntityLivingBase entity, final EntityRace... races) {
+        for (EntityRace race : races) {
+            if (isEntityRace(entity, race)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isEntityRace(final EntityLivingBase entity, final EntityRace race) {
+        return Capabilities.getEntityProperties(entity, false, (prop, rtn) -> prop.getCurrentRace().compareRace(race));
+    }
+
+    public static boolean isEntityBoss(Entity entity) {
+        if (entity == null || (entity instanceof EntityPlayer && !(entity instanceof FakePlayer))) {
+            return false;
+        }
+        try {
+            return entity instanceof EntityLivingBase && !entity.isNonBoss() || entity instanceof EntityWither || entity instanceof EntityDragon;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

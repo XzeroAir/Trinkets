@@ -15,25 +15,25 @@ public class PacketConfigSync extends ThreadSafePacket {
 
     public PacketConfigSync(NBTTagCompound configMap) {
         if ((configMap != null) && !configMap.isEmpty()) {
-            tag = configMap;
+            this.tag = configMap;
         } else {
-            tag = new NBTTagCompound();
+            this.tag = new NBTTagCompound();
         }
     }
 
     @Override
     public void toBytes(ByteBuf buffer) {
-        ByteBufUtils.writeTag(buffer, tag);
+        ByteBufUtils.writeTag(buffer, this.tag);
     }
 
     @Override
     public void fromBytes(ByteBuf buffer) {
-        tag = ByteBufUtils.readTag(buffer);
+        this.tag = ByteBufUtils.readTag(buffer);
     }
 
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
-        TrinketsConfig.readConfigMap(tag);
+        TrinketsConfig.readConfigMap(this.tag);
     }
 
     @Override

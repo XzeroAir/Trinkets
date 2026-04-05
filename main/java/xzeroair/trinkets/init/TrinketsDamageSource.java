@@ -1,65 +1,69 @@
 package xzeroair.trinkets.init;
 
-import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.util.ConstantsLang;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TrinketsDamageSource extends EntityDamageSource {
 
-	public static final TrinketsDamageSource poison = new TrinketsDamageSource("xat.poison").setIsPoisonDamage(true);
-	public static final TrinketsDamageSource bleeding = new TrinketsDamageSource("xat.bleed");
-	public static final TrinketsDamageSource water = new TrinketsDamageSource("xat.water");
+    public static final TrinketsDamageSource poison = new TrinketsDamageSource(TrinketsRegistryNames.ModDamageTypes.POISON).setIsPoisonDamage(true);
+    public static final TrinketsDamageSource bleeding = new TrinketsDamageSource(TrinketsRegistryNames.ModDamageTypes.BLEED);
+    public static final TrinketsDamageSource water = new TrinketsDamageSource(TrinketsRegistryNames.ModDamageTypes.WATER);
 
-	private boolean isPoisonDamage;
+    private boolean isPoisonDamage;
 
-	public TrinketsDamageSource(String damageType) {
-		this(damageType, null);
-	}
+    public TrinketsDamageSource(String name) {
+        this(name, null);
+    }
 
-	public TrinketsDamageSource(String damageType, @Nullable Entity damageSource) {
-		super(damageType, damageSource);
-		damageSourceEntity = damageSource;
-	}
+    public TrinketsDamageSource(String name, @Nullable Entity damageSource) {
+        super(name, damageSource);
+        this.damageSourceEntity = damageSource;
+    }
 
-	public boolean isPoisonDamage() {
-		return isPoisonDamage;
-	}
+    public boolean isPoisonDamage() {
+        return this.isPoisonDamage;
+    }
 
-	public TrinketsDamageSource setIsPoisonDamage(boolean isPoison) {
-		isPoisonDamage = isPoison;
-		return this;
-	}
+    public TrinketsDamageSource setIsPoisonDamage(boolean isPoison) {
+        this.isPoisonDamage = isPoison;
+        return this;
+    }
 
-	public TrinketsDamageSource setDirectSource(Entity damageSource) {
-		damageSourceEntity = damageSource;
-		return this;
-	}
+    public TrinketsDamageSource setDirectSource(Entity damageSource) {
+        this.damageSourceEntity = damageSource;
+        return this;
+    }
 
-	public static TrinketsDamageSource causeDamageFrom(String damageType, Entity damageSource) {
-		return new TrinketsDamageSource(damageType, damageSource);
-	}
+    public static TrinketsDamageSource causeDamageFrom(String damageType, Entity damageSource) {
+        return new TrinketsDamageSource(damageType, damageSource);
+    }
 
-	@Override
-	public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn) {
-		//		return new TextComponentTranslation("damagetype." + damageType);
-		//		ItemStack itemstack = damageSourceEntity instanceof EntityLivingBase ? ((EntityLivingBase) damageSourceEntity).getHeldItemMainhand() : ItemStack.EMPTY;
-		//		String s = "death.attack." + damageType;
-		//		String s1 = s + ".item";
-		//		ITextComponent source = damageSourceEntity.getDisplayName();//damageSourceEntity != null ? damageSourceEntity.getDisplayName() : "Poison";
-		//		boolean flag1 = !itemstack.isEmpty() && itemstack.hasDisplayName() && I18n.canTranslate(s1);
-		//		return flag1 ? new TextComponentTranslation(s1, new Object[] { entityLivingBaseIn.getDisplayName(), source, itemstack.getTextComponent() })
-		//				: new TextComponentTranslation(s, new Object[] { entityLivingBaseIn.getDisplayName(), source });
-		//		final ITextComponent source = new TextComponentTranslation("damagetype." + damageType);
-		//		ItemStack itemstack = damageSourceEntity instanceof EntityLivingBase ? ((EntityLivingBase) damageSourceEntity).getHeldItemMainhand() : ItemStack.EMPTY;
-		final ITextComponent source = new TextComponentTranslation("damagetype." + damageType);
-		final String s = "death.attack." + damageType;
-		//		ITextComponent source = damageSourceEntity.getDisplayName();//damageSourceEntity != null ? damageSourceEntity.getDisplayName() : "Poison";
-		//		boolean flag1 = !itemstack.isEmpty() && itemstack.hasDisplayName() && I18n.canTranslate(s1);
-		return new TextComponentTranslation(s, new Object[] { entityLivingBaseIn.getDisplayName(), source });
-		//		return source;//new TextComponentTranslation(message);
-	}
+    @Override
+    public ITextComponent getDeathMessage(@Nonnull EntityLivingBase entity) {
+        final ITextComponent source = new TextComponentTranslation(ConstantsLang.DAMAGE_TYPE + "." + this.damageType);
+        String type = ".attack";
+        type += this.isCrownDeath(entity);
+        final String s = ConstantsLang.DAMAGE_TYPE + "." + this.damageType + type;
+        return new TextComponentTranslation(s, entity.getDisplayName(), source);
+    }
+
+    public String isCrownDeath(EntityLivingBase entity) {
+        if (this.damageType.contentEquals(TrinketsRegistryNames.ModDamageTypes.WATER)) {
+            boolean WATER_CROWN = TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketEnderTiara);
+            if (WATER_CROWN) {
+                return ".crown";
+            }
+        }
+        return "";
+    }
 
 }

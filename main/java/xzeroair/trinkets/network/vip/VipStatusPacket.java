@@ -15,38 +15,38 @@ import xzeroair.trinkets.network.ThreadSafePacket;
 
 public class VipStatusPacket extends ThreadSafePacket {
 
-	public VipStatusPacket() {
-		super();
-	}
+    public VipStatusPacket() {
+        super();
+    }
 
-	public VipStatusPacket(EntityPlayer entity, NBTTagCompound tag) {
-		super(entity.getEntityId(), tag);
-	}
+    public VipStatusPacket(EntityPlayer entity, NBTTagCompound tag) {
+        super(entity.getEntityId(), tag);
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-		ByteBufUtils.writeTag(buf, tag);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(this.entityID);
+        ByteBufUtils.writeTag(buf, this.tag);
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		entityID = buf.readInt();
-		tag = ByteBufUtils.readTag(buf);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.entityID = buf.readInt();
+        this.tag = ByteBufUtils.readTag(buf);
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
-		final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
-		final World world = clientPlayer.getEntityWorld();
-		final Entity entity = world.getEntityByID(entityID);
-		Capabilities.getVipStatus(entity, vip -> {
-			vip.loadFromNBT(tag);
-		});
-	}
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
+        final World world = clientPlayer.getEntityWorld();
+        final Entity entity = world.getEntityByID(this.entityID);
+        Capabilities.getVipStatus(entity, vip -> {
+            vip.loadFromNBT(this.tag);
+        });
+    }
 
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
-	}
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
+    }
 
 }

@@ -1,41 +1,59 @@
 package xzeroair.trinkets.util.config.gui;
 
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.util.Reference;
+import net.minecraftforge.common.config.Config;
+import xzeroair.trinkets.util.ConstantsConfigLang;
 
 public class ConfigGuiButtonShared {
 
-	public ConfigGuiButtonShared(String image, int x, int y, int width, int height, int texWidth, int texHeight, int texSizeWidth, int texSizeHeight, int color) {
-		this.image = image;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.texWidth = texWidth;
-		this.texHeight = texHeight;
-		this.texSizeWidth = texSizeWidth;
-		this.texSizeHeight = texSizeHeight;
-		this.color = color;
-	}
+    public ConfigGuiButtonShared(int x, int y, int width, int height, int texWidth, int texHeight, int texSizeWidth, int texSizeHeight, int color) {
+        this.X = x;
+        this.Y = y;
+        this.BUTTON_WIDTH = width;
+        this.BUTTON_HEIGHT = height;
+        this.TEXTURE_WIDTH = texWidth;
+        this.TEXTURE_HEIGHT = texHeight;
+        this.TEXTURE_ATLAS_WIDTH = texSizeWidth;
+        this.TEXTURE_ATLAS_HEIGHT = texSizeHeight;
+        this.COLOR = color;
+    }
 
-	@Name("Texture")
-	public String image = Reference.RESOURCE_PREFIX + "";
-	@Name("Texture X")
-	public int x = 0;
-	@Name("Texture Y")
-	public int y = 0;
-	@Name("Button Width")
-	public int width = 16;
-	@Name("Button Height")
-	public int height = 16;
-	@Name("Texture Width")
-	public int texWidth = 16;
-	@Name("Texture Height")
-	public int texHeight = 16;
-	@Name("Texture Size Width")
-	public int texSizeWidth = 16;
-	@Name("Texture Size Height")
-	public int texSizeHeight = 16;
-	@Name("Texture Color")
-	public int color = 16777215;
+    @Config.Name(ConstantsConfigLang.CONFIG_LOCATION_X_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_LOCATION_X_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_LOCATION_X)
+    public int X = 0;
+    @Config.Name(ConstantsConfigLang.CONFIG_LOCATION_Y_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_LOCATION_Y_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_LOCATION_Y)
+    public int Y = 0;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_WIDTH_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_WIDTH_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_WIDTH)
+    public int BUTTON_WIDTH = 16;
+    @Config.Name(ConstantsConfigLang.CONFIG_HEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_HEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_HEIGHT)
+    public int BUTTON_HEIGHT = 16;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH)
+    public int TEXTURE_WIDTH = 16;
+    @Config.Name(ConstantsConfigLang.CONFIG_TEXTURE_HEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_TEXTURE_HEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_TEXTURE_HEIGHT)
+    public int TEXTURE_HEIGHT = 16;
+    @Config.Name(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_WIDTH_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_WIDTH_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_WIDTH)
+    public int TEXTURE_ATLAS_WIDTH = 16;
+    @Config.Name(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_HEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_HEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_TEXTURE_ATLAS_HEIGHT)
+    public int TEXTURE_ATLAS_HEIGHT = 16;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_COLOR_DECIMAL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COLOR_DECIMAL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COLOR_DECIMAL)
+    public int COLOR = 16777215;
 }

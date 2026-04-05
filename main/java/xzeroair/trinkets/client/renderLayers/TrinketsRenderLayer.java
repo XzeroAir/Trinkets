@@ -18,17 +18,17 @@ import javax.annotation.Nonnull;
 @SideOnly(Side.CLIENT)
 public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
 
-    private boolean isSlim;
-    private RenderPlayer renderer;
+    private final boolean isSlim;
+    private final RenderPlayer renderer;
 
     public TrinketsRenderLayer(boolean slim, RenderPlayer render) {
-        isSlim = slim;
-        renderer = render;
+        this.isSlim = slim;
+        this.renderer = render;
     }
 
     @Override
     public void doRenderLayer(@Nonnull EntityPlayer player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        if (player.isInvisible() || (player.getActivePotionEffect(MobEffects.INVISIBILITY) != null) || !TrinketsConfig.CLIENT.rendering) {
+        if (player.isInvisible() || (player.getActivePotionEffect(MobEffects.INVISIBILITY) != null) || !TrinketsConfig.CLIENT.RENDERING) {
             return;
         }
         Minecraft.getMinecraft().profiler.startSection("Trinkets Render Layer");
@@ -36,7 +36,8 @@ public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
         Capabilities.getEntityProperties(player, prop -> {
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F, 1F);
-            prop.getRaceHandler().getRaceRenderer().doRenderLayer(player, renderer, prop.isFake(), isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+            prop.getClientInfo().updateInfo(player, partialTicks);
+            prop.getRaceHandler().getRaceRenderer().doRenderLayer(player, this.renderer, prop.isFake(), this.isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
             GlStateManager.color(1F, 1F, 1F, 1F);
             GlStateManager.popMatrix();
         });
@@ -48,7 +49,7 @@ public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
                 final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
                 GlStateManager.pushMatrix();
                 GlStateManager.color(1F, 1F, 1F, 1F);
-                trinket.playerRenderLayer(stack, player, renderer, isSlim, partialTicks, scale);
+                trinket.playerRenderLayer(stack, player, this.renderer, this.isSlim, partialTicks, scale);
                 GlStateManager.color(1F, 1F, 1F, 1F);
                 GlStateManager.popMatrix();
             }

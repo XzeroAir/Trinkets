@@ -18,15 +18,19 @@ import xzeroair.trinkets.attributes.JumpAttribute;
 import xzeroair.trinkets.attributes.MagicAttributes;
 import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.Vip.VipStatus;
+import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.configsync.PacketConfigSync;
 import xzeroair.trinkets.util.TrinketsConfig;
 
+import javax.annotation.Nonnull;
+
 public class OnWorldJoinHandler {
 
     @SubscribeEvent
-    public void attachAttributes(EntityEvent.EntityConstructing event) {
+    public void attachAttributes(@Nonnull EntityEvent.EntityConstructing event) {
         if (event.getEntity() instanceof EntityLivingBase) {
             final EntityLivingBase entity = (EntityLivingBase) event.getEntity();
             final AbstractAttributeMap map = entity.getAttributeMap();
@@ -39,6 +43,8 @@ public class OnWorldJoinHandler {
             map.registerAttribute(MagicAttributes.regen);
             map.registerAttribute(MagicAttributes.regenCooldown);
             map.registerAttribute(MagicAttributes.affinity);
+
+
         }
     }
 
@@ -46,31 +52,34 @@ public class OnWorldJoinHandler {
      * Fired on Logical Server and Fired After EntityJoinedWorldEvent
      */
     @SubscribeEvent
-    public void onPlayerLogin(PlayerLoggedInEvent event) {
+    public void onPlayerLogin(@Nonnull PlayerLoggedInEvent event) {
         final EntityPlayer player = event.player;
         if ((player instanceof EntityPlayerMP)) {
             final EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
             // config Sync
-            Trinkets.log.info("Syncing Config to " + playerMP.getName());
+            Trinkets.LOGGER.info("Syncing Config to " + playerMP.getName());
             final NBTTagCompound config = TrinketsConfig.writeConfigMap();
             if (!config.isEmpty()) {
                 NetworkHandler.sendTo(new PacketConfigSync(config), playerMP);
             }
-
+            if (TrinketsConfig.SERVER.MISC.VIPS) {
+                Capabilities.getVipStatus(player, VipStatus::onLogin);
+            }
             Capabilities.getEntityProperties(playerMP, EntityProperties::onLogin);
-
-            Capabilities.getMagicStats(playerMP, cap -> {
-                cap.sendManaToPlayer(playerMP);
-            });
+            Capabilities.getMagicStats(playerMP, MagicStats::onLogin);
         }
     }
 
     @SubscribeEvent
-    public void onPlayerLogout(PlayerLoggedOutEvent event) {
+    public void onPlayerLogout(@Nonnull PlayerLoggedOutEvent event) {
         final EntityPlayer player = event.player;
         if ((player instanceof EntityPlayerMP)) {
             final EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
+            if (TrinketsConfig.SERVER.MISC.VIPS) {
+                Capabilities.getVipStatus(playerMP, VipStatus::onJoinWorld);
+            }
             Capabilities.getEntityProperties(playerMP, EntityProperties::onLogoff);
+            Capabilities.getMagicStats(playerMP, MagicStats::onLogoff);
         }
     }
 
@@ -78,23 +87,15 @@ public class OnWorldJoinHandler {
      * Send Capability Data To the player from Server, Because Client is Incorrect
      */
     @SubscribeEvent
-    public void entityJoinWorld(EntityJoinWorldEvent event) {
+    public void entityJoinWorld(@Nonnull EntityJoinWorldEvent event) {
         final Entity entity = event.getEntity();
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            if (TrinketsConfig.SERVER.misc.retrieveVIP) {
-                Capabilities.getVipStatus(player, cap -> {
-                    cap.sendStatusToPlayer(player);
-                });
+            if (TrinketsConfig.SERVER.MISC.VIPS) {
+                Capabilities.getVipStatus(player, VipStatus::onJoinWorld);
             }
-            Capabilities.getEntityProperties(player, cap -> {
-                cap.sendInformationToPlayer(player);
-            });
-            Capabilities.getMagicStats(player, cap -> {
-                cap.sendManaToPlayer(player);
-            });
-        } else {
-            Capabilities.getEntityProperties(entity, prop -> prop.setLogin(true));
+            Capabilities.getEntityProperties(player, EntityProperties::onJoinWorld);
+            Capabilities.getMagicStats(player, MagicStats::onJoinWorld);
         }
     }
 
@@ -103,7 +104,12 @@ public class OnWorldJoinHandler {
      */
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
-        //		final EntityPlayer player = event.player;
+        final EntityPlayer player = event.player;
+        if (TrinketsConfig.SERVER.MISC.VIPS) {
+            Capabilities.getVipStatus(player, (vip) -> vip.onChangedDimension(event.fromDim, event.toDim));
+        }
+        Capabilities.getEntityProperties(player, (prop) -> prop.onChangedDimension(event.fromDim, event.toDim));
+        Capabilities.getMagicStats(player, (magic) -> magic.onChangedDimension(event.fromDim, event.toDim));
     }
 
 }

@@ -7,34 +7,37 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import javax.annotation.Nullable;
+
 public abstract class BasicPacket implements IMessage {
 
-	public BasicPacket() {
-	}
+    public BasicPacket() {
+    }
 
-	public BasicPacket(int entityID, NBTTagCompound tag) {
-		this();
-		this.entityID = entityID;
-		this.tag = tag;
-	}
+    public BasicPacket(int entityID, NBTTagCompound tag) {
+        this();
+        this.entityID = entityID;
+        this.tag = tag;
+    }
 
-	protected abstract IMessage handleClient(NetHandlerPlayClient ctx);
+    protected abstract IMessage handleClient(NetHandlerPlayClient ctx);
 
-	protected abstract IMessage handleServer(NetHandlerPlayServer ctx);
+    protected abstract IMessage handleServer(NetHandlerPlayServer ctx);
 
-	protected int entityID;
-	protected NBTTagCompound tag;
+    protected int entityID;
+    @Nullable
+    protected NBTTagCompound tag;
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		entityID = buf.readInt();
-		tag = ByteBufUtils.readTag(buf);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        entityID = buf.readInt();
+        tag = ByteBufUtils.readTag(buf);
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-		ByteBufUtils.writeTag(buf, tag);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeInt(entityID);
+        ByteBufUtils.writeTag(buf, tag);
+    }
 
 }

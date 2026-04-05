@@ -1,101 +1,92 @@
 package xzeroair.trinkets.util.config.trinkets;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityViciousStrike;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 
 public class ConfigFaelisClaw {
 
-	private final String name = ModItems.FaelisClaws;
-	private final String PREFIX = Reference.MODID + ".config.server." + name;
-	private final String registry = Reference.MODID + ".config.registry";
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_ITEMS_FAELIS_CLAWS;
 
-	@Name("01. Bleeding")
-	@LangKey(PREFIX + ".bleeding")
-	public boolean bleed = true;
+    public ConfigFaelisClaw() {
 
-	@Name("02. Bleed Duration")
-	@LangKey(PREFIX + ".bleeding.duration")
-	public int bleedDuration = 300;
+    }
 
-	@Name("03. Bleed chance")
-	@LangKey(PREFIX + ".bleeding.chance")
-	public int chance = 4;
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Should this Item Be Registered")
-	@Name("98. Item Enabled")
-	@LangKey(registry + ".enabled")
-	public boolean enabled = true;
+    public class ConfigAbilities {
 
-	@Name("Compatability Settings")
-	@LangKey(Reference.MODID + ".config.compatability")
-	public Compatability compat = new Compatability();
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_VICIOUS_STRIKE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_VICIOUS_STRIKE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_VICIOUS_STRIKE)
+        public ConfigAbilityViciousStrike VICIOUS_STRIKE = new ConfigAbilityViciousStrike();
 
-	public class Compatability {
 
-		@Name("Tough as Nails Compatability")
-		@LangKey(Reference.MODID + ".config.toughasnails")
-		private TANCompat tan = new TANCompat();
+    }
 
-		public class TANCompat {
+    @Config.RequiresMcRestart
+    @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
+    @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.REGISTRY_ENABLED)
+    public boolean ENABLED = true;
 
-		}
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-		public LycanitesCompat lycanites = new LycanitesCompat();
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
 
-		public class LycanitesCompat {
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
 
-			public boolean useLycaniteBleed = true;
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.attackDamage, Amount:0.25, Operation:1"
+            //@formatter:on
+    };
 
-		}
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
 
-		public DefiledLandsCompat defiledlands = new DefiledLandsCompat();
+    public class Compatibility {
 
-		public class DefiledLandsCompat {
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
 
-			public boolean useDefiledLandsBleed = true;
-		}
-
-		@Name("Baubles Compatability")
-		@Config.Comment({
-				"If the mod Baubles is installed what bauble slot should it use",
-				"Available Types:",
-				"Trinket, Any, All",
-				"Amulet, Necklace, Pendant",
-				"Ring, Rings",
-				"Belt",
-				"Head, Hat",
-				"Body, Chest",
-				"Charm"
-		})
-		@LangKey(Reference.MODID + ".config.baubles")
-		public BaubleCompat baubles = new BaubleCompat("Trinket");
-	}
-
-	//@formatter:off
-
-	@Config.Comment({"For Mor Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-	@Name("Attributes")
-	@LangKey(Reference.MODID + ".config.attributes")
-	public String[] attributes = {
-			"Name:generic.maxHealth, Amount:0, Operation:0",
-			"Name:generic.knockbackResistance; Amount:0; Operation:0",
-			"Name:generic.movementSpeed, Amount:0, Operation:0",
-			"Name:generic.attackDamage, Amount:0.25, Operation:1",
-			"Name:generic.attackSpeed, Amount:0, Operation:0",
-			"Name:generic.armor, Amount:0, Operation:0",
-			"Name:generic.armorToughness, Amount:0, Operation:0",
-			"Name:generic.luck, Amount:0, Operation:0",
-			"Name:forge.swimSpeed, Amount:0, Operation:0",
-			"Name:xat.entityMagic.regen, Amount:0, Operation:0",
-			"Name:xat.entityMagic.regen.cooldown, Amount:0, Operation:0",
-			"Name:xat.entityMagic.affinity, Amount:0, Operation:0",
-			"Name:xat.jump, Amount:0, Operation:0",
-			"Name:xat.stepheight, Amount:0, Operation:0"
-	};
+        @Config.Name(ConstantsConfigLang.CONFIG_BAUBLES_NAME)
+        @Config.Comment({
+                //@formatter:off
+					"If the mod Baubles is installed what bauble slot should it use",
+					"Available Types:",
+					"Trinket, Any, All",
+					"Amulet, Necklace, Pendant",
+					"Ring, Rings",
+					"Belt",
+					"Head, Hat",
+					"Body, Chest",
+					"Charm"
+					//@formatter:on
+        })
+        @Config.LangKey(ConstantsConfigLang.CONFIG_BAUBLES)
+        public BaubleCompat BAUBLES = new BaubleCompat("trinket");
+    }
 
 }

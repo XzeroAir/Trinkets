@@ -3,17 +3,45 @@ package xzeroair.trinkets.util.helpers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import xzeroair.trinkets.network.GenericChatMessage;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.Reference;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class StringUtils {
+
+    public static String nameRegex = "([a-zA-Z0-9_*]{1,})";
+    public static String itemIDRegex = "(" + nameRegex + ":" + nameRegex + ")";
+    public static String materialRegex = "(material" + nameRegex + ")";
+    public static String metaRegex = "(([0-9]*)|([*]))";
+    public static String metaRegexOptional = "(;" + metaRegex + ")?";
+    public static String doubleRegex = "(([-])?([0-9]{1,})([.][0-9]{1,})?)";
+    public static String doubleRegexOptional = "(;" + doubleRegex + ")?";
+    public static String optionalWordRegex = "(;[a-zA-Z]*)?";
+
+    public static boolean parseResourceLocationSafely(@Nullable ResourceLocation resource, String string) {
+        if (resource != null) {
+            if (string.contains(":")) {
+                final String[] array = string.split(":");
+                final String nameSpace = StringUtils.getStringFromArray(array, 0);
+                final String path = StringUtils.getStringFromArray(array, 1);
+                return nameSpace.equalsIgnoreCase(resource.getNamespace()) && path.equalsIgnoreCase(resource.getPath());
+            } else {
+                try {
+                    return resource.toString().equalsIgnoreCase(string);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return false;
+    }
 
     public static String combineStringArray(String[] array) {
         if (array.length > 0) {
@@ -184,6 +212,18 @@ public class StringUtils {
             try {
                 return Integer.parseInt(string.replaceFirst("i=", "").replaceAll("[^.\\d]", "").replaceAll("(\\..*)", ""));
             } catch (final Exception e) {
+            }
+        }
+        return 0;
+    }
+
+    public static float getFloat(String string) {
+        if (!string.replaceAll("[^0-9.-]", "").replace(".", "").replace("-", "").isEmpty()) {
+            try {
+//            return Float.parseFloat(string.replaceAll(doubleRegex, ""));
+                return Float.parseFloat(string);
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
         }
         return 0;

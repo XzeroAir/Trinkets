@@ -1,0 +1,44 @@
+{
+  "type": "xat:shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "iceandfire"
+      }
+    }
+  ],
+  "pattern": [
+    "XS#",
+    "SDS",
+    "#SM"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:skull",
+      "data": 5
+    },
+    "M": {
+      "item": "minecraft:magma"
+    },
+    "S": {
+      "item": "minecraft:diamond_sword"
+    },
+    "#": {
+      "item": "xat:glowing_gem"
+    },
+    "X": {
+      "item": "xat:glow_ring"
+    }
+  },
+  "result": {
+    "item": "xat:dragons_eye",
+    "data": 1,
+    "nbt": {
+      "Elements": {
+        "primary": "xat:fire"
+      }
+    }
+  }
+}

@@ -13,6 +13,14 @@ import java.util.List;
 
 public interface IAbilityInterface {
 
+    boolean isAbilityEnabled();
+
+    IAbilityInterface setAbilityEnabled(boolean enabled);
+
+    boolean isFirstUpdate();
+
+    IAbilityInterface setFirstUpdate(boolean firstUpdate);
+
     ResourceLocation getRegistryName();
 
     String getDisplayName();
@@ -47,6 +55,10 @@ public interface IAbilityInterface {
         return false;
     }
 
+    boolean hasChanged();
+
+    IAbilityInterface setChanged(boolean bool);
+
     default IAbilityInterface scheduleRemoval() {
         return this;
     }
@@ -66,7 +78,20 @@ public interface IAbilityInterface {
         return compound;
     }
 
-    default void loadTagCacheFromNBT(NBTTagCompound tag) {
+    /**
+     * Used to send Temporary Ability Data on change
+     *
+     * @return
+     */
+    @Nullable
+    NBTTagCompound sendAbilityData();
+
+    /**
+     * Used to load Temporary Ability Data on change
+     *
+     * @param tag
+     */
+    default void loadDataCache(NBTTagCompound tag) {
 
     }
 

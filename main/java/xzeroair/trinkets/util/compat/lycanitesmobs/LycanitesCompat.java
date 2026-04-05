@@ -3,31 +3,50 @@ package xzeroair.trinkets.util.compat.lycanitesmobs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextComponentTranslation;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 public class LycanitesCompat {
 
-    private static final String paralysis = "paralysis";
-    private static final String penetration = "penetration";
-    private static final String weight = "weight";
-    private static final String fear = "fear";
-    private static final String decay = "decay";
-    private static final String insomnia = "insomnia";
-    private static final String instability = "instability";
-    private static final String lifeleak = "lifeleak";
-    private static final String bleed = "bleed";
-    private static final String plague = "plague";
-    private static final String aphagia = "aphagia";
-    private static final String smited = "smited";
-    private static final String smouldering = "smouldering";
-    private static final String leech = "leech";
-    private static final String swiftswimming = "swiftswimming";
-    private static final String fallresist = "fallresist";
-    private static final String rejuvenation = "rejuvenation";
-    private static final String immunization = "immunization";
-    private static final String cleansed = "cleansed";
-    private static final String repulsion = "repulsion";
+    private static final String MODID = "lycanitesmobs";
+
+    public static final String paralysis = "paralysis";
+    public static final String penetration = "penetration";
+    public static final String weight = "weight";
+    public static final String fear = "fear";
+    public static final String decay = "decay";
+    public static final String insomnia = "insomnia";
+    public static final String instability = "instability";
+    public static final String lifeleak = "lifeleak";
+    public static final String bleed = "bleed";
+    public static final String plague = "plague";
+    public static final String aphagia = "aphagia";
+    public static final String smited = "smited";
+    public static final String smouldering = "smouldering";
+    public static final String leech = "leech";
+    public static final String swiftswimming = "swiftswimming";
+    public static final String fallresist = "fallresist";
+    public static final String rejuvenation = "rejuvenation";
+    public static final String immunization = "immunization";
+    public static final String cleansed = "cleansed";
+    public static final String repulsion = "repulsion";
+
+    public static final String DAMAGE_TYPE_OOZE = "ooze";
+    public static final String DAMAGE_TYPE_COLD_FIRE = "cold_fire";
+
+    public static final String LANG_DAMAGE_COLD_FIRE = "tile.icefire.name";
+    public static final String LANG_DAMAGE_OOZE = "tile.ooze.name";
+    public static final String LANG_DAMAGE_SMOULDERING = "effect." + smouldering;
+    public static final String LANG_DAMAGE_INSTABILITY = "effect." + instability;
+    public static final TextComponentTranslation SMOULDERING = new TextComponentTranslation(LANG_DAMAGE_SMOULDERING);
+    public static final TextComponentTranslation INSTABILITY = new TextComponentTranslation(LANG_DAMAGE_INSTABILITY);
+
+    public static boolean isModActive() {
+        return Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.LYCANITES_MOBS;
+    }
 
     public static void removeParalysis(EntityLivingBase entity) {
         removeEffect(entity, paralysis);
@@ -113,9 +132,9 @@ public class LycanitesCompat {
     }
 
     public static void applyEffect(EntityLivingBase entity, String name, int duration, int amplifier) {
-        if (Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.lycanites) {
+        if (isModActive()) {
             try {
-                Potion effect = Potion.getPotionFromResourceLocation("lycanitesmobs:" + name);
+                Potion effect = Potion.getPotionFromResourceLocation(MODID + ":" + name);
                 if ((effect != null) && !entity.isPotionActive(effect)) {
                     entity.addPotionEffect(new PotionEffect(effect, duration, amplifier, false, false));
                 }
@@ -126,9 +145,9 @@ public class LycanitesCompat {
     }
 
     public static void removeEffect(EntityLivingBase entity, String name) {
-        if (Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.lycanites) {
+        if (isModActive()) {
             try {
-                Potion effect = Potion.getPotionFromResourceLocation("lycanitesmobs:" + name);
+                Potion effect = Potion.getPotionFromResourceLocation(MODID + ":" + name);
                 if ((effect != null) && entity.isPotionActive(effect)) {
                     entity.removePotionEffect(effect);
                 }
@@ -138,15 +157,43 @@ public class LycanitesCompat {
         }
     }
 
-    public static Potion getPotionEffectByName(String name) {
-        if (Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.lycanites) {
-            try {
-                return Potion.getPotionFromResourceLocation("lycanitesmobs:" + name);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public static Potion getPotionByName(String name) {
+        if (isModActive()) {
+            return PotionHelper.getModPotion(MODID, name);
         }
         return null;
+    }
+
+    public static boolean isWeight(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, weight);
+    }
+
+    public static boolean isWeightLazy(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, weight);
+    }
+
+    public static boolean isSmouldering(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, smouldering);
+    }
+
+    public static boolean isSmoulderingLazy(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, smouldering);
+    }
+
+    public static boolean isParalysis(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, paralysis);
+    }
+
+    public static boolean isParalysisLazy(final PotionEffect effect) {
+        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, paralysis);
+    }
+
+    public static boolean isOozeDamage(DamageSource source) {
+        return isModActive() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_OOZE);
+    }
+
+    public static boolean isColdFireDamage(DamageSource source) {
+        return isModActive() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_COLD_FIRE);
     }
 
     public static void convertManaToSpirit(EntityLivingBase entity) {

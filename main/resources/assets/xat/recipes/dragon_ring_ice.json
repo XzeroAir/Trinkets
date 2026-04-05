@@ -1,11 +1,5 @@
 {
-  "type": "xat:dragon_eye_iaf",
-  "conditions": [
-    {
-      "type": "forge:mod_loaded",
-      "modid": "iceandfire"
-    }
-  ],
+  "type": "xat:shaped",
   "pattern": [
     "#I ",
     "ICI",
@@ -21,16 +15,17 @@
     "C": {
       "type": "xat:nbt",
       "item": "xat:dragon_gem",
+      "data": 2,
       "nbt": {
         "Elements": {
           "primary": "xat:ice"
         }
-      },
-      "data": 0
+      }
     }
   },
   "result": {
     "item": "xat:dragon_ring",
+    "data": 2,
     "nbt": {
       "Elements": {
         "primary": "xat:ice"

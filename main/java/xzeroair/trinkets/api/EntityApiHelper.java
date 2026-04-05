@@ -18,11 +18,11 @@ public class EntityApiHelper {
     }
 
     public static String getEntityPrimaryElement(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getElement().getName());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getName());
     }
 
     public static String getEntityPrimaryElementRegistryName(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getElement().getRegistryName().toString());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getRegistryName().toString());
     }
 
 }

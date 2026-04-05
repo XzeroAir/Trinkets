@@ -1,11 +1,5 @@
 {
-  "type": "xat:dragon_eye_iaf",
-  "conditions": [
-    {
-      "type": "forge:mod_loaded",
-      "modid": "iceandfire"
-    }
-  ],
+  "type": "xat:shaped",
   "pattern": [
     "CFC",
     "DCD",
@@ -18,12 +12,12 @@
     "F": {
       "type": "xat:nbt",
       "item": "xat:dragons_eye",
+      "data": 3,
       "nbt": {
         "Elements": {
           "primary": "xat:lightning"
         }
-      },
-      "data": 0
+      }
     },
     "D": {
       "item": "minecraft:dragon_breath"
@@ -34,6 +28,7 @@
   },
   "result": {
     "item": "xat:dragon_gem",
+    "data": 3,
     "nbt": {
       "Elements": {
         "primary": "xat:lightning"

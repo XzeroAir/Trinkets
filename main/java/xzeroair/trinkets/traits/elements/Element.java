@@ -21,12 +21,12 @@ public class Element extends IForgeRegistryEntry.Impl<Element> implements IDescr
 
     public Element(String name) {
         this.name = name;
-        setTranslationKey(name);
+        this.setTranslationKey(name);
         this.setRegistryName(name);
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Element[] getStrengths() {
@@ -43,9 +43,10 @@ public class Element extends IForgeRegistryEntry.Impl<Element> implements IDescr
     }
 
     public String getTranslationKey() {
-        return Reference.MODID + ".element." + translationKey;
+        return Reference.MODID + ".element." + this.translationKey;
     }
 
+    @Override
     public String getDisplayName() {
         return new TextComponentTranslation(this.getTranslationKey().toLowerCase() + ".name").getFormattedText();
     }
@@ -78,8 +79,7 @@ public class Element extends IForgeRegistryEntry.Impl<Element> implements IDescr
         if (item == null) {
             try {
                 return getById(Integer.parseInt(id));
-            } catch (NumberFormatException var3) {
-
+            } catch (NumberFormatException ignored) {
             }
         }
         return item;
@@ -107,9 +107,9 @@ public class Element extends IForgeRegistryEntry.Impl<Element> implements IDescr
 
     public NBTTagCompound addElement(NBTTagCompound elements) {
         NBTTagCompound damageResistanceTypes = new NBTTagCompound();
-        damageResistanceTypes = addDamageResist(damageResistanceTypes, "Fire", 10, false);
-        damageResistanceTypes = addDamageResist(damageResistanceTypes, "Ice", 5, false);
-        damageResistanceTypes = addDamageResist(damageResistanceTypes, "Lightning", 2, false);
+        damageResistanceTypes = this.addDamageResist(damageResistanceTypes, "Fire", 10, false);
+        damageResistanceTypes = this.addDamageResist(damageResistanceTypes, "Ice", 5, false);
+        damageResistanceTypes = this.addDamageResist(damageResistanceTypes, "Lightning", 2, false);
         elements.setTag("damageResistanceTypes", damageResistanceTypes);
         return elements;
     }

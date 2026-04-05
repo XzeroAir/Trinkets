@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
@@ -39,18 +39,20 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         this.setRegistryName(Reference.MODID, name);
 //        this.slipperiness = 0.98F;
         this.setTickRandomly(true);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(AGE, Integer.valueOf(0)));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(AGE, 0));
         this.setTranslationKey(this.getRegistryName().toString());
         this.setLightLevel(0);
 //        this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.SOLID;
     }
 
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+    @Override
+    public void harvestBlock(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack) {
         player.addStat(StatList.getBlockStats(this));
         player.addExhaustion(0.005F);
 
@@ -68,9 +70,9 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
             }
 
             int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-            harvesters.set(player);
+            this.harvesters.set(player);
             this.dropBlockAsItem(worldIn, pos, state, i);
-            harvesters.set(null);
+            this.harvesters.set(null);
             Material material = worldIn.getBlockState(pos.down()).getMaterial();
 
             if (material.blocksMovement() || material.isLiquid()) {
@@ -79,7 +81,8 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         }
     }
 
-    public int quantityDropped(Random random) {
+    @Override
+    public int quantityDropped(@Nonnull Random random) {
         return 0;
     }
 
@@ -91,8 +94,9 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
 //        }
 //    }
 
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        if ((rand.nextInt(3) == 0 || this.countNeighbors(worldIn, pos) < 4) && worldIn.getLightFromNeighbors(pos) > 11 - ((Integer) state.getValue(AGE)).intValue() - state.getLightOpacity()) {
+    @Override
+    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Random rand) {
+        if ((rand.nextInt(3) == 0 || this.countNeighbors(worldIn, pos) < 4) && worldIn.getLightFromNeighbors(pos) > 11 - state.getValue(AGE) - state.getLightOpacity()) {
             this.slightlyMelt(worldIn, pos, state, rand, true);
         } else {
             worldIn.scheduleUpdate(pos, this, MathHelper.getInt(rand, 20, 40));
@@ -109,19 +113,23 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         }
     }
 
-    public EnumPushReaction getPushReaction(IBlockState state) {
+    @Override
+    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.NORMAL;
     }
 
-    public int getMetaFromState(IBlockState state) {
-        return ((Integer) state.getValue(AGE)).intValue();
+    @Override
+    public int getMetaFromState(@Nonnull IBlockState state) {
+        return state.getValue(AGE);
     }
 
+    @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(AGE, Integer.valueOf(MathHelper.clamp(meta, 0, 3)));
+        return this.getDefaultState().withProperty(AGE, MathHelper.clamp(meta, 0, 3));
     }
 
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    @Override
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         if (blockIn == this) {
             int i = this.countNeighbors(worldIn, pos);
 
@@ -147,11 +155,11 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         return i;
     }
 
-    protected void slightlyMelt(World worldIn, BlockPos pos, IBlockState state, Random rand, boolean meltNeighbors) {
-        int i = ((Integer) state.getValue(AGE)).intValue();
+    protected void slightlyMelt(World worldIn, BlockPos pos, @Nonnull IBlockState state, Random rand, boolean meltNeighbors) {
+        int i = state.getValue(AGE);
 
         if (i < 3) {
-            worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(i + 1)), 2);
+            worldIn.setBlockState(pos, state.withProperty(AGE, i + 1), 2);
             worldIn.scheduleUpdate(pos, this, MathHelper.getInt(rand, 20, 40));
         } else {
             this.turnIntoLava(worldIn, pos);
@@ -169,11 +177,13 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         }
     }
 
+    @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{AGE});
+        return new BlockStateContainer(this, AGE);
     }
 
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+    @Override
+    public ItemStack getItem(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         return ItemStack.EMPTY;
     }
 

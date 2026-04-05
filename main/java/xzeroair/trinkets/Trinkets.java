@@ -49,13 +49,13 @@ import java.io.File;
 // @formatter:on
 public class Trinkets {
 
-    public static final CreativeTabs trinketstab = new CreativeTabs("trinketstab") {
+    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs("trinketstab") {
 
         @Nonnull
         @Override
         public ItemStack createIcon() {
             try {
-                if (TrinketsConfig.SERVER.Items.GLOW_RING.enabled) {
+                if (TrinketsConfig.SERVER.ITEMS.GLOW_RING.ENABLED) {
                     if (Loader.isModLoaded("baubles")) {
                         return new ItemStack(ModItems.baubles.BaubleGlowRing);
                     } else {
@@ -78,37 +78,37 @@ public class Trinkets {
 
     public static File directory;
 
-    public static final Logger log = LogManager.getLogger(Reference.MODID.toUpperCase());
+    public static final Logger LOGGER = LogManager.getLogger(Reference.MODID.toUpperCase());
 
     @SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
     public static CommonProxy proxy;
 
-    public static ModCompat MOD_COMPAT = ModCompat.instance;
+    public static ModCompat MOD_COMPAT = ModCompat.INSTANCE;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
         directory = event.getModConfigurationDirectory();
-        config = TrinketsConfig.readConfig(new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg")));
 
         MOD_COMPAT.preInitChecks();
+        config = TrinketsConfig.readConfig(new Configuration(new File(directory.getPath(), Reference.configPath + ".cfg")));
+
 
         Element.registerElements();
-        log.info("Setting Up Races");
+        LOGGER.info("Setting Up Races");
         EntityRace.registerRaces();
-        log.info("Setting Up Blocks");
+        LOGGER.info("Setting Up Blocks");
         ModBlocks.registerBlocks();
-        log.info("Setting Up Items");
+        LOGGER.info("Setting Up Items");
         ModItems.registerItems();
         //Capabilities
-        log.info("Setting Up Capabilities");
+        LOGGER.info("Setting Up Capabilities");
         Capabilities.init();
-
         //Network
-        log.info("Setting Up Networking");
+        LOGGER.info("Setting Up Networking");
         NetworkHandler.INSTANCE.init();
 
-        log.info("Pre-init");
+        LOGGER.info("Pre-init");
         proxy.preInit(event);
     }
 
@@ -140,13 +140,13 @@ public class Trinkets {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        if (TrinketsConfig.SERVER.misc.retrieveVIP) {
-            log.info("Trinkets and Baubles: Generating VIP List");
+        if (TrinketsConfig.SERVER.MISC.VIPS) {
+            LOGGER.info("Trinkets and Baubles: Generating VIP List");
             try {
                 long startTime = System.nanoTime();
                 VIPHandler.instance.popVIPList();
                 long endTime = System.nanoTime() - startTime;
-                log.info("Trinkets and Baubles: Finished Gathering VIP List, Took " + (endTime / 1000000L) + "ms");
+                LOGGER.info("Trinkets and Baubles: Finished Gathering VIP List, Took {}ms", endTime / 1000000L);
             } catch (final Exception e) {
                 e.printStackTrace();
             }

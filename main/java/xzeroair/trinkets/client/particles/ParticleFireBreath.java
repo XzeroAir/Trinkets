@@ -13,6 +13,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.util.Reference;
 
+import javax.annotation.Nonnull;
+
 @SideOnly(Side.CLIENT)
 public class ParticleFireBreath extends ParticleFlame {
 
@@ -23,23 +25,23 @@ public class ParticleFireBreath extends ParticleFlame {
         final int r = (color & 16711680) >> 16;
         final int g = (color & 65280) >> 8;
         final int b = (color & 255) >> 0;
-        particleRed = r / 255.0F;
-        particleGreen = g / 255.0F;
-        particleBlue = b / 255.0F;
-        particleAlpha = 1F;
-        particleAge = 0;
-        particleMaxAge = 31;//(int) (8.0D / ((Math.random() * 0.8D) + 0.2D)) + 4;
-        particleScale = scale;
+        this.particleRed = r / 255.0F;
+        this.particleGreen = g / 255.0F;
+        this.particleBlue = b / 255.0F;
+        this.particleAlpha = 1F;
+        this.particleAge = 0;
+        this.particleMaxAge = 31;//(int) (8.0D / ((Math.random() * 0.8D) + 0.2D)) + 4;
+        this.particleScale = scale;
     }
 
     @Override
-    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        final float fT = (particleAge + partialTicks) / particleMaxAge;
-        final float flameScale = particleScale;
-        final int i = (int) (((particleAge + partialTicks) * 30.0F) / particleMaxAge);
-        particleScale = flameScale * (1.0F - (fT * fT * 0.5F));
+    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        final float fT = (this.particleAge + partialTicks) / this.particleMaxAge;
+        final float flameScale = this.particleScale;
+        final int i = (int) (((this.particleAge + partialTicks) * 30.0F) / this.particleMaxAge);
+        this.particleScale = flameScale * (1.0F - (fT * fT * 0.5F));
         //		particleScale = flameScale * (1.0F - (i * i * 0.5F));
-        if (i <= (particleMaxAge - 1)) {
+        if (i <= (this.particleMaxAge - 1)) {
             GlStateManager.pushMatrix();
             Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/particle/dragon_breath.png"));
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -66,8 +68,8 @@ public class ParticleFireBreath extends ParticleFlame {
             //			final float f1 = f + 0.0625F;//uF2;//(y + height) * tileHeight;
             //			final float f2 = i / 16 / 16.0F;//vF;//(x) * tileWidth;//i / 32 / 32.0F;
             //			final float f3 = f2 + 0.0625F;//vF2;//(x + height) * tileHeight;//0.0625F;//f2 + 0.0625f;
-            final int offset = particleMaxAge;//i <= 8 ? 8 : 16;
-            final float f4 = particleScale;
+            final int offset = this.particleMaxAge;//i <= 8 ? 8 : 16;
+            final float f4 = this.particleScale;
             //					(0.0625F) * (offset - i);
             //			System.out.println(f4);
             //			final float f4 = particleScale;
@@ -84,13 +86,13 @@ public class ParticleFireBreath extends ParticleFlame {
             final int b = this.getBrightnessForRender(partialTicks);
             final int j = (b >> 16) & 65535;
             final int k = b & 65535;
-            final float f5 = (float) ((prevPosX + ((posX - prevPosX) * partialTicks)) - interpPosX);
-            final float f6 = (float) ((prevPosY + ((posY - prevPosY) * partialTicks)) - interpPosY);
-            final float f7 = (float) ((prevPosZ + ((posZ - prevPosZ) * partialTicks)) - interpPosZ);
+            final float f5 = (float) ((this.prevPosX + ((this.posX - this.prevPosX) * partialTicks)) - interpPosX);
+            final float f6 = (float) ((this.prevPosY + ((this.posY - this.prevPosY) * partialTicks)) - interpPosY);
+            final float f7 = (float) ((this.prevPosZ + ((this.posZ - this.prevPosZ) * partialTicks)) - interpPosZ);
             final Vec3d[] avec3d = new Vec3d[]{new Vec3d((-rotationX * f4) - (rotationXY * f4), -rotationZ * f4, (-rotationYZ * f4) - (rotationXZ * f4)), new Vec3d((-rotationX * f4) + (rotationXY * f4), rotationZ * f4, (-rotationYZ * f4) + (rotationXZ * f4)), new Vec3d((rotationX * f4) + (rotationXY * f4), rotationZ * f4, (rotationYZ * f4) + (rotationXZ * f4)), new Vec3d((rotationX * f4) - (rotationXY * f4), -rotationZ * f4, (rotationYZ * f4) - (rotationXZ * f4))};
 
-            if (particleAngle != 0.0F) {
-                final float f8 = particleAngle + ((particleAngle - prevParticleAngle) * partialTicks);
+            if (this.particleAngle != 0.0F) {
+                final float f8 = this.particleAngle + ((this.particleAngle - this.prevParticleAngle) * partialTicks);
                 final float f9 = MathHelper.cos(f8 * 0.5F);
                 final float f10 = MathHelper.sin(f8 * 0.5F) * (float) cameraViewDir.x;
                 final float f11 = MathHelper.sin(f8 * 0.5F) * (float) cameraViewDir.y;
@@ -101,10 +103,10 @@ public class ParticleFireBreath extends ParticleFlame {
                     avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d)).add(avec3d[l].scale((f9 * f9) - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(avec3d[l]).scale(2.0F * f9));
                 }
             }
-            buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z).tex(uF * tileWidth, vF2 * tileHeight).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z).tex(uF2 * tileWidth, vF2 * tileHeight).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z).tex(uF2 * tileWidth, vF * tileHeight).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[3].x, f6 + avec3d[3].y, f7 + avec3d[3].z).tex(uF * tileWidth, vF * tileHeight).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
+            buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z).tex(uF * tileWidth, vF2 * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z).tex(uF2 * tileWidth, vF2 * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z).tex(uF2 * tileWidth, vF * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            buffer.pos(f5 + avec3d[3].x, f6 + avec3d[3].y, f7 + avec3d[3].z).tex(uF * tileWidth, vF * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
             //			buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z).tex(f1, f3).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
             //			buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z).tex(f1, f2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
             //			buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z).tex(f, f2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();

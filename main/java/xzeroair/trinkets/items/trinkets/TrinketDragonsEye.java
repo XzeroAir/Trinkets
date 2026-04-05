@@ -2,34 +2,30 @@ package xzeroair.trinkets.items.trinkets;
 
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
-import xzeroair.trinkets.traits.abilities.*;
-import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
-import xzeroair.trinkets.traits.abilities.compat.survival.AbilityHeatImmunity;
+import xzeroair.trinkets.traits.abilities.AbilityGreedyEyes;
+import xzeroair.trinkets.traits.abilities.AbilityNightVision;
+import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireImmunity;
+import xzeroair.trinkets.traits.abilities.elements.ice.AbilityFrostWalker;
+import xzeroair.trinkets.traits.abilities.elements.ice.AbilityIceImmunity;
+import xzeroair.trinkets.traits.abilities.elements.lightning.AbilityLightningImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigDragonsEye;
-import xzeroair.trinkets.util.config.trinkets.ConfigDragonsEye;
+import xzeroair.trinkets.util.config.trinkets.dragoneye.ConfigDragonsEye;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrinketDragonsEye extends AccessoryBase {
 
-    public static final ConfigDragonsEye serverConfig = TrinketsConfig.SERVER.Items.DRAGON_EYE;
-    public static final ClientConfigDragonsEye clientConfig = TrinketsConfig.CLIENT.items.DRAGON_EYE;
+    protected final ConfigDragonsEye CONFIG = TrinketsConfig.SERVER.ITEMS.DRAGON_EYE;
 
     public TrinketDragonsEye(String name) {
         super(name);
@@ -37,95 +33,126 @@ public class TrinketDragonsEye extends AccessoryBase {
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab == this.getCreativeTab()) {
-            final ItemStack normal = new ItemStack(this, 1, 0);
-            items.add(normal);
-            if (serverConfig.compat.iaf.FIRE_VARIANT) {
-                final ItemStack fire = new ItemStack(this, 1, 0);
-                NBTTagCompound tag = new NBTTagCompound();
-                Capabilities.getTrinketProperties(fire, prop -> {
-                    prop.setVariant(1);
-                    prop.getElementAttributes().setPrimaryElement(Elements.FIRE);
-                    prop.saveToNBT(tag);
-                });
-                fire.setTagCompound(tag);
-                items.add(fire);
-            }
-            if (serverConfig.compat.iaf.ICE_VARIANT) {
-                final ItemStack ice = new ItemStack(this, 1, 0);
-                NBTTagCompound tag = new NBTTagCompound();
-                Capabilities.getTrinketProperties(ice, prop -> {
-                    prop.setVariant(2);
-                    prop.getElementAttributes().setPrimaryElement(Elements.ICE);
-                    prop.saveToNBT(tag);
-                });
-                ice.setTagCompound(tag);
-                items.add(ice);
-            }
-            if (serverConfig.compat.iaf.LIGHTNING_VARIANT) {
-                final ItemStack lightning = new ItemStack(this, 1, 0);
-                NBTTagCompound tag = new NBTTagCompound();
-                Capabilities.getTrinketProperties(lightning, prop -> {
-                    prop.setVariant(3);
-                    prop.getElementAttributes().setPrimaryElement(Elements.LIGHTNING);
-                    prop.saveToNBT(tag);
-                });
-                lightning.setTagCompound(tag);
-                items.add(lightning);
-            }
-        }
-    }
-
-    @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
-    }
-
-    @Override
-    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        abilities.add(new AbilityNightVision().toggleAbility(true));
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
         final Element element = this.getPrimaryElement(stack);
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean survival = tanEnabled || sdEnabled;
-        if (serverConfig.compat.iaf.FIRE_VARIANT && (element == Elements.FIRE)) {
-            abilities.add(new AbilityFireImmunity().setRequiredElement(Elements.FIRE));
-            if (survival && serverConfig.compat.tan.immuneToHeat) {
-                abilities.add(new AbilityHeatImmunity().setRequiredElement(Elements.FIRE));
-            }
-        } else if (serverConfig.compat.iaf.ICE_VARIANT && (element == Elements.ICE)) {
-            abilities.add(new AbilityIceImmunity().setRequiredElement(Elements.ICE));
-            if (survival && serverConfig.compat.tan.immuneToCold) {
-                abilities.add(new AbilityColdImmunity().setRequiredElement(Elements.ICE));
-            }
-            if (serverConfig.compat.iaf.FROST_WALKER) {
-                abilities.add(new AbilityFrostWalker().setRequiredElement(Elements.ICE));
-            }
-        } else if (serverConfig.compat.iaf.LIGHTNING_VARIANT && (element == Elements.LIGHTNING)) {
-            abilities.add(new AbilityLightningImmunity().setRequiredElement(Elements.LIGHTNING));
+        if (element == Elements.FIRE) {
+            this.addFireAbilities(stack, entity, abilities, element);
+        } else if (element == Elements.ICE) {
+            this.addIceAbilities(stack, entity, abilities, element);
+        } else if (element == Elements.LIGHTNING) {
+            this.addLightningAbilities(stack, entity, abilities, element);
         } else {
-            if (serverConfig.compat.iaf.DE_FIRE_RESIST) {
-                abilities.add(new AbilityFireImmunity().setRequiredElement(Elements.NEUTRAL));
-                if (survival && serverConfig.compat.tan.immuneToHeat) {
-                    abilities.add(new AbilityHeatImmunity().setRequiredElement(Elements.NEUTRAL));
-                }
-            }
+            this.addDefaultAbilities(stack, entity, abilities, element);
         }
-        if (serverConfig.oreFinder) {
-            abilities.add(new AbilityBlockFinder());
-        }
+        abilities.add(new AbilityGreedyEyes(this.CONFIG.ABILITIES.GREEDY_EYES));
+    }
+
+    private void addDefaultAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities, Element element) {
+        abilities.add(new AbilityFireImmunity(this.CONFIG.ABILITIES.FIRE_IMMUNITY));
+        this.addSurvivalAbilities(stack, entity, abilities, element, this.CONFIG.COMPAT.SURVIVAL);
+    }
+
+    private void addFireAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities, Element element) {
+        abilities.add(new AbilityFireImmunity(this.CONFIG.ELEMENTS.FIRE.ABILITIES.FIRE_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(stack, entity, abilities, element, this.CONFIG.ELEMENTS.FIRE.COMPAT.SURVIVAL);
+    }
+
+    private void addIceAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities, Element element) {
+        abilities.add(new AbilityIceImmunity(this.CONFIG.ELEMENTS.ICE.ABILITIES.ICE_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(stack, entity, abilities, element, this.CONFIG.ELEMENTS.ICE.COMPAT.SURVIVAL);
+        abilities.add(new AbilityFrostWalker(this.CONFIG.ELEMENTS.ICE.ABILITIES.FROST_WALKER).setRequiredElement(element));
+    }
+
+    private void addLightningAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities, Element element) {
+        abilities.add(new AbilityLightningImmunity(this.CONFIG.ELEMENTS.LIGHTNING.ABILITIES.LIGHTNING_IMMUNITY).setRequiredElement(element));
+        this.addSurvivalAbilities(stack, entity, abilities, element, this.CONFIG.ELEMENTS.LIGHTNING.COMPAT.SURVIVAL);
     }
 
     @Override
     public Element getPrimaryElement() {
-//        return Elements.VOID;
-        return super.getPrimaryElement();
+        return Elements.VOID;
+    }
+
+    @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getAttributeConfig(ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element == Elements.FIRE) {
+            return this.CONFIG.ELEMENTS.FIRE.ATTRIBUTES;
+        } else if (element == Elements.ICE) {
+            return this.CONFIG.ELEMENTS.ICE.ATTRIBUTES;
+        } else if (element == Elements.LIGHTNING) {
+            return this.CONFIG.ELEMENTS.LIGHTNING.ATTRIBUTES;
+        } else {
+            return this.getAttributeConfig();
+        }
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToRemove(ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element == Elements.FIRE) {
+            return this.CONFIG.ELEMENTS.FIRE.EFFECTS_TO_REMOVE;
+        } else if (element == Elements.ICE) {
+            return this.CONFIG.ELEMENTS.ICE.EFFECTS_TO_REMOVE;
+        } else if (element == Elements.LIGHTNING) {
+            return this.CONFIG.ELEMENTS.LIGHTNING.EFFECTS_TO_REMOVE;
+        } else {
+            return this.getEffectsToRemove();
+        }
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getEffectsToAdd(ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element == Elements.FIRE) {
+            return this.CONFIG.ELEMENTS.FIRE.EFFECTS_TO_ADD;
+        } else if (element == Elements.ICE) {
+            return this.CONFIG.ELEMENTS.ICE.EFFECTS_TO_ADD;
+        } else if (element == Elements.LIGHTNING) {
+            return this.CONFIG.ELEMENTS.LIGHTNING.EFFECTS_TO_ADD;
+        } else {
+            return this.getEffectsToAdd();
+        }
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig(ItemStack stack) {
+        final Element element = this.getPrimaryElement(stack);
+        if (element == Elements.FIRE) {
+            return this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE;
+        } else if (element == Elements.ICE) {
+            return this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE;
+        } else if (element == Elements.LIGHTNING) {
+            return this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE;
+        } else {
+            return this.getDamageTypesToIgnoreConfig();
+        }
     }
 
     @Override
     public boolean ItemEnabled() {
-        return serverConfig.enabled;
+        return this.CONFIG.ENABLED;
     }
 
     @Override
@@ -136,13 +163,10 @@ public class TrinketDragonsEye extends AccessoryBase {
         final ModelResourceLocation iceVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_ice", "inventory");
         final ModelResourceLocation lightningVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_lightning", "inventory");
         final ModelResourceLocation fireVariant = new ModelResourceLocation(this.getRegistryName().toString() + "_fire", "inventory");
+//        ModelLoader.setCustomModelResourceLocation();
         ModelBakery.registerItemVariants(this, normal, fireVariant, iceVariant, lightningVariant);
         ModelLoader.setCustomMeshDefinition(this, stack -> {
-            TrinketProperties prop = Capabilities.getTrinketProperties(stack, new TrinketProperties(stack), (prop1, emptyProp) -> {
-                return prop1;
-            });
-            prop.loadFromNBT(prop.getTag());
-            Element element = prop.getElementAttributes().getPrimaryElement();
+            Element element = this.getPrimaryElement(stack);
             if (element == Elements.LIGHTNING) {
                 return lightningVariant;
             } else if (element == Elements.ICE) {

@@ -8,6 +8,8 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import xzeroair.trinkets.entity.EntityRangedAttack;
 import xzeroair.trinkets.util.Reference;
 
+import javax.annotation.Nonnull;
+
 public class RenderThrownProjectile<T extends Entity> extends Render<T> {
 
     private static final ResourceLocation DRAGON_FIREBALL_TEXTURE = new ResourceLocation("textures/entity/enderdragon/dragon_fireball.png");
@@ -23,7 +25,7 @@ public class RenderThrownProjectile<T extends Entity> extends Render<T> {
      * Renders the desired {@code T} type Entity.
      */
     @Override
-    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(@Nonnull T entity, double x, double y, double z, float entityYaw, float partialTicks) {
         //		final Tessellator tessellator = Tessellator.getInstance();
         //		final BufferBuilder buffer = tessellator.getBuffer();
         //		final int particleAge = entity.ticksExisted;
@@ -147,7 +149,7 @@ public class RenderThrownProjectile<T extends Entity> extends Render<T> {
      * you call Render.bindEntityTexture.
      */
     @Override
-    public ResourceLocation getEntityTexture(T entity) {
+    public ResourceLocation getEntityTexture(@Nonnull T entity) {
         return null;
         //		return DRAGON_FIREBALL_TEXTURE;
         //		return TEXTURES;//DRAGON_FIREBALL_TEXTURE;

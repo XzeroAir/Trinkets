@@ -46,7 +46,7 @@ public class TranslationHelper {
     //	}
 
     public String formatAddVariables(String string, KeyEntry... entries) {
-        return formatAddVariables(string, 0, entries);
+        return this.formatAddVariables(string, 0, entries);
     }
 
     public String formatAddVariables(String string, int rendLoc, KeyEntry... entries) {
@@ -77,12 +77,12 @@ public class TranslationHelper {
                 }
             }
         }
-        return string.replace("#underline:", UL + "").replace("#strikethrough:", ST + "").replace("#italic:", italic + "").replace("#bold:", bold + "");
+        return string.replace("#underline:", this.UL + "").replace("#strikethrough:", this.ST + "").replace("#italic:", this.italic + "").replace("#bold:", this.bold + "");
     }
 
     // DELETE
     public String formatAddVariable(String string, int rendLoc, KeyEntry entry) {
-        return formatAddVariables(string, rendLoc, entry);
+        return this.formatAddVariables(string, rendLoc, entry);
     }
 
 
@@ -112,9 +112,9 @@ public class TranslationHelper {
 
     public static class KeyEntry {
 
-        private String key;
-        private String option;
-        private boolean enabled;
+        private final String key;
+        private final String option;
+        private final boolean enabled;
 
         public <T> KeyEntry(String key, T option) {
             this(key, true, option);
@@ -127,15 +127,15 @@ public class TranslationHelper {
         }
 
         public String key() {
-            return key;
+            return this.key;
         }
 
         public String option() {
-            return option;
+            return this.option;
         }
 
         public boolean enabled() {
-            return enabled;
+            return this.enabled;
         }
     }
 
@@ -175,35 +175,19 @@ public class TranslationHelper {
     }
 
     public boolean hasKey(String key, String string) {
-        if (string.contains(key)) {
-            return true;
-        } else {
-            return false;
-        }
+        return string.contains(key);
     }
 
     public boolean hasKeyBind(String key, String string) {
-        if (string.contains("*" + key.replace("*", "").replace(":", "").toLowerCase() + ":")) {
-            return true;
-        } else {
-            return false;
-        }
+        return string.contains("*" + key.replace("*", "").replace(":", "").toLowerCase() + ":");
     }
 
     public boolean hasOption(String key, String string) {
-        if (string.contains("$" + key.replace("$", "").replace(":", "").toLowerCase() + ":")) {
-            return true;
-        } else {
-            return false;
-        }
+        return string.contains("$" + key.replace("$", "").replace(":", "").toLowerCase() + ":");
     }
 
     public boolean hasLangReplacement(String key, String string) {
-        if (string.contains("@" + key.replace("@", "").replace(":", "").toLowerCase() + ":")) {
-            return true;
-        } else {
-            return false;
-        }
+        return string.contains("@" + key.replace("@", "").replace(":", "").toLowerCase() + ":");
     }
 
     public String langKeyReplace(String string, boolean enabled, String key, String replacementKey) {
@@ -266,28 +250,28 @@ public class TranslationHelper {
 
     @Deprecated
     public String addTextColorFromLangKey(String string) {
-        return string.replace("#black:", "" + black) // §0
-                .replace("#darkblue:", "" + dBlue) // §1
-                .replace("#darkgreen:", "" + dGreen) // §2
-                .replace("#darkaqua:", "" + dAqua) // §3
-                .replace("#darkred:", "" + dRed) // §4
-                .replace("#darkpurple:", "" + dPurple) // §5
-                .replace("#gold:", "" + gold) // §6
-                .replace("#gray:", "" + gray) // §7
-                .replace("#darkgray:", "" + dGray) // §8
-                .replace("#blue:", "" + blue) // §9
-                .replace("#green:", "" + green) // §a
-                .replace("#aqua:", "" + aqua) // §b
-                .replace("#red:", "" + red) // §c
-                .replace("#lightpurple:", "" + lPurple) // §d
-                .replace("#yellow:", "" + yellow) // §e
-                .replace("#white:", "" + white) // §f
-                .replace("#obfuscated:", "" + reset) // §k
-                .replace("#bold:", "" + bold) // §l
-                .replace("#strikethrough:", "" + ST) // §m
-                .replace("#underline:", "" + UL) // §n
-                .replace("#italic:", "" + italic) // §o
-                .replace("#reset:", "" + reset); // §r
+        return string.replace("#black:", "" + this.black) // §0
+                .replace("#darkblue:", "" + this.dBlue) // §1
+                .replace("#darkgreen:", "" + this.dGreen) // §2
+                .replace("#darkaqua:", "" + this.dAqua) // §3
+                .replace("#darkred:", "" + this.dRed) // §4
+                .replace("#darkpurple:", "" + this.dPurple) // §5
+                .replace("#gold:", "" + this.gold) // §6
+                .replace("#gray:", "" + this.gray) // §7
+                .replace("#darkgray:", "" + this.dGray) // §8
+                .replace("#blue:", "" + this.blue) // §9
+                .replace("#green:", "" + this.green) // §a
+                .replace("#aqua:", "" + this.aqua) // §b
+                .replace("#red:", "" + this.red) // §c
+                .replace("#lightpurple:", "" + this.lPurple) // §d
+                .replace("#yellow:", "" + this.yellow) // §e
+                .replace("#white:", "" + this.white) // §f
+                .replace("#obfuscated:", "" + this.reset) // §k
+                .replace("#bold:", "" + this.bold) // §l
+                .replace("#strikethrough:", "" + this.ST) // §m
+                .replace("#underline:", "" + this.UL) // §n
+                .replace("#italic:", "" + this.italic) // §o
+                .replace("#reset:", "" + this.reset); // §r
     }
 
     public String translateAttributeValue(int OP, double Amount) {
@@ -301,7 +285,7 @@ public class TranslationHelper {
             if (TranslatedAmount > 0) {
                 string = "+" + TranslatedAmount + "%";
             } else {
-                string = "" + TranslatedAmount + "%";
+                string = TranslatedAmount + "%";
             }
         } else {
             if (TranslatedAmount > 0) {
@@ -310,7 +294,7 @@ public class TranslationHelper {
                 string = "" + TranslatedAmount;
             }
         }
-        final String color = TranslatedAmount > 0 ? "" + green : "" + red;
+        final String color = TranslatedAmount > 0 ? "" + this.green : "" + this.red;
         return color + string;
     }
 

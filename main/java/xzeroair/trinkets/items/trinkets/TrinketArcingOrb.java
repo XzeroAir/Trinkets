@@ -8,7 +8,7 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityDodge;
-import xzeroair.trinkets.traits.abilities.AbilityLightningBolt;
+import xzeroair.trinkets.traits.abilities.elements.lightning.AbilityLightningBolt;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TrinketArcingOrb extends AccessoryBase {
 
-    public final ConfigArcingOrb serverConfig = TrinketsConfig.SERVER.Items.ARCING_ORB;
+    protected final ConfigArcingOrb CONFIG = TrinketsConfig.SERVER.ITEMS.ARCING_ORB;
 
     public TrinketArcingOrb(String name) {
         super(name);
@@ -26,18 +26,10 @@ public class TrinketArcingOrb extends AccessoryBase {
     }
 
     @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
-    }
-
-    @Override
     public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        if (serverConfig.attackAbility) {
-            abilities.add(new AbilityLightningBolt());
-        }
-        if (serverConfig.dodgeAbility) {
-            abilities.add(new AbilityDodge());
-        }
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
+        abilities.add(new AbilityLightningBolt(this.CONFIG.ABILITIES.LIGHTNING_BOLT));
+        abilities.add(new AbilityDodge(this.CONFIG.ABILITIES.DODGE));
     }
 
     @Override
@@ -46,8 +38,28 @@ public class TrinketArcingOrb extends AccessoryBase {
     }
 
     @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
     public boolean ItemEnabled() {
-        return serverConfig.enabled;
+        return this.CONFIG.ENABLED;
     }
 
     @Override

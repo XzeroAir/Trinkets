@@ -4,19 +4,18 @@ public class ColorHelper {
 
     public static String getHexFromRGB(int r, int g, int b) {
         final int decimal = getDecimalFromRGB(r, g, b);
-        final String hex = convertDecimalColorToHexadecimal(decimal);
-        return hex;
+        return convertDecimalColorToHexadecimal(decimal);
     }
 
     public static String getHexFromRGB(float r, float g, float b) {
-        final int rR = (int) (r * 255);
-        final int rG = (int) (g * 255);
-        final int rB = (int) (b * 255);
+        final int rR = Math.round(r * 255);
+        final int rG = Math.round(g * 255);
+        final int rB = Math.round(b * 255);
         return getHexFromRGB(rR, rG, rB);
     }
 
     public static int getDecimalFromRGB(int r, int g, int b) {
-        return ((0xff << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
+        return (((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
     }
 
     /**
@@ -28,9 +27,9 @@ public class ColorHelper {
     }
 
     public static int getDecimalFromRGB(float r, float g, float b) {
-        final int rR = (int) (r * 255);
-        final int rG = (int) (g * 255);
-        final int rB = (int) (b * 255);
+        final int rR = Math.round(r * 255);
+        final int rG = Math.round(g * 255);
+        final int rB = Math.round(b * 255);
         return getDecimalFromRGB(rR, rG, rB);
     }
 
@@ -39,10 +38,10 @@ public class ColorHelper {
      */
     @Deprecated
     public static int getDecimalFromRGBA(float r, float g, float b, float a) {
-        final int rR = (int) (r * 255);
-        final int rG = (int) (g * 255);
-        final int rB = (int) (b * 255);
-        final int rA = (int) (a * 255);
+        final int rR = Math.round(r * 255);
+        final int rG = Math.round(g * 255);
+        final int rB = Math.round(b * 255);
+        final int rA = Math.round(a * 255);
         return getDecimalFromRGBA(rR, rG, rB, rA);
     }
 
@@ -51,72 +50,83 @@ public class ColorHelper {
     }
 
     public static float[] getRGBColor(int decimal) {
-        final float r = ((decimal & 16711680) >> 16) / 255F;
-        final float g = ((decimal & 65280) >> 8) / 255F;
-        final float b = ((decimal & 255) >> 0) / 255F;
+        final float r = ((decimal & 0xFF0000) >> 16) / 255f;
+        final float g = ((decimal & 0x00FF00) >> 8) / 255f;
+        final float b = (decimal & 0x0000FF) / 255f;
         return new float[]{r, g, b};
     }
 
     public static String convertDecimalColorToHexadecimal(int color) {
-        String hex = Integer.toHexString(color & 0xffffff);
-        if (hex.length() < 6) {
-            if (hex.length() == 5) {
-                hex = "0" + hex;
-            }
-            if (hex.length() == 4) {
-                hex = "00" + hex;
-            }
-            if (hex.length() == 3) {
-                hex = "000" + hex;
-            }
-        }
-        hex = "#" + hex;
-        return hex;
+        String hex = Integer.toHexString(color & 0xFFFFFF);
+        return "#" + ("000000" + hex).substring(hex.length());
+//        String hex = Integer.toHexString(color & 0xffffff);
+//        if (hex.length() < 6) {
+//            if (hex.length() == 5) {
+//                hex = "0" + hex;
+//            }
+//            if (hex.length() == 4) {
+//                hex = "00" + hex;
+//            }
+//            if (hex.length() == 3) {
+//                hex = "000" + hex;
+//            }
+//        }
+//        hex = "#" + hex;
+//        return hex;
     }
 
     public static int convertHexToDecimal(String color) {
-        try {
-            color = color.toLowerCase().replaceAll("[^#0-9a-f]", "");
-            String hexColor;// = color.toLowerCase().replaceAll("[^#0-9a-f]", "");
-            if (!color.isEmpty()) {
-                final boolean CheckforHash = !color.startsWith("#");
-                hexColor = CheckforHash ? ("#" + color) : color.toLowerCase();
-                int length = hexColor.length();
-                if (hexColor.length() >= 7) {
-                    length = 7;
-                }
-                final int i = Integer.decode(hexColor.substring(0, length));
-                return i;
-            }
-        } catch (final NumberFormatException ex) {
+        if (color == null || color.isEmpty()) {
+            return 0;
         }
-        return 0;
+
+        color = color.trim();
+
+        try {
+            if (color.startsWith("#")) {
+                return Integer.parseInt(color.substring(1), 16);
+            }
+
+            return Integer.parseInt(color); // decimal only
+
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
     }
 
     public static int getColorFromString(String color) {
-        try {
-            color = color.toLowerCase().replaceAll("[^#0-9a-f]", "");
-            if (!color.isEmpty()) {
-                final boolean CheckforHash = color.startsWith("#");
-                if (CheckforHash) {
-                    return convertHexToDecimal(color);
-                } else {
-                    color = color.toLowerCase().replaceAll("[^0-9]", "");
-                    if (!color.isEmpty()) {
-                        return Integer.decode(color);
-                    }
-                }
-            }
-        } catch (final NumberFormatException ex) {
-            ex.printStackTrace();
+        if (color == null) {
+            return 0;
         }
+
+        color = color.trim();
+        if (color.isEmpty()) {
+            return 0;
+        }
+
+        try {
+            // #RRGGBB or #RGB (optional, depending on your needs)
+            if (color.matches("^#?[0-9a-fA-F]+$")) {
+                String hex = color.startsWith("#") ? color.substring(1) : color;
+                return Integer.parseInt(hex, 16);
+            }
+
+            // decimal
+            if (color.matches("^[0-9]+$")) {
+                return Integer.parseInt(color);
+            }
+
+        } catch (NumberFormatException ignored) {
+            ignored.printStackTrace();
+        }
+
         return 0;
     }
 
     public static class ColorObject {
 
-        private String hexadecimal;
-        private int decimal;
+        private final String hexadecimal;
+        private final int decimal;
 
         private float r = 1;
         private float g = 1;
@@ -125,39 +135,39 @@ public class ColorHelper {
         public ColorObject(int decimal) {
             final float[] rgb = getRGBColor(decimal);
             this.decimal = decimal;
-            hexadecimal = convertDecimalColorToHexadecimal(decimal);
-            r = rgb[0];
-            g = rgb[1];
-            b = rgb[2];
+            this.hexadecimal = convertDecimalColorToHexadecimal(decimal);
+            this.r = rgb[0];
+            this.g = rgb[1];
+            this.b = rgb[2];
         }
 
         public ColorObject(String hexadecimal) {
             final float[] rgb = getRGBColor(hexadecimal);
             this.hexadecimal = hexadecimal;
-            decimal = convertHexToDecimal(hexadecimal);
-            r = rgb[0];
-            g = rgb[1];
-            b = rgb[2];
+            this.decimal = convertHexToDecimal(hexadecimal);
+            this.r = rgb[0];
+            this.g = rgb[1];
+            this.b = rgb[2];
         }
 
         public float getRed() {
-            return r;
+            return this.r;
         }
 
         public float getGreen() {
-            return g;
+            return this.g;
         }
 
         public float getBlue() {
-            return b;
+            return this.b;
         }
 
         public int getDecimal() {
-            return decimal;
+            return this.decimal;
         }
 
         public String getHexadecimal() {
-            return hexadecimal;
+            return this.hexadecimal;
         }
     }
 }

@@ -8,20 +8,21 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 
 public class CapabilityStorage<T extends CapabilityBase> implements IStorage<T> {
 
-	@Override
-	public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
-		if (instance == null) {
-			return null;
-		}
-		return instance.saveToNBT(instance.getTag());
-	}
+    @Override
+    public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
+        if (instance == null) {
+            return new NBTTagCompound();
+        }
+        NBTTagCompound tag = new NBTTagCompound();
+        instance.saveToNBT(tag);
+        return tag;
+    }
 
-	@Override
-	public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
-		if ((instance == null) || (nbt == null)) {
-			return;
-		}
-		instance.loadFromNBT((NBTTagCompound) nbt);
-	}
+    @Override
+    public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
+        if (instance != null && nbt instanceof NBTTagCompound) {
+            instance.loadFromNBT((NBTTagCompound) nbt);
+        }
+    }
 
 }

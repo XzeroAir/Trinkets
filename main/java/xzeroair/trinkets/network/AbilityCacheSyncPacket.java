@@ -12,51 +12,77 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 
+import javax.annotation.Nonnull;
+
 public class AbilityCacheSyncPacket extends ThreadSafePacket {
 
+    private static final String ABILITY_TAG = "Ability";
+    private static final String DATA_TAG = "data";
 
     // A default constructor is always required
     public AbilityCacheSyncPacket() {
     }
 
-    public AbilityCacheSyncPacket(EntityLivingBase entity, NBTTagCompound tag) {
+    public AbilityCacheSyncPacket(@Nonnull EntityLivingBase entity, NBTTagCompound tag) {
         this.entityID = entity.getEntityId();
         this.tag = tag;
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-//        // Writes the int into the buf
-        buf.writeInt(entityID);
-        ByteBufUtils.writeTag(buf, tag);
+    public void toBytes(@Nonnull ByteBuf buf) {
+        buf.writeInt(this.entityID);
+        ByteBufUtils.writeTag(buf, this.tag);
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
-        entityID = buf.readInt();
-        tag = ByteBufUtils.readTag(buf);
+    public void fromBytes(@Nonnull ByteBuf buf) {
+        this.entityID = buf.readInt();
+        this.tag = ByteBufUtils.readTag(buf);
     }
 
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
+        if (this.tag == null || this.tag.isEmpty()) {
+            return;
+        }
         final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null) {
+            return;
+        }
         final World world = mc.player.getEntityWorld();
-        final Entity entity = world.getEntityByID(entityID);
-
-        if (tag != null && !tag.isEmpty()) {
-            String abilityName = tag.getString("Ability");
-            Capabilities.getEntityProperties(entity, (prop) -> {
-                IAbilityInterface ability = prop.getAbilityHandler().getAbility(abilityName);
-                if (ability != null) {
-                    ability.loadTagCacheFromNBT(tag);
-                }
-            });
+        if (world == null) {
+            return;
+        }
+        final Entity entity = world.getEntityByID(this.entityID);
+        if (entity == null) {
+            return;
         }
 
+        Capabilities.getEntityProperties(entity, (prop) -> {
+            if (this.tag.hasKey(ABILITY_TAG)) {
+                String abilityName = this.tag.getString(ABILITY_TAG);
+                if (this.tag.hasKey("ENABLED")) {
+                    prop.getAbilityHandler().removeKillOrder(abilityName);
+                } else if (this.tag.hasKey("DISABLED")) {
+                    prop.getAbilityHandler().addKillOrder(abilityName);
+                } else {
+                    IAbilityInterface ability = prop.getAbilityHandler().getAbility(abilityName);
+                    if (ability != null) {
+                        if (this.tag.hasKey(abilityName)) {
+                            NBTTagCompound data = this.tag.getCompoundTag(abilityName);
+                            ability.loadStorage(data);
+                        }
+                        if (this.tag.hasKey(DATA_TAG)) {
+                            NBTTagCompound data = this.tag.getCompoundTag(DATA_TAG);
+                            ability.loadDataCache(data);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
-//        final Entity entity = server.player.getEntityWorld().getEntityByID(entityID);
     }
 }

@@ -1,244 +1,152 @@
 package xzeroair.trinkets.races.dragon.config;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityNightVision;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
-//@formatter:off
 public class DragonConfig {
-    private final String name = "dragon";
-    private final String PREFIX = Reference.MODID + ".config.races." + name;
 
-    @Config.RequiresWorldRestart
-    @Config.Comment("Creative Flight. Set to False to Disable. Default True")
-    @Name("00. Creative Flight")
-    @LangKey(PREFIX + ".flight")
-    public boolean creative_flight = true;
+    private final static String LANG_PREFIX = ConstantsConfigLang.CONFIG_RACES_DRAGON;
 
-    @Config.Comment("Mana Cost per second while flying")
-    @Name("05. Flight Cost")
-    @LangKey(PREFIX + ".flight.cost")
-    public float flight_cost = 5F;
+    public DragonConfig() {
+    }
 
-    @Name("Compatability Settings")
-    @LangKey(Reference.MODID + ".config.compatibility")
-    public Compatability compat = new Compatability();
+    /// Default Abilities
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-    public class Compatability {
+    public class ConfigAbilities {
 
-        @Name("Tough as Nails Compatability")
-        @LangKey(Reference.MODID + ".config.toughasnails")
-        public TANCompat tan = new TANCompat();
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES)
+        public ConfigAbilityGreedyEyes GREEDY_EYES = new ConfigAbilityGreedyEyes();
 
-        public class TANCompat {
-            @Config.Comment("If Tough as Nails is Installed, Should the player be immune to Heat")
-            @Name("00. Immune to Heat")
-            @LangKey(Reference.MODID + ".config." + ModItems.DragonsEye + ".toughasnails.immunity.heat")
-            public boolean immuneToHeat = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION)
+        public ConfigAbilityNightVision NIGHT_VISION = new ConfigAbilityNightVision();
 
-            @Config.Comment("If Tough as Nails is Installed, Should the player be immune to Cold")
-            @Name("01. Immune to Cold")
-            @LangKey(Reference.MODID + ".config." + ModItems.DragonsEye + ".toughasnails.immunity.cold")
-            public boolean immuneToCold = true;
-        }
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE)
+        public ConfigAbilityImmunityFire FIRE_IMMUNITY = new ConfigAbilityImmunityFire(false);
 
-        @Name("Fire Resistance Tiers")
-        @LangKey(Reference.MODID + ".config.fire_resistance_tiers")
-        public FireResistanceTiers FRTiers = new FireResistanceTiers();
-
-        public class FireResistanceTiers {
-
-            public int amplifier = 0;
-        }
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT)
+        public ConfigAbilityFlight FLIGHT = new ConfigAbilityFlight(true, 5F);
 
     }
 
-    @Name("Element Settings")
-    @LangKey(Reference.MODID + ".config.element")
-    public ElementConfig elementConfig = new ElementConfig();
+    /// Elemental Configuration
+
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementConfig ELEMENTS = new ElementConfig();
 
     public class ElementConfig {
 
-        @Name("Fire Settings")
-        @LangKey(Reference.MODID + ".config.element.fire")
-        public FireElementConfig fire = new FireElementConfig();
+        /// Fire
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireDragon FIRE = new ConfigFireDragon();
 
-        public class FireElementConfig {
+        /// Ice
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceDragon ICE = new ConfigIceDragon();
 
-            @Config.Comment("Does the breath attack effect terrain")
-            @Name("00. Breath effects terrain")
-            @LangKey(PREFIX + ".breath.terrain")
-            public boolean terrain = true;
+        /// Lightning
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningDragon LIGHTNING = new ConfigLightningDragon();
 
-            @Config.Comment("How much damage per second the dragon breath does")
-            @Name("01. Dragon Breath Damage")
-            @LangKey(PREFIX + ".breath.damage")
-            public float breath_damage = 1F;
-
-            @Config.Comment("The Mana Cost per tick when using dragons breath")
-            @Name("02. Dragon Breath Cost")
-            @LangKey(PREFIX + ".breath.cost")
-            public float breath_cost = 10F;
-
-            @Config.Comment("What effects does the breath attack apply to targets")
-            @Name("03. Dragon Breath Effects")
-            @LangKey(PREFIX + ".breath.effects")
-            public String[] effects = {};
-
-            @Config.Comment("What potion effects is the player immune to")
-            @Name("04. Potion Resistances")
-            @LangKey(Reference.MODID + ".config.races" + ".resistances")
-            public String[] resistances = {};
-
-            @Config.Comment("What effects to add to the player")
-            @Name("05. Potion Effects")
-            @LangKey(Reference.MODID + ".config.races" + ".effects")
-            public String[] potEffects = {};
-
-            @Config.Comment("What DamageTypes is the player immune to")
-            @Name("Damage Immunity")
-            @LangKey(Reference.MODID + ".config.races" + ".immunities")
-            public DamageTypesConfig dmgType = new DamageTypesConfig(true, false, false, false, false);
-
-        }
-
-        @Name("Ice Settings")
-        @LangKey(Reference.MODID + ".config.element.ice")
-        public IceElementConfig ice = new IceElementConfig();
-
-        public class IceElementConfig {
-
-            @Config.Comment("Does the breath attack effect terrain")
-            @Name("00. Breath effects terrain")
-            @LangKey(PREFIX + ".breath.terrain")
-            public boolean terrain = true;
-
-            @Config.Comment("How much damage per second the dragon breath does")
-            @Name("01. Dragon Breath Damage")
-            @LangKey(PREFIX + ".breath.damage")
-            public float breath_damage = 1F;
-
-            @Config.Comment("The Mana Cost per tick when using dragons breath")
-            @Name("02. Dragon Breath Cost")
-            @LangKey(PREFIX + ".breath.cost")
-            public float breath_cost = 10F;
-
-            @Config.Comment("What effects does the breath attack apply to targets")
-            @Name("03. Dragon Breath Effects")
-            @LangKey(PREFIX + ".breath.effects")
-            public String[] effects = {
-                    "minecraft:slowness:100:2",
-            };
-
-            @Config.Comment("What potion effects is the player immune to")
-            @Name("04. Potion Resistances")
-            @LangKey(Reference.MODID + ".config.races" + ".resistances")
-            public String[] resistances = {};
-
-            @Config.Comment("What effects to add to the player")
-            @Name("05. Potion Effects")
-            @LangKey(Reference.MODID + ".config.races" + ".effects")
-            public String[] potEffects = {};
-
-            @Config.Comment("What DamageTypes is the player immune to")
-            @Name("Damage Immunity")
-            @LangKey(Reference.MODID + ".config.races" + ".immunities")
-            public DamageTypesConfig dmgType = new DamageTypesConfig();
-        }
-
-        @Name("Lightning Settings")
-        @LangKey(Reference.MODID + ".config.element.lightning")
-        public LightningElementConfig lightning = new LightningElementConfig();
-
-        public class LightningElementConfig {
-
-            @Config.Comment("Does the breath attack effect terrain")
-            @Name("00. Breath effects terrain")
-            @LangKey(PREFIX + ".breath.terrain")
-            public boolean terrain = true;
-
-            @Config.Comment("How much damage per second the dragon breath does")
-            @Name("01. Dragon Breath Damage")
-            @LangKey(PREFIX + ".breath.damage")
-            public float breath_damage = 1F;
-
-            @Config.Comment("The Mana Cost per tick when using dragons breath")
-            @Name("02. Dragon Breath Cost")
-            @LangKey(PREFIX + ".breath.cost")
-            public float breath_cost = 10F;
-
-            @Config.Comment("What effects does the breath attack apply to targets")
-            @Name("03. Dragon Breath Effects")
-            @LangKey(PREFIX + ".breath.effects")
-            public String[] effects = {
-                    "minecraft:slowness:20:4",
-                    "minecraft:weakness:20:1"
-            };
-
-            @Config.Comment("What potion effects is the player immune to")
-            @Name("04. Potion Resistances")
-            @LangKey(Reference.MODID + ".config.races" + ".resistances")
-            public String[] resistances = {};
-
-            @Config.Comment("What effects to add to the player")
-            @Name("05. Potion Effects")
-            @LangKey(Reference.MODID + ".config.races" + ".effects")
-            public String[] potEffects = {};
-
-            @Config.Comment("What DamageTypes is the player immune to")
-            @Name("Damage Immunity")
-            @LangKey(Reference.MODID + ".config.races" + ".immunities")
-            public DamageTypesConfig dmgType = new DamageTypesConfig();
-        }
     }
 
-    @Config.Comment("What potion effects is the player immune to")
-    @Name("Potion Resistances")
-    @LangKey(Reference.MODID + ".config.races" + ".resistances")
-    public String[] resistances = {};
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL)
+    public boolean CAN_MOUNT = true;
 
-    @Config.Comment("What DamageTypes is the player immune to")
-    @Name("Damage Immunity")
-    @LangKey(Reference.MODID + ".config.races" + ".immunities")
-    public DamageTypesConfig dmgType = new DamageTypesConfig();
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT)
+    public boolean CAN_CONTROL_BOATS = true;
 
-    @Config.Comment("What effects to add to the player")
-    @Name("Potion Effects")
-    @LangKey(Reference.MODID + ".config.races" + ".effects")
-    public String[] potEffects = {};
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED)
+    public boolean MOUNT_WHITELIST = false;
 
-    @Config.Name("Magic")
-    @Config.LangKey(Reference.MODID + ".config.magic")
-    public final RaceMagicConfig magic = new RaceMagicConfig(400);
+    @Config.Name("05. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST)
+    public String[] MOUNT_BLACKLIST = {};
 
-    @Name("Size")
-    @LangKey(Reference.MODID + ".config.race.size")
-    public final RaceSizeConfig size = new RaceSizeConfig(120, 120);
+    @Config.Name("06. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-    @Config.Comment({"For More Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-    @Name("Attributes")
-    @LangKey(Reference.MODID + ".config.attributes")
-    public String[] attributes = {
+    @Config.Name("07. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+    @Config.Name("08. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
             "Name:generic.maxHealth, Amount:0.25, Operation:1",
-            "Name:generic.knockbackResistance; Amount:0; Operation:0",
-            "Name:generic.movementSpeed, Amount:0, Operation:0",
             "Name:generic.attackDamage, Amount:0.5, Operation:1",
-            "Name:generic.attackSpeed, Amount:0, Operation:0",
-            "Name:generic.armor, Amount:0, Operation:0",
             "Name:generic.armorToughness, Amount:0.5, Operation:1",
-            "Name:generic.luck, Amount:0, Operation:0",
-            "Name:generic.reachDistance, Amount:0, Operation:0",
-            "Name:forge.swimSpeed, Amount:0, Operation:0",
-            "Name:xat.entityMagic.regen, Amount:0, Operation:0",
-            "Name:xat.entityMagic.regen.cooldown, Amount:0, Operation:0",
-            "Name:xat.entityMagic.affinity, Amount:0, Operation:0",
-            "Name:xat.jump, Amount:0, Operation:0",
-            "Name:xat.stepheight, Amount:0, Operation:0",
             "Name:xat.flyspeed, Amount:-0.6, Operation:2"
+            //@formatter:on
     };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC)
+    public RaceMagicConfig MAGIC = new RaceMagicConfig(400);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SIZE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
+    public RaceSizeConfig SIZE = new RaceSizeConfig(120, 120);
+
+    /// Default Compat
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+    }
+
 }

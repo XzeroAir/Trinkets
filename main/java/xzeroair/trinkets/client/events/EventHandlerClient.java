@@ -7,13 +7,9 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionType;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -32,7 +28,6 @@ import xzeroair.trinkets.client.keybinds.KeyHandler;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.init.EntityRaces;
-import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.keybinds.KeybindPacket;
 import xzeroair.trinkets.network.keybinds.MovementKeyPacket;
@@ -43,11 +38,8 @@ import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
-import xzeroair.trinkets.util.config.ConfigHelper.ArmorEntry;
+import xzeroair.trinkets.util.config.ConfigHelper.ConfigEquipmentObject;
 import xzeroair.trinkets.util.config.ConfigHelper.MPRecoveryItem;
-import xzeroair.trinkets.util.helpers.TranslationHelper;
-import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
-import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -100,8 +92,8 @@ public class EventHandlerClient {
                                 final IKeyBindInterface keybind = (IKeyBindInterface) ability;
                                 final String keybind1 = keybind.getKey().replace(" ", "");
                                 final String keybind2 = keybind.getAuxKey().replace(" ", "");
-                                final boolean keyDown = !keybind1.isEmpty() ? ModKeyBindings.isKeyDownFromName(keybind1) : false;
-                                final boolean auxDown = !keybind2.isEmpty() ? ModKeyBindings.isKeyDownFromName(keybind2) : false;
+                                final boolean keyDown = !keybind1.isEmpty() && ModKeyBindings.isKeyDownFromName(keybind1);
+                                final boolean auxDown = !keybind2.isEmpty() && ModKeyBindings.isKeyDownFromName(keybind2);
                                 final KeyHandler keyHand = prop.getKeybindHandler().getKeyHandler(key + "." + keybind1);
                                 if (keyHand != null) {
                                     keyHand.handler(keyDown, press -> {
@@ -129,7 +121,7 @@ public class EventHandlerClient {
                                 }
                             }
                         } catch (final Exception e) {
-                            Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                            Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                             e.printStackTrace();
                         }
                     }
@@ -229,17 +221,17 @@ public class EventHandlerClient {
                 event.getToolTip().add(OreDictionary.getOreName(or));
             }
         }
-        if (TrinketsConfig.CLIENT.debug.debugArmorMaterials || TrinketsConfig.SERVER.races.faelis.penalties) {
-            final String itemType = ConfigHelper.ArmorEntry.getItemType(stack);
+        if (TrinketsConfig.CLIENT.debug.debugArmorMaterials || TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {
+            final String itemType = ConfigEquipmentObject.getItemType(stack);
             if (!itemType.isEmpty()) {
-                final String ItemMaterial = ConfigHelper.ArmorEntry.getItemMaterial(stack).toLowerCase();
+                final String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack).toLowerCase();
                 if (TrinketsConfig.CLIENT.debug.debugArmorMaterials && !ItemMaterial.isEmpty()) {
                     event.getToolTip().add(ItemMaterial);
                 }
-                if (TrinketsConfig.SERVER.races.faelis.penalties) {
+                if (TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {
                     boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
                     if (isFaelis) {
-                        ArmorEntry entry = null;
+                        ConfigEquipmentObject entry = null;
                         if (item instanceof ItemArmor) {
                             final ItemArmor armor = ((ItemArmor) item);
                             final String armorType = armor.armorType.getName();
@@ -252,9 +244,9 @@ public class EventHandlerClient {
                             //						} else if (item instanceof ItemShield) {
                         } else {
                             String[] mS = new String[]{regName + ":" + "mainhand", regName, "ObjectMaterial:" + ItemMaterial + ":" + "mainhand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "mainhand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "mainhand", "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial,};
-                            final ArmorEntry main = ConfigHelper.TrinketConfigStorage.getEquipmentEntry((k, v) -> v.doesItemMatchEntry(stack), mS);
+                            final ConfigEquipmentObject main = ConfigHelper.TrinketConfigStorage.getEquipmentEntry((k, v) -> v.doesItemMatchEntry(stack), mS);
                             String[] oS = new String[]{regName + ":" + "offhand", regName, "ObjectMaterial:" + ItemMaterial + ":" + "offhand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "offhand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "hand" + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + itemType, "ObjectMaterial:" + ItemMaterial + ":" + "tool", "ObjectMaterial:" + ItemMaterial + ":" + "offhand", "ObjectMaterial:" + ItemMaterial + ":" + "hand", "ObjectMaterial:" + ItemMaterial};
-                            final ArmorEntry off = ConfigHelper.TrinketConfigStorage.getEquipmentEntry((k, v) -> v.doesItemMatchEntry(stack), oS);
+                            final ConfigEquipmentObject off = ConfigHelper.TrinketConfigStorage.getEquipmentEntry((k, v) -> v.doesItemMatchEntry(stack), oS);
                             double mW = main == null ? 0 : main.getEquipmentWeight();
                             String color1 = mW > 0 ? "" + TextFormatting.RED : "" + TextFormatting.BLUE;
                             double oW = off == null ? 0 : off.getEquipmentWeight();
@@ -279,7 +271,7 @@ public class EventHandlerClient {
                 }
             }
         }
-        if (TrinketsConfig.SERVER.mana.mana_enabled) {
+        if (TrinketsConfig.SERVER.MAGIC.mana_enabled) {
             try {
                 final Map<String, MPRecoveryItem> MagicRecoveryItems = ConfigHelper.TrinketConfigStorage.MagicRecoveryItems;
                 float amount = 0;
@@ -303,26 +295,17 @@ public class EventHandlerClient {
                 e.printStackTrace();
             }
         }
-        if (stack.getItem().equals(Items.POTIONITEM)) {
-            final PotionType pot = PotionUtils.getPotionFromItem(stack);
-            if (ModPotionTypes.TrinketPotionTypes.containsValue(pot)) {
-                final TranslationHelper helper = TranslationHelper.INSTANCE;
-                final KeyEntry human = new OptionEntry("humanticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.human.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry fairy = new OptionEntry("fairyticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.fairy.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry dwarf = new OptionEntry("dwarfticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.dwarf.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry titan = new OptionEntry("titanticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.titan.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry goblin = new OptionEntry("goblinticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.goblin.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry elf = new OptionEntry("elfticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.elf.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry faelis = new OptionEntry("faelisticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.faelis.Duration), 0, Integer.MAX_VALUE) / 20F));
-                final KeyEntry dragon = new OptionEntry("dragonticks", (MathHelper.clamp((TrinketsConfig.SERVER.Potion.dragon.Duration), 0, Integer.MAX_VALUE) / 20F));
-                for (int i = 1; i < 10; i++) {
-                    final String key = Reference.MODID + "." + stack.getTranslationKey() + "." + pot.getRegistryName().getPath() + ".tooltip" + i;
-                    final String string = helper.getLangTranslation(key, lang -> helper.formatAddVariables(lang, human, fairy, dwarf, titan, goblin, elf, faelis, dragon));
-                    if (!helper.isStringEmpty(string)) {
-                        event.getToolTip().add(string);
-                    }
-                }
-            }
-        }
+//        if (stack.getItem().equals(Items.POTIONITEM)) {
+//            final PotionType pot = PotionUtils.getPotionFromItem(stack);
+//            if (ModPotionTypes.TrinketPotionTypes.containsValue(pot)) {
+//                final TranslationHelper helper = TranslationHelper.INSTANCE;
+//                for (int i = 1; i < 10; i++) {
+//                    String string = helper.getLangTranslation("xat.item.potion." + pot.getRegistryName().getPath() + ".tooltip" + i);
+//                    if (!helper.isStringEmpty(string)) {
+//                        event.getToolTip().add(string);
+//                    }
+//                }
+//            }
+//        }
     }
 }

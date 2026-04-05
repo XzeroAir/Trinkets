@@ -5,12 +5,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.container.TrinketInventoryContainer;
 import xzeroair.trinkets.util.Reference;
 
 public class GuiHandler implements IGuiHandler {
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (world instanceof WorldClient) {
             switch (ID) {
@@ -22,6 +25,7 @@ public class GuiHandler implements IGuiHandler {
     }
 
     @Override
+    @SideOnly(Side.SERVER)
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (world instanceof WorldServer) {
             switch (ID) {

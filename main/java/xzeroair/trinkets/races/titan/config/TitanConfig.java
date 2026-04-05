@@ -1,104 +1,115 @@
 package xzeroair.trinkets.races.titan.config;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityHeavy;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityLargeHands;
+import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
 
 public class TitanConfig {
 
-    private final String name = "titan";
-    private final String PREFIX = Reference.MODID + ".config.races." + name;
+    private final String LANG_PREFIX = ConstantsConfigLang.CONFIG_RACES + ".titan";
 
-    @Config.Comment("Jump Height Adjustment when wearing Race Rings. Set to False to Disable. Default True")
-    @Name("01. Jump Height")
-    @LangKey(PREFIX + ".jumpheight")
-    public boolean step_height = true;
+    public TitanConfig() {
+    }
 
-    @Config.Comment("If the player should be too heavy to stay afloat")
-    @Name("02. Heavy Player")
-    @LangKey(PREFIX + ".heavy")
-    public boolean sink = true;
+    /// Default Abilities
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
 
-    @Config.Comment("If Enabled the player will trample farmland")
-    @Name("03. Trample Farmland")
-    @LangKey(PREFIX + ".trample")
-    public boolean trample = true;
+    public class ConfigAbilities {
 
-    @Config.Comment("If Enabled the player will be able to mine a 3x3 area")
-    @Name("04. AoE Mining")
-    @LangKey(PREFIX + ".mining.extended")
-    public boolean miningExtend = true;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_LARGE_HANDS_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_LARGE_HANDS_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_LARGE_HANDS)
+        public ConfigAbilityLargeHands LARGE_HANDS = new ConfigAbilityLargeHands();
 
-    @Config.Comment("If Enabled the player will be required to sneak to AoE Mine")
-    @Name("05. Invert AoE Mining")
-    @LangKey(PREFIX + ".mining.extended.inverted")
-    public boolean miningExtendInverted = false;
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_HEAVY_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_HEAVY_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_HEAVY)
+        public ConfigAbilityHeavy HEAVY = new ConfigAbilityHeavy();
 
-    @Config.Comment("what blocks can not be AoE Mined")
-    @Name("06. AoE Mining Blacklist")
-    @LangKey(PREFIX + ".mining.extended.blacklist")
-    public String[] miningAoEBlacklist = new String[]{"dynamictrees:*"};
-
-    @Config.Comment("If the player can Mount Entities at all")
-    @Name("07. Able to Mount Entities")
-    @LangKey(PREFIX + ".mount.enabled")
-    public boolean canMount = true;
-
-    @Config.Comment("Should the Mount Blacklist to a Whitelist")
-    @Name("08. Toggle Whitelist")
-    @LangKey(PREFIX + ".mount.whitelist")
-    public boolean whitelist = false;
-
-    @Config.Comment("Entities that can not be mounted, or can only be mounted")
-    @Name("09. Mount Blacklist")
-    @LangKey(PREFIX + ".mount.blacklist")
-    public String[] mountBlacklist = new String[]{"quark:seat", "sit:entity_sit", "minecraft:minecart"};
-
-    @Name("Compatability Settings")
-    @LangKey(Reference.MODID + ".config.compatability")
-    private final Compatability compat = new Compatability();
-
-    public class Compatability {
-
-        @Name("Tough as Nails Compatability")
-        @LangKey(Reference.MODID + ".config.toughasnails")
-        private final TANCompat tan = new TANCompat();
-
-        public class TANCompat {
-
-        }
 
     }
 
-    @Config.Comment("What potion effects is the player immune to")
-    @Name("Potion Resistances")
-    @LangKey(Reference.MODID + ".config.races" + ".resistances")
-    public String[] resistances = {};
+    @Config.Name("01. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL)
+    public boolean CAN_MOUNT = true;
 
-    @Config.Comment("What DamageTypes is the player immune to")
-    @Name("Damage Immunity")
-    @LangKey(Reference.MODID + ".config.races" + ".immunities")
-    public DamageTypesConfig dmgType = new DamageTypesConfig();
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BOAT)
+    public boolean CAN_CONTROL_BOATS = false;
 
-    @Config.Comment("What effects to add to the player")
-    @Name("Potion Effects")
-    @LangKey(Reference.MODID + ".config.races" + ".effects")
-    public String[] potEffects = {};
+    @Config.Name("03. " + ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_BLACKLIST_INVERTED)
+    public boolean MOUNT_WHITELIST = false;
 
-    @Config.Name("Magic")
-    @Config.LangKey(Reference.MODID + ".config.magic")
-    public final RaceMagicConfig magic = new RaceMagicConfig(50);
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MOUNT_CONTROL_BLACKLIST)
+    public String[] MOUNT_BLACKLIST = {"quark:seat", "sit:entity_sit", "minecraft:minecart"};
 
-    @Name("Size")
-    @LangKey(Reference.MODID + ".config.race.size")
-    public final RaceSizeConfig size = new RaceSizeConfig(300, 300);
+    @Config.Name("05. " + ConstantsConfigLang.CONFIG_EFFECTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EFFECTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EFFECTS)
+    public String[] EFFECTS_TO_ADD = {};
 
-    @Config.Comment({"For More Information on Attributes", "https://minecraft.gamepedia.com/Attribute"})
-    @Name("Attributes")
-    @LangKey(Reference.MODID + ".config.attributes")
-    public String[] attributes = {"Name:generic.maxHealth, Amount:1, Operation:1", "Name:generic.knockbackResistance; Amount:1; Operation:0", "Name:generic.movementSpeed, Amount:0, Operation:0", "Name:generic.attackDamage, Amount:0.5, Operation:2", "Name:generic.attackSpeed, Amount:-0.5, Operation:2", "Name:generic.armor, Amount:0, Operation:0", "Name:generic.armorToughness, Amount:0, Operation:0", "Name:generic.luck, Amount:0, Operation:0", "Name:generic.reachDistance, Amount:1, Operation:1", "Name:forge.swimSpeed, Amount:0, Operation:0", "Name:xat.entityMagic.regen, Amount:0, Operation:0", "Name:xat.entityMagic.regen.cooldown, Amount:0, Operation:0", "Name:xat.entityMagic.affinity, Amount:0, Operation:0", "Name:xat.jump, Amount:0.75, Operation:1", "Name:xat.stepheight, Amount:1.4, Operation:0"};
+    @Config.Name("06. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
+    public String[] EFFECTS_TO_REMOVE = {};
+
+    @Config.Name("07. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
+    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.maxHealth, Amount:2, Operation:1",
+            "Name:generic.knockbackResistance; Amount:1; Operation:0",
+            "Name:generic.attackDamage, Amount:0.5, Operation:2",
+            "Name:generic.attackSpeed, Amount:-0.5, Operation:2",
+            "Name:generic.reachDistance, Amount:1, Operation:1",
+            "Name:xat.jump, Amount:0.75, Operation:1",
+            "Name:xat.stepheight, Amount:1.4, Operation:0"
+            //@formatter:on
+    };
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC)
+    public RaceMagicConfig MAGIC = new RaceMagicConfig(50);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SIZE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
+    public RaceSizeConfig SIZE = new RaceSizeConfig(300, 300);
+
+    /// Default Compat
+    @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COMPAT)
+    public Compatibility COMPAT = new Compatibility();
+
+    public class Compatibility {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_SURVIVAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_SURVIVAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_SURVIVAL)
+        public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
+
+    }
+
 }

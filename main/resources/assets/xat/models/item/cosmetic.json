@@ -1,0 +1,104 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "xat:items/page"
+  },
+  "display": {
+    "thirdPerson": {
+      "rotation": [
+        -90,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1,
+        -3
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstPerson": {
+      "rotation": [
+        0,
+        -135,
+        25
+      ],
+      "translation": [
+        0,
+        4,
+        2
+      ],
+      "scale": [
+        1.7,
+        1.7,
+        1.7
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "meta": 8
+      },
+      "model": "xat:race/taurus/tuarian_horns"
+    },
+    {
+      "predicate": {
+        "meta": 9
+      },
+      "model": "xat:race/taurus/tuarian_horns"
+    },
+    {
+      "predicate": {
+        "meta": 10
+      },
+      "model": "xat:race/taurus/tuarian_horns_f"
+    },
+    {
+      "predicate": {
+        "meta": 11
+      },
+      "model": "xat:race/taurus/tuarian_horns_f"
+    },
+    {
+      "predicate": {
+        "meta": 12
+      },
+      "model": "xat:race/taurus/tuarian_cowbell"
+    },
+    {
+      "predicate": {
+        "meta": 13
+      },
+      "model": "xat:race/succubus/succubus_horns"
+    },
+    {
+      "predicate": {
+        "meta": 14
+      },
+      "model": "xat:race/generic/horns"
+    },
+    {
+      "predicate": {
+        "meta": 15
+      },
+      "model": "xat:race/generic/horns_inverted"
+    },
+    {
+      "predicate": {
+        "meta": 16
+      },
+      "model": "xat:race/dragon/dragon_horns"
+    },
+    {
+      "predicate": {
+        "meta": 17
+      },
+      "model": "xat:race/faelis/tail"
+    }
+  ]
+}

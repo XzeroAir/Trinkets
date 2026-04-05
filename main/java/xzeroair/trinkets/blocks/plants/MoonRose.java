@@ -1,11 +1,7 @@
 package xzeroair.trinkets.blocks.plants;
 
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -17,11 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,200 +23,207 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.blocks.tileentities.TileEntityMoonRose;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Random;
+
 public class MoonRose extends BlockBush implements IsModelLoaded {
 
-	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-	public MoonRose(String name) {
-		this.setTranslationKey(name);
-		this.setRegistryName(name);
-		this.setCreativeTab(Trinkets.trinketstab);
-		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		this.setSoundType(SoundType.PLANT);
-	}
+    public MoonRose(String name) {
+        this.setTranslationKey(name);
+        this.setRegistryName(name);
+        this.setCreativeTab(Trinkets.CREATIVE_TAB);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setSoundType(SoundType.PLANT);
+    }
 
-	@SideOnly(Side.CLIENT)
-	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		return helper.formatAddVariables(translation);
-	}
+    @SideOnly(Side.CLIENT)
+    protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        return helper.formatAddVariables(translation);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, World world, List<String> tooltips, ITooltipFlag flagIn) {
-		super.addInformation(stack, world, tooltips, flagIn);
-		final TranslationHelper helper = TranslationHelper.INSTANCE;
-		for (int i = 1; i < 10; i++) {
-			final int index = i;
-			final String string = helper.getLangTranslation(stack.getTranslationKey() + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
-			if (!helper.isStringEmpty(string)) {
-				tooltips.add(
-						string
-				);
-			}
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(@Nonnull ItemStack stack, World world, @Nonnull List<String> tooltips, @Nonnull ITooltipFlag flagIn) {
+        super.addInformation(stack, world, tooltips, flagIn);
+        final TranslationHelper helper = TranslationHelper.INSTANCE;
+        for (int i = 1; i < 10; i++) {
+            final int index = i;
+            final String string = helper.getLangTranslation(stack.getTranslationKey() + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
+            if (!helper.isStringEmpty(string)) {
+                tooltips.add(string);
+            }
+        }
+    }
 
-	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		//		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-	}
-	//
-	//	/**
-	//	 * Convert the given metadata into a BlockState for this Block
-	//	 */
-	//	@Override
-	//	public IBlockState getStateFromMeta(int meta) {
-	//		IBlockState state = this.getDefaultState()
-	//				.withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
-	//		return state;
-	//	}
-	//
-	//	@Override
-	//	public int getMetaFromState(IBlockState state) {
-	//		int i = 0;
-	//		i |= state.getValue(FACING).getHorizontalIndex();
-	//		return i;
-	////		return super.getMetaFromState(state);
-	//	}
+    @Override
+    public String getTranslationKey() {
+        return Reference.MODID + "." + super.getTranslationKey();
+    }
 
-	/**
-	 * Convert the given metadata into a BlockState for this Block
-	 */
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		EnumFacing enumfacing = EnumFacing.byIndex(meta);
+    @Override
+    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nonnull EnumHand hand) {
+        //		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+    //
+    //	/**
+    //	 * Convert the given metadata into a BlockState for this Block
+    //	 */
+    //	@Override
+    //	public IBlockState getStateFromMeta(int meta) {
+    //		IBlockState state = this.getDefaultState()
+    //				.withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
+    //		return state;
+    //	}
+    //
+    //	@Override
+    //	public int getMetaFromState(IBlockState state) {
+    //		int i = 0;
+    //		i |= state.getValue(FACING).getHorizontalIndex();
+    //		return i;
+    ////		return super.getMetaFromState(state);
+    //	}
 
-		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-			enumfacing = EnumFacing.NORTH;
-		}
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        EnumFacing enumfacing = EnumFacing.byIndex(meta);
 
-		return this.getDefaultState().withProperty(FACING, enumfacing);
-	}
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
+            enumfacing = EnumFacing.NORTH;
+        }
 
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getIndex();
-	}
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+    }
 
-	@Override
-	@Deprecated
-	public IBlockState withRotation(IBlockState state, Rotation rot) {
-		return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
-	}
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getIndex();
+    }
 
-	@Override
-	@Deprecated
-	public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
-		return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
-	}
+    @Override
+    @Deprecated
+    public IBlockState withRotation(IBlockState state, Rotation rot) {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
 
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { FACING });
-	}
+    @Override
+    @Deprecated
+    public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+    }
 
-	@Override
-	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-		super.updateTick(worldIn, pos, state, rand);
-		this.checkAndDropBlock(worldIn, pos, state);
-	}
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
 
-	@Override
-	public boolean hasTileEntity(IBlockState state) {
-		return true;
-	}
+    @Override
+    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
+        super.updateTick(worldIn, pos, state, rand);
+        this.checkAndDropBlock(worldIn, pos, state);
+    }
 
-	@Override
-	public IBlockState getPlant(IBlockAccess world, BlockPos pos) {
-		return super.getPlant(world, pos);
-	}
+    @Override
+    public boolean hasTileEntity(@Nonnull IBlockState state) {
+        return true;
+    }
 
-	@Override
-	public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {
-		return EnumPlantType.Plains;
-	}
+    @Override
+    public IBlockState getPlant(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        return super.getPlant(world, pos);
+    }
 
-	/**
-	 * Checks if this block can be placed exactly at the given position.
-	 */
-	@Override
-	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-		IBlockState soil = worldIn.getBlockState(pos.down());
-		return super.canPlaceBlockAt(worldIn, pos) && soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
-	}
+    @Override
+    public EnumPlantType getPlantType(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        return EnumPlantType.Plains;
+    }
 
-	/**
-	 * Return true if the block can sustain a Bush
-	 */
-	@Override
-	protected boolean canSustainBush(IBlockState state) {
-		return (state.getBlock() == Blocks.GRASS) || (state.getBlock() == Blocks.DIRT) || (state.getBlock() == Blocks.FARMLAND);
-	}
+    /**
+     * Checks if this block can be placed exactly at the given position.
+     */
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        IBlockState soil = worldIn.getBlockState(pos.down());
+        return super.canPlaceBlockAt(worldIn, pos) && soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+    }
 
-	@Override
-	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
-		if (state.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-		{
-			IBlockState soil = worldIn.getBlockState(pos.down());
-			return soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
-		}
-		return this.canSustainBush(worldIn.getBlockState(pos.down()));
-		//		return true;
-	}
+    /**
+     * Return true if the block can sustain a Bush
+     */
+    @Override
+    protected boolean canSustainBush(IBlockState state) {
+        return (state.getBlock() == Blocks.GRASS) || (state.getBlock() == Blocks.DIRT) || (state.getBlock() == Blocks.FARMLAND);
+    }
 
-	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntityMoonRose();
-	}
+    @Override
+    public boolean canBlockStay(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state) {
+        if (state.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+        {
+            IBlockState soil = worldIn.getBlockState(pos.down());
+            return soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+        }
+        return this.canSustainBush(worldIn.getBlockState(pos.down()));
+        //		return true;
+    }
 
-	@Override
-	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-		if (willHarvest) {
-			return true;
-		}
-		return super.removedByPlayer(state, world, pos, player, willHarvest);
-	}
+    @Override
+    public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
+        return new TileEntityMoonRose();
+    }
 
-	@Override
-	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te,
-			ItemStack tool) {
-		super.harvestBlock(world, player, pos, state, te, tool);
-		world.setBlockToAir(pos);
-	}
+    @Override
+    public boolean removedByPlayer(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
+        if (willHarvest) {
+            return true;
+        }
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		super.onBlockPlacedBy(world, pos, state, placer, stack);
-		if (stack.hasTagCompound()) {
-			final TileEntity te = world.getTileEntity(pos);
-			if (te instanceof TileEntityMoonRose) {
-				Capabilities.getTEProperties(te, prop -> prop.loadFromNBT(stack.getTagCompound()));
-			}
-		}
-	}
+    @Override
+    public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, TileEntity te, @Nonnull ItemStack tool) {
+        super.harvestBlock(world, player, pos, state, te, tool);
+        world.setBlockToAir(pos);
+    }
 
-	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		final ItemStack stack = new ItemStack(state.getBlock());
-		final TileEntity te = world.getTileEntity(pos);
-		if (te instanceof TileEntityMoonRose) {
-			stack.setTagCompound(Capabilities.getTEProperties(te, new NBTTagCompound(), (prop, tag) -> {
-				prop.saveToNBT(tag);
-				return tag;
-			}));
-		}
-		drops.add(stack);
-	}
+    @Override
+    public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        if (stack.hasTagCompound()) {
+            final TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityMoonRose) {
+                Capabilities.getTEProperties(te, prop -> prop.loadFromNBT(stack.getTagCompound()));
+            }
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		Trinkets.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-	}
+    @Override
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
+        final ItemStack stack = new ItemStack(state.getBlock());
+        final TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityMoonRose) {
+            stack.setTagCompound(Capabilities.getTEProperties(te, new NBTTagCompound(), (prop, tag) -> {
+                prop.saveToNBT(tag);
+                return tag;
+            }));
+        }
+        drops.add(stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        Trinkets.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+    }
 
 }

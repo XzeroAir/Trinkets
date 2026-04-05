@@ -1,30 +1,25 @@
 package xzeroair.trinkets.util.config.potions;
 
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.LangKey;
-import net.minecraftforge.common.config.Config.Name;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsConfigLang;
 
 public class PotionConfig {
 
-	private final String potion = ".potion";
-	private final String PREFIX = Reference.MODID + ".config" + potion;
+    public PotionConfig(String itemID, int duration) {
+        catalyst = itemID;
+        Duration = duration;
+    }
 
-	public PotionConfig(String itemID, int duration) {
-		catalyst = itemID;
-		Duration = duration;
-	}
+    @Config.RequiresMcRestart
+    @Config.Name(ConstantsConfigLang.CONFIG_POTIONS_CATALYST_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_POTIONS_CATALYST_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_CATALYST)
+    public String catalyst;
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Item Catalyst to brew this potion")
-	@Name("Potion Catalyst")
-	@LangKey(PREFIX + ".catalyst")
-	public String catalyst = "xat:glowing_ingot";
-
-	@Config.RequiresMcRestart
-	@Config.Comment("How long this potion should last in ticks\\n20 ticks per second")
-	@Name("Potion Effect Duration")
-	@LangKey(PREFIX + ".duration")
-	public int Duration = 1200;
+    @Config.RequiresMcRestart
+    @Config.Name(ConstantsConfigLang.CONFIG_POTIONS_DURATION_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_POTIONS_DURATION_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_DURATION)
+    public int Duration;
 
 }

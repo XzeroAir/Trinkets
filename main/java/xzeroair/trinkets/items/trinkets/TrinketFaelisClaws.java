@@ -10,12 +10,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
+import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityViciousStrike;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
-import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.ConstantsResourceLocations;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigFaelisClaw;
 import xzeroair.trinkets.util.config.trinkets.ConfigFaelisClaw;
@@ -25,32 +27,18 @@ import java.util.List;
 
 public class TrinketFaelisClaws extends AccessoryBase {
 
-    public static final ClientConfigFaelisClaw clientConfig = TrinketsConfig.CLIENT.items.FAELIS_CLAW;
-    public static final ConfigFaelisClaw serverConfig = TrinketsConfig.SERVER.Items.FAELIS_CLAW;
+    protected final ConfigFaelisClaw CONFIG = TrinketsConfig.SERVER.ITEMS.FAELIS_CLAW;
+    protected final ClientConfigFaelisClaw CONFIG_CLIENT = TrinketsConfig.CLIENT.ITEMS.FAELIS_CLAW;
 
     public TrinketFaelisClaws(String name) {
         super(name);
         this.setUUID("4959ec73-142d-4b82-bd0d-cd6cd7431611");
     }
 
-//	@Override
-//	@SideOnly(Side.CLIENT)
-//	protected String customItemInformation(ItemStack stack, World world, ITooltipFlag flagIn, int index, String translation) {
-//		final TranslationHelper helper = TranslationHelper.INSTANCE;
-//		final KeyEntry key = new OptionEntry("clawbleed", serverConfig.bleed, serverConfig.bleedDuration);
-//		return helper.formatAddVariables(translation, key);
-//	}
-
-    @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
-    }
-
     @Override
     public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        if (serverConfig.bleed) {
-            abilities.add(new AbilityViciousStrike());
-        }
+        abilities.add(new AbilityViciousStrike(this.CONFIG.ABILITIES.VICIOUS_STRIKE));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
     }
 
     @Override
@@ -59,8 +47,28 @@ public class TrinketFaelisClaws extends AccessoryBase {
     }
 
     @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
     public boolean ItemEnabled() {
-        return serverConfig.enabled;
+        return this.CONFIG.ENABLED;
     }
 
     @Override
@@ -69,23 +77,26 @@ public class TrinketFaelisClaws extends AccessoryBase {
         Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
     }
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":" + "textures/claws.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(ConstantsResourceLocations.TEXTURES_CLAWS);
 
     @Override
     @SideOnly(Side.CLIENT)
     public void playerRenderLayer(ItemStack stack, EntityLivingBase player, RenderPlayer renderer, boolean isSlim, float partialTicks, float scale) {
-        if (!clientConfig.doRender) {
+        if (!this.CONFIG_CLIENT.RENDER) {
             return;
         }
-
+        boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
+        if (isFaelis) {
+            return;
+        }
         int count = TrinketHelper.countAccessories(player, s -> !s.isEmpty() && (s.getItem().getRegistryName().compareTo(stack.getItem().getRegistryName()) == 0));
         final float offsetX = isSlim ? -12.4F : -18.6F;
         final float offsetY = 61F;
         final float offsetZ = -21F;
         final float bS = 0.16f;
-        boolean flag = (serverConfig.compat.baubles.equip_multiple);
-        boolean flag1 = flag ? count > 0 : true;
-        boolean flag2 = flag ? count > 1 : true;
+        boolean flag = (this.CONFIG.COMPAT.BAUBLES.equip_multiple);
+        boolean flag1 = !flag || count > 0;
+        boolean flag2 = !flag || count > 1;
         if (flag1) {
             GlStateManager.pushMatrix();
             GlStateManager.color(1, 1, 1, 1);

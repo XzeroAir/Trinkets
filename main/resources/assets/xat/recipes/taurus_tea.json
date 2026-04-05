@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#!#",
+    "*@*",
+    "#$#"
+  ],
+  "key": {
+    "#": {
+      "item": "xat:glowing_gem"
+    },
+    "@": {
+      "item": "xat:mana_crystal"
+    },
+    "*": {
+      "item": "minecraft:dragon_breath"
+    },
+    "!": {
+      "item": "minecraft:hay_block"
+    },
+    "$": {
+      "item": "minecraft:tallgrass",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "xat:taurus_tea"
+  }
+}

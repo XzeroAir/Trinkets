@@ -7,10 +7,10 @@ public class Reference {
 
     public static final String MODID = "xat";
     public static final String NAME = "Trinkets and Baubles";
-    public static final String VERSION = "0.32.6";
+    public static final String VERSION = "0.33";
     public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,);after:baubles";
     public static final String acceptedMinecraftVersions = "";
-    public static final String RESOURCE_PREFIX = MODID.toLowerCase() + ":";
+    public static final String RESOURCE_PREFIX = MODID + ":";
     public static final String CLIENT = "xzeroair.trinkets.proxy.ClientProxy";
     public static final String COMMON = "xzeroair.trinkets.proxy.CommonProxy";
     public static final String updateJSON = "https://raw.githubusercontent.com/XzeroAir/Trinkets-1.12.2/master/update.json";
@@ -59,5 +59,14 @@ public class Reference {
      * Trinkets Race Selection GUI
      */
     public static final int GUI_RACE_SELECTION = 4;
+
+    public static final int BAUBLES_GUI_BUTTON_ID = 55;
+
+    public static final int GUI_TRINKETS_EXIT_BUTTON = 9999;
+
+    public static final String MINECRAFT_GAMERULE_MOBGRIEFING = "mobGriefing";
+    public static final String MINECRAFT_FORGE_ATTRIBUTE_SWIM_SPEED = "forge.swimSpeed";
+    public static final String MINECRAFT_ENDER_MAN_SCREAM = "minecraft:entity.endermen.stare";
+
 
 }

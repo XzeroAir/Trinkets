@@ -11,43 +11,43 @@ import xzeroair.trinkets.network.ThreadSafePacket;
 
 public class MovementKeyPacket extends ThreadSafePacket {
 
-	private int entityID;
-	private String key;
-	private int state;
+    private int entityID;
+    private String key;
+    private int state;
 
-	public MovementKeyPacket() {
-	}
+    public MovementKeyPacket() {
+    }
 
-	public MovementKeyPacket(EntityLivingBase entity, String key, int state) {
-		entityID = entity.getEntityId();
-		this.key = key;
-		this.state = state;
-	}
+    public MovementKeyPacket(EntityLivingBase entity, String key, int state) {
+        this.entityID = entity.getEntityId();
+        this.key = key;
+        this.state = state;
+    }
 
-	@Override
-	public void toBytes(ByteBuf buffer) {
-		buffer.writeInt(entityID);
-		ByteBufUtils.writeUTF8String(buffer, key);
-		buffer.writeInt(state);
-	}
+    @Override
+    public void toBytes(ByteBuf buffer) {
+        buffer.writeInt(this.entityID);
+        ByteBufUtils.writeUTF8String(buffer, this.key);
+        buffer.writeInt(this.state);
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buffer) {
-		entityID = buffer.readInt();
-		key = ByteBufUtils.readUTF8String(buffer);
-		state = buffer.readInt();
-	}
+    @Override
+    public void fromBytes(ByteBuf buffer) {
+        this.entityID = buffer.readInt();
+        this.key = ByteBufUtils.readUTF8String(buffer);
+        this.state = buffer.readInt();
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
-		//		final Entity entity = Minecraft.getMinecraft().world.getEntityByID(entityID);
-	}
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        //		final Entity entity = Minecraft.getMinecraft().world.getEntityByID(entityID);
+    }
 
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
-		final Entity entity = server.player.getEntityWorld().getEntityByID(entityID);
-		Capabilities.getEntityProperties(entity, prop -> {
-			prop.getKeybindHandler().pressKey(entity, key, state);
-		});
-	}
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
+        final Entity entity = server.player.getEntityWorld().getEntityByID(this.entityID);
+        Capabilities.getEntityProperties(entity, prop -> {
+            prop.getKeybindHandler().pressKey(entity, this.key, this.state);
+        });
+    }
 }

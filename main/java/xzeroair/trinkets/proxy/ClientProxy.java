@@ -16,24 +16,26 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.client.events.*;
 import xzeroair.trinkets.client.gui.TrinketGui;
 import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiAttributesScreen;
 import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiEntityProperties;
 import xzeroair.trinkets.client.gui.entityPropertiesGui.GuiRaceSelectionScreen;
 import xzeroair.trinkets.client.gui.hud.mana.ManaHud;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.client.particles.ParticleFireBreath;
-import xzeroair.trinkets.client.particles.ParticleGreed;
-import xzeroair.trinkets.client.particles.ParticleLightning;
-import xzeroair.trinkets.client.particles.ParticleLightningOrb;
+import xzeroair.trinkets.client.particles.*;
 import xzeroair.trinkets.client.renderLayers.TrinketsRenderLayer;
+import xzeroair.trinkets.init.ModEntities;
 import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.registry.EventRegistry;
+import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsRenderEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +52,8 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent e) {
         ModKeyBindings.init();
         super.preInit(e);
-        EventRegistry.clientPreInit();
+        OBJLoader.INSTANCE.addDomain(Reference.MODID);
+        ModEntities.registerEntityRenders();
     }
 
     @Override
@@ -63,28 +66,20 @@ public class ClientProxy extends CommonProxy {
         render = skinMap.get("slim");
         render.addLayer(new TrinketsRenderLayer(true, render));
         super.init(e);
-        EventRegistry.clientInit();
+        MinecraftForge.EVENT_BUS.register(ScreenOverlayEvents.instance);
+        MinecraftForge.EVENT_BUS.register(new GuiScreenEvents());
+        MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
+        MinecraftForge.EVENT_BUS.register(new RenderEntitiesEvent());
+        MinecraftForge.EVENT_BUS.register(new PlayerCameraSetupEvents());
+
+        if (Trinkets.MOD_COMPAT.EnhancedVisuals) {
+            MinecraftForge.EVENT_BUS.register(EnhancedVisualsRenderEvent.instance);
+        }
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
-        EventRegistry.clientPostInit();
-    }
-
-    @Override
-    public void spawnParticle(int effectID, World world, double x, double y, double z, double motX, double motY, double motZ, int color, float alpha) {
-        Particle effect = null;
-        if (effectID == 3) {
-            effect = new ParticleFireBreath(world, x, y, z, 0.0D, 0.0D, 0.0D, color, alpha);//, color, alpha);
-            effect.setParticleTextureIndex((int) alpha);
-            //			effect = new ParticleFireBreath(world, x, y, z, motX, motY, motZ, color, 0.25F);//, color, alpha);
-        } else {
-
-        }
-        if (effect != null) {
-            Minecraft.getMinecraft().effectRenderer.addEffect(effect);
-        }
     }
 
     @Override
@@ -102,6 +97,7 @@ public class ClientProxy extends CommonProxy {
             //			effect = EnumParticleTypes.SWEEP_ATTACK;
         } else if (effectID == 4) {
             effect = new ParticleFireBreath(world, x, y, z, 0.0D, 0.0D, 0.0D, color, alpha);//, color, alpha);
+//            effect.setParticleTextureIndex((int) alpha);
             //			world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
         } else if (effectID == 5) {
             world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, x, y, z, 0, 0, 0);
@@ -113,18 +109,11 @@ public class ClientProxy extends CommonProxy {
             effect = new ParticleGreed(world, new Vec3d(X, Y, Z), color, 1F, false);
         } else if (effectID == 7) {
             effect = new ParticleLightningOrb(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
-        } else {
-
+        } else if (effectID == 8) {
+            effect = new ShieldAuraEffect(world, new Vec3d(x, y, z), color, alpha, false);
         }
         if (effect != null) {
             mc.effectRenderer.addEffect(effect);
-        }
-    }
-
-    public void playSound(int effectID, World world, double x, double y, double z, float volume, float pitch) {
-        final Minecraft mc = Minecraft.getMinecraft();
-        if (effectID == 1) {
-            world.playSound(mc.player, x, y, z, SoundEvents.ENTITY_ENDERDRAGON_GROWL, SoundCategory.PLAYERS, volume, pitch);
         }
     }
 

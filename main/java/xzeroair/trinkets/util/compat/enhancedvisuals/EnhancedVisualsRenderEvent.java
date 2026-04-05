@@ -3,8 +3,11 @@ package xzeroair.trinkets.util.compat.enhancedvisuals;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
+import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class EnhancedVisualsRenderEvent {
 
@@ -19,8 +22,8 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void EndermenEvent(team.creative.enhancedvisuals.api.event.SelectEndermanEvent event) {
-        if (TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS && (mc.player != null) && !event.isCanceled()) {
-            if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketEnderTiara)) {
+        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+            if (TrinketHelper.entityHasAbility(mc.player, Reference.MODID + ":" + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_STATIC)) {
                 event.setCanceled(true);
             }
         }
@@ -33,8 +36,18 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void VisualExplosionEvent(team.creative.enhancedvisuals.api.event.VisualExplosionEvent event) {
-        if (TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS && (mc.player != null) && !event.isCanceled()) {
-            if (TrinketHelper.AccessoryCheck(mc.player, ModItems.trinkets.TrinketDamageShield)) {
+        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+            if (Capabilities.getEntityProperties(mc.player, false, (prop, rtn) -> {
+                IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR);
+                if (ability != null) {
+                    if (ability instanceof IToggleAbility) {
+                        return ((IToggleAbility) ability).isAbilityToggled();
+                    }
+                    return true;
+                } else {
+                    return rtn;
+                }
+            })) {
                 event.setCanceled(true);
             }
         }

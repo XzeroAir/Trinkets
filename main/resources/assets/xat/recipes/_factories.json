@@ -1,9 +1,10 @@
 {
-	"ingredients":{
-		"conditional": "xzeroair.trinkets.util.recipes.ConditionalIngredientFactory",
-		"nbt": "xzeroair.trinkets.util.recipes.NBTIngredient$Factory"
-	},
-	"recipes": {
-		"dragon_eye_iaf": "xzeroair.trinkets.util.recipes.RecipeDragonEye$Factory"
-	}
+  "ingredients": {
+    "conditional": "xzeroair.trinkets.util.recipes.ConditionalIngredientFactory",
+    "nbt": "xzeroair.trinkets.util.recipes.NBTIngredient$Factory"
+  },
+  "recipes": {
+    "shaped": "xzeroair.trinkets.util.recipes.TrinketShapedRecipe$Factory",
+    "shapeless": "xzeroair.trinkets.util.recipes.TrinketShapelessRecipe$Factory"
+  }
 }

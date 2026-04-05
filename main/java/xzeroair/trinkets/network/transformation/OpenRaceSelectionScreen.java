@@ -10,40 +10,50 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.network.ThreadSafePacket;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.helpers.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class OpenRaceSelectionScreen extends ThreadSafePacket {
 
-    private String blacklist;
+    private int size;
+    List<String> blacklist;
 
     public OpenRaceSelectionScreen() {
-        this(TrinketsConfig.SERVER.races.selectionBlacklist);
+        this(TrinketsConfig.SERVER.RACES.BLACKLIST);
     }
 
-    public OpenRaceSelectionScreen(String[] selectionBlacklist) {
-        this.init(selectionBlacklist != null && selectionBlacklist.length > 0 ? selectionBlacklist : new String[0]);
-    }
-
-    private void init(String[] selectionBlacklist) {
-        this.blacklist = StringUtils.combineStringArray(selectionBlacklist);
+    public OpenRaceSelectionScreen(String... selectionBlacklist) {
+        List<String> list = Arrays.asList(selectionBlacklist);
+        this.blacklist = list;
+        this.size = list.size();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, blacklist);
+        buf.writeInt(this.size);
+        for (String s : this.blacklist) {
+            ByteBufUtils.writeUTF8String(buf, s);
+        }
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        ByteBufUtils.readUTF8String(buf);
+        this.size = buf.readInt();
+        if (this.blacklist == null) {
+            this.blacklist = new ArrayList<>();
+        }
+        for (int i = 0; i < this.size; i++) {
+            this.blacklist.add(ByteBufUtils.readUTF8String(buf));
+        }
     }
 
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final Minecraft mc = Minecraft.getMinecraft();
         final World world = mc.player.getEntityWorld();
-        // TODO don't merge Arrays into a single string.
-        TrinketsConfig.getClientStore().RACE_SELECTION_BLACKLIST = StringUtils.deconstructStringArray(blacklist);
+        TrinketsConfig.getClientStore().RACE_SELECTION_BLACKLIST = this.blacklist.toArray(new String[0]);
         mc.player.openGui(Trinkets.instance, Reference.GUI_RACE_SELECTION, world, 0, 0, 0);
     }
 

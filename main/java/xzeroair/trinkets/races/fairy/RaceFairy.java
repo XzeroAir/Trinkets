@@ -3,69 +3,60 @@ package xzeroair.trinkets.races.fairy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.client.races.IRenderRaceHandler;
 import xzeroair.trinkets.client.races.fairy.RaceFairyRenderer;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.traits.abilities.AbilityClimbing;
-import xzeroair.trinkets.traits.abilities.AbilityFlying;
-import xzeroair.trinkets.traits.elements.Element;
+import xzeroair.trinkets.traits.abilities.AbilityCreativeFlight;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigFairyRing;
-import xzeroair.trinkets.util.config.damage.DamageTypesConfig;
+import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
 import xzeroair.trinkets.util.helpers.EntityHelper;
 import xzeroair.trinkets.util.helpers.PotionHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
 public class RaceFairy extends EntityRacePropertiesHandler {
 
-    public static final FairyConfig serverConfig = TrinketsConfig.SERVER.races.fairy;
-    public static final ClientConfigFairyRing clientConfig = TrinketsConfig.CLIENT.items.FAIRY_RING;
+    private final FairyConfig CONFIG = TrinketsConfig.SERVER.RACES.FAIRY;
 
-    public RaceFairy(EntityLivingBase e, Element element) {
-        super(e, EntityRaces.fairy, element);
+    public RaceFairy(EntityLivingBase e, EntityProperties properties) {
+        super(e, properties, new RaceCache(EntityRaces.fairy));
     }
 
-    public RaceFairy(EntityLivingBase e) {
-        super(e, EntityRaces.fairy);
+    public RaceFairy(@Nonnull EntityLivingBase e, EntityProperties properties, @Nonnull RaceCache raceCache) {
+        super(e, properties, raceCache);
     }
 
     @Override
     public void startTransformation() {
-        if (serverConfig.creative_flight) {
-            this.addAbility(new AbilityFlying().setFlightCost(serverConfig.flight_cost));
-        }
-        if (TrinketsConfig.getClientStore().CLIMBING_ENABLED) {
-            this.addAbility(new AbilityClimbing());
-        }
+        this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
+        this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
+//        this.addAbility(new AbilityHealCloud());
+        this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }
 
     @Override
     public void whileTransformed() {
         super.whileTransformed();
-        if (!entity.world.isRemote) {
-            String[] potEffects = serverConfig.potEffects;
-            for (final String potID : potEffects) {
-                final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
-                if (potion.getPotion() != null) {
-                    entity.addPotionEffect(potion.getPotionEffect());
-                }
-            }
-        }
-        if (!entity.world.isRemote && entity.isRiding()) {
-            final Entity mount = entity.getRidingEntity();
+        PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_REMOVE);
+        PotionHelper.addAllPotionEffectsFromConfig(this.getEntity(), true, this.CONFIG.EFFECTS_TO_ADD);
+        if (!this.getEntity().world.isRemote && this.getEntity().isRiding()) {
+            final Entity mount = this.getEntity().getRidingEntity();
             if ((mount != null)) {
                 if (!this.mountEntity(mount)) {
-                    entity.dismountRidingEntity();
+                    this.getEntity().dismountRidingEntity();
                 }
             }
         }
@@ -73,36 +64,36 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 
     @Override
     public boolean canFly() {
-        return super.canFly() && this.showTraits() && serverConfig.creative_flight;
+        return super.canFly() && this.showTraits() && this.CONFIG.ABILITIES.FLIGHT.ENABLED;
     }
 
     @Override
     public boolean mountEntity(Entity mount) {
-        if (EntityHelper.isCreative(entity)) {
+        if (EntityHelper.isCreative(this.getEntity())) {
             return true;
-        } else if (!serverConfig.canMount) {
+        } else if (!this.CONFIG.CAN_MOUNT) {
             return false;
-        } else if (serverConfig.mountBlacklist.length > 0) {
-            List<String> disallowedMounts = Arrays.asList(serverConfig.mountBlacklist);
+        } else if (this.CONFIG.MOUNT_BLACKLIST.length > 0) {
+            List<String> disallowedMounts = Arrays.asList(this.CONFIG.MOUNT_BLACKLIST);
             try {
                 final ResourceLocation regName = EntityRegistry.getEntry(mount.getClass()).getRegistryName();
                 final String modID = regName.getNamespace();
                 final String entityID = regName.getPath();
                 final boolean exists = disallowedMounts.contains(modID + ":*") || disallowedMounts.contains(regName.toString());
                 if (exists) {
-                    if (!serverConfig.canControlBoats && (mount instanceof EntityBoat)) {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
                         final EntityBoat boat = (EntityBoat) mount;
                         final Entity controller = boat.getControllingPassenger();
-                        if ((controller == null) || (controller == entity)) {
+                        if ((controller == null) || (controller == this.getEntity())) {
                             return false;
                         }
                     }
-                    return serverConfig.whitelist;
+                    return this.CONFIG.MOUNT_WHITELIST;
                 } else {
-                    if (!serverConfig.canControlBoats && (mount instanceof EntityBoat)) {
+                    if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
                         final EntityBoat boat = (EntityBoat) mount;
                         final Entity controller = boat.getControllingPassenger();
-                        if ((controller == null) || (controller == entity)) {
+                        if ((controller == null) || (controller == this.getEntity())) {
                             return false;
                         }
                     }
@@ -110,14 +101,12 @@ public class RaceFairy extends EntityRacePropertiesHandler {
             } catch (final Exception e) {
                 e.printStackTrace();
             }
-            return !serverConfig.whitelist;
+            return !this.CONFIG.MOUNT_WHITELIST;
         } else {
-            if (!serverConfig.canControlBoats && (mount instanceof EntityBoat)) {
+            if (!this.CONFIG.CAN_CONTROL_BOATS && (mount instanceof EntityBoat)) {
                 final EntityBoat boat = (EntityBoat) mount;
                 final Entity controller = boat.getControllingPassenger();
-                if ((controller == null) || (controller == entity)) {
-                    return false;
-                }
+                return (controller != null) && (controller != this.getEntity());
             }
             return true;
         }
@@ -125,38 +114,41 @@ public class RaceFairy extends EntityRacePropertiesHandler {
 
     @Override
     public boolean isAttacked(DamageSource source, float dmg) {
-        DamageTypesConfig config = serverConfig.dmgType;
-        if ((source.isFireDamage() && config.fire) || (source.isExplosion() && config.explosion) || (source.isMagicDamage() && config.magic) || (source.isProjectile() && config.projectile) || (source instanceof EntityDamageSourceIndirect && config.indirect)) {
-            return true;
+        if (!this.getEntity().world.isRemote) {
+            boolean result = DamageTypeConfigParser.parseDamageTypeConfig(0, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getFirst();
+            return !result;
         }
-        for (String type : config.damageTypes) {
-            if (source.damageType.contentEquals(type)) {
-                return true;
-            }
-        }
-        return super.isAttacked(source, dmg);
+        return true;
+    }
+
+    @Override
+    public float isHurt(DamageSource source, float dmg) {
+        return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
+    }
+
+    @Override
+    public float isDamaged(DamageSource source, float dmg) {
+        return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
     }
 
     @Override
     public void endTransformation() {
-        String[] potEffects = serverConfig.potEffects;
-        for (final String potID : potEffects) {
-            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(potID);
-            if (potion.getPotion() != null) {
-                if (entity.isPotionActive(potion.getPotion())) {
-                    entity.removePotionEffect(potion.getPotion());
-                }
-            }
-        }
+        PotionHelper.removeAllPotionEffectsFromConfig(this.getEntity(), this.CONFIG.EFFECTS_TO_ADD);
     }
 
     @Override
+    public boolean potionBeingApplied(PotionEffect effect) {
+        return PotionHelper.isPotionEffect(effect, this.CONFIG.EFFECTS_TO_REMOVE);
+    }
+
+
+    @Override
     @SideOnly(Side.CLIENT)
-    public IRenderRaceHandler<? super IRenderRaceHandler> getRaceRenderer() {
+    public IRenderRaceHandler getRaceRenderer() {
         if (this.RendererRace == null) {
-            this.RendererRace = new RaceFairyRenderer(entity, this);
+            this.RendererRace = new RaceFairyRenderer(this.getEntity(), this);
         }
-        return RendererRace;
+        return this.RendererRace;
     }
 
 }

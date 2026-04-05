@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.ModPotionTypes;
+import xzeroair.trinkets.util.ConstantsResourceLocations;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
@@ -32,16 +33,16 @@ public class BasePotion extends Potion {
     }
 
     public BasePotion(String modid, String name, int color, int duration, boolean isBadEffect) {
-        this(modid, name, color, duration, isBadEffect, -1, -1, new ResourceLocation(modid, "textures/potions/" + name + ".png"));
+        this(modid, name, color, duration, isBadEffect, -1, -1, new ResourceLocation(modid, ConstantsResourceLocations.TEXTURES_POTIONS_PATH + "/" + name + ".png"));
     }
 
     public BasePotion(String modid, String name, int color, int duration, boolean isBadEffect, int IconX, int IconY, ResourceLocation texture) {
         super(isBadEffect, color);
-        indexX = IconX;
-        indexY = IconY;
+        this.indexX = IconX;
+        this.indexY = IconY;
         this.name = name;
-        ICON = texture;
-        maxDuration = duration;
+        this.ICON = texture;
+        this.maxDuration = duration;
         this.setPotionName(modid + ".effect." + name);
         this.setRegistryName(new ResourceLocation(modid, name));
     }
@@ -59,10 +60,10 @@ public class BasePotion extends Potion {
             return;
         }
         mc.getTextureManager().bindTexture(this.getTexture());
-        if ((indexX >= 0) && (indexY >= 0)) {
+        if ((this.indexX >= 0) && (this.indexY >= 0)) {
             //		int i1 = this.getStatusIconIndex();
-            int i1 = (indexX + indexY) * 8;//this.getStatusIconIndex();
-            Gui.drawModalRectWithCustomSizedTexture(x + 6, y + 7, 0 + ((i1 % 8) * 18), 198 + ((i1 / 8) * 18), 18, 18, 256, 256);
+            int i1 = (this.indexX + this.indexY) * 8;//this.getStatusIconIndex();
+            Gui.drawModalRectWithCustomSizedTexture(x + 6, y + 7, ((i1 % 8) * 18), 198 + ((i1 / 8) * 18), 18, 18, 256, 256);
         } else {
             Gui.drawModalRectWithCustomSizedTexture(x + 6, y + 7, 0, 0, 18, 18, 18, 18);
         }
@@ -81,9 +82,9 @@ public class BasePotion extends Potion {
             return;
         }
         mc.getTextureManager().bindTexture(this.getTexture());
-        if ((indexX >= 0) && (indexY >= 0)) {
+        if ((this.indexX >= 0) && (this.indexY >= 0)) {
             //		int i1 = this.getStatusIconIndex();
-            int i1 = (indexX + indexY) * 8;//this.getStatusIconIndex();
+            int i1 = (this.indexX + this.indexY) * 8;//this.getStatusIconIndex();
             Gui.drawModalRectWithCustomSizedTexture(x + 3, y + 3, (i1 % 8) * 18, 198 + ((i1 / 8) * 18), 18, 18, 256, 256);
         } else {
             Gui.drawModalRectWithCustomSizedTexture(x + 3, y + 3, 0, 0, 18, 18, 18, 18);
@@ -97,33 +98,33 @@ public class BasePotion extends Potion {
 
     @Override
     public boolean isInstant() {
-        return maxDuration <= 0;
+        return this.maxDuration <= 0;
     }
 
     @Override
     public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
         Capabilities.getEntityProperties(entity, prop -> {
-            if (name.equals(ModPotionTypes.restore)) {
+            if (this.name.equals(ModPotionTypes.restore)) {
                 prop.setImbuedRace(null);
                 MagicHelper.refillMana(entity);
             } else {
-                if (name.equals(ModPotionTypes.advancedGlowing)) {
+                if (this.name.equals(ModPotionTypes.advancedGlowing)) {
                     MagicHelper.refillMana(entity);
-                } else if (name.equals(ModPotionTypes.enhancedGlittering)) {
-                    MagicHelper.refillManaByPrecentage(entity, 0.5F);
+                } else if (this.name.equals(ModPotionTypes.enhancedGlittering)) {
+                    MagicHelper.refillManaByPercentage(entity, 0.5F);
                 } else {
-                    MagicHelper.refillManaByPrecentage(entity, 0.25F);
+                    MagicHelper.refillManaByPercentage(entity, 0.25F);
                 }
             }
         });
         float heals = 0;
         int thirst = 0;
         int saturation = 0;
-        if (name.equals(ModPotionTypes.restore) || name.equals(ModPotionTypes.advancedGlowing)) {
+        if (this.name.equals(ModPotionTypes.restore) || this.name.equals(ModPotionTypes.advancedGlowing)) {
             heals = entity.getMaxHealth();
             thirst = 20;
             saturation = 20;
-        } else if (name.equals(ModPotionTypes.enhancedGlittering)) {
+        } else if (this.name.equals(ModPotionTypes.enhancedGlittering)) {
             entity.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 300, 0, false, false));
             heals = entity.getMaxHealth() * 0.5F;
             thirst = 10;
@@ -136,7 +137,7 @@ public class BasePotion extends Potion {
         if (heals > 0) {
             entity.heal(heals);
         }
-        if (TrinketsConfig.SERVER.Potion.potion_thirst) {
+        if (TrinketsConfig.SERVER.POTIONS.THIRST) {
             if (entity instanceof EntityPlayer) {
                 SurvivalCompat.addThirst(entity, thirst, saturation);
                 SurvivalCompat.clearThirst(entity);
@@ -145,12 +146,12 @@ public class BasePotion extends Potion {
     }
 
     public ResourceLocation getTexture() {
-        return ICON;
+        return this.ICON;
     }
 
     @Override
     public boolean hasStatusIcon() {
-        return ICON != null;
+        return this.ICON != null;
     }
 
     @Override

@@ -3,37 +3,34 @@ package xzeroair.trinkets.capabilities.race;
 import com.google.common.base.Objects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.api.events.TransformationEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.EndTransformation;
 import xzeroair.trinkets.api.events.TransformationEvent.RaceUpdateEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.StartTransformation;
 import xzeroair.trinkets.attributes.FlyingAttribute;
 import xzeroair.trinkets.attributes.JumpAttribute;
-import xzeroair.trinkets.attributes.RaceAttribute.RaceAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.CapabilityBase;
+import xzeroair.trinkets.capabilities.CapabilityEntityBase;
 import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.SyncRaceDataPacket;
-import xzeroair.trinkets.network.transformation.OpenRaceSelectionScreen;
+import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.IRaceProvider;
@@ -41,26 +38,27 @@ import xzeroair.trinkets.traits.AbilityHandler;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.Utils.TempCache;
+import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
-import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import javax.annotation.Nullable;
 
-public class EntityProperties extends CapabilityBase<EntityProperties, EntityLivingBase> {
+public class EntityProperties extends CapabilityEntityBase<EntityProperties, EntityLivingBase> {
+
+    public static final String TAG_KEY = Reference.MODID + ":race";
 
     protected boolean first_login = true;
     protected boolean login = true;
 
-    protected boolean changed = false;
     protected boolean sync = false;
+    protected boolean syncTracking = false;
 
     protected RaceCache originalRace = new RaceCache();
     protected RaceCache imbuedRace = new RaceCache();
     protected RaceCache potionRace = new RaceCache();
-    protected RaceCache attributeRace = new RaceCache();
     protected RaceCache currentRace = new RaceCache();
     protected RaceCache previousRace = new RaceCache();
 
@@ -73,275 +71,169 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
 
     protected KeybindHandler keybindHandler;
     protected EntityRacePropertiesHandler properties;
-    //    protected ElementalAttributes elementalAttributes;
-    protected AbilityHandler abilities;
+    protected final AbilityHandler abilities;
 
     protected float stepHeightPrev = 0.6F;
-    protected boolean onGround;
     protected boolean isChild;
     protected BlockPos prevBlockpos;
 
+    protected ClientInfo clientInfo;
+
     public EntityProperties(EntityLivingBase e) {
         super(e);
-        widthValue = 100;
-        heightValue = 100;
-        defaultHeight = e.height;
-        defaultWidth = e.width;
-        originalRace = new RaceCache();
-        imbuedRace = originalRace;
-        potionRace = originalRace;
-        attributeRace = originalRace;
-        previousRace = originalRace;
-        currentRace = originalRace;
-        abilities = new AbilityHandler(object);
-//        elementalAttributes = new ElementalAttributes();
-        properties = currentRace.getRace().getRaceHandler(object);
+        this.widthValue = 100;
+        this.heightValue = 100;
+        this.defaultHeight = e.height;
+        this.defaultWidth = e.width;
+        this.originalRace = new RaceCache();
+        this.imbuedRace = this.originalRace;
+        this.potionRace = this.originalRace;
+        this.previousRace = this.originalRace;
+        this.currentRace = this.originalRace;
+        this.abilities = new AbilityHandler(this);
+        this.properties = this.currentRace.getRace().getRaceHandler(e, this);
+        this.clientInfo = new ClientInfo();
     }
 
     @Override
     public NBTTagCompound getTag() {
-        NBTTagCompound tag = object.getEntityData();
-        if (tag != null) {
-            final NBTTagCompound persistentData;
-            if (object instanceof EntityPlayer) {
-                if (!tag.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
-                    tag.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
-                }
-                persistentData = tag.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-            } else {
-                persistentData = tag;
-            }
-            final String capTag = Reference.MODID + ".race";
-            if (!persistentData.hasKey(capTag)) {
-                persistentData.setTag(capTag, new NBTTagCompound());
-            }
-            return persistentData.getCompoundTag(capTag);
+        final NBTTagCompound tag = NBTHelper.getEntityTag(this.getEntity());
+        if (!tag.hasKey(TAG_KEY)) {
+            tag.setTag(TAG_KEY, new NBTTagCompound());
         }
-        return super.getTag();
+        return tag.getCompoundTag(TAG_KEY);
     }
 
     // ABILITIES
     public AbilityHandler getAbilityHandler() {
-        return abilities;
+        return this.abilities;
     }
-
-//    public ElementalAttributes getElementalAttributes() {
-//        return elementalAttributes;
-//    }
 
     // ABILITIES END
 
+    @Override
     public void onUpdatePre() {
-        final World world = object.getEntityWorld();
-        final boolean isClient = world.isRemote;
-        if (!(object instanceof FakePlayer) && (object instanceof EntityPlayer)) {
-            onGround = object.onGround;
-        }
     }
 
     @Override
     public void onUpdate() {
-        final World world = object.getEntityWorld();
+        final World world = this.getEntity().getEntityWorld();
+
+        final boolean isInWorld = this.getEntity().addedToChunk;
+        final boolean existsInWorld = world.playerEntities.contains(this.getEntity());
+
         final boolean isClient = world.isRemote;
+
+        if (!(this.getEntity() instanceof FakePlayer) && (this.getEntity() instanceof EntityPlayer)) {
+            if (!isInWorld || !existsInWorld) {
+                return;
+            }
+            this.onPlayerUpdate(world, (EntityPlayer) this.getEntity());
+        } else {
+            return;
+        }
+
         if (isClient && TrinketsConfig.CLIENT.debug.showMovementSpeed) {
-            StringUtils.sendStatusMessageToPlayer(object, "Bp/t:" + this.entitySpeed(object), true);
+            StringUtils.sendStatusMessageToPlayer(this.getEntity(), "Bp/t:" + this.entitySpeed(this.getEntity()), true);
         }
         this.stepHeightHandler();
         this.flySpeedHandler();
-
-        if (!(object instanceof FakePlayer) && (object instanceof EntityPlayer)) {
-            this.onPlayerUpdate(world, (EntityPlayer) object);
-        } else {
-            this.onEntityUpdate(world, object);
+        if (this.sync) {
+            this.sync = false;
+            this.sendInformationToPlayer(this.getEntity());
+            this.scheduleResyncTracking();
         }
-
-        if (sync == true) {
+        if (this.syncTracking) {
             this.sendInformationToTracking();
-            sync = false;
+            this.syncTracking = false;
         }
 
         this.setLogin(false);
         this.setFirstLogin(false);
         if (!isClient) {
-            BlockPos blockpos = new BlockPos(object);
+            BlockPos blockpos = new BlockPos(this.getEntity());
 
-            if (!Objects.equal(prevBlockpos, blockpos)) {
-                prevBlockpos = blockpos;
+            if (!Objects.equal(this.prevBlockpos, blockpos)) {
+                this.prevBlockpos = blockpos;
             }
         }
     }
 
     public void onPlayerUpdate(World world, EntityPlayer player) {
-        final boolean isClient = world.isRemote;
-        if (!isClient) {
-            if (!this.getCurrentRace().getRace().isNone()) {
-                player.onGround = onGround;
-            }
-        }
+
         if (this.isLogin()) {
             this.getRaceHandler().setFirstUpdate(true);
         }
-//        final IAttributeInstance atk = object.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE);
-//        if (atk != null) {
-//            System.out.println(atk.getAttributeValue() + "|" + atk.getModifiers());
-//        }
-//        if (player.getName().equalsIgnoreCase("xzeroair") && player.isSneaking() && ((player.ticksExisted % 40) == 0)) {
-//            if (!world.isRemote && (object instanceof EntityPlayerMP)) {
-//                NetworkHandler.sendTo(new OpenTrinketGui(Reference.GUI_RACE_SELECTION), (EntityPlayerMP) object);
-//            }
-//        }
 
-        abilities.updateAbilityHandler();
+        this.getAbilityHandler().onUpdatePre(player);
+        this.getAbilityHandler().onUpdate(player);
         this.updateRace();
         this.getRaceHandler().onTick();
+        this.getAbilityHandler().onUpdatePost(player);
 
-        if (sync == true) {
-            if (!isClient) {
-                this.sendInformationToPlayer(player);
-            }
-        }
-    }
-
-    public void onEntityUpdate(World world, EntityLivingBase entity) {
-        if (object.isChild()) {
-            //			TODO Fix Child Transformations
-            //				this.onChildUpdate(world, object);
-            return;
-        }
-        final boolean isClient = world.isRemote;
-        final ResourceLocation regName = EntityRegistry.getEntry(entity.getClass()).getRegistryName();
-        final String modID = regName.getNamespace();
-        final String name = regName.getPath();
-        if (modID.equalsIgnoreCase("iceandfire")) {
-            return;
-        }
-        if (this.isFirstLogin()) {
-            //			System.out.println("Is Entitiy First Update: H:" + entity.height + ", W:" + entity.width + ", Step:" + entity.stepHeight);
-            final IAttributeInstance stepheight = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
-            if (stepheight != null) {
-                stepheight.setBaseValue(object.stepHeight);
-            }
-            stepHeightPrev = object.stepHeight;
-            this.setDefaultHeight(object.height);
-            this.setDefaultWidth(object.width);
-            this.saveToNBT(this.getTag());
-        }
-
-        if (this.isLogin()) {
-            //			System.out.println("Is Entitiy Login: H:" + entity.height + ", W:" + entity.width + ", Step:" + entity.stepHeight);
-            this.scheduleResync();
-        }
-
-        this.updateRace();
-        this.getRaceHandler().onTick();
-
-        if (!(object instanceof EntityPlayer)) {
-            List<SlotInformation> equipment = TrinketHelper.getSlotInfoForArmor(object, s -> !s.isEmpty() && (s.getItem() instanceof IAccessoryInterface));
-            if (!equipment.isEmpty()) {
-                for (SlotInformation info : equipment) {
-                    ItemStack equipStack = info.getStackFromHandler(object);
-                    if (!equipStack.isEmpty() && (equipStack.getItem() instanceof IAccessoryInterface)) {
-                        IAccessoryInterface item = (IAccessoryInterface) equipStack.getItem();
-                        item.onEntityArmorTick(world, object, equipStack);
-                    }
-                }
-            }
-        }
-    }
-
-    public void onChildUpdate(@Nonnull World world, EntityLivingBase entity) {
-        final boolean isClient = world.isRemote;
-        if (this.isFirstLogin()) {
-            //			System.out.println("Is Child First Update: H:" + entity.height + ", W:" + entity.width + ", Step:" + entity.stepHeight);
-            final IAttributeInstance stepheight = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
-            if (stepheight != null) {
-                stepheight.setBaseValue(object.stepHeight);
-            }
-            stepHeightPrev = object.stepHeight;
-            this.setDefaultHeight(object.height);
-            this.setDefaultWidth(object.width);
-            this.saveToNBT(this.getTag());
-        }
-
-        if (this.isLogin()) {
-            //			System.out.println("Is Child Login: H:" + entity.height + ", W:" + entity.width + ", Step:" + entity.stepHeight);
-            this.scheduleResync();
-        }
-
-        this.updateRace();
-        this.getRaceHandler().onTick();
-
-        //		System.out.println(
-        //				"H:" +
-        //						object.height + "|W:" + object.width +
-        //						"| - |H:" +
-        //						this.getDefaultHeight() + " |W:" + this.getDefaultWidth()
-        //						+ "| - |H:" +
-        //						properties.getHeight() + " |H:" + properties.getTargetHeight()
-        //						+ "| - |W:" +
-        //						properties.getWidth() + " |W:" + properties.getTargetWidth()
-        //						+ "| - |" +
-        //						"Transforming: " + properties.isTransforming() + "| Progress: " + properties.TransformationProgress() + "| Transformed: " + properties.isTransformed()
-        //						+ " | - |After"
-        //		);
     }
 
     public void updateRace() {
-        final World world = object.getEntityWorld();
+        final World world = this.getEntity().getEntityWorld();
         final boolean isClient = world.isRemote;
+        final Counter counter = this.getTickHandler().getCounter("TempRace");
+        if (counter != null) {
+            if (counter.Tick()) {
+                this.setPotionRace(null);
+                this.getTickHandler().removeCounter("TempRace");
+            }
+        }
         if (isClient) {
             return;
         }
-        final TempCache<EntityRace, Element> raceCache = this.getEntityRaceWithDetails();
-        final TransformationEvent.RaceUpdateEvent UpdateEvent = new RaceUpdateEvent(object, this, raceCache.getFirst(), raceCache.getSecond());
+        final RaceCache raceCache = this.getEntityRaceWithDetails();
+        final TransformationEvent.RaceUpdateEvent UpdateEvent = new RaceUpdateEvent(this.getEntity(), this, raceCache);
         // If the Event is not canceled, Continue.
         if (!MinecraftForge.EVENT_BUS.post(UpdateEvent)) {
-            Element newElement = UpdateEvent.getNewElement();
-            if (newElement == null) {
-                newElement = Elements.NEUTRAL;
-            }
             // If the race is different from the current race.
-            if (UpdateEvent.raceChanged() || UpdateEvent.ElementChanged()) {
+            if (UpdateEvent.raceChanged()) {
                 // Get the new race
-                EntityRace newRace = UpdateEvent.getNewRace();
+                RaceCache newRace = UpdateEvent.getNewRaceCache();
                 // Check to see if it's null
                 if (newRace == null) {
-                    newRace = EntityRaces.none;
+                    newRace = new RaceCache();
                 }
                 // Get the players current race handler and information.
-                final EntityRacePropertiesHandler oldProperties = this.getRaceHandler();
                 // Start the end transformation event for the current race.
-                final TransformationEvent.EndTransformation end = new EndTransformation(object, this, oldProperties.getRace());
+                final TransformationEvent.EndTransformation end = new EndTransformation(this.getEntity(), this, this.getCurrentRace());
                 // Bug? Supposed to only continue if the event is not canceled.
                 if (MinecraftForge.EVENT_BUS.post(end)) {
                     return;
                 }
+                final EntityRacePropertiesHandler oldProperties = this.getRaceHandler();
                 // RUn all the end race transformation methods and remove attributes.
                 oldProperties.onTransformEnd();
-                AttributeHelper.removeAttributesByUUID(object, this.getPreviousRace().getRace().getUUID(), oldProperties.getRace().getUUID());
-                this.setPreviousRace(oldProperties.getRaceCache());
-                final Entity mount = object.getRidingEntity();
+                AttributeHelper.removeAttributesByUUID(this.getEntity(), this.getPreviousRace().getRace().getUUID(), oldProperties.getRace().getUUID());
+                this.setPreviousRace(this.getCurrentRace());
+                final Entity mount = this.getEntity().getRidingEntity();
                 if (mount instanceof AlphaWolf) {
-                    object.dismountRidingEntity();
+                    this.getEntity().dismountRidingEntity();
                 }
-                final IAttributeInstance attribute = object.getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
-                if ((attribute != null)) {
-                    if (object.stepHeight != attribute.getBaseValue()) {
-                        object.stepHeight = (float) attribute.getBaseValue();
+                final IAttributeInstance stepHeight = this.getEntity().getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
+                if ((stepHeight != null)) {
+                    if (this.getEntity().stepHeight != stepHeight.getBaseValue()) {
+                        this.getEntity().stepHeight = (float) stepHeight.getBaseValue();
                     }
                 }
                 // officially start new transformation.
-                properties = newRace.getRaceHandler(object, newElement);
-                try {
-                    properties.loadNBTData(this.getTag());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                this.properties = newRace.getRace().getRaceHandler(this.getEntity(), this, newRace);
+                this.properties.loadNBTData(this.getTag());
+
+                this.setCurrent(newRace);
+                this.properties.onTransform();
+
+                if (newRace.isTemporary() && newRace.getDuration() > 0) {
+                    Counter tempPot = this.getTickHandler().getCounter("TempRace", newRace.getDuration(), true, true, true, true);
+                    tempPot.resetTick();
                 }
-                this.setCurrent(new RaceCache(newRace, newElement));
-                properties.onTransform();
 
                 // Trigger start Transformation event. Maybe add a cancel scenario?
-                final TransformationEvent.StartTransformation start = new StartTransformation(object, this, properties.getRace());
+                final TransformationEvent.StartTransformation start = new StartTransformation(this.getEntity(), this, this.getCurrentRace());
                 MinecraftForge.EVENT_BUS.post(start);
                 this.scheduleResync();
             }
@@ -349,44 +241,42 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     }
 
     public BlockPos getPrevBlockpos() {
-        if (prevBlockpos == null) {
-            prevBlockpos = object.getPosition();
+        if (this.prevBlockpos == null) {
+            this.prevBlockpos = this.getEntity().getPosition();
         }
-        return prevBlockpos;
+        return this.prevBlockpos;
     }
 
     public KeybindHandler getKeybindHandler() {
-        if (keybindHandler == null) {
-            keybindHandler = new KeybindHandler();
+        if (this.keybindHandler == null) {
+            this.keybindHandler = new KeybindHandler();
         }
-        return keybindHandler;
+        return this.keybindHandler;
     }
 
     private EntityRace getEntityRace() {
-        return getEntityRaceWithDetails().getFirst();
+        return this.getEntityRaceWithDetails().getRace();
     }
 
     private Element getEntityElement() {
-        return getEntityRaceWithDetails().getSecond();
+        return this.getEntityRaceWithDetails().getPrimaryElement();
+    }
+
+    private Element getSecondaryElement() {
+        return this.getEntityRaceWithDetails().getSecondaryElement();
     }
 
     private RaceCache getEntityRaceWithDetails() {
-        final RaceCache attributeRace = this.getAttributeRace();
-        setFake(true);
-        if ((attributeRace != null) && !attributeRace.getRace().isNone()) {
-            return attributeRace;
-        }
+        this.setFake(true);
         final RaceCache potionRace = this.getPotionRace();
         if ((potionRace != null) && !potionRace.getRace().isNone()) {
             return potionRace;
         }
         ItemStack provider = this.getRaceProvider();
         if (!provider.isEmpty()) {
-            return new RaceCache(((IRaceProvider) provider.getItem()).getRace(), Capabilities.getTrinketProperties(provider, Elements.NEUTRAL, (prop, ele) -> {
-                return prop.getElementAttributes().getPrimaryElement();
-            }));
+            return new RaceCache(((IRaceProvider) provider.getItem()).getRace(), Capabilities.getTrinketProperties(provider, Elements.NEUTRAL, (prop, ele) -> prop.getElementalAttributes().getPrimaryElement()));
         }
-        setFake(false);
+        this.setFake(false);
         final RaceCache imbuedRace = this.getImbuedRace();
         if ((imbuedRace != null) && !imbuedRace.getRace().isNone()) {
             return imbuedRace;
@@ -394,24 +284,12 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
         return this.getOriginalRace();
     }
 
-    public RaceCache getAttributeRace() {
-        IAttributeInstance race = object.getEntityAttribute(RaceAttribute.ENTITY_RACE);
-        if (race != null) {
-            if (!race.getModifiers().isEmpty()) {
-                for (final AttributeModifier modifier : race.getModifiers()) {
-                    return new RaceCache(EntityRace.getByUUID(modifier.getID()));
-                }
-            }
-        }
-        return null;
-    }
-
     public ItemStack getRaceProvider() {
-        final int count = TrinketHelper.countAccessories(object, stack -> stack.getItem() instanceof IRaceProvider);
-        if ((count > 1) || (count < 1)) {
+        final int count = TrinketHelper.countAccessories(this.getEntity(), stack -> stack.getItem() instanceof IRaceProvider);
+        if (count != 1) {
             return ItemStack.EMPTY;
         } else {
-            return TrinketHelper.getAccessory(object, stack -> stack.getItem() instanceof IRaceProvider);
+            return TrinketHelper.getAccessory(this.getEntity(), stack -> stack.getItem() instanceof IRaceProvider);
         }
     }
 
@@ -421,31 +299,31 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * avoid touching it.
      */
     private void stepHeightHandler() {
-        final IAttributeInstance attribute = object.getEntityAttribute(JumpAttribute.stepHeight);
+        final IAttributeInstance attribute = this.getEntity().getEntityAttribute(JumpAttribute.stepHeight);
         if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
             final float defaultStepHeight = (float) attribute.getBaseValue();
             final float attributeStepHeight = (float) attribute.getAttributeValue();
-            final float currentStepHeight = object.stepHeight;
-            object.stepHeight = defaultStepHeight;
-            if ((currentStepHeight - object.stepHeight) == 0F) {
-                object.stepHeight = attributeStepHeight;
-                stepHeightPrev = defaultStepHeight;
-            } else if (((currentStepHeight - object.stepHeight) - attributeStepHeight) == -defaultStepHeight) {
-                object.stepHeight = attributeStepHeight;
-                stepHeightPrev = defaultStepHeight;
+            final float currentStepHeight = this.getEntity().stepHeight;
+            this.getEntity().stepHeight = defaultStepHeight;
+            if ((currentStepHeight - this.getEntity().stepHeight) == 0F) {
+                this.getEntity().stepHeight = attributeStepHeight;
+                this.stepHeightPrev = defaultStepHeight;
+            } else if (((currentStepHeight - this.getEntity().stepHeight) - attributeStepHeight) == -defaultStepHeight) {
+                this.getEntity().stepHeight = attributeStepHeight;
+                this.stepHeightPrev = defaultStepHeight;
             } else {
-                final float stepP = stepHeightPrev;
-                stepHeightPrev = currentStepHeight;
+                final float stepP = this.stepHeightPrev;
+                this.stepHeightPrev = currentStepHeight;
                 if (((attributeStepHeight - defaultStepHeight) + currentStepHeight) == ((attributeStepHeight - defaultStepHeight) + stepP)) {
-                    object.stepHeight = (attributeStepHeight - defaultStepHeight) + stepHeightPrev;
+                    this.getEntity().stepHeight = (attributeStepHeight - defaultStepHeight) + this.stepHeightPrev;
                 }
             }
         }
     }
 
     private void flySpeedHandler() {
-        if (object instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) object;
+        if (this.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) this.getEntity();
             if (player.isCreative() || player.isSpectator()) {
                 return;
             }
@@ -467,18 +345,17 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     protected double prev_posy;
     protected double prev_posz;
 
-    public void startVec(EntityLivingBase entity) {
-        prev_posx = entity.posX;
-        prev_posy = entity.posY;
-        prev_posz = entity.posZ;
+    public void startVec(@Nonnull EntityLivingBase entity) {
+        this.prev_posx = entity.posX;
+        this.prev_posy = entity.posY;
+        this.prev_posz = entity.posZ;
     }
 
     public Vec3d lastVec() {
-        final Vec3d lastPosVec = new Vec3d(prev_posx, prev_posy, prev_posz);
-        return lastPosVec;
+        return new Vec3d(this.prev_posx, this.prev_posy, this.prev_posz);
     }
 
-    public double entitySpeed(EntityLivingBase entity) {
+    public double entitySpeed(@Nonnull EntityLivingBase entity) {
         final Vec3d currentPosVec = new Vec3d(entity.posX, entity.posY, entity.posZ);
         final double distanceTraveled = this.lastVec().distanceTo(currentPosVec);
 
@@ -492,53 +369,73 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Send Player information on Login
      *
      */
+    @Override
     public void onLogin() {
-        final World world = object.getEntityWorld();
-        if (!world.isRemote && (object instanceof EntityPlayerMP)) {
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote && (this.getEntity() instanceof EntityPlayerMP)) {
             if (this.isFirstLogin()) {
-                if (TrinketsConfig.SERVER.races.selectionMenu) {
-                    NetworkHandler.sendTo(new OpenRaceSelectionScreen(), (EntityPlayerMP) object);
+                if (TrinketsConfig.SERVER.RACES.SELECTION_MENU) {
+                    NetworkHandler.sendTo(new OpenTrinketGui(Reference.GUI_RACE_SELECTION), (EntityPlayerMP) this.getEntity());
                 }
-            } else {
-                this.sendInformationToPlayer(object, this.getTag());
+//            } else {
+//                this.sendInformationToPlayer(this.getEntity(), this.getTag());
             }
         }
+    }
+
+    @Override
+    public void onJoinWorld() {
+        this.sendInformationToPlayer(this.getEntity(), this.saveToNBT(this.getTag()));
+    }
+
+    @Override
+    public void onChangedDimension(int from, int to) {
+
     }
 
     /**
      * Force Dismount Goblins
      *
      */
+    @Override
     public void onLogoff() {
         if (this.getCurrentRace().compareRace(EntityRaces.goblin)) {
-            if (object.getRidingEntity() instanceof AlphaWolf) {
-                object.dismountRidingEntity();
+            if (this.getEntity().getRidingEntity() instanceof AlphaWolf) {
+                this.getEntity().dismountRidingEntity();
             }
         }
     }
 
-    /**
-     * @param receiver Send Capability Information to receiver
-     */
+    public void sendInformationToPlayer() {
+        this.sendInformationToPlayer(this.getEntity(), this.saveToNBT(this.getTag()));
+    }
+
     public void sendInformationToPlayer(EntityLivingBase receiver) {
-        final World world = object.getEntityWorld();
+        final World world = this.getEntity().getEntityWorld();
         if (!world.isRemote) {
             this.sendInformationToPlayer(receiver, this.saveToNBT(this.getTag()));
         }
     }
 
     public void sendInformationToPlayer(EntityLivingBase receiver, NBTTagCompound tag) {
-        final World world = object.getEntityWorld();
-        if (!world.isRemote && (receiver instanceof EntityPlayerMP)) {
-            NetworkHandler.sendTo(new SyncRaceDataPacket(object, tag), (EntityPlayerMP) receiver);
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            NetworkHandler.sendTo(new SyncRaceDataPacket(this.getEntity(), tag, false), (EntityPlayerMP) receiver);
         }
     }
 
     public void sendInformationToTracking() {
-        final World world = object.getEntityWorld();
+        final World world = this.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            this.sendInformationToTracking(this.saveToNBT(this.getTag()));
+        }
+    }
+
+    public void sendInformationToTracking(NBTTagCompound tag) {
+        final World world = this.getEntity().getEntityWorld();
         if (!world.isRemote && (world instanceof WorldServer)) {
             final WorldServer w = (WorldServer) world;
-            NetworkHandler.sendToClients(w, object.getPosition(), new SyncRaceDataPacket(object, this.saveToNBT(this.getTag())));
+            NetworkHandler.sendToClients(w, this.getEntity().getPosition(), new SyncRaceDataPacket(this.getEntity(), tag, false));
         }
     }
 
@@ -547,9 +444,13 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      *
      */
     public void sendInformationToServer() {
-        final World world = object.getEntityWorld();
+        this.sendInformationToServer(this.saveToNBT(this.getTag()));
+    }
+
+    public void sendInformationToServer(NBTTagCompound tag) {
+        final World world = this.getEntity().getEntityWorld();
         if (world.isRemote) {
-            NetworkHandler.sendToServer(new SyncRaceDataPacket(object, this.saveToNBT(this.getTag())));
+            NetworkHandler.sendToServer(new SyncRaceDataPacket(this.getEntity(), tag, true));
         }
     }
 
@@ -566,14 +467,21 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     /**
      * A quick height check to see if the players height has changed.
      *
-     * @return
      */
     public boolean isNormalSize() {
-        return (object.height == this.getDefaultHeight()) && (object.width == this.getDefaultWidth());
+        return (this.getEntity().height == this.getDefaultHeight()) && (this.getEntity().width == this.getDefaultWidth());
+    }
+
+    public boolean isBig() {
+        return (this.getEntity().width > this.getDefaultWidth());
+    }
+
+    public boolean isSmall() {
+        return (this.getEntity().height < this.getDefaultHeight());
     }
 
     public boolean hasRace() {
-        return !currentRace.compareRace(EntityRaces.none);
+        return !this.currentRace.compareRace(EntityRaces.none);
     }
 
     /*-----------------------------------Boolean Checks-------------------------------*/
@@ -582,68 +490,69 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Get the Entity Race Handler
      */
     public EntityRacePropertiesHandler getRaceHandler() {
-        return properties;
+        if (this.properties == null) {
+            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this);
+        }
+        return this.properties;
     }
 
     public RaceCache getPreviousRace() {
-        return previousRace;
+        return this.previousRace;
     }
 
     public void setPreviousRace(RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
-        if (!previousRace.compare(cache)) {
-            previousRace = cache;
+        if (!this.previousRace.compare(cache)) {
+            this.previousRace = cache;
         }
     }
 
     /**
      * Get the current race of the Entity
      *
-     * @return
      */
     public RaceCache getCurrentRace() {
-        return currentRace;
+        return this.currentRace;
     }
 
     public void setCurrent(RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
-        if (!currentRace.compare(cache)) {
-            currentRace = cache;
+        if (!this.currentRace.compare(cache)) {
+            this.currentRace = cache;
         }
     }
 
     /**
      * Get the current race of the entity given by eating a transformation item.
      *
-     * @return
      */
     public RaceCache getImbuedRace() {
-        return imbuedRace;
+        return this.imbuedRace;
     }
 
-    public void setImbuedRace(RaceCache cache) {
+    public void setImbuedRace(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
-        if (!imbuedRace.compare(cache)) {
-            imbuedRace = cache;
+        if (!this.imbuedRace.compare(cache)) {
+            this.imbuedRace = cache;
         }
     }
 
     public RaceCache getPotionRace() {
-        return potionRace;
+        return this.potionRace;
     }
 
-    public void setPotionRace(RaceCache cache) {
+    public void setPotionRace(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
-        if (!potionRace.compare(cache)) {
-            potionRace = cache;
+        if (!this.potionRace.compare(cache)) {
+            this.potionRace = cache;
         }
     }
 
@@ -651,28 +560,26 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Get the entities original race. By default, this is EntityRaces.none.
      * This changes based on if the race selection menu is enabled.
      *
-     * @return
      */
     public RaceCache getOriginalRace() {
-        return originalRace;
+        return this.originalRace;
     }
 
-    public void setOriginalRace(RaceCache cache) {
+    public void setOriginalRace(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
-        if (!originalRace.compare(cache)) {
-            originalRace = cache;
+        if (!this.originalRace.compare(cache)) {
+            this.originalRace = cache;
         }
     }
 
     /**
      * Get the Entities default width.
      *
-     * @return
      */
     public float getDefaultWidth() {
-        return defaultWidth;
+        return this.defaultWidth;
     }
 
     private void setDefaultWidth(float defaultWidth) {
@@ -684,10 +591,9 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     /**
      * Get the Entities default height.
      *
-     * @return
      */
     public float getDefaultHeight() {
-        return defaultHeight;
+        return this.defaultHeight;
     }
 
     private void setDefaultHeight(float defaultHeight) {
@@ -699,36 +605,34 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     /**
      * Get the current height value based on percentage, the default value is 100
      *
-     * @return
      */
     public int getHeightValue() {
-        return heightValue;
+        return this.heightValue;
     }
 
     public void setHeightValue(int height) {
-        if (heightValue != height) {
-            heightValue = height;
+        if (this.heightValue != height) {
+            this.heightValue = height;
         }
     }
 
     /**
      * Get the current height value based on percentage, the default value is 100
      *
-     * @return
      */
     public int getWidthValue() {
-        return widthValue;
+        return this.widthValue;
     }
 
     public void setWidthValue(int width) {
-        if (widthValue != width) {
-            widthValue = width;
+        if (this.widthValue != width) {
+            this.widthValue = width;
         }
     }
 
     // Is Likely redundant and could be removed. Mainly kept for Non-Player Entities
     public boolean isLogin() {
-        return login;
+        return this.login;
     }
 
     public void setLogin(boolean login) {
@@ -738,12 +642,12 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     }
 
     public boolean isFirstLogin() {
-        return first_login;
+        return this.first_login;
     }
 
     public void setFirstLogin(boolean firstLogin) {
-        if (first_login != firstLogin) {
-            first_login = firstLogin;
+        if (this.first_login != firstLogin) {
+            this.first_login = firstLogin;
         }
     }
 
@@ -751,10 +655,9 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Check to see if the entity is currently a fake race, this was originally added for a system that was never implemented.
      * an Entity with a Fake Race is typically one that is wearing a transformation item, It might also apply to potion transformations as well.
      *
-     * @return
      */
     public boolean isFake() {
-        return isFake;
+        return this.isFake;
     }
 
     public void setFake(boolean isFake) {
@@ -766,10 +669,9 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
     /**
      * Sanity Check for Child Entities, Necessary due to how Minecraft handles child entities.
      *
-     * @return
      */
     public boolean isChild() {
-        return isChild;
+        return this.isChild;
     }
 
     public void setChild(boolean isChild) {
@@ -782,179 +684,276 @@ public class EntityProperties extends CapabilityBase<EntityProperties, EntityLiv
      * Schedule a forced resync.
      */
     public void scheduleResync() {
-        sync = true;
+        this.sync = true;
+    }
+
+    public void scheduleResyncTracking() {
+        this.syncTracking = true;
     }
 
     @Override
-    public void copyFrom(EntityProperties source, boolean wasDeath, boolean keepInv) {
-        first_login = source.first_login;
-        login = source.login;
-        defaultWidth = source.defaultWidth;
-        defaultHeight = source.defaultHeight;
+    public void copyFrom(@Nonnull EntityProperties source, boolean wasDeath, boolean keepInv) {
+        this.first_login = source.first_login;
+        this.login = source.login;
+        this.defaultWidth = source.defaultWidth;
+        this.defaultHeight = source.defaultHeight;
+        this.originalRace = source.originalRace;
 
-        originalRace = source.originalRace;
-        imbuedRace = source.imbuedRace;
-
-        isChild = source.isChild;
+        this.isChild = source.isChild;
 
         if (wasDeath && !keepInv) {
-            previousRace = source.currentRace;
-            currentRace = imbuedRace.getRace().isNone() ? originalRace : imbuedRace;
-            heightValue = currentRace.getRace().getRaceHeight();
-            widthValue = currentRace.getRace().getRaceWidth();
+            this.previousRace = source.currentRace;
+            this.currentRace = this.imbuedRace.getRace().isNone() ? this.originalRace : this.imbuedRace;
+            this.heightValue = this.currentRace.getRace().getRaceHeight();
+            this.widthValue = this.currentRace.getRace().getRaceWidth();
+            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this, this.currentRace);
+            if (TrinketsConfig.SERVER.FOOD.KEEP_EFFECTS) {
+                this.imbuedRace = source.imbuedRace;
+            }
         } else {
-            currentRace = source.currentRace;
-            previousRace = source.previousRace;
-//            potionRace = source.potionRace;
-            heightValue = source.heightValue;
-            widthValue = source.widthValue;
+            this.currentRace = source.currentRace;
+            this.previousRace = source.previousRace;
+            this.imbuedRace = source.imbuedRace;
+            this.potionRace = source.potionRace;
+            this.heightValue = source.heightValue;
+            this.widthValue = source.widthValue;
+            this.properties = source.properties;
         }
 
-        properties = currentRace.getRace().getRaceHandler(object, currentRace.getElement());
-        properties.onTransform();
-
-        try {
-            this.getRaceHandler().copyFrom(source.getRaceHandler(), wasDeath, keepInv);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            this.getAbilityHandler().copyFrom(source.getAbilityHandler(), wasDeath, keepInv);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.getRaceHandler().copyFrom(source.getRaceHandler(), wasDeath, keepInv);
+        this.getAbilityHandler().copyFrom(source.getAbilityHandler(), wasDeath, keepInv);
         this.scheduleResync();
     }
 
     @Override
     public NBTTagCompound saveToNBT(NBTTagCompound compound) {
-        compound.setTag("OriginalRace", getOriginalRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("ImbuedRace", getImbuedRace().saveToNBT(new NBTTagCompound()));
-//        compound.setTag("PotionRace", getPotionRace().saveToNBT(new NBTTagCompound()));
-//        compound.setTag("AttributeRace", getAttributeRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("PreviousRace", getPreviousRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("CurrentRace", getCurrentRace().saveToNBT(new NBTTagCompound()));
+        this.getClientInfo().saveInfo(compound);
+        compound.setTag("OriginalRace", this.getOriginalRace().saveToNBT(new NBTTagCompound()));
+        compound.setTag("ImbuedRace", this.getImbuedRace().saveToNBT(new NBTTagCompound()));
+        compound.setTag("PreviousRace", this.getPreviousRace().saveToNBT(new NBTTagCompound()));
+        compound.setTag("CurrentRace", this.getCurrentRace().saveToNBT(new NBTTagCompound()));
         compound.setInteger("heightValue", this.getHeightValue());
         compound.setInteger("widthValue", this.getWidthValue());
         compound.setFloat("default_height", this.getDefaultHeight());
         compound.setFloat("default_width", this.getDefaultWidth());
-        compound.setBoolean("login", this.isLogin());
         compound.setBoolean("first_login", this.isFirstLogin());
         compound.setBoolean("fake", this.isFake());
         compound.setBoolean("child", this.isChild());
         this.getRaceHandler().savedNBTData(compound);
-        this.getAbilityHandler().saveAbilitiesToNBT(compound);
+        this.getAbilityHandler().saveToNBT(compound);
         return compound;
     }
 
     @Override
     public void loadFromNBT(NBTTagCompound compound) {
+        this.getClientInfo().loadInfo(compound);
+        boolean changed = false;
         if (compound.hasKey("first_login")) {
-            first_login = compound.getBoolean("first_login");
-        }
-        if (compound.hasKey("login")) {
-            login = compound.getBoolean("login");
+            this.first_login = compound.getBoolean("first_login");
         }
         if (compound.hasKey("OriginalRace")) {
-            originalRace = RaceCache.loadFromNBT(compound.getCompoundTag("OriginalRace"));
+            this.originalRace = RaceCache.loadFromNBT(compound.getCompoundTag("OriginalRace"));
         }
         if (compound.hasKey("ImbuedRace")) {
-            imbuedRace = RaceCache.loadFromNBT(compound.getCompoundTag("ImbuedRace"));
-        }
-        if (compound.hasKey("PotionRace")) {
-            potionRace = RaceCache.loadFromNBT(compound.getCompoundTag("PotionRace"));
-        }
-        if (compound.hasKey("AttributeRace")) {
-            attributeRace = RaceCache.loadFromNBT(compound.getCompoundTag("AttributeRace"));
+            this.imbuedRace = RaceCache.loadFromNBT(compound.getCompoundTag("ImbuedRace"));
         }
         if (compound.hasKey("PreviousRace")) {
-            previousRace = RaceCache.loadFromNBT(compound.getCompoundTag("PreviousRace"));
+            this.previousRace = RaceCache.loadFromNBT(compound.getCompoundTag("PreviousRace"));
         }
-
         if (compound.hasKey("CurrentRace")) {
-            currentRace = RaceCache.loadFromNBT(compound.getCompoundTag("CurrentRace"));
-            properties = currentRace.getRace().getRaceHandler(object, currentRace.getElement());
-            this.getRaceHandler().loadNBTData(compound);
-            properties.onTransform();
+            this.currentRace = RaceCache.loadFromNBT(compound.getCompoundTag("CurrentRace"));
+            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this, this.currentRace);
+            changed = true;
         }
         if (compound.hasKey("heightValue")) {
-            heightValue = compound.getInteger("heightValue");
+            this.heightValue = compound.getInteger("heightValue");
         }
         if (compound.hasKey("widthValue")) {
-            widthValue = compound.getInteger("widthValue");
+            this.widthValue = compound.getInteger("widthValue");
         }
         if (compound.hasKey("default_height")) {
-            defaultHeight = compound.getFloat("default_height");
+            this.defaultHeight = compound.getFloat("default_height");
         }
         if (compound.hasKey("default_width")) {
-            defaultWidth = compound.getFloat("default_width");
+            this.defaultWidth = compound.getFloat("default_width");
         }
         if (compound.hasKey("fake")) {
-            isFake = compound.getBoolean("fake");
+            this.isFake = compound.getBoolean("fake");
         }
         if (compound.hasKey("child")) {
-            isChild = compound.getBoolean("child");
+            this.isChild = compound.getBoolean("child");
         }
-        this.getAbilityHandler().loadAbilitiesFromNBT(compound);
-
+        this.getRaceHandler().loadNBTData(compound);
+        if (changed) {
+            this.properties.onTransform();
+        }
+        this.getAbilityHandler().loadFromNBT(compound);
     }
 
-    public static class RaceCache extends TempCache<EntityRace, Element> {
+    public ClientInfo getClientInfo() {
+        return this.clientInfo;
+    }
 
-        public RaceCache() {
-            super(EntityRaces.none, Elements.NEUTRAL);
+    public static class ClientInfo {
+        private boolean onGround = true;
+        private double smoothedMotion, amplitude, tiltX, tiltY, tiltZ, motion, forwardMotion, motionX, motionY, motionZ, lookVecX, lookVecY, lookVecZ = 0;
+
+        public ClientInfo() {
         }
 
-        public RaceCache(EntityRace race, Element element) {
-            super(race, element);
+        @SideOnly(Side.CLIENT)
+        public void updateInfo(@Nonnull EntityLivingBase entity, float partialTicks) {
+            if (entity instanceof EntityLivingBase) {
+                double dx = entity.posX - entity.prevPosX;
+                double dy = entity.posY - entity.prevPosY;
+                double dz = entity.posZ - entity.prevPosZ;
+                this.onGround = entity.onGround;
+                this.motionX = dx;
+                this.motionY = dy;
+                this.motionZ = dz;
+                this.motion = Math.sqrt(dx * dx + dz * dz);
+                Vec3d look = entity.getLook(partialTicks);
+                this.forwardMotion = dx * look.x + dz * look.z;
+                this.lookVecX = look.x;
+                this.lookVecY = look.y;
+                this.lookVecZ = look.z;
+            }
         }
 
-        public RaceCache(Element element) {
-            this(EntityRaces.none, element);
+        public NBTTagCompound saveInfo() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setTag(TAG_KEY, new NBTTagCompound());
+            return this.saveInfo(tag.getCompoundTag(TAG_KEY));
         }
 
-        public RaceCache(EntityRace race) {
-            this(race, Elements.NEUTRAL);
-        }
-
-        public EntityRace getRace() {
-            return getFirst() == null ? EntityRaces.none : this.getFirst();
-        }
-
-        public Element getElement() {
-            return getSecond() == null ? Elements.NEUTRAL : this.getSecond();
-        }
-
-        public NBTTagCompound saveToNBT(NBTTagCompound tag) {
-            tag.setInteger("race", getRace().getID());
-            tag.setInteger("element", getElement().getID());
+        public NBTTagCompound saveInfo(@Nonnull NBTTagCompound tag) {
+            NBTTagCompound info = new NBTTagCompound();
+            info.setBoolean("onGround", this.onGround);
+            info.setDouble("amplitude", this.amplitude);
+            info.setDouble("motX", this.motionX);
+            info.setDouble("motY", this.motionY);
+            info.setDouble("motZ", this.motionZ);
+            info.setDouble("lookX", this.lookVecX);
+            info.setDouble("lookY", this.lookVecY);
+            info.setDouble("lookZ", this.lookVecZ);
+            info.setDouble("motion", this.motion);
+            info.setDouble("forwardMotion", this.forwardMotion);
+            tag.setTag("ClientInfo", info);
             return tag;
         }
 
-        public static RaceCache loadFromNBT(NBTTagCompound tag) {
-            final EntityRace race = tag.hasKey("race") ? EntityRace.getRaceById(tag.getInteger("race")) : EntityRaces.none;
-            final Element element = tag.hasKey("element") ? Element.getById(tag.getInteger("element")) : Elements.NEUTRAL;
-            return new RaceCache(race == null ? EntityRaces.none : race, element == null ? Elements.NEUTRAL : element);
+        private void loadInfo(NBTTagCompound tag) {
+            NBTHelper.hasTag(tag, "ClientInfo", (info) -> {
+                NBTHelper.hasBoolean(info, "onGround", (bool) -> this.onGround = bool);
+                NBTHelper.hasDouble(info, "amplitude", (value) -> this.amplitude = value);
+                NBTHelper.hasDouble(info, "motion", (value) -> this.motion = value);
+                NBTHelper.hasDouble(info, "forwardMotion", (value) -> this.forwardMotion = value);
+                NBTHelper.hasDouble(info, "motX", (value) -> this.motionX = value);
+                NBTHelper.hasDouble(info, "motY", (value) -> this.motionY = value);
+                NBTHelper.hasDouble(info, "motZ", (value) -> this.motionZ = value);
+                NBTHelper.hasDouble(info, "lookX", (value) -> this.lookVecX = value);
+                NBTHelper.hasDouble(info, "lookY", (value) -> this.lookVecY = value);
+                NBTHelper.hasDouble(info, "lookZ", (value) -> this.lookVecZ = value);
+            });
         }
 
-        public boolean compare(RaceCache other) {
-            return compareRace(other) && compareElement(other);
+        public void resetInfo() {
+            this.onGround = true;
+            this.amplitude = 0D;
+            this.motion = 0D;
+            this.motionX = 0D;
+            this.motionY = 0D;
+            this.motionZ = 0D;
+            this.forwardMotion = 0D;
+            this.lookVecX = 0D;
+            this.lookVecY = 0D;
+            this.lookVecZ = 0D;
+            this.tiltX = 0D;
+            this.tiltY = 0D;
+            this.tiltZ = 0D;
+            this.smoothedMotion = 0D;
         }
 
-        public boolean compareRace(RaceCache other) {
-            return this.getRace().equals(other.getRace());
+        public boolean onGround() {
+            return this.onGround;
         }
 
-        public boolean compareRace(EntityRace race) {
-            return this.getRace().equals(race);
+        public double getMotion() {
+            return this.motion;
         }
 
-        public boolean compareElement(RaceCache other) {
-            return this.getElement().equals(other.getElement());
+        public double getMotionX() {
+            return this.motionX;
         }
 
-        public boolean compareElement(Element element) {
-            return this.getElement().equals(element);
+        public double getMotionY() {
+            return this.motionY;
+        }
+
+        public double getMotionZ() {
+            return this.motionZ;
+        }
+
+        public double getForwardMotion() {
+            return this.forwardMotion;
+        }
+
+        public double getAmplitude() {
+            return this.amplitude;
+        }
+
+        public double getTiltX() {
+            return this.tiltX;
+        }
+
+        public double getTiltY() {
+            return this.tiltY;
+        }
+
+        public double getTiltZ() {
+            return this.tiltZ;
+        }
+
+        public double getLookVecX() {
+            return this.lookVecX;
+        }
+
+        public double getLookVecY() {
+            return this.lookVecY;
+        }
+
+        public double getLookVecZ() {
+            return this.lookVecZ;
+        }
+
+        public ClientInfo setAmplitude(double amplitude) {
+            this.amplitude = amplitude;
+            return this;
+        }
+
+        public ClientInfo setSmoothedMotion(double smoothedMotion) {
+            this.smoothedMotion = smoothedMotion;
+            return this;
+        }
+
+        public ClientInfo setTiltX(double tiltX) {
+            this.tiltX = tiltX;
+            return this;
+        }
+
+        public ClientInfo setTiltY(double tiltY) {
+            this.tiltY = tiltY;
+            return this;
+        }
+
+        public ClientInfo setTiltZ(double tiltZ) {
+            this.tiltZ = tiltZ;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "OnGround:" + this.onGround() + ", motX:" + this.getMotionX() + ", motY:" + this.getMotionY() + ", motZ:" + this.getMotionZ() + ", Motion:" + this.getMotion();
         }
     }
 }

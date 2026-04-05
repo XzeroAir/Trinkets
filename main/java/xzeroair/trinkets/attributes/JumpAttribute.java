@@ -13,7 +13,7 @@ public class JumpAttribute {
 	//	0.33319999363422365
 	public static final IAttribute Jump = new RangedAttribute(
 			(IAttribute) null, Reference.MODID + ".jump",
-			(double) 1.0F, (double) 0.0F, (double) Integer.MAX_VALUE
+			(double) 1.0F, (double)0.0F, (double) Integer.MAX_VALUE
 			).setDescription("Jump Height").setShouldWatch(true);
 
 	public static final IAttribute stepHeight = new RangedAttribute(

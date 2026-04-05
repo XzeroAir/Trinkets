@@ -4,8 +4,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.capabilities.race.RaceCache;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
-import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
@@ -14,18 +16,8 @@ import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class EmptyHandler extends EntityRacePropertiesHandler {
 
-    public EmptyHandler(EntityLivingBase e) {
-        this(e, EntityRaces.none);
-    }
-
-    public EmptyHandler(EntityLivingBase e, EntityRace race) {
-        super(e, race);
-        setMaxTraitVariant(0);
-    }
-
-    public EmptyHandler(EntityLivingBase e, EntityRace race, Element element) {
-        super(e, race, element);
-        setMaxTraitVariant(0);
+    public EmptyHandler(EntityLivingBase e, EntityProperties properties) {
+        super(e, properties, new RaceCache(EntityRaces.none, Elements.NEUTRAL));
     }
 
     @Override
@@ -37,23 +29,21 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
     }
 
     @Override
-    protected void initAttributes() {
-        final EntityRace previous = this.getEntityProperties().getPreviousRace().getRace();
+    protected void addNewAttributes() {
+        final EntityRace previous = this.getProperties().getPreviousRace().getRace();
         double d = Double.parseDouble(Reference.DECIMALFORMAT.format(1D - this.TransformationProgress()));
         if (d != 0) {
-            String[] raceAttributes = previous.getRaceAttributes().getAttributes();
-            if (raceAttributes.length > 0) {
-                for (String entry : raceAttributes) {
-                    AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-                    if (attributeShell != null) {
-                        String name = attributeShell.getAttribute();
-                        double amount = attributeShell.getAmount();
-                        int operation = attributeShell.getOperation();
-                        boolean isSaved = attributeShell.isSaved();
-                        UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(false);
-                        //					attribute.addModifier(entity, (amount), operation);
-                        attribute.addModifier(entity, (amount * d), operation);
-                    }
+            String[] raceAttributes = previous.getRaceInformation().getAttributes();
+            for (String entry : raceAttributes) {
+                AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
+                if (attributeShell != null) {
+                    String name = attributeShell.getAttribute();
+                    double amount = attributeShell.getAmount();
+                    int operation = attributeShell.getOperation();
+                    boolean isSaved = attributeShell.isSaved();
+                    UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(false);
+                    //					attribute.addModifier(entity, (amount), operation);
+                    attribute.addModifier(this.getEntity(), (amount * d), operation);
                 }
             }
         }
@@ -61,39 +51,18 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
     @Override
     public void onTick() {
-        if (entity instanceof EntityPlayer) {
+        if (this.getEntity() instanceof EntityPlayer) {
             if (this.isTransforming()) {
-                SizeHandler.setSize(entity, this.getHeight(), this.getWidth());
+                SizeHandler.setSize(this.getEntity(), this.getHeight(), this.getWidth());
                 this.updateSize();
-                this.initAttributes();
+                this.addNewAttributes();
                 this.eyeHeightHandler();
             } else {
-                if (firstTransformUpdate) {
-                    final EntityRace previous = this.getEntityProperties().getPreviousRace().getRace();
-                    AttributeHelper.removeAttributesByUUID(entity, previous.getUUID());
-                    ((EntityPlayer) entity).eyeHeight = ((EntityPlayer) entity).getDefaultEyeHeight();
-                    firstTransformUpdate = false;
-                }
-            }
-        } else {
-            if (this.isTransforming()) {
-                this.updateSize();
-                this.eyeHeightHandler();
-            } else {
-                if (firstTransformUpdate) {
-                    float height = this.getEntityProperties().getDefaultHeight();
-                    float width = this.getEntityProperties().getDefaultWidth();
-                    //					if (entity instanceof EntityAgeable) {
-                    //						if (entity.isChild()) {
-                    //							height *= 2;
-                    //							width *= 2;
-                    //						}
-                    //						SizeHandler.setSize(entity, height, width);
-                    //						((EntityAgeable) entity).setScaleForAge(entity.isChild());
-                    //					} else {
-                    SizeHandler.setSize(entity, height, width);
-                    //					}
-                    firstTransformUpdate = false;
+                if (this.firstTransformUpdate) {
+                    final EntityRace previous = this.getProperties().getPreviousRace().getRace();
+                    AttributeHelper.removeAttributesByUUID(this.getEntity(), previous.getUUID());
+                    this.eyeHeightHandler();
+                    this.firstTransformUpdate = false;
                 }
             }
         }

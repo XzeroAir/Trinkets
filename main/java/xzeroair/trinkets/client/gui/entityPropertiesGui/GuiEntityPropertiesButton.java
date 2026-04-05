@@ -8,27 +8,31 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.util.ConstantsResourceLocations;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.gui.ConfigGuiButtonShared;
 import xzeroair.trinkets.util.helpers.ColorHelper;
 import xzeroair.trinkets.util.helpers.DrawingHelper;
 
+import javax.annotation.Nonnull;
+
 public class GuiEntityPropertiesButton extends GuiButton {
 
-    public static ResourceLocation buttonTex = null;
+    private final ResourceLocation TEXTURE_BUTTON;
 
     private final GuiContainer parentGui;
 
     public GuiEntityPropertiesButton(int buttonId, GuiContainer parentGui, int x, int y, int width, int height, String buttonText) {
         super(buttonId, x, parentGui.getGuiTop() + y, width, height, buttonText);
         this.parentGui = parentGui;
+        this.TEXTURE_BUTTON = new ResourceLocation(ConstantsResourceLocations.GUI_ENTITY_BUTTON);
     }
 
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
         final boolean flag = mc.player.getRecipeBook().isGuiOpen();
-        final boolean pressed = flag ? false : super.mousePressed(mc, mouseX - parentGui.getGuiLeft(), mouseY);
+        final boolean pressed = !flag && super.mousePressed(mc, mouseX - this.parentGui.getGuiLeft(), mouseY);
         if (pressed) {
             mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, mc.player.world, 0, 0, 0);
         }
@@ -36,35 +40,32 @@ public class GuiEntityPropertiesButton extends GuiButton {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        if (visible && !mc.player.getRecipeBook().isGuiOpen()) {
-            final int x = this.x + parentGui.getGuiLeft();
+    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+        if (this.visible && !mc.player.getRecipeBook().isGuiOpen()) {
+            final int x = this.x + this.parentGui.getGuiLeft();
 
-            final int ID = TrinketsConfig.CLIENT.GUI.button.ID;
-            if (id == 69) {
+            final int ID = TrinketsConfig.CLIENT.raceProperties.button.ID;
+            if (this.id == ID) {
                 final FontRenderer fontrenderer = mc.fontRenderer;
-                hovered = (mouseX >= x) && (mouseY >= y) && (mouseX < (x + width)) && (mouseY < (y + height));
-                final int k = this.getHoverState(hovered);
+                this.hovered = (mouseX >= x) && (mouseY >= this.y) && (mouseX < (x + this.width)) && (mouseY < (this.y + this.height));
+                final int k = this.getHoverState(this.hovered);
                 GlStateManager.pushMatrix();
 
-                final ConfigGuiButtonShared config = TrinketsConfig.CLIENT.raceProperties.button.texture;
-                if (buttonTex == null) {
-                    buttonTex = new ResourceLocation(TrinketsConfig.CLIENT.raceProperties.button.texture.image);
-                }
-                final int X = config.x;
-                final int Y = config.y;
-                final int width = config.width;
-                final int height = config.height;
-                final int texWidth = config.texWidth;
-                final int texHeight = config.texHeight;
-                final float[] rgb = ColorHelper.getRGBColor(TrinketsConfig.CLIENT.raceProperties.button.texture.color);
+                final ConfigGuiButtonShared TEXTURE_CONFIG = TrinketsConfig.CLIENT.raceProperties.button.texture;
+                final int X = TEXTURE_CONFIG.X;
+                final int Y = TEXTURE_CONFIG.Y;
+                final int width = TEXTURE_CONFIG.BUTTON_WIDTH;
+                final int height = TEXTURE_CONFIG.BUTTON_HEIGHT;
+                final int texWidth = TEXTURE_CONFIG.TEXTURE_WIDTH;
+                final int texHeight = TEXTURE_CONFIG.TEXTURE_HEIGHT;
+                final float[] rgb = ColorHelper.getRGBColor(TrinketsConfig.CLIENT.raceProperties.button.texture.COLOR);
                 if (k == 1) {
-                    mc.getTextureManager().bindTexture(buttonTex);
-                    DrawingHelper.Draw(x, y, 0, X, Y, texWidth, texHeight, width, height, config.texSizeWidth, config.texSizeHeight, rgb[0], rgb[1], rgb[2], 1F);
+                    mc.getTextureManager().bindTexture(this.TEXTURE_BUTTON);
+                    DrawingHelper.Draw(x, this.y, 0, X, Y, texWidth, texHeight, width, height, TEXTURE_CONFIG.TEXTURE_ATLAS_WIDTH, TEXTURE_CONFIG.TEXTURE_ATLAS_HEIGHT, rgb[0], rgb[1], rgb[2], 1F);
                 } else {
-                    mc.getTextureManager().bindTexture(buttonTex);
-                    DrawingHelper.Draw(x, y, 0, X, Y + texHeight, texWidth, texHeight, width, height, config.texSizeWidth, config.texSizeHeight, rgb[0], rgb[1], rgb[2], 1F);
-                    this.drawCenteredString(fontrenderer, I18n.format(displayString), x + 5, y + height, 0xffffff);
+                    mc.getTextureManager().bindTexture(this.TEXTURE_BUTTON);
+                    DrawingHelper.Draw(x, this.y, 0, X, Y + texHeight, texWidth, texHeight, width, height, TEXTURE_CONFIG.TEXTURE_ATLAS_WIDTH, TEXTURE_CONFIG.TEXTURE_ATLAS_HEIGHT, rgb[0], rgb[1], rgb[2], 1F);
+                    this.drawCenteredString(fontrenderer, I18n.format(this.displayString), x + 5, this.y + height, 0xffffff);
                 }
                 GlStateManager.popMatrix();
             }

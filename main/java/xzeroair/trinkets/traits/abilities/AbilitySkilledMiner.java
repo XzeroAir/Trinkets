@@ -15,31 +15,38 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.races.dwarf.config.DwarfConfig;
 import xzeroair.trinkets.traits.abilities.interfaces.IMiningAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.ConfigHelper.ConfigObject;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilitySkilledMiner;
 import xzeroair.trinkets.util.helpers.BlockHelperUtil;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilitySkilledMiner extends Ability implements IMiningAbility {
 
-    public static final DwarfConfig serverConfig = TrinketsConfig.SERVER.races.dwarf;
+    protected final ConfigAbilitySkilledMiner CONFIG;
 
     public AbilitySkilledMiner() {
-        super(Abilities.skilledMiner);
+        this(TrinketsConfig.SERVER.ABILITIES.SKILLED_MINER);
+    }
+
+    public AbilitySkilledMiner(ConfigAbilitySkilledMiner config) {
+        super(TrinketsRegistryNames.ModAbilities.SKILLED_MINER);
+        this.CONFIG = config;
+        this.setAbilityEnabled(config.ENABLED);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        return super.addCustomDescriptionTags(helper, key, rendMod, renderID, compatID);
+        final TranslationHelper.OptionEntry key1 = new TranslationHelper.OptionEntry("fortune", CONFIG.fortune, "");
+        return helper.formatAddVariables(key, renderID, key1);
     }
 
     @Override
     public float breakingBlock(EntityLivingBase entity, IBlockState state, BlockPos pos, float originalSpeed, float newSpeed) {
-        if (serverConfig.static_mining) {
+        if (CONFIG.static_mining) {
             final ItemStack heldItemStack = entity.getHeldItemMainhand();
             final Item heldItem = heldItemStack.getItem();
             final int toolLevel = heldItem.getHarvestLevel(heldItemStack, "pickaxe", null, state);
@@ -71,11 +78,11 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
         final int fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, heldItemStack);
         final boolean silkTouching = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, toolUsed) > 0;
         try {
-            if (serverConfig.fortune && !silkTouching) {
+            if (CONFIG.fortune && !silkTouching) {
                 final Enchantment fortune = Enchantments.FORTUNE;
                 final int fortuneMaxLevel = fortune.getMaxLevel();
                 if (fortuneLevel > 0) {
-                    if (serverConfig.fortune_mix) {
+                    if (CONFIG.fortune_mix) {
                         NBTTagList nbttaglist = toolUsed.getEnchantmentTagList();
 
                         for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -96,21 +103,21 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
         if (!toolItem.getToolClasses(toolUsed).isEmpty() && toolItem.getToolClasses(toolUsed).contains("pickaxe")) {
             int tempExp = 0;
             if (!silkTouching && !isClient) {
-                if (serverConfig.BLOCKS.bonus_exp) {
-                    for (String s : serverConfig.BLOCKS.xPBlocks) {
+                if (CONFIG.BLOCKS.bonus_exp) {
+                    for (String s : CONFIG.BLOCKS.xPBlocks) {
                         ConfigObject object = new ConfigObject(s);
                         if (object.doesBlockMatchEntry(state)) {
-                            final int bonusExp = serverConfig.BLOCKS.bonus_exp_max;
-                            final int min = serverConfig.BLOCKS.bonus_exp_min;
+                            final int bonusExp = CONFIG.BLOCKS.bonus_exp_max;
+                            final int min = CONFIG.BLOCKS.bonus_exp_min;
                             final int rXP = bonusExp < 1 ? min : random.nextInt(bonusExp);
                             tempExp += Math.max(min, rXP);
                             break;
                         }
                     }
                 }
-                if (serverConfig.BLOCKS.minXpBlocks) {
+                if (CONFIG.BLOCKS.minXpBlocks) {
                     if (tempExp < 1) {
-                        for (String s : serverConfig.BLOCKS.MinBlocks) {
+                        for (String s : CONFIG.BLOCKS.MinBlocks) {
                             ConfigObject object = new ConfigObject(s);
                             if (object.doesBlockMatchEntry(state)) {
                                 tempExp = 1;
@@ -121,7 +128,7 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
                 }
             }
             final int droppedExp = tempExp;
-            if (serverConfig.skilled_miner && (entity instanceof EntityPlayer)) {
+            if (CONFIG.skilled_miner && (entity instanceof EntityPlayer)) {
                 if (BlockHelperUtil.canBreakBlock(toolUsed, world, (EntityPlayer) entity, pos, pos, 1)) {
                     BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false, 1, xp -> {
                         if (xp < -1) {

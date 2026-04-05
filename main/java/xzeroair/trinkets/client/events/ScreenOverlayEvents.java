@@ -16,11 +16,10 @@ public class ScreenOverlayEvents {
     public static ScreenOverlayEvents instance = new ScreenOverlayEvents();
 
     private final Minecraft mc = Minecraft.getMinecraft();
-    private final ManaGui manaGui = new ManaGui(mc);
+    private final ManaGui manaGui = new ManaGui(this.mc);
 
     private float mana = 0;
     private float maxMana = 0;
-    //	private int bonusMana = 0;
 
     private float manaCost = 0;
 
@@ -28,7 +27,6 @@ public class ScreenOverlayEvents {
 
     public void SyncMana(float mana, int bonusMana, float maxMana) {
         this.setMana(mana);
-        //		this.setBonusMana(bonusMana);
         this.setMaxMana(maxMana);
     }
 
@@ -45,24 +43,24 @@ public class ScreenOverlayEvents {
     //	public void renderGameOverlayTextEvent(RenderGameOverlayEvent.Text event) {
     //
     //	}
-    //
+
     @SubscribeEvent
     public void renderGameOverlayPreEvent(RenderGameOverlayEvent.Pre event) {
-        if (TrinketsConfig.CLIENT.MPBar.rendLocPre) {
-            renderManaBar(event);
+        if (TrinketsConfig.CLIENT.MANA_BAR_HUD.rendLocPre) {
+            this.renderManaBar(event);
         }
     }
 
     @SubscribeEvent
     public void renderGameOverlayPostEvent(RenderGameOverlayEvent.Post event) {
-        if (!TrinketsConfig.CLIENT.MPBar.rendLocPre) {
-            renderManaBar(event);
+        if (!TrinketsConfig.CLIENT.MANA_BAR_HUD.rendLocPre) {
+            this.renderManaBar(event);
         }
     }
 
     private void renderManaBar(RenderGameOverlayEvent event) {
         //TODO Make sure this works properly
-        if (event.isCanceled() || !(event.getType() == RenderGameOverlayEvent.ElementType.ALL) || !TrinketsConfig.CLIENT.MPBar.shown || !TrinketsConfig.SERVER.mana.mana_enabled) {
+        if (event.isCanceled() || !(event.getType() == RenderGameOverlayEvent.ElementType.ALL) || !TrinketsConfig.CLIENT.MANA_BAR_HUD.shown || !TrinketsConfig.SERVER.MAGIC.mana_enabled) {
             return;
         }
         final MagicStats stats = Capabilities.getMagicStats(Minecraft.getMinecraft().player);
@@ -73,7 +71,7 @@ public class ScreenOverlayEvents {
         if (!this.needMana() && (this.getCost() <= 0)) {
             if (this.updateCounter()) {
                 if (!(Minecraft.getMinecraft().currentScreen instanceof ManaHud)) {
-                    if ((getMaxMana() <= 0) || !TrinketsConfig.CLIENT.MPBar.always_shown) {
+                    if ((this.getMaxMana() <= 0) || !TrinketsConfig.CLIENT.MANA_BAR_HUD.always_shown) {
                         return;
                     }
                 }
@@ -83,31 +81,28 @@ public class ScreenOverlayEvents {
         }
         final int h = event.getResolution().getScaledHeight();
         final int w = event.getResolution().getScaledWidth();
-        final double x = (TrinketsConfig.CLIENT.MPBar.translatedX);
-        final double y = (TrinketsConfig.CLIENT.MPBar.translatedY);
+        final double x = (TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX);
+        final double y = (TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY);
         final int xPos = (int) Math.round(w * x);
         final int yPos = (int) Math.round(h * y);
         GlStateManager.pushMatrix();
-        manaGui.renderManaGui(event, MathHelper.clamp(xPos, 0, w), MathHelper.clamp(yPos, 0, h), updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
+        this.manaGui.renderManaGui(event, MathHelper.clamp(xPos, 0, w), MathHelper.clamp(yPos, 0, h), this.updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
         GlStateManager.popMatrix();
     }
 
     private boolean updateCounter() {
-        if (updateCounter < 80) {
-            ++updateCounter;
+        if (this.updateCounter < 80) {
+            ++this.updateCounter;
         }
-        if (updateCounter >= 80) {
-            return true;
-        }
-        return false;
+        return this.updateCounter >= 80;
     }
 
     public int getUpdateCounter() {
-        return updateCounter;
+        return this.updateCounter;
     }
 
     private void resetCounter() {
-        updateCounter = 0;
+        this.updateCounter = 0;
     }
 
     private void setMana(float mana) {
@@ -116,13 +111,6 @@ public class ScreenOverlayEvents {
             this.resetCounter();
         }
     }
-
-    //	private void setBonusMana(int bonusMana) {
-    //		if (this.bonusMana != bonusMana) {
-    //			this.bonusMana = bonusMana;
-    //			this.resetCounter();
-    //		}
-    //	}
 
     private void setMaxMana(float maxMana) {
         if (this.maxMana != maxMana) {
@@ -136,22 +124,18 @@ public class ScreenOverlayEvents {
     }
 
     private float getMana() {
-        return mana;
+        return this.mana;
     }
 
-    //	private int getBonusMana() {
-    //		return bonusMana;
-    //	}
-
     private float getMaxMana() {
-        return maxMana;
+        return this.maxMana;
     }
 
     private float getCost() {
-        return manaCost;
+        return this.manaCost;
     }
 
     private void setCost(float cost) {
-        manaCost = cost;
+        this.manaCost = cost;
     }
 }

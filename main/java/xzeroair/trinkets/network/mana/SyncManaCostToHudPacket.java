@@ -8,33 +8,33 @@ import xzeroair.trinkets.network.ThreadSafePacket;
 
 public class SyncManaCostToHudPacket extends ThreadSafePacket {
 
-	public SyncManaCostToHudPacket() {
-	}
+    public SyncManaCostToHudPacket() {
+    }
 
-	private float cost;
+    private float cost;
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		cost = buf.readFloat();
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.cost = buf.readFloat();
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		buf.writeFloat(cost);
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeFloat(this.cost);
+    }
 
-	public SyncManaCostToHudPacket(float cost) {
-		this.cost = cost;
-	}
+    public SyncManaCostToHudPacket(float cost) {
+        this.cost = cost;
+    }
 
-	@Override
-	public void handleClientSafe(NetHandlerPlayClient client) {
-		ScreenOverlayEvents.instance.SyncCost(cost);
-	}
+    @Override
+    public void handleClientSafe(NetHandlerPlayClient client) {
+        ScreenOverlayEvents.instance.SyncCost(this.cost);
+    }
 
-	@Override
-	public void handleServerSafe(NetHandlerPlayServer server) {
+    @Override
+    public void handleServerSafe(NetHandlerPlayServer server) {
 
-	}
+    }
 
 }

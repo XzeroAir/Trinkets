@@ -13,11 +13,12 @@ import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigWeightlessStone;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrinketWeightless extends AccessoryBase {
 
-    public static final ConfigWeightlessStone serverConfig = TrinketsConfig.SERVER.Items.WEIGHTLESS_STONE;
+    protected final ConfigWeightlessStone CONFIG = TrinketsConfig.SERVER.ITEMS.WEIGHTLESS_STONE;
 
     public TrinketWeightless(String name) {
         super(name);
@@ -25,13 +26,9 @@ public class TrinketWeightless extends AccessoryBase {
     }
 
     @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
-    }
-
-    @Override
-    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        abilities.add(new AbilityWeightless());
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityWeightless(this.CONFIG.ABILITIES.WEIGHTLESS));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
     }
 
     @Override
@@ -40,8 +37,28 @@ public class TrinketWeightless extends AccessoryBase {
     }
 
     @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
     public boolean ItemEnabled() {
-        return serverConfig.enabled;
+        return this.CONFIG.ENABLED;
     }
 
     @Override

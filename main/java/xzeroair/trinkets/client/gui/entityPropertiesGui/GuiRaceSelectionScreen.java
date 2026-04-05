@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -25,7 +26,9 @@ import org.lwjgl.opengl.GL11;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.race.EntityProperties.RaceCache;
+import xzeroair.trinkets.capabilities.race.RaceCache;
+import xzeroair.trinkets.client.ConstantsTextureResourceLocation;
+import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.races.EntityRace;
@@ -42,14 +45,14 @@ import java.util.List;
 import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
-public class GuiRaceSelectionScreen extends GuiScreen {
+public class GuiRaceSelectionScreen extends GuiScreen implements ITrinketGuiInterface {
 
-    public EntityPlayer player;
+    protected final EntityPlayer player;
     public EntityRace selectedRace;
     public Element selectedPrimaryElement;
     public Element selectedSecondaryElement;
     public int selectedGender;
-    public EntityProperties properties;
+    protected final EntityProperties properties;
     public int buttonPressed;
     public int BACK = 1;
     public int EXIT = 2;
@@ -59,7 +62,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
     public GuiRaceSelectionScreen(EntityPlayer player) {
         this.player = player;
-        properties = Capabilities.getEntityProperties(player);
+        this.properties = Capabilities.getEntityProperties(player);
     }
 
     public static ResourceLocation background = null;
@@ -71,68 +74,70 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     private int raceListWidth;
     private int elementListWidth;
 
-    private int buttonMargin = 1;
+    private final int buttonMargin = 1;
 
     public void selectIndex(int index) {
-        if (index == raceSelected) {
+        if (index == this.raceSelected) {
             return;
         }
-        raceSelected = index;
-        selectedRace = ((index >= 0) && (index <= raceCaches.size())) ? raceCaches.get(raceSelected).getRace() : null;
+        this.raceSelected = index;
+        this.selectedRace = ((index >= 0) && (index <= this.raceCaches.size())) ? this.raceCaches.get(this.raceSelected).getRace() : null;
         this.updateCache();
     }
 
     public boolean indexSelected(int index) {
-        return index == raceSelected;
+        return index == this.raceSelected;
     }
 
     public void selectPrimaryElement(int index) {
-        if (index == primaryElementSelected) {
+        if (index == this.primaryElementSelected) {
             return;
         }
-        primaryElementSelected = index;
-        selectedPrimaryElement = ((index >= 0) && (index <= elementCache.size())) ? elementCache.get(primaryElementSelected) : null;
+        this.primaryElementSelected = index;
+        this.selectedPrimaryElement = ((index >= 0) && (index <= this.elementCache.size())) ? this.elementCache.get(this.primaryElementSelected) : null;
         this.updateCache();
     }
 
     public boolean primaryElementSelected(int index) {
-        return index == primaryElementSelected;
+        return index == this.primaryElementSelected;
     }
 
     public void selectSecondaryElement(int index) {
-        if (index == secondaryElementSelected) {
+        if (index == this.secondaryElementSelected) {
             return;
         }
-        secondaryElementSelected = index;
-        selectedSecondaryElement = ((index >= 0) && (index <= elementCache.size())) ? elementCache.get(secondaryElementSelected) : null;
+        this.secondaryElementSelected = index;
+        this.selectedSecondaryElement = ((index >= 0) && (index <= this.elementCache.size())) ? this.elementCache.get(this.secondaryElementSelected) : null;
         this.updateCache();
     }
 
     public boolean secondaryElementSelected(int index) {
-        return index == secondaryElementSelected;
+        return index == this.secondaryElementSelected;
     }
 
     @Override
     public void initGui() {
-        buttonList.clear();
+        this.buttonList.clear();
 //        raceCaches.clear();
 //        elementCache.clear();
         super.initGui();
 
-        raceSelected = -1;
-        primaryElementSelected = -1;
-        secondaryElementSelected = -1;
-        raceListWidth = 0;
-        elementListWidth = 0;
+        this.raceSelected = -1;
+        this.primaryElementSelected = -1;
+        this.secondaryElementSelected = -1;
+        this.raceListWidth = 0;
+        this.elementListWidth = 0;
         String[] altSelectionConfig = TrinketsConfig.getClientStore().RACE_SELECTION_BLACKLIST;
 
         //		addButton(new GuiButton(buttonId, x, y, widthIn, heightIn, buttonText))
-        this.addButton(new GuiPropertiesButton(BACK, 2, 2, 50, 20, "<--"));
-        this.addButton(new GuiPropertiesButton(EXIT, width - (14 + 40), 2, 40, 20, TextFormatting.RED + "X"));
-        this.addButton(new GuiPropertiesButton(CONFIRM, width - (60 + 20), height - 32, 60, 20, TextFormatting.GREEN + "CONFIRM"));
+        if (!this.properties.isFirstLogin()) {
+            this.addButton(new GuiPropertiesButton(this.BACK, 2, 2, 50, 20, "<--"));
+        }
+        this.addButton(new GuiPropertiesButton(this.EXIT, this.width - (14 + 40), 2, 40, 20, TextFormatting.RED + "X"));
+        this.addButton(new GuiPropertiesButton(this.CONFIRM, this.width - (60 + 20), this.height - 32, 60, 20, TextFormatting.GREEN + "CONFIRM"));
 
         final ForgeRegistry<EntityRace> registryList = EntityRace.Registry;
-        raceCaches = new ArrayList<>();
+        this.raceCaches = new ArrayList<>();
         try {
             for (EntityRace entry : registryList.getValuesCollection()) {
                 if (entry.getUUID().compareTo(UUID.fromString("00000000-0000-0000-0000-000000000000")) == 0) {
@@ -147,38 +152,38 @@ public class GuiRaceSelectionScreen extends GuiScreen {
                 }
                 if (!forbid) {
                     int txtLength = this.getFontRenderer().getStringWidth(entry.getDisplayName().trim());
-                    raceCaches.add(new RaceCache(entry));
-                    if (raceListWidth <= txtLength) {
-                        raceListWidth = txtLength;
+                    this.raceCaches.add(new RaceCache(entry));
+                    if (this.raceListWidth <= txtLength) {
+                        this.raceListWidth = txtLength;
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int fromTop = 32;
         int fromBottom = 60;
 
-        raceListWidth = Math.min(raceListWidth + 12, 150);
-        raceSelection = new RaceSelectionList(4, this, raceCaches, raceListWidth, height, fromTop, height - fromBottom, 10, 18);
+        this.raceListWidth = Math.min(this.raceListWidth + 12, 150);
+        this.raceSelection = new RaceSelectionList(4, this, this.raceCaches, this.raceListWidth, this.height, fromTop, this.height - fromBottom, 10, 18);
 //        this(ID, parent, cache, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight);
         final ForgeRegistry<Element> elements = Element.Registry;
-        elementCache = new ArrayList<>();
+        this.elementCache = new ArrayList<>();
         for (Element ele : elements.getValuesCollection()) {
             int txtLength = this.getFontRenderer().getStringWidth(ele.getDisplayName().trim());
-            elementCache.add(ele);
-            if (elementListWidth <= txtLength) {
-                elementListWidth = txtLength;
+            this.elementCache.add(ele);
+            if (this.elementListWidth <= txtLength) {
+                this.elementListWidth = txtLength;
             }
         }
-        elementListWidth = Math.min(elementListWidth + 12, 150);
-        elementSelection = new ElementSelectionList(5, this, elementCache, elementListWidth, height, fromTop, height - fromBottom, width - (160), 18, true);
+        this.elementListWidth = Math.min(this.elementListWidth + 12, 150);
+        this.elementSelection = new ElementSelectionList(5, this, this.elementCache, this.elementListWidth, this.height, fromTop, this.height - fromBottom, this.width - (160), 18, true);
         this.updateCache();
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        buttonPressed = 0;
+        this.buttonPressed = 0;
     }
 
     @Override
@@ -203,15 +208,15 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     protected void keyTyped(char c, int keyCode) throws IOException {
         super.keyTyped(c, keyCode);
         if (keyCode == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
-            player.closeScreen();
+            this.player.closeScreen();
             this.displayNormalInventory();
         }
         //		search.textboxKeyTyped(c, keyCode);
     }
 
     public void displayNormalInventory() {
-        final GuiInventory gui = new GuiInventory(mc.player);
-        mc.displayGuiScreen(gui);
+        final GuiInventory gui = new GuiInventory(this.mc.player);
+        this.mc.displayGuiScreen(gui);
     }
 
     /**
@@ -228,19 +233,28 @@ public class GuiRaceSelectionScreen extends GuiScreen {
      */
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        buttonPressed = button.id;
+        this.buttonPressed = button.id;
         super.actionPerformed(button);
-        if (button.id == BACK) {
-            mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, mc.player.world, 0, 0, 0);
-        }
-        if (button.id == EXIT) {
-            mc.player.closeScreen();
-        }
-        if (button.id == CONFIRM) {
-            if (selectedRace != null) {
-                properties.setOriginalRace(new RaceCache(selectedRace, selectedPrimaryElement == null ? Elements.NEUTRAL : selectedPrimaryElement));
-                properties.sendInformationToServer();
-                mc.player.closeScreen();
+        if (button.id == this.CONFIRM) {
+            if (this.selectedRace != null) {
+                RaceCache race = new RaceCache(this.selectedRace, this.selectedPrimaryElement == null ? Elements.NEUTRAL : this.selectedPrimaryElement);
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setTag("OriginalRace", race.saveToNBT(new NBTTagCompound()));
+                this.properties.setOriginalRace(race);
+                this.properties.sendInformationToServer(tag);
+                this.mc.player.closeScreen();
+            }
+        } else {
+            RaceCache blank = new RaceCache();
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setTag("OriginalRace", blank.saveToNBT(new NBTTagCompound()));
+            this.properties.setOriginalRace(blank);
+            this.properties.sendInformationToServer(tag);
+            if (button.id == this.BACK) {
+                this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);
+            }
+            if (button.id == this.EXIT) {
+                this.mc.player.closeScreen();
             }
         }
     }
@@ -248,7 +262,6 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        //		properties.sendInformationToServer();
     }
 
     @Override
@@ -262,50 +275,50 @@ public class GuiRaceSelectionScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         //TODO Rendering Might still be broken?
-        oldMouseX = mouseX;
-        oldMouseY = mouseY;
+        this.oldMouseX = mouseX;
+        this.oldMouseY = mouseY;
         this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (properties == null) {
+        if (this.properties == null) {
             return;
         }
 
-        if (raceSelection != null) {
-            raceSelection.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.raceSelection != null) {
+            this.raceSelection.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (elementSelection != null) {
-            elementSelection.drawScreen(mouseX, mouseY, partialTicks);
-        }
-
-        if (raceDescriptions != null) {
-            raceDescriptions.drawScreen(mouseX, mouseY, partialTicks);
-        }
-        if (elementDescriptions != null) {
-            elementDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.elementSelection != null) {
+            this.elementSelection.drawScreen(mouseX, mouseY, partialTicks);
         }
 
-        int x = width - 60;//(width / 2);
-        int y = height - 30;//(height / 2);
-        if (selectedRace != null) {
+        if (this.raceDescriptions != null) {
+            this.raceDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        if (this.elementDescriptions != null) {
+            this.elementDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        }
+
+        int x = this.width - 60;//(width / 2);
+        int y = this.height - 30;//(height / 2);
+        if (this.selectedRace != null) {
             int pX = x - 16;
             int pY = y - 20;
-            String name = selectedRace.getDisplayName();
+            String name = this.selectedRace.getDisplayName();
             int txtLength = this.fontRenderer.getStringWidth(name);
             int distToAdd = txtLength % 2 == 0 ? 0 : 1;
             DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, (txtLength + distToAdd) + 10, 14, 0, 0, 0, 0, 0, 0.5F);
 //            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, selectedRace.getPrimaryColor());
-            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
+            this.fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
         }
-        if (selectedPrimaryElement != null) {
+        if (this.selectedPrimaryElement != null) {
             int pX = x - 16;
             int pY = y - 34;
-            String name = selectedPrimaryElement.getDisplayName();
+            String name = this.selectedPrimaryElement.getDisplayName();
             int txtLength = this.fontRenderer.getStringWidth(name);
             int distToAdd = txtLength % 2 == 0 ? 0 : 1;
             DrawingHelper.Draw(pX, pY, -100, 0, 0, 0, 0, (txtLength + distToAdd) + 10, 14, 0, 0, 0, 0, 0, 0.5F);
 //            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, selectedPrimaryElement.getPrimaryColor());
-            fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
+            this.fontRenderer.drawStringWithShadow(name, pX + 6, pY + 3, 0xFFAA00);
             // font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
         }
     }
@@ -315,47 +328,47 @@ public class GuiRaceSelectionScreen extends GuiScreen {
      */
     @Override
     public void handleMouseInput() throws IOException {
-        final int mouseX = (Mouse.getEventX() * width) / mc.displayWidth;
-        final int mouseY = height - ((Mouse.getEventY() * height) / mc.displayHeight) - 1;
+        final int mouseX = (Mouse.getEventX() * this.width) / this.mc.displayWidth;
+        final int mouseY = this.height - ((Mouse.getEventY() * this.height) / this.mc.displayHeight) - 1;
 
         super.handleMouseInput();
-        if (raceSelection != null) {
-            raceSelection.handleMouseInput(mouseX, mouseY);
+        if (this.raceSelection != null) {
+            this.raceSelection.handleMouseInput(mouseX, mouseY);
         }
-        if (elementSelection != null) {
-            elementSelection.handleMouseInput(mouseX, mouseY);
+        if (this.elementSelection != null) {
+            this.elementSelection.handleMouseInput(mouseX, mouseY);
         }
     }
 
     public int drawLine(String line, int offset, int shifty) {
-        fontRenderer.drawString(line, offset, shifty, 0xd7edea);
+        this.fontRenderer.drawString(line, offset, shifty, 0xd7edea);
         return shifty + 10;
     }
 
     public Minecraft getMinecraftInstance() {
-        return mc;
+        return this.mc;
     }
 
     public FontRenderer getFontRenderer() {
-        return fontRenderer;
+        return this.fontRenderer;
     }
 
     private void updateCache() {
-        raceDescriptions = null;
-        elementDescriptions = null;
-        if (selectedRace != null) {
-            final ResourceLocation logoPath = new ResourceLocation(Reference.MODID, "textures/potions/" + selectedRace.getName().toLowerCase() + ".png");
+        this.raceDescriptions = null;
+        this.elementDescriptions = null;
+        if (this.selectedRace != null) {
+            final ResourceLocation logoPath = ConstantsTextureResourceLocation.getPotionIconForRace(this.selectedRace, this.selectedPrimaryElement == null ? Elements.NEUTRAL : this.selectedPrimaryElement);
             final Dimension logoDims = new Dimension(18 * 2, 18 * 2);
             final List<String> lines = new ArrayList<>();
-            selectedRace.getRaceHandler(player, selectedPrimaryElement == null ? Elements.NEUTRAL : selectedPrimaryElement).getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
-            raceDescriptions = new Info(width - (160 + 56), lines, logoPath, logoDims, 32, (this.height - 60), raceListWidth + 12);
+            this.selectedRace.getRaceHandler(this.player, this.properties, new RaceCache(this.selectedRace, this.selectedPrimaryElement)).getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
+            this.raceDescriptions = new Info(this.width - (160 + (this.raceListWidth + 14)), lines, logoPath, logoDims, 32, (this.height - 60), this.raceListWidth + 12);
         }
     }
 
     private class Info extends GuiScrollingList {
         @Nullable
-        private ResourceLocation logoPath;
-        private Dimension logoDims;
+        private final ResourceLocation logoPath;
+        private final Dimension logoDims;
         private List<ITextComponent> lines = null;
 
         public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims, int top, int bottom, int left) {
@@ -412,7 +425,7 @@ public class GuiRaceSelectionScreen extends GuiScreen {
                 }
 
                 final ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                final int maxTextLength = listWidth - 8;
+                final int maxTextLength = this.listWidth - 8;
                 if (maxTextLength >= 0) {
                     ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiRaceSelectionScreen.this.getFontRenderer(), false, true));
                 }
@@ -422,22 +435,22 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         private int getHeaderHeight() {
             int height = 0;
-            if (logoPath != null) {
-                final double scaleX = logoDims.width / 200.0;
-                final double scaleY = logoDims.height / 65.0;
+            if (this.logoPath != null) {
+                final double scaleX = this.logoDims.width / 200.0;
+                final double scaleY = this.logoDims.height / 65.0;
                 double scale = 1.0;
                 if ((scaleX > 1) || (scaleY > 1)) {
                     scale = 1.0 / Math.max(scaleX, scaleY);
                 }
-                logoDims.width *= scale;
-                logoDims.height *= scale;
+                this.logoDims.width *= scale;
+                this.logoDims.height *= scale;
 
-                height += logoDims.height;
+                height += this.logoDims.height;
                 height += 10;
             }
-            height += (lines.size() * 10);
-            if (height < (bottom - top - 8)) {
-                height = bottom - top - 8;
+            height += (this.lines.size() * 10);
+            if (height < (this.bottom - this.top - 8)) {
+                height = this.bottom - this.top - 8;
             }
             return height;
         }
@@ -446,25 +459,25 @@ public class GuiRaceSelectionScreen extends GuiScreen {
         protected void drawHeader(int entryRight, int relativeY, Tessellator tess) {
             int top = relativeY;
 
-            if (logoPath != null) {
+            if (this.logoPath != null) {
                 GlStateManager.enableBlend();
-                GuiRaceSelectionScreen.this.getMinecraftInstance().renderEngine.bindTexture(logoPath);
+                GuiRaceSelectionScreen.this.getMinecraftInstance().renderEngine.bindTexture(this.logoPath);
                 final BufferBuilder wr = tess.getBuffer();
-                final int offset = (left + (listWidth / 2)) - (logoDims.width / 2);
+                final int offset = (this.left + (this.listWidth / 2)) - (this.logoDims.width / 2);
                 wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                wr.pos(offset, top + logoDims.height, zLevel).tex(0, 1).endVertex();
-                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
-                wr.pos(offset + logoDims.width, top, zLevel).tex(1, 0).endVertex();
-                wr.pos(offset, top, zLevel).tex(0, 0).endVertex();
+                wr.pos(offset, top + this.logoDims.height, GuiRaceSelectionScreen.this.zLevel).tex(0, 1).endVertex();
+                wr.pos(offset + this.logoDims.width, top + this.logoDims.height, GuiRaceSelectionScreen.this.zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + this.logoDims.width, top, GuiRaceSelectionScreen.this.zLevel).tex(1, 0).endVertex();
+                wr.pos(offset, top, GuiRaceSelectionScreen.this.zLevel).tex(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
-                top += logoDims.height + 10;
+                top += this.logoDims.height + 10;
             }
 
-            for (final ITextComponent line : lines) {
+            for (final ITextComponent line : this.lines) {
                 if (line != null) {
                     GlStateManager.enableBlend();
-                    GuiRaceSelectionScreen.this.getFontRenderer().drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
+                    GuiRaceSelectionScreen.this.getFontRenderer().drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
                     GlStateManager.disableAlpha();
                     GlStateManager.disableBlend();
                 }
@@ -475,26 +488,26 @@ public class GuiRaceSelectionScreen extends GuiScreen {
         @Override
         protected void clickHeader(int x, int y) {
             int offset = y;
-            if (logoPath != null) {
-                offset -= logoDims.height + 10;
+            if (this.logoPath != null) {
+                offset -= this.logoDims.height + 10;
             }
             if (offset <= 0) {
                 return;
             }
 
             final int lineIdx = offset / 10;
-            if (lineIdx >= lines.size()) {
+            if (lineIdx >= this.lines.size()) {
                 return;
             }
 
-            final ITextComponent line = lines.get(lineIdx);
+            final ITextComponent line = this.lines.get(lineIdx);
             if (line != null) {
                 int k = -4;
                 for (final ITextComponent part : line) {
                     if (!(part instanceof TextComponentString)) {
                         continue;
                     }
-                    k += fontRenderer.getStringWidth(((TextComponentString) part).getText());
+                    k += GuiRaceSelectionScreen.this.fontRenderer.getStringWidth(((TextComponentString) part).getText());
                     if (k >= x) {
                         GuiRaceSelectionScreen.this.handleComponentClick(part);
                         break;
@@ -507,14 +520,14 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
     public class RaceSelectionList extends GuiScrollingList {
 
-        private GuiRaceSelectionScreen parent;
-        private ArrayList<RaceCache> cache;
+        private final GuiRaceSelectionScreen parent;
+        private final ArrayList<RaceCache> cache;
 
-        private int id;
+        private final int id;
 
         public RaceSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<RaceCache> cache, int width, int height, int top, int bottom, int left, int slotHeight) {
             super(parent.mc, width, height, top, bottom, left, slotHeight, parent.width, parent.height);
-            id = ID;
+            this.id = ID;
             this.parent = parent;
             this.cache = cache;
         }
@@ -525,17 +538,17 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         @Override
         protected int getSize() {
-            return cache.size();
+            return this.cache.size();
         }
 
         @Override
         protected void elementClicked(int index, boolean doubleClick) {
-            parent.selectIndex(index);
+            this.parent.selectIndex(index);
         }
 
         @Override
         protected boolean isSelected(int index) {
-            return parent.indexSelected(index);
+            return this.parent.indexSelected(index);
         }
 
         @Override
@@ -545,34 +558,34 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         @Override
         protected int getContentHeight() {
-            return ((this.getSize()) * slotHeight) + 1;
+            return ((this.getSize()) * this.slotHeight) + 1;
         }
 
         ArrayList<RaceCache> getRaces() {
-            return cache;
+            return this.cache;
         }
 
         @Override
         protected void drawSlot(int idx, int right, int top, int height, Tessellator tess) {
-            if (idx >= cache.size()) return;
-            final RaceCache race = cache.get(idx);
+            if (idx >= this.cache.size()) return;
+            final RaceCache race = this.cache.get(idx);
             final String name = race == null ? "ERROR" : TextFormatting.GOLD + race.getRace().getDisplayName();
-            final FontRenderer font = parent.getFontRenderer();
-            font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
+            final FontRenderer font = this.parent.getFontRenderer();
+            font.drawString(font.trimStringToWidth(name, this.listWidth - 10), this.left + 3, top + 2, 0xFFFFFF);
         }
     }
 
     public class ElementSelectionList extends GuiScrollingList {
 
-        private GuiRaceSelectionScreen parent;
-        private ArrayList<Element> cache;
+        private final GuiRaceSelectionScreen parent;
+        private final ArrayList<Element> cache;
 
-        private int id;
-        private boolean primary;
+        private final int id;
+        private final boolean primary;
 
         public ElementSelectionList(int ID, GuiRaceSelectionScreen parent, ArrayList<Element> cache, int width, int height, int top, int bottom, int left, int slotHeight, boolean primary) {
             super(parent.mc, width, height, top, bottom, left, slotHeight, parent.width, parent.height);
-            id = ID;
+            this.id = ID;
             this.parent = parent;
             this.cache = cache;
             this.primary = primary;
@@ -584,24 +597,24 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         @Override
         protected int getSize() {
-            return cache.size();
+            return this.cache.size();
         }
 
         @Override
         protected void elementClicked(int index, boolean doubleClick) {
-            if (primary) {
-                parent.selectPrimaryElement(index);
+            if (this.primary) {
+                this.parent.selectPrimaryElement(index);
             } else {
-                parent.selectSecondaryElement(index);
+                this.parent.selectSecondaryElement(index);
             }
         }
 
         @Override
         protected boolean isSelected(int index) {
-            if (primary) {
-                return parent.primaryElementSelected(index);
+            if (this.primary) {
+                return this.parent.primaryElementSelected(index);
             } else {
-                return parent.secondaryElementSelected(index);
+                return this.parent.secondaryElementSelected(index);
             }
         }
 
@@ -612,20 +625,20 @@ public class GuiRaceSelectionScreen extends GuiScreen {
 
         @Override
         protected int getContentHeight() {
-            return ((this.getSize()) * slotHeight) + 1;
+            return ((this.getSize()) * this.slotHeight) + 1;
         }
 
         ArrayList<Element> getElements() {
-            return cache;
+            return this.cache;
         }
 
         @Override
         protected void drawSlot(int idx, int right, int top, int height, Tessellator tess) {
-            if (idx >= cache.size()) return;
-            final Element ele = cache.get(idx);
+            if (idx >= this.cache.size()) return;
+            final Element ele = this.cache.get(idx);
             final String name = ele == null ? "ERROR" : TextFormatting.GOLD + ele.getDisplayName();
-            final FontRenderer font = parent.getFontRenderer();
-            font.drawString(font.trimStringToWidth(name, listWidth - 10), left + 3, top + 2, 0xFFFFFF);
+            final FontRenderer font = this.parent.getFontRenderer();
+            font.drawString(font.trimStringToWidth(name, this.listWidth - 10), this.left + 3, top + 2, 0xFFFFFF);
         }
 
     }

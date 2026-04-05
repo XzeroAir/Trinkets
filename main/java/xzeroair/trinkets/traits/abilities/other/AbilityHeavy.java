@@ -16,19 +16,24 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import xzeroair.trinkets.api.TrinketHelper;
-import xzeroair.trinkets.init.Abilities;
-import xzeroair.trinkets.init.ModItems;
-import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityHeavy;
 
 public class AbilityHeavy extends Ability implements ITickableAbility {
 
-    public static final TitanConfig serverConfig = TrinketsConfig.SERVER.races.titan;
+    protected final ConfigAbilityHeavy CONFIG;
 
     public AbilityHeavy() {
-        super(Abilities.heavy);
+        this(TrinketsConfig.SERVER.ABILITIES.HEAVY);
+    }
+
+    public AbilityHeavy(ConfigAbilityHeavy config) {
+        super(TrinketsRegistryNames.ModAbilities.HEAVY);
+        this.CONFIG = config;
+        this.setAbilityEnabled(config.ENABLED);
     }
 
     @Override
@@ -37,7 +42,7 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
         if (!flag) {
             final World world = entity.getEntityWorld();
             this.trample(entity);
-            if (serverConfig.sink && !TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketSea)) {
+            if (!TrinketHelper.entityHasAbility(entity, TrinketsRegistryNames.ModAbilities.SKILLED_SWIMMER)) {
                 if (entity.isRiding()) {
                     if (entity.getRidingEntity() instanceof EntityBoat) {
                         final EntityBoat boat = (EntityBoat) entity.getRidingEntity();
@@ -59,7 +64,7 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
     }
 
     private void trample(EntityLivingBase entity) {
-        if (serverConfig.trample && !entity.isSneaking()) {
+        if (this.CONFIG.TRAMPLE && !entity.isSneaking()) {
             final AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(1, 0, 1);
             final int i = MathHelper.floor(aabb.minX);
             final int j = MathHelper.floor(aabb.maxX + 1.0D);

@@ -13,11 +13,12 @@ import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.ConfigGlowRing;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrinketGlowRing extends AccessoryBase {
 
-    public static final ConfigGlowRing serverConfig = TrinketsConfig.SERVER.Items.GLOW_RING;
+    protected final ConfigGlowRing CONFIG = TrinketsConfig.SERVER.ITEMS.GLOW_RING;
 
     public TrinketGlowRing(String name) {
         super(name);
@@ -25,13 +26,9 @@ public class TrinketGlowRing extends AccessoryBase {
     }
 
     @Override
-    public String[] getAttributeConfig() {
-        return serverConfig.attributes;
-    }
-
-    @Override
-    public void initAbilities(ItemStack stack, EntityLivingBase entity, List<IAbilityInterface> abilities) {
-        abilities.add(new AbilityNightVision().toggleAbility(true));
+    public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
+        abilities.add(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION).toggleAbility(true));
+        this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
     }
 
     @Override
@@ -40,8 +37,28 @@ public class TrinketGlowRing extends AccessoryBase {
     }
 
     @Override
+    public String[] getAttributeConfig() {
+        return this.CONFIG.ATTRIBUTES;
+    }
+
+    @Override
+    public String[] getEffectsToRemove() {
+        return this.CONFIG.EFFECTS_TO_REMOVE;
+    }
+
+    @Override
+    public String[] getEffectsToAdd() {
+        return this.CONFIG.EFFECTS_TO_ADD;
+    }
+
+    @Override
+    public String[] getDamageTypesToIgnoreConfig() {
+        return this.CONFIG.DAMAGE_TYPES_TO_IGNORE;
+    }
+
+    @Override
     public boolean ItemEnabled() {
-        return serverConfig.enabled;
+        return this.CONFIG.ENABLED;
     }
 
     @Override
@@ -49,4 +66,5 @@ public class TrinketGlowRing extends AccessoryBase {
     public void registerModels() {
         Trinkets.proxy.registerItemRenderer(this, 0, "inventory");
     }
+
 }

@@ -24,35 +24,35 @@ public class OpenTrinketGui extends ThreadSafePacket {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(guiID);
+        buf.writeInt(this.guiID);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        guiID = buf.readInt();
+        this.guiID = buf.readInt();
     }
 
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final Minecraft mc = Minecraft.getMinecraft();
         final World world = mc.player.getEntityWorld();
-        mc.player.openGui(Trinkets.instance, guiID, world, 0, 0, 0);
+        mc.player.openGui(Trinkets.instance, this.guiID, world, 0, 0, 0);
     }
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
         final EntityPlayerMP entity = server.player;
-        if (guiID == 99) {
+        if (this.guiID == Reference.GUI_TRINKETS_EXIT_BUTTON) {
             entity.openContainer.onContainerClosed(entity);
             entity.openContainer = entity.inventoryContainer;
         } else {
-            if (guiID == Reference.GUI) {
-                if (!TrinketsConfig.SERVER.GUI.guiEnabled) {
+            if (this.guiID == Reference.GUI) {
+                if (!TrinketsConfig.SERVER.GUI.ENABLED) {
                     return;
                 }
+                entity.openContainer.onContainerClosed(entity);
+                entity.openGui(Trinkets.instance, this.guiID, entity.world, 0, 0, 0);
             }
-            entity.openContainer.onContainerClosed(entity);
-            entity.openGui(Trinkets.instance, guiID, entity.world, 0, 0, 0);
         }
     }
 }

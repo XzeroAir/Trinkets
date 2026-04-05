@@ -1,93 +1,95 @@
 package xzeroair.trinkets.client.gui.hud.mana;
 
-import java.io.IOException;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 
-public class ManaHud extends GuiScreen {
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
-	public static ResourceLocation background = null;
+public class ManaHud extends GuiScreen implements ITrinketGuiInterface {
 
-	private float oldMouseX;
-	private float oldMouseY;
+    public static ResourceLocation background = null;
 
-	public ManaHud() {
-		allowUserInput = true;
-	}
+    private float oldMouseX;
+    private float oldMouseY;
 
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
-	}
+    public ManaHud() {
+        this.allowUserInput = true;
+    }
 
-	@Override
-	public void initGui() {
-		//		buttonList.clear();
-		super.initGui();
-	}
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+    }
 
-	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY, state);
-	}
+    @Override
+    public void initGui() {
+        //		buttonList.clear();
+        super.initGui();
+    }
 
-	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-		ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-		mc.player.closeScreen();
-	}
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+    }
 
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-	}
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+        this.mc.player.closeScreen();
+    }
 
-	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
-		super.actionPerformed(button);
-	}
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+    }
 
-	@Override
-	public void onGuiClosed() {
-		super.onGuiClosed();
-	}
+    @Override
+    protected void actionPerformed(@Nonnull GuiButton button) throws IOException {
+        super.actionPerformed(button);
+    }
 
-	@Override
-	public boolean doesGuiPauseGame() {
-		return false;//super.doesGuiPauseGame();
-	}
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+    }
 
-	/**
-	 * Draws the screen and all the components in it.
-	 */
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		oldMouseX = mouseX;
-		oldMouseY = mouseY;
-		TrinketsConfig.CLIENT.MPBar.translatedX = ((mouseX * 100D) / width) * 0.01D;
-		TrinketsConfig.CLIENT.MPBar.translatedY = ((mouseY * 100D) / height) * 0.01D;
-		//		this.drawDefaultBackground();
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		//		drawHoveringText(text, mouseX, y);
-		//		this.renderHoveredToolTip(mouseX, mouseY);
-	}
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;//super.doesGuiPauseGame();
+    }
 
-	@Override
-	protected void keyTyped(char par1, int par2) throws IOException {
-		ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-		super.keyTyped(par1, par2);
-	}
+    /**
+     * Draws the screen and all the components in it.
+     */
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.oldMouseX = mouseX;
+        this.oldMouseY = mouseY;
+        TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX = ((mouseX * 100D) / this.width) * 0.01D;
+        TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY = ((mouseY * 100D) / this.height) * 0.01D;
+        //		this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        //		drawHoveringText(text, mouseX, y);
+        //		this.renderHoveredToolTip(mouseX, mouseY);
+    }
 
-	public void displayNormalInventory() {
-		final GuiInventory gui = new GuiInventory(mc.player);
-		mc.displayGuiScreen(gui);
-	}
+    @Override
+    protected void keyTyped(char par1, int par2) throws IOException {
+        ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+        super.keyTyped(par1, par2);
+    }
+
+    public void displayNormalInventory() {
+        final GuiInventory gui = new GuiInventory(this.mc.player);
+        this.mc.displayGuiScreen(gui);
+    }
 }

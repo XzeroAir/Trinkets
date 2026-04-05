@@ -1,7 +1,9 @@
 package xzeroair.trinkets.items.base;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,17 +12,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.ITrinketInterface;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.race.ElementalAttributes;
+import xzeroair.trinkets.capabilities.CapabilityProviderBase;
+import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
+import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.traits.elements.IElementProvider;
+import xzeroair.trinkets.util.ConstantsTextTranslations;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
@@ -28,22 +36,59 @@ import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterface, IElementProvider {
 
     private UUID uuid;
+    private final List<Element> subElementTypes = new ArrayList<>();
     protected int cooldown = 0;
     protected boolean canEat = true;
-    protected ElementalAttributes elements;
 
-    public FoodBase(String name, int heal, float saturation) {
+    public FoodBase(String modid, String name, int heal, float saturation) {
         super(heal, saturation, false);
         this.setTranslationKey(name);
-        this.setRegistryName(name);
-        this.setCreativeTab(Trinkets.trinketstab);
-        elements = new ElementalAttributes();
+        this.setRegistryName(new ResourceLocation(modid, name));
+    }
+
+    public FoodBase(String name, int heal, float saturation) {
+        this(Reference.MODID, name, heal, saturation);
+        this.setCreativeTab(Trinkets.CREATIVE_TAB);
+    }
+
+    @Override
+    public boolean getHasSubtypes() {
+        return super.getHasSubtypes() || !this.getElementTypes().isEmpty();
+    }
+
+    public List<Element> getElementTypes() {
+        return this.subElementTypes;
+    }
+
+    public FoodBase addElementSubType(@Nonnull Element... elements) {
+        for (Element element : elements) {
+            this.getElementTypes().add(element);
+        }
+        return this;
+    }
+
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+        if (tab == this.getCreativeTab()) {
+            final ItemStack normal = new ItemStack(this, 1, 0);
+            items.add(normal);
+            int index = 1;
+            for (Element element : this.getElementTypes()) {
+                ItemStack stack = new ItemStack(this, 1, index++);
+                items.add(Capabilities.getTrinketProperties(stack, stack, (properties, rtn) -> {
+                    properties.getElementalAttributes().setPrimaryElement(element);
+                    return properties.getItemStack();
+                }));
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -54,11 +99,22 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltips, ITooltipFlag flagIn) {
-        super.addInformation(stack, world, tooltips, flagIn);
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltips, @Nonnull ITooltipFlag flagIn) {
         if (world == null) {
             return;
         }
+        EntityPlayer entity = null;
+        try {
+            entity = Minecraft.getMinecraft().player;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (entity == null) {
+            return;
+        }
+        final EntityPlayer player = entity;
+        boolean showAdvEnabled = flagIn != null && flagIn.isAdvanced();
+        super.addInformation(stack, world, tooltips, flagIn);
 
         for (int i = 1; i < 4; i++) {
             String key = stack.getItem() instanceof RaceFood ? (Reference.MODID + ".transformation.food.tooltip" + i) : (Reference.MODID + ".food.item.tooltip" + i);
@@ -77,44 +133,24 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
                 tooltips.add(string);
             }
         }
-        final TextComponentTranslation ctrl = new TextComponentTranslation(Reference.MODID + ".holdctrl");
-        final boolean tanEnabled = (Trinkets.MOD_COMPAT.ToughAsNails && TrinketsConfig.getClientStore().MOD_COMPAT_TOUGHASNAILS);
-        final boolean sdEnabled = (Trinkets.MOD_COMPAT.SimpleDifficulty && TrinketsConfig.getClientStore().MOD_COMPAT_SIMPLEDIFFICULTY);
-        final boolean faEnabled = Trinkets.MOD_COMPAT.FirstAid;
-        final boolean evEnabled = Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS;
-        final String TAN = !(tanEnabled || sdEnabled) ? "" : helper.getLangTranslation(translationKey + ".compat.tan", lang -> this.customItemInformation(stack, world, flagIn, 11, lang));
-        final String FA = !faEnabled ? "" : helper.getLangTranslation(translationKey + ".compat.firstaid", lang -> this.customItemInformation(stack, world, flagIn, 12, lang));
-        final String EV = !evEnabled ? "" : helper.getLangTranslation(translationKey + ".compat.enhancedvisuals", lang -> this.customItemInformation(stack, world, flagIn, 13, lang));
-        if (GuiScreen.isCtrlKeyDown()) {
-            if (!helper.isStringEmpty(TAN)) {
-                final String modifier = sdEnabled ? " (Simple Difficulty)" : tanEnabled ? " (Tough as Nails)" : "";
-                tooltips.add(TAN + helper.gold + modifier);
-            }
-            if (!helper.isStringEmpty(FA)) {
-                tooltips.add(FA + helper.gold + " (First Aid)");
-            }
-            if (!helper.isStringEmpty(EV)) {
-                tooltips.add(EV + helper.gold + " (Enhanced Visuals)");
-            }
-        } else if (GuiScreen.isShiftKeyDown()) {
-            if (!stack.isEmpty() && stack.getItem() instanceof IElementProvider) {
-                IElementProvider elementProvider = (IElementProvider) stack.getItem();
-                tooltips.add(elementProvider.getPrimaryElement(stack).getDisplayName() + "");
-            }
-        } else {
-            if ((!helper.isStringEmpty(TAN)) || (!helper.isStringEmpty(EV)) || (!helper.isStringEmpty(FA))) {
-                tooltips.add(helper.reset + "" + helper.dGray + ctrl.getFormattedText());
+
+        //(showAdvEnabled ? EnumRenderLocation.ITEM_ADVANCED : EnumRenderLocation.ALWAYS)
+        EnumRenderLocation modifier = GuiScreen.isCtrlKeyDown() ? EnumRenderLocation.ITEM_CTRL : GuiScreen.isShiftKeyDown() ? EnumRenderLocation.ITEM_SHIFT : GuiScreen.isAltKeyDown() ? EnumRenderLocation.ITEM_ALT : EnumRenderLocation.NEVER;
+        if (showAdvEnabled && TrinketsConfig.CLIENT.ITEMS.RENDER_ELEMENTS) {
+            tooltips.add(ConstantsTextTranslations.KEY_CTRL.getFormattedText());
+            if (modifier.equals(EnumRenderLocation.ITEM_CTRL)) {
+                tooltips.add(this.getPrimaryElement(stack).getDisplayName());
             }
         }
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         return super.getItemStackDisplayName(stack);
     }
 
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getTranslationKey(@Nonnull ItemStack stack) {
         return this.getTranslationKey();
     }
 
@@ -124,7 +160,7 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
     }
 
     public UUID getUUID() {
-        return uuid;
+        return this.uuid;
     }
 
     public void setUUID(String uuid) {
@@ -136,33 +172,33 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        if (cooldown > 0) {
-            canEat = false;
-            cooldown--;
+    public void onUpdate(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
+        if (this.cooldown > 0) {
+            this.canEat = false;
+            this.cooldown--;
         } else {
-            canEat = true;
+            this.canEat = true;
         }
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+    public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull EntityLivingBase entityLiving) {
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
 
     @Override
-    public void onCreated(ItemStack stack, World world, EntityPlayer player) {
+    public void onCreated(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player) {
         super.onCreated(stack, world, player);
     }
 
     public int getCooldown() {
-        return cooldown;
+        return this.cooldown;
     }
 
     public void setCooldown(int cooldown) {
@@ -170,38 +206,35 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
     }
 
     public boolean getEdible() {
-        return canEat;
+        return this.canEat;
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+        TrinketProperties newProperties = new TrinketProperties(stack);
+        if (stack.getItem() instanceof IElementProvider) {
+            newProperties.getElementalAttributes().setPrimaryElement(((IElementProvider) stack.getItem()).getPrimaryElement());
+        }
+        return new CapabilityProviderBase<>(Capabilities.ITEM_TRINKET, newProperties);
     }
 
     @Override
     public Element getPrimaryElement(ItemStack stack) {
-        return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, element) -> prop.getElementAttributes().getPrimaryElement());
-    }
-
-    @Override
-    public Element getSecondaryElement(ItemStack stack) {
-        return Capabilities.getTrinketProperties(stack, this.getSecondaryElement(), (prop, element) -> prop.getElementAttributes().getSecondaryElement());
-    }
-
-    @Override
-    public Element[] getSubElements(ItemStack stack) {
-        return Capabilities.getTrinketProperties(stack, this.getSubElements(), (prop, element) -> prop.getElementAttributes().getSubElements().values().toArray(new Element[0]));
+        return Capabilities.getTrinketProperties(stack, this.getPrimaryElement(), (prop, e) -> prop.getElementalAttributes().getPrimaryElement());
     }
 
     @Override
     public NBTTagCompound getNBTShareTag(@Nonnull ItemStack stack) {
-        return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, tag) -> {
-            if (tag == null) {
-                tag = new NBTTagCompound();
-            }
-            return prop.saveToNBT(tag);
-        });
+        return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, rtnTag) -> prop.saveToNBT(prop.getTag()));
     }
 
     @Override
     public void readNBTShareTag(@Nonnull ItemStack stack, NBTTagCompound nbt) {
         super.readNBTShareTag(stack, nbt);
-        Capabilities.getTrinketProperties(stack, prop -> prop.loadFromNBT(nbt));
+        if (nbt != null) {
+            Capabilities.getTrinketProperties(stack, (prop) -> prop.loadFromNBT(nbt));
+        }
     }
 
     @Override
@@ -211,11 +244,12 @@ public class FoodBase extends ItemFood implements IsModelLoaded, ITrinketInterfa
 
     @Override
     public int getSlot(ItemStack stack) {
-        return -1;
+        return Capabilities.getTrinketProperties(stack, -1, (prop, slot) -> prop.getSlot());
     }
 
     @Override
     public String getItemHandler(ItemStack stack) {
-        return TrinketHelper.SlotInformation.ItemHandlerType.NONE.getName();
+        return Capabilities.getTrinketProperties(stack, TrinketHelper.SlotInformation.ItemHandlerType.NONE.getName(), (prop, slot) -> prop.getSlotInfo().getHandler());
     }
+
 }

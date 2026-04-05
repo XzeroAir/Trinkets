@@ -19,13 +19,14 @@ import xzeroair.trinkets.traits.abilities.interfaces.IJumpAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class MovementHandler extends EventBaseHandler {
 
     @SubscribeEvent
-    public void onCollideWithBlock(PlayerSPPushOutOfBlocksEvent event) {
+    public void onCollideWithBlock(@Nonnull PlayerSPPushOutOfBlocksEvent event) {
         final EntityPlayer player = event.getEntityPlayer();
         Capabilities.getEntityProperties(player, prop -> {
             if (!prop.isNormalSize()) {
@@ -35,28 +36,32 @@ public class MovementHandler extends EventBaseHandler {
     }
 
     @SubscribeEvent
-    public void livingJump(LivingJumpEvent event) {
+    public void livingJump(@Nonnull LivingJumpEvent event) {
         final EntityLivingBase entity = event.getEntityLiving();
-        // TODO Add Config to disable attribute
-        final IAttributeInstance attribute = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
-        if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
-            double motionBase = attribute.getBaseValue();
-            if (motionBase != 1.0D) {
-                attribute.setBaseValue(1.0D);
+        final IAttributeInstance jump = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
+        if ((jump != null) && !jump.getModifiers().isEmpty()) {
+            if (jump.getBaseValue() != 1.0D) {
+                jump.setBaseValue(1.0D);
             }
-            double motion = attribute.getAttributeValue();
+            double jumpHeight = jump.getAttributeValue();
+
             if (entity.isPotionActive(MobEffects.JUMP_BOOST)) {
-                motion -= entity.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1;
+                jumpHeight -= entity.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1;
             }
-            double motionXZ = Math.max(0.0D, ((0.42D * (motion - 1D)) / 0.42D));
-            motion = (motion / 10.0D);
-            entity.motionY += motion;
+            double jumpVelocity = 0.42D * jumpHeight;
+            entity.motionY += (jumpVelocity - 0.42D);
+
+            double horizontalScale = 1.0D + (jumpHeight - 1.0D) * 0.1D;
+            horizontalScale = MathHelper.clamp(horizontalScale, 0.9D, 1.1D);
+
             if (entity.isSprinting()) {
-                entity.motionX *= (motionXZ);
-                entity.motionZ *= (motionXZ);
+                float yaw = entity.rotationYaw * 0.017453292F;
+                double boost = 0.2D * horizontalScale;
+                entity.motionX -= MathHelper.sin(yaw) * boost;
+                entity.motionZ += MathHelper.cos(yaw) * boost;
             }
         }
-        //				entity.motionY = 0.368129F;
+
         Capabilities.getEntityProperties(entity, prop -> {
             if (TrinketsConfig.getClientStore().BLOCK_MOVEMENT) {
                 if (prop.getRaceHandler().isTransforming()) {
@@ -75,7 +80,7 @@ public class MovementHandler extends EventBaseHandler {
                         ((IJumpAbility) ability).jump(entity);
                     }
                 } catch (Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
@@ -83,24 +88,27 @@ public class MovementHandler extends EventBaseHandler {
     }
 
     @SubscribeEvent
-    public void livingFall(LivingFallEvent event) {
+    public void livingFall(@Nonnull LivingFallEvent event) {
         final EntityLivingBase entity = event.getEntityLiving();
-        if (entity.world.isRemote) {
-            return;
-        }
-        final float baseDistance = event.getDistance();
-        final float baseMultiplier = event.getDamageMultiplier();
+        final float distanceFallen = event.getDistance();
+        final float fallDamageMultiplier = event.getDamageMultiplier();
 
         // ATTRIBUTE
-        final IAttributeInstance attribute = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
-        if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
-            double value = attribute.getAttributeValue();
+        final IAttributeInstance jump = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
+        if ((jump != null) && !jump.getModifiers().isEmpty()) {
+            double jumpHeight = jump.getAttributeValue();
             PotionEffect potioneffect = entity.getActivePotionEffect(MobEffects.JUMP_BOOST);
             float jumpboost = potioneffect == null ? 0.0F : (float) (potioneffect.getAmplifier() + 1);
-            value -= jumpboost;
-            value = StringUtils.getAccurateDouble(value);
-            if (value > 0.0F) {
-                event.setDistance((float) (baseDistance - value));
+            jumpHeight -= jumpboost;
+            jumpHeight = StringUtils.getAccurateDouble(jumpHeight);
+
+            if (jumpHeight > 0.0D) {
+                float newDistance = (float) (distanceFallen - jumpHeight);
+                if (newDistance < 0.0F) {
+                    newDistance = 0.0F;
+                }
+                event.setDistance(newDistance);
+                entity.fallDistance = Math.max(newDistance, 0.0F);
             }
         }
         // END ATTRIBUTE
@@ -131,14 +139,14 @@ public class MovementHandler extends EventBaseHandler {
                         }
                     }
                 } catch (Exception e) {
-                    Trinkets.log.error("Trinkets had an Error with Ability:" + key);
+                    Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
                     e.printStackTrace();
                 }
             }
-            if (fallDistance != baseDistance) {
+            if (fallDistance != distanceFallen) {
                 event.setDistance(MathHelper.clamp(fallDistance, 0, fallDistance));
             }
-            if (damageMultiplier != baseMultiplier) {
+            if (damageMultiplier != fallDamageMultiplier) {
                 event.setDamageMultiplier(MathHelper.clamp(damageMultiplier, 0, damageMultiplier));
             }
 
@@ -146,7 +154,7 @@ public class MovementHandler extends EventBaseHandler {
 
             return event.isCanceled() || (event.getDistance() <= 0) || (event.getDamageMultiplier() <= 0) || bool;
         });
-        if (cancel) {
+        if ((event.getDistance() <= 0) || (event.getDamageMultiplier() <= 0) || cancel) {
             this.cancelEvent(event);
         }
     }

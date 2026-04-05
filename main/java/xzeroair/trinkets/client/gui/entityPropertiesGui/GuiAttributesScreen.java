@@ -28,13 +28,13 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
-import xzeroair.trinkets.util.helpers.ColorHelper;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -45,7 +45,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class GuiAttributesScreen extends GuiScreen {
+public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterface {
 
     private enum SortType implements Comparator<IAbilityInterface> {
         NORMAL(24), A_TO_Z(25) {
@@ -60,9 +60,9 @@ public class GuiAttributesScreen extends GuiScreen {
             }
         };
 
-        private int buttonID;
+        private final int buttonID;
 
-        private SortType(int buttonID) {
+        SortType(int buttonID) {
             this.buttonID = buttonID;
         }
 
@@ -88,10 +88,10 @@ public class GuiAttributesScreen extends GuiScreen {
         }
     }
 
-    public EntityPlayer player;
-    public EntityProperties properties;
+    protected final EntityPlayer player;
+    @Nullable
+    protected final EntityProperties properties;
     protected GuiPropertiesSlider r, g, b, a;
-    public ColorHelper color;
     public int buttonPressed;
 
     public int redSlider = 5;
@@ -103,8 +103,7 @@ public class GuiAttributesScreen extends GuiScreen {
 
     public GuiAttributesScreen(EntityPlayer player) {
         this.player = player;
-        color = new ColorHelper();
-        properties = Capabilities.getEntityProperties(player);
+        this.properties = Capabilities.getEntityProperties(player);
     }
 
     public static ResourceLocation background = null;
@@ -116,60 +115,61 @@ public class GuiAttributesScreen extends GuiScreen {
     //	private GuiScreen mainMenu;
     private GuiScrollingList abilityDescriptions, raceAttributes, raceBonuses;
     private int selected = -1;
+    @Nullable
     private AbilityHolder selectedAbility;
     private int listWidth;
     private ArrayList<AbilityHolder> abilities;
 
-    private int buttonMargin = 1;
-    private int numButtons = SortType.values().length;
+    private final int buttonMargin = 1;
+    private final int numButtons = SortType.values().length;
 
-    private String lastFilterText = "";
+    private final String lastFilterText = "";
 
-    private boolean sorted = false;
+    private final boolean sorted = false;
 
-    private SortType sortType = SortType.NORMAL;
+    private final SortType sortType = SortType.NORMAL;
 
     public void selectAbilityIndex(int index) {
-        if (index == selected) {
+        if (index == this.selected) {
             return;
         }
-        selected = index;
-        selectedAbility = ((index >= 0) && (index <= abilities.size())) ? abilities.get(selected) : null;
+        this.selected = index;
+        this.selectedAbility = ((index >= 0) && (index <= this.abilities.size())) ? this.abilities.get(this.selected) : null;
 
         this.updateCache();
     }
 
     public boolean abilityIndexSelected(int index) {
-        return index == selected;
+        return index == this.selected;
     }
 
     @Override
     public void initGui() {
-        buttonList.clear();
+        this.buttonList.clear();
         super.initGui();
 
         this.addButton(new GuiPropertiesButton(1, 2, 2, 50, 20, "<--"));
-        this.addButton(new GuiPropertiesButton(2, width - 16, 2, 14, 20, TextFormatting.RED + "X"));
+        this.addButton(new GuiPropertiesButton(2, this.width - 16, 2, 14, 20, TextFormatting.RED + "X"));
 
-        abilities = Lists.newArrayList(properties.getAbilityHandler().getActiveAbilities().values());
+        this.abilities = Lists.newArrayList(this.properties.getAbilityHandler().getActiveAbilities().values());
         final int slotHeight = 20;
-        if ((abilities == null) || abilities.isEmpty()) {
+        if ((this.abilities == null) || this.abilities.isEmpty()) {
             return;
         }
-        for (final AbilityHolder ability : abilities) {
+        for (final AbilityHolder ability : this.abilities) {
             String name = ability.getAbility().getDisplayName();
-            listWidth = Math.max(listWidth, this.getFontRenderer().getStringWidth(name) + 10);
+            this.listWidth = Math.max(this.listWidth, this.getFontRenderer().getStringWidth(name) + 10);
         }
-        listWidth = Math.min(listWidth, 150);
+        this.listWidth = Math.min(this.listWidth, 150);
         //        this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
-        abilitySelectionList = new GuiAttributesScrollingList(0, this, abilities, listWidth, slotHeight);
+        this.abilitySelectionList = new GuiAttributesScrollingList(0, this, this.abilities, this.listWidth, slotHeight);
         this.updateCache();
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        buttonPressed = 0;
+        this.buttonPressed = 0;
     }
 
     @Override
@@ -194,15 +194,15 @@ public class GuiAttributesScreen extends GuiScreen {
     protected void keyTyped(char c, int keyCode) throws IOException {
         super.keyTyped(c, keyCode);
         if (keyCode == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
-            player.closeScreen();
+            this.player.closeScreen();
             this.displayNormalInventory();
         }
         //		search.textboxKeyTyped(c, keyCode);
     }
 
     public void displayNormalInventory() {
-        final GuiInventory gui = new GuiInventory(mc.player);
-        mc.displayGuiScreen(gui);
+        final GuiInventory gui = new GuiInventory(this.mc.player);
+        this.mc.displayGuiScreen(gui);
     }
 
     /**
@@ -219,10 +219,10 @@ public class GuiAttributesScreen extends GuiScreen {
      */
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        buttonPressed = button.id;
+        this.buttonPressed = button.id;
         super.actionPerformed(button);
         if (button.id == 1) {
-            mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, mc.player.world, 0, 0, 0);
+            this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);
         }
         if (button.id == 2) {
             this.displayNormalInventory();
@@ -245,26 +245,26 @@ public class GuiAttributesScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         //TODO Rendering Might still be broken?
-        oldMouseX = mouseX;
-        oldMouseY = mouseY;
+        this.oldMouseX = mouseX;
+        this.oldMouseY = mouseY;
         this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (properties == null) {
+        if (this.properties == null) {
             return;
         }
 
-        if (abilitySelectionList != null) {
-            abilitySelectionList.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.abilitySelectionList != null) {
+            this.abilitySelectionList.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (abilityDescriptions != null) {
-            abilityDescriptions.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.abilityDescriptions != null) {
+            this.abilityDescriptions.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (raceAttributes != null) {
-            raceAttributes.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.raceAttributes != null) {
+            this.raceAttributes.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (raceBonuses != null) {
-            raceBonuses.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.raceBonuses != null) {
+            this.raceBonuses.drawScreen(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -273,85 +273,80 @@ public class GuiAttributesScreen extends GuiScreen {
      */
     @Override
     public void handleMouseInput() throws IOException {
-        final int mouseX = (Mouse.getEventX() * width) / mc.displayWidth;
-        final int mouseY = height - ((Mouse.getEventY() * height) / mc.displayHeight) - 1;
+        final int mouseX = (Mouse.getEventX() * this.width) / this.mc.displayWidth;
+        final int mouseY = this.height - ((Mouse.getEventY() * this.height) / this.mc.displayHeight) - 1;
 
         super.handleMouseInput();
-        if (abilityDescriptions != null) {
-            abilityDescriptions.handleMouseInput(mouseX, mouseY);
+        if (this.abilityDescriptions != null) {
+            this.abilityDescriptions.handleMouseInput(mouseX, mouseY);
         }
-        if (abilitySelectionList != null) {
-            abilitySelectionList.handleMouseInput(mouseX, mouseY);
+        if (this.abilitySelectionList != null) {
+            this.abilitySelectionList.handleMouseInput(mouseX, mouseY);
         }
     }
 
     public int drawLine(String line, int offset, int shifty) {
-        fontRenderer.drawString(line, offset, shifty, 0xd7edea);
+        this.fontRenderer.drawString(line, offset, shifty, 0xd7edea);
         return shifty + 10;
     }
 
     public Minecraft getMinecraftInstance() {
-        return mc;
+        return this.mc;
     }
 
     public FontRenderer getFontRenderer() {
-        return fontRenderer;
+        return this.fontRenderer;
     }
 
     public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
 
     private void updateCache() {
-        abilityDescriptions = null;
-        raceAttributes = null;
+        this.abilityDescriptions = null;
+        this.raceAttributes = null;
         final ResourceLocation logoPath2 = null;
         final Dimension logoDims2 = new Dimension(0, 0);
         final List<String> lines2 = new ArrayList<>();
         try {
-            String[] attributeConfig = properties.getCurrentRace().getRace().getRaceAttributes().getAttributes();
-            if ((attributeConfig != null) && (attributeConfig.length > 0)) {
+            String[] attributeConfig = this.properties.getCurrentRace().getRace().getRaceInformation().getAttributes();
+            if (attributeConfig != null) {
                 for (String entry : attributeConfig) {
                     AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
                     if (attributeShell != null) {
-                        //						EntityPlayer player = Minecraft.getMinecraft().player;
                         final String name = attributeShell.getAttribute();
                         final double amount = attributeShell.getAmount();
                         final int operation = attributeShell.getOperation();
-                        if ((player != null)) {
-                            if ((player.getAttributeMap().getAttributeInstanceByName(name) != null)) {
-                                double d0 = amount;
-                                double d1;
-                                boolean flag = false;
-                                if ((operation != 1) && (operation != 2)) {
-                                    d1 = d0;
-                                } else {
-                                    d1 = d0 * 100.0D;
-                                }
-                                final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
-                                if (flag) {
-                                    final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                                    lines2.add(" " + never.getFormattedText());
-                                } else if (d0 > 0.0D) {
-                                    final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                                    addition.getStyle().setColor(TextFormatting.BLUE);
-                                    String s = addition.getFormattedText();
-                                    lines2.add(" " + s);
-                                } else if (d0 < 0.0D) {
-                                    d1 = d1 * -1.0D;
-                                    final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                                    subtraction.getStyle().setColor(TextFormatting.RED);
-                                    String s = subtraction.getFormattedText();
-                                    lines2.add(" " + s);
-                                }
-                            }
+                        double d0 = amount;
+                        double d1;
+                        boolean flag = false;
+                        if ((operation != 1) && (operation != 2)) {
+                            d1 = d0;
+                        } else {
+                            d1 = d0 * 100.0D;
+                        }
+                        final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
+                        if (flag) {
+                            final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                            lines2.add(" " + never.getFormattedText());
+                        } else if (d0 > 0.0D) {
+                            final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                            addition.getStyle().setColor(TextFormatting.BLUE);
+                            String s = addition.getFormattedText();
+                            lines2.add(" " + s);
+                        } else if (d0 < 0.0D) {
+                            d1 = d1 * -1.0D;
+                            final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
+                            subtraction.getStyle().setColor(TextFormatting.RED);
+                            String s = subtraction.getFormattedText();
+                            lines2.add(" " + s);
                         }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
-        raceAttributes = new Info(listWidth + 40, lines2, logoPath2, logoDims2, 32, (GuiAttributesScreen.this.height - 18) + 4, (width - listWidth - 50));
-        if (selectedAbility == null) {
+        this.raceAttributes = new Info(this.listWidth + 40, lines2, logoPath2, logoDims2, 32, (GuiAttributesScreen.this.height - 18) + 4, (this.width - this.listWidth - 50));
+        if (this.selectedAbility == null) {
             return;
         }
 
@@ -380,32 +375,28 @@ public class GuiAttributesScreen extends GuiScreen {
         //			} catch (IOException e) {
         //			}
         //		}
-        try {
-            final String source = selectedAbility.getSourceID();
-            IAbilityInterface abilityInstance = selectedAbility.getAbility();
-            SlotInformation slotInfo = selectedAbility.getInfo();
+        final String source = this.selectedAbility.getSourceID();
+        IAbilityInterface abilityInstance = this.selectedAbility.getAbility();
+        SlotInformation slotInfo = this.selectedAbility.getInfo();
 
-            lines.add(TextFormatting.GOLD + abilityInstance.getDisplayName());
-            lines.add(TextFormatting.AQUA + source);
-            //						source = properties.getAbilityHandler().getAbilitySource(selectedMod);
-            //		lines.add(selectedAbility. + " - " + source);
-            lines.add(null);
-            abilityInstance.getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        lines.add(TextFormatting.GOLD + abilityInstance.getDisplayName());
+        lines.add(TextFormatting.AQUA + source);
+        //						source = properties.getAbilityHandler().getAbilitySource(selectedMod);
+        //		lines.add(selectedAbility. + " - " + source);
+        lines.add(null);
+        abilityInstance.getDescription(lines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
         //			lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
         //			lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
 
         //		lines.addAll(selectedMod.getDescription());
 
-        abilityDescriptions = new Info((width - listWidth - 50) - listWidth - 30, lines, logoPath, logoDims);
+        this.abilityDescriptions = new Info((this.width - this.listWidth - 50) - this.listWidth - 30, lines, logoPath, logoDims);
     }
 
     private class Info extends GuiScrollingList {
         @Nullable
-        private ResourceLocation logoPath;
-        private Dimension logoDims;
+        private final ResourceLocation logoPath;
+        private final Dimension logoDims;
         private List<ITextComponent> lines = null;
 
         public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims, int top, int bottom, int left) {
@@ -457,7 +448,7 @@ public class GuiAttributesScreen extends GuiScreen {
                 }
 
                 final ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                final int maxTextLength = listWidth - 8;
+                final int maxTextLength = this.listWidth - 8;
                 if (maxTextLength >= 0) {
                     ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiAttributesScreen.this.getFontRenderer(), false, true));
                 }
@@ -467,22 +458,22 @@ public class GuiAttributesScreen extends GuiScreen {
 
         private int getHeaderHeight() {
             int height = 0;
-            if (logoPath != null) {
-                final double scaleX = logoDims.width / 200.0;
-                final double scaleY = logoDims.height / 65.0;
+            if (this.logoPath != null) {
+                final double scaleX = this.logoDims.width / 200.0;
+                final double scaleY = this.logoDims.height / 65.0;
                 double scale = 1.0;
                 if ((scaleX > 1) || (scaleY > 1)) {
                     scale = 1.0 / Math.max(scaleX, scaleY);
                 }
-                logoDims.width *= scale;
-                logoDims.height *= scale;
+                this.logoDims.width *= scale;
+                this.logoDims.height *= scale;
 
-                height += logoDims.height;
+                height += this.logoDims.height;
                 height += 10;
             }
-            height += (lines.size() * 10);
-            if (height < (bottom - top - 8)) {
-                height = bottom - top - 8;
+            height += (this.lines.size() * 10);
+            if (height < (this.bottom - this.top - 8)) {
+                height = this.bottom - this.top - 8;
             }
             return height;
         }
@@ -491,25 +482,25 @@ public class GuiAttributesScreen extends GuiScreen {
         protected void drawHeader(int entryRight, int relativeY, Tessellator tess) {
             int top = relativeY;
 
-            if (logoPath != null) {
+            if (this.logoPath != null) {
                 GlStateManager.enableBlend();
-                GuiAttributesScreen.this.getMinecraftInstance().renderEngine.bindTexture(logoPath);
+                GuiAttributesScreen.this.getMinecraftInstance().renderEngine.bindTexture(this.logoPath);
                 final BufferBuilder wr = tess.getBuffer();
-                final int offset = (left + (listWidth / 2)) - (logoDims.width / 2);
+                final int offset = (this.left + (this.listWidth / 2)) - (this.logoDims.width / 2);
                 wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                wr.pos(offset, top + logoDims.height, zLevel).tex(0, 1).endVertex();
-                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
-                wr.pos(offset + logoDims.width, top, zLevel).tex(1, 0).endVertex();
-                wr.pos(offset, top, zLevel).tex(0, 0).endVertex();
+                wr.pos(offset, top + this.logoDims.height, GuiAttributesScreen.this.zLevel).tex(0, 1).endVertex();
+                wr.pos(offset + this.logoDims.width, top + this.logoDims.height, GuiAttributesScreen.this.zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + this.logoDims.width, top, GuiAttributesScreen.this.zLevel).tex(1, 0).endVertex();
+                wr.pos(offset, top, GuiAttributesScreen.this.zLevel).tex(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
-                top += logoDims.height + 10;
+                top += this.logoDims.height + 10;
             }
 
-            for (final ITextComponent line : lines) {
+            for (final ITextComponent line : this.lines) {
                 if (line != null) {
                     GlStateManager.enableBlend();
-                    GuiAttributesScreen.this.getFontRenderer().drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
+                    GuiAttributesScreen.this.getFontRenderer().drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
                     GlStateManager.disableAlpha();
                     GlStateManager.disableBlend();
                 }
@@ -520,26 +511,26 @@ public class GuiAttributesScreen extends GuiScreen {
         @Override
         protected void clickHeader(int x, int y) {
             int offset = y;
-            if (logoPath != null) {
-                offset -= logoDims.height + 10;
+            if (this.logoPath != null) {
+                offset -= this.logoDims.height + 10;
             }
             if (offset <= 0) {
                 return;
             }
 
             final int lineIdx = offset / 10;
-            if (lineIdx >= lines.size()) {
+            if (lineIdx >= this.lines.size()) {
                 return;
             }
 
-            final ITextComponent line = lines.get(lineIdx);
+            final ITextComponent line = this.lines.get(lineIdx);
             if (line != null) {
                 int k = -4;
                 for (final ITextComponent part : line) {
                     if (!(part instanceof TextComponentString)) {
                         continue;
                     }
-                    k += fontRenderer.getStringWidth(((TextComponentString) part).getText());
+                    k += GuiAttributesScreen.this.fontRenderer.getStringWidth(((TextComponentString) part).getText());
                     if (k >= x) {
                         GuiAttributesScreen.this.handleComponentClick(part);
                         break;
@@ -547,6 +538,60 @@ public class GuiAttributesScreen extends GuiScreen {
                 }
             }
         }
+    }
+
+    public static class GuiAttributesScrollingList extends GuiScrollingList {
+
+        private final GuiAttributesScreen parent;
+        private final ArrayList<AbilityHolder> abilities;
+
+        private final int id;
+
+        public GuiAttributesScrollingList(int ID, GuiAttributesScreen parent, ArrayList<AbilityHolder> abilities, int listWidth, int slotHeight) {
+            super(parent.mc, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight, parent.width, parent.height);
+            this.id = ID;
+            this.parent = parent;
+            this.abilities = abilities;
+        }
+
+        @Override
+        protected int getSize() {
+            return this.abilities.size();
+        }
+
+        @Override
+        protected void elementClicked(int index, boolean doubleClick) {
+            this.parent.selectAbilityIndex(index);
+        }
+
+        @Override
+        protected boolean isSelected(int index) {
+            return this.parent.abilityIndexSelected(index);
+        }
+
+        @Override
+        protected void drawBackground() {
+            //		parent.drawDefaultBackground();
+        }
+
+        @Override
+        protected int getContentHeight() {
+            return ((this.getSize()) * this.slotHeight) + 1;
+        }
+
+        ArrayList<AbilityHolder> getAbilities() {
+            return this.abilities;
+        }
+
+        @Override
+        protected void drawSlot(int idx, int right, int top, int height, Tessellator tess) {
+            if (idx >= this.abilities.size()) return;
+            final AbilityHolder ability = this.abilities.get(idx);
+            final String name = ability == null ? "ERROR" : ability.getAbility().getDisplayName();
+            final FontRenderer font = this.parent.getFontRenderer();
+            font.drawString(font.trimStringToWidth(name, this.listWidth - 10), this.left + 3, top + 2, 0xFFFFFF);
+        }
+
     }
 
 }

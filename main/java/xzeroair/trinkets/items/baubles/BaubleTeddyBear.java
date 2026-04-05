@@ -9,32 +9,32 @@ import xzeroair.trinkets.util.compat.baubles.BaublesHelper;
 
 public class BaubleTeddyBear extends TrinketTeddyBear implements IBauble {
 
-	public BaubleTeddyBear(String name) {
-		super(name);
-	}
+    public BaubleTeddyBear(String name) {
+        super(name);
+    }
 
-	@Override
-	public BaubleType getBaubleType(ItemStack itemstack) {
-		return BaublesHelper.getBaubleType(serverConfig.compat.baubles.bauble_type);
-	}
+    @Override
+    public BaubleType getBaubleType(ItemStack itemstack) {
+        return BaublesHelper.getBaubleType(this.CONFIG.COMPAT.BAUBLES.bauble_type);
+    }
 
-	@Override
-	public boolean canEquip(ItemStack stack, EntityLivingBase player) {
-		return super.canEquipAccessory(stack, player);
-	}
+    @Override
+    public boolean canEquip(ItemStack stack, EntityLivingBase player) {
+        return super.canEquipAccessory(stack, player);
+    }
 
-	@Override
-	public boolean canUnequip(ItemStack stack, EntityLivingBase player) {
-		return super.canUnequipAccessory(stack, player);
-	}
+    @Override
+    public boolean canUnequip(ItemStack stack, EntityLivingBase player) {
+        return super.canUnequipAccessory(stack, player);
+    }
 
-	@Override
-	public void onEquipped(ItemStack stack, EntityLivingBase player) {
-		super.onAccessoryEquipped(stack, player);
-	}
+    @Override
+    public void onEquipped(ItemStack stack, EntityLivingBase player) {
+        super.onAccessoryEquipped(stack, player);
+    }
 
-	@Override
-	public void onUnequipped(ItemStack stack, EntityLivingBase player) {
-		super.onAccessoryUnequipped(stack, player);
-	}
+    @Override
+    public void onUnequipped(ItemStack stack, EntityLivingBase player) {
+        super.onAccessoryUnequipped(stack, player);
+    }
 }
