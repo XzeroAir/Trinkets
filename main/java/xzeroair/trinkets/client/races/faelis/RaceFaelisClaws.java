@@ -1,6 +1,8 @@
 package xzeroair.trinkets.client.races.faelis;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -45,9 +47,9 @@ public class RaceFaelisClaws implements IRenderModelInterface {
         if (entity.isSneaking()) {
             GlStateManager.translate(0F, 0.2F, 0F);
         }
-        if (renderer instanceof RenderPlayer) {
-            final RenderPlayer rend = (RenderPlayer) renderer;
-            rend.getMainModel().bipedLeftArm.postRender(scale);
+        ModelBase model = renderer.getMainModel();
+        if (model instanceof ModelBiped) {
+            ((ModelBiped) model).bipedLeftArm.postRender(scale);
         }
         GlStateManager.scale(scale * bS, scale * bS, scale * bS);
         GlStateManager.translate(-offsetX, offsetY, offsetZ);

@@ -50,7 +50,7 @@ public class TransformationPotion extends BasePotion {
         }
         RaceAttribute.removeAllModifiers(entity);
         Capabilities.getEntityProperties(entity, prop -> {
-            prop.setPotionRace(this.getRaceCache());
+            prop.setPotionRaceCache(this.getRaceCache());
         });
         super.applyAttributesModifiersToEntity(entity, attributeMapIn, amplifier);
     }
@@ -68,7 +68,7 @@ public class TransformationPotion extends BasePotion {
     public void removeAttributesModifiersFromEntity(@Nonnull EntityLivingBase entity, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
         super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
         Capabilities.getEntityProperties(entity, prop -> {
-            prop.setPotionRace(null);
+            prop.setPotionRaceCache(null);
         });
     }
 

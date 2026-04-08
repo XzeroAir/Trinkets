@@ -51,8 +51,8 @@ public class AbilityWellRested extends Ability implements ISleepAbility, IHeldAb
                 return;
             }
         }
-        final String[] config = SLEEP_BONUSES;
-        int amount = SLEEP_BONUSES_RANDOM;
+        final String[] config = this.SLEEP_BONUSES;
+        int amount = this.SLEEP_BONUSES_RANDOM;
         if (amount > config.length) {
             amount = config.length;
         }

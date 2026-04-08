@@ -85,7 +85,7 @@ public class TrinketFaelisClaws extends AccessoryBase {
         if (!this.CONFIG_CLIENT.RENDER) {
             return;
         }
-        boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
+        boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRaceCache().compareRace(EntityRaces.faelis));
         if (isFaelis) {
             return;
         }

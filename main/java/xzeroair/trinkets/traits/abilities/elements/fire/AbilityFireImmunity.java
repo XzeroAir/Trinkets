@@ -8,18 +8,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
-import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.ConstantsTextTranslations;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.fireresisttiers.FireResistTiersCompat;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
 import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
-public class AbilityFireImmunity extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility {
+public class AbilityFireImmunity extends Ability implements ITickableAbility, IAttackAbility {
 
     protected final ConfigAbilityImmunityFire CONFIG;
     protected int AMPLIFIER, DURATION;
@@ -44,8 +42,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
         final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("potion", this.DURATION > 0, ConstantsTextTranslations.TextMinecraft.MINECRAFT_FIRE_RESISTANCE.getFormattedText());
-        final TranslationHelper.KeyEntry key2 = new TranslationHelper.OptionEntry(LycanitesCompat.smouldering, LycanitesCompat.isModActive(), LycanitesCompat.SMOULDERING.getFormattedText());
-        return helper.formatAddVariables(key, renderID, key1, key2);
+        return helper.formatAddVariables(key, renderID, key1);
     }
 
     @Override
@@ -53,11 +50,11 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
         if (entity.isBurning()) {
             entity.extinguish();
         }
-        if (DURATION > 0) {
+        if (this.DURATION > 0) {
             final boolean client = entity.world.isRemote;
             if (!client) {
                 if (!entity.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
-                    final PotionEffect fireResist = new PotionEffect(MobEffects.FIRE_RESISTANCE, DURATION, AMPLIFIER, false, false);
+                    final PotionEffect fireResist = new PotionEffect(MobEffects.FIRE_RESISTANCE, this.DURATION, this.AMPLIFIER, false, false);
                     entity.addPotionEffect(fireResist);
                 }
             }
@@ -77,14 +74,6 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IP
         if (entity.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
             entity.removePotionEffect(MobEffects.FIRE_RESISTANCE);
         }
-    }
-
-    @Override
-    public boolean potionApplied(EntityLivingBase entity, PotionEffect effect, boolean cancel) {
-        if (LycanitesCompat.isSmouldering(effect)) {
-            return true;
-        }
-        return cancel;
     }
 
     @Override

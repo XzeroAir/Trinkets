@@ -71,8 +71,8 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         super(TrinketsRegistryNames.ModAbilities.SKILLED_ARCHER);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
-        defaultDrawWeight = config.DEFAULT_WEIGHT;
-        defaultDrawTime = config.CHARGE_SHOT_TIME;
+        this.defaultDrawWeight = config.DEFAULT_WEIGHT;
+        this.defaultDrawTime = config.CHARGE_SHOT_TIME;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     }
 
     private float getChargeCurve(int ticks) {
-        float charge = ticks / (float) defaultDrawTime;
+        float charge = ticks / (float) this.defaultDrawTime;
         charge = (charge * charge + charge * 2.0F) / 3.0F;
         if (charge > 1F) charge = 1F;
         return charge;
@@ -112,23 +112,23 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 //
 
         if (entity.isSneaking()) {
-            if (!isSneaking) {
-                isSneaking = true;
+            if (!this.isSneaking) {
+                this.isSneaking = true;
             }
         } else {
-            if (isSneaking) {
+            if (this.isSneaking) {
                 final MagicStats magic = Capabilities.getMagicStats(entity);
                 if (magic != null) {
                     magic.syncToManaCostToHud(0);
                 }
-                isSneaking = false;
+                this.isSneaking = false;
             }
         }
-        if (hitPending) {
-            waitTicks++;
-            if (waitTicks > MAX_SHOT_WINDOW) {
-                hitPending = false;
-                reset();
+        if (this.hitPending) {
+            this.waitTicks++;
+            if (this.waitTicks > this.MAX_SHOT_WINDOW) {
+                this.hitPending = false;
+                this.reset();
             }
         }
     }
@@ -144,26 +144,26 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 
     @Override
     public int onItemUseTick(EntityLivingBase entity, ItemStack stack, int duration) {
-        if (!drawingBow) {
+        if (!this.drawingBow) {
 //            reset();
             return duration;
         }
-        if (!isUsingABow) {
-            isUsingABow = true;
+        if (!this.isUsingABow) {
+            this.isUsingABow = true;
         }
 
-        float charge = getChargeCurve(72000 - duration);
+        float charge = this.getChargeCurve(72000 - duration);
 
-        if (isSneaking) {
-            final float ManaCost = CONFIG.CHARGE_SHOT_COST;
+        if (this.isSneaking) {
+            final float ManaCost = this.CONFIG.CHARGE_SHOT_COST;
             final MagicStats magic = Capabilities.getMagicStats(entity);
             if (magic != null) {
                 final float Cost = MathHelper.clamp(ManaCost * (charge * 10), 0, magic.getMana());
                 magic.syncToManaCostToHud(Cost);
             }
         }
-        if (charge >= 1F && !drawnBow) {
-            drawnBow = true;
+        if (charge >= 1F && !this.drawnBow) {
+            this.drawnBow = true;
             if (duration % 5 == 0 && entity.world.isRemote && (entity instanceof EntityPlayer)) {
                 entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.PLAYERS, 0.3F, 0.5F);
             }
@@ -179,9 +179,9 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     @Override
     public void onItemUseStop(EntityLivingBase entity, ItemStack stack, int duration) {
 //        if (!charging) return;
-        isUsingABow = false;
-        drawingBow = false;
-        drawnBow = false;
+        this.isUsingABow = false;
+        this.drawingBow = false;
+        this.drawnBow = false;
     }
 
     @Override
@@ -193,16 +193,16 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         EntityPlayer player = event.getEntityPlayer();
         World world = player.world;
         int chargeTicks = event.getCharge();
-        float charge = getChargeCurve(72000 - chargeTicks);
-        float c = getChargeCurve(chargeTicks);
-        drawWeight = pounds * c;
-        crit = c >= 1F;
+        float charge = this.getChargeCurve(72000 - chargeTicks);
+        float c = this.getChargeCurve(chargeTicks);
+        this.drawWeight = pounds * c;
+        this.crit = c >= 1F;
 
-        float scale = CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
-        if (!released) {
+        float scale = this.CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
+        if (!this.released) {
             boolean sneaking = player.isSneaking();
             if (sneaking) {
-                float manaCost = CONFIG.CHARGE_SHOT_COST * charge * 10F;
+                float manaCost = this.CONFIG.CHARGE_SHOT_COST * charge * 10F;
                 if (manaCost > 0F) {
                     MagicStats magic = Capabilities.getMagicStats(player);
                     if (magic != null) {
@@ -215,24 +215,24 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                         scale += ratio;
 
                         if (magic.spendMana(manaSpent)) {
-                            usedMana = true;
-                            usedFullCost = ratio >= 1F;
+                            this.usedMana = true;
+                            this.usedFullCost = ratio >= 1F;
                         }
 
                         /* Extra bonus for full mana charge */
-                        if (usedFullCost) {
-                            scale += CONFIG.CHARGE_SHOT_MANA_DAMAGE_MULTI;
+                        if (this.usedFullCost) {
+                            scale += this.CONFIG.CHARGE_SHOT_MANA_DAMAGE_MULTI;
                         }
                     }
                 }
             }
-            if (scale < CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI) {
-                scale = CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI;
+            if (scale < this.CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI) {
+                scale = this.CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI;
             }
-            damageMultiplier = scale;
-            hitPending = true;
-            waitTicks = 0;
-            released = true;
+            this.damageMultiplier = scale;
+            this.hitPending = true;
+            this.waitTicks = 0;
+            this.released = true;
         }
 
 
@@ -314,7 +314,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                     if (main != null) {
                         float wt = (float) main.getEquipmentWeight();
                         if (wt <= 1F) {
-                            return CONFIG.DEFAULT_WEIGHT;
+                            return this.CONFIG.DEFAULT_WEIGHT;
                         } else {
                             return wt;
                         }
@@ -324,7 +324,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                 }
             }
         }
-        return CONFIG.DEFAULT_WEIGHT;
+        return this.CONFIG.DEFAULT_WEIGHT;
     }
 
 //    private float getVanillaVelocity(int charge) {
@@ -363,11 +363,11 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         EntityArrow arrow = event.getArrow();
         RayTraceResult result = event.getRayTraceResult();
         if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
-            if (drawWeight > 0 && crit && usedFullCost && CONFIG.CHARGE_SHOT_EXPLODES) {
-                float strength = getExplosionStrength(drawWeight);
+            if (this.drawWeight > 0 && this.crit && this.usedFullCost && this.CONFIG.CHARGE_SHOT_EXPLODES) {
+                float strength = this.getExplosionStrength(this.drawWeight);
                 arrow.world.createExplosion(arrow, arrow.posX, arrow.posY, arrow.posZ, strength, false);
             }
-            reset();
+            this.reset();
         }
     }
 
@@ -376,33 +376,33 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         if (!(source.getImmediateSource() instanceof EntityArrow)) return dmg;
         EntityArrow arrow = (EntityArrow) source.getImmediateSource();
 
-        float mult = damageMultiplier;
-        float weight = drawWeight;
-        float scaledDamage = applyArrowDamage(dmg * damageMultiplier, drawWeight);
+        float mult = this.damageMultiplier;
+        float weight = this.drawWeight;
+        float scaledDamage = this.applyArrowDamage(dmg * this.damageMultiplier, this.drawWeight);
 
-        if (scaledDamage > 0 && crit && usedFullCost && CONFIG.CHARGE_SHOT_EXPLODES) {
-            float strength = getExplosionStrength(weight);
+        if (scaledDamage > 0 && this.crit && this.usedFullCost && this.CONFIG.CHARGE_SHOT_EXPLODES) {
+            float strength = this.getExplosionStrength(weight);
             arrow.world.createExplosion(arrow, arrow.posX, arrow.posY, arrow.posZ, strength, false);
         }
-        reset();
+        this.reset();
         return scaledDamage;
     }
 
     private float getWeightFactor(float drawWeight) {
-        if (defaultDrawWeight <= 0F) return 0F;
-        return drawWeight / defaultDrawWeight;
+        if (this.defaultDrawWeight <= 0F) return 0F;
+        return drawWeight / this.defaultDrawWeight;
     }
 
     public int getScaledDrawTime(float drawWeight) {
-        float factor = getWeightFactor(drawWeight);
-        return Math.max(5, (int) (defaultDrawTime * factor));
+        float factor = this.getWeightFactor(drawWeight);
+        return Math.max(5, (int) (this.defaultDrawTime * factor));
     }
 
     public float getVelocityScale(float drawWeight) {
 
-        float factor = getWeightFactor(drawWeight);
+        float factor = this.getWeightFactor(drawWeight);
 
-        switch (getScalingMode()) {
+        switch (this.getScalingMode()) {
 
             case LINEAR:
                 return factor;
@@ -415,9 +415,9 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     }
 
     public float getDamageScale(float drawWeight) {
-        float factor = getWeightFactor(drawWeight);
+        float factor = this.getWeightFactor(drawWeight);
         float scale;
-        switch (getScalingMode()) {
+        switch (this.getScalingMode()) {
             case LINEAR:
                 scale = factor;
                 break;
@@ -431,11 +431,11 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                 scale = velocity * velocity;
                 break;
         }
-        return scale * CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
+        return scale * this.CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
     }
 
     public float getExplosionStrength(float drawWeight) {
-        float factor = getWeightFactor(drawWeight);
+        float factor = this.getWeightFactor(drawWeight);
         float base = 1.5F;
         float maxBonus = 2.0F;
         return base + factor * maxBonus;
@@ -449,7 +449,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 //    }
 
     public float applyArrowDamage(float baseDamage, float drawWeight) {
-        float damageScale = getDamageScale(drawWeight);
+        float damageScale = this.getDamageScale(drawWeight);
         return baseDamage * damageScale;
     }
 
@@ -459,7 +459,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 //    }
 
     public BowScalingMode getScalingMode() {
-        return CONFIG.SCALING_MODE;
+        return this.CONFIG.SCALING_MODE;
     }
 
     private boolean arrowReleased() {
@@ -467,21 +467,21 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     }
 
     private void reset() {
-        heldTicks = 0;
-        waitTicks = 0;
-        distanceTicks = 0;
-        bowWeight = 0F;
-        drawWeight = 0F;
-        damageMultiplier = 0F;
-        drawnBow = false;
-        drawingBow = false;
-        isUsingABow = false;
-        released = false;
-        hitPending = false;
-        crit = false;
-        explosion = false;
-        usedMana = false;
-        usedFullCost = false;
+        this.heldTicks = 0;
+        this.waitTicks = 0;
+        this.distanceTicks = 0;
+        this.bowWeight = 0F;
+        this.drawWeight = 0F;
+        this.damageMultiplier = 0F;
+        this.drawnBow = false;
+        this.drawingBow = false;
+        this.isUsingABow = false;
+        this.released = false;
+        this.hitPending = false;
+        this.crit = false;
+        this.explosion = false;
+        this.usedMana = false;
+        this.usedFullCost = false;
     }
 
     @Override
@@ -497,8 +497,8 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         if (tag == null) {
             tag = new NBTTagCompound();
         }
-        tag.setFloat("defaultDrawWeight", defaultDrawWeight);
-        tag.setInteger("defaultDrawTime", defaultDrawTime);
+        tag.setFloat("defaultDrawWeight", this.defaultDrawWeight);
+        tag.setInteger("defaultDrawTime", this.defaultDrawTime);
         return tag;
     }
 
@@ -520,8 +520,8 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 
     @Override
     public void loadDataCache(NBTTagCompound tag) {
-        if (!BowWeights.isEmpty()) {
-            BowWeights.clear();
+        if (!this.BowWeights.isEmpty()) {
+            this.BowWeights.clear();
         }
         NBTHelper.hasFloat(tag, "defaultDrawWeight", (value) -> this.defaultDrawWeight = value);
         NBTHelper.hasInteger(tag, "defaultDrawTime", (value) -> this.defaultDrawTime = value);
@@ -532,7 +532,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                 if (!Bows.isEmpty()) {
                     if (Bows.hasKey("config")) {
                         String key = Bows.hasKey("key") ? Bows.getString("key") : "" + index++;
-                        BowWeights.put(key, new ConfigHelper.ConfigEquipmentObject(Bows.getString("config")));
+                        this.BowWeights.put(key, new ConfigHelper.ConfigEquipmentObject(Bows.getString("config")));
                     }
                 }
             }

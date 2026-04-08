@@ -212,7 +212,7 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
     }
 
     public int getRacialAffinity() {
-        return Capabilities.getEntityProperties(this.getEntity(), EntityRaces.none, (prop, r) -> prop.getCurrentRace().getRace()).getMagicAffinity();
+        return Capabilities.getEntityProperties(this.getEntity(), EntityRaces.none, (prop, r) -> prop.getCurrentRaceCache().getRace()).getMagicAffinity();
     }
 
     @Override

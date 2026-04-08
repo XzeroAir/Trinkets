@@ -26,6 +26,7 @@ import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
 import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -43,14 +44,14 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         this(TrinketsConfig.SERVER.ABILITIES.CLIMBING);
     }
 
-    public AbilityClimbing(ConfigAbilityClimbing config) {
+    public AbilityClimbing(@Nonnull ConfigAbilityClimbing config) {
         super(TrinketsRegistryNames.ModAbilities.CLIMBING);
-        CONFIG = config;
+        this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
-        canClimb = config.ENABLED;
-        useWhitelist = config.USE_WHITELIST;
+        this.canClimb = config.ENABLED;
+        this.useWhitelist = config.USE_WHITELIST;
         if (config.ENABLED) {
-            initClimbBlocks();
+            this.initClimbBlocks();
         }
     }
 
@@ -64,7 +65,7 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     public void onAbilityAdded(EntityLivingBase entity) {
         super.onAbilityAdded(entity);
         if (this.isFirstUpdate()) {
-            this.sendCacheToPlayer(entity, generateTag());
+            this.sendCacheToPlayer(entity, this.generateTag());
         }
     }
 
@@ -84,15 +85,12 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         }
     }
 
-    protected boolean movingForward(EntityLivingBase entity, EnumFacing facing) {
-        if (((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0)) {
-            return true;
-        }
-        return false;
+    protected boolean movingForward(@Nonnull EntityLivingBase entity, @Nonnull EnumFacing facing) {
+        return ((facing.getDirectionVec().getX() * entity.motionX) > 0) || ((facing.getDirectionVec().getZ() * entity.motionZ) > 0);
     }
 
     protected boolean canClimb(EntityLivingBase entity) {
-        if (!canClimb) {
+        if (!this.canClimb) {
             return false;
         }
         final World world = entity.getEntityWorld();
@@ -112,14 +110,14 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
 //            boolean flag2 = object.doesBlockMatchEntry(frontBody);
 //            if (flag1 || flag2) {
             if (s.getValue().doesBlockMatchEntry(body) || s.getValue().doesBlockMatchEntry(frontBody)) {
-                return whitelist ? true && !headClear : false;
+                return whitelist && !headClear;
             }
         }
         //		if (flag1 || flag2)
-        return !whitelist ? true && !headClear : false;
+        return !whitelist && !headClear;
     }
 
-    protected void sendCacheToPlayer(Entity entity, NBTTagCompound tag) {
+    protected void sendCacheToPlayer(@Nonnull Entity entity, NBTTagCompound tag) {
         World world = entity.getEntityWorld();
         if (world instanceof WorldServer && entity instanceof EntityPlayerMP && tag != null && !tag.isEmpty()) {
             NetworkHandler.sendTo(new AbilityCacheSyncPacket(((EntityPlayerMP) entity), tag), (EntityPlayerMP) entity);
@@ -129,14 +127,14 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     protected NBTTagCompound generateTag() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("Ability", this.getRegistryName().toString());
-        tag.setBoolean("canClimb", canClimb);
-        tag.setBoolean("useWhitelist", useWhitelist);
-        if (canClimb) {
+        tag.setBoolean("canClimb", this.canClimb);
+        tag.setBoolean("useWhitelist", this.useWhitelist);
+        if (this.canClimb) {
             this.initClimbBlocks();
             NBTTagCompound blocks = new NBTTagCompound();
-            if (climbBlocks != null && !climbBlocks.isEmpty()) {
+            if (this.climbBlocks != null && !this.climbBlocks.isEmpty()) {
                 int index = 0;
-                for (Map.Entry<Integer, ConfigObject> e : climbBlocks.entrySet()) {
+                for (Map.Entry<Integer, ConfigObject> e : this.climbBlocks.entrySet()) {
                     NBTTagCompound blockTag = new NBTTagCompound();
                     blockTag.setString("Target", e.getValue().getOriginalEntry());
                     blocks.setTag(index + "", blockTag);
@@ -152,15 +150,15 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
 
     @Override
     public void loadDataCache(NBTTagCompound tag) {
-        if (!climbBlocks.isEmpty()) {
-            climbBlocks.clear();
+        if (!this.climbBlocks.isEmpty()) {
+            this.climbBlocks.clear();
         }
         if (tag != null && !tag.isEmpty()) {
             NBTHelper.hasBoolean(tag, "canClimb", (bool) -> {
-                canClimb = bool;
+                this.canClimb = bool;
             });
             NBTHelper.hasBoolean(tag, "useWhitelist", (bool) -> {
-                useWhitelist = bool;
+                this.useWhitelist = bool;
             });
             NBTHelper.hasTag(tag, "Blocks", (blocks) -> {
                 for (int i = 0; i < blocks.getSize(); i++) {
@@ -169,7 +167,7 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
                         NBTHelper.hasString(block, "Target", (string) -> {
                             if (!string.isEmpty()) {
                                 ConfigObject climbBlock = new ConfigObject(string);
-                                climbBlocks.put(index, climbBlock);
+                                this.climbBlocks.put(index, climbBlock);
                             }
                         });
                     });
@@ -179,16 +177,16 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     }
 
     protected void initClimbBlocks() {
-        if (!climbBlocks.isEmpty()) {
-            climbBlocks.clear();
+        if (!this.climbBlocks.isEmpty()) {
+            this.climbBlocks.clear();
         }
-        final String[] climb = CONFIG.BLOCKS;
+        final String[] climb = this.CONFIG.BLOCKS;
         int index = 0;
         for (String entry : climb) {
             ConfigTreasureObject climbBlock = new ConfigTreasureObject(entry);
-            boolean existsCheck = climbBlock.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0 ? true : Block.getBlockFromName(climbBlock.getObjectRegistryName()) != null;
+            boolean existsCheck = climbBlock.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0 || Block.getBlockFromName(climbBlock.getObjectRegistryName()) != null;
             if (!climbBlock.isEmpty() && existsCheck) {
-                climbBlocks.put(index, climbBlock);
+                this.climbBlocks.put(index, climbBlock);
                 index++;
             }
         }

@@ -45,6 +45,7 @@ import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
@@ -60,7 +61,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         this(TrinketsConfig.SERVER.ABILITIES.ENDER_QUEEN);
     }
 
-    public AbilityEnderQueen(ConfigAbilityEnderQueen config) {
+    public AbilityEnderQueen(@Nonnull ConfigAbilityEnderQueen config) {
         super(TrinketsRegistryNames.ModAbilities.ENDER_QUEEN);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
@@ -73,7 +74,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String langOutput, int rendMod, int renderID, int compatID) {
+    protected String addCustomDescriptionTags(@Nonnull TranslationHelper helper, String langOutput, int rendMod, int renderID, int compatID) {
 //        String langKey = this.getTranslationKey();
         final KeyEntry key1 = new OptionEntry("dmgchance", this.CONFIG.IGNORE_CHANCE > 0, MathHelper.clamp((1F / this.CONFIG.IGNORE_CHANCE) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
         final KeyEntry key2 = new OptionEntry("spawnchance", this.CONFIG.SPAWN_CHANCE > 0, MathHelper.clamp((1F / this.CONFIG.SPAWN_CHANCE) * 100, Integer.MIN_VALUE, Integer.MAX_VALUE) + "%");
@@ -86,12 +87,11 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         final KeyEntry key9 = new OptionEntry("chestcost", this.CONFIG.ENDER_CHEST, (this.CHEST_COST) * 100 + "%");
         final KeyEntry key10 = new KeyBindEntry("tpkey", ModKeyBindings.ENDER_CROWN.getDisplayName());
         final KeyEntry key11 = new KeyBindEntry("auxkb", ModKeyBindings.AUX_KEY.getDisplayName());
-        final KeyEntry key12 = new OptionEntry("instability", LycanitesCompat.isModActive(), LycanitesCompat.INSTABILITY.getFormattedText());
-        return helper.formatAddVariables(langOutput, renderID, key1, key2, key3, key4, key5, key6, key7, key8, key9, key10, key11, key12);
+        return helper.formatAddVariables(langOutput, renderID, key1, key2, key3, key4, key5, key6, key7, key8, key9, key10, key11);
     }
 
     @Override
-    public void tickAbility(EntityLivingBase entity) {
+    public void tickAbility(@Nonnull EntityLivingBase entity) {
         if (entity.world.isRemote) {
             return;
         }
@@ -105,7 +105,6 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                 }
             });
         }
-        LycanitesCompat.removeInstability(entity);
         if (this.CONFIG.WATER_HURTS) {
             final Counter counter = this.tickHandler.getCounter("water_hurt", 20, true, true, true, true);
             if (counter.Tick()) {
@@ -146,7 +145,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     }
 
     @Override
-    public boolean potionApplied(EntityLivingBase entity, PotionEffect effect, boolean cancel) {
+    public boolean potionApplied(EntityLivingBase entity, @Nonnull PotionEffect effect, boolean cancel) {
         final ResourceLocation e = effect.getPotion().getRegistryName();
         final Potion instability = LycanitesCompat.getPotionByName("instability");
         if ((instability != null) && (e.compareTo(instability.getRegistryName()) == 0)) {
@@ -156,7 +155,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     }
 
     @Override
-    public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
+    public boolean attacked(@Nonnull EntityLivingBase attacked, @Nonnull DamageSource source, float dmg, boolean cancel) {
         final boolean client = attacked.getEntityWorld().isRemote;
         final Entity attacker = source.getTrueSource();
         if (!client) {
@@ -283,7 +282,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         return dmg;
     }
 
-    protected boolean teleportRandomly(EntityLivingBase entity, float cost) {
+    protected boolean teleportRandomly(@Nonnull EntityLivingBase entity, float cost) {
         final double d0 = entity.posX + ((Reference.random.nextDouble() - 0.5D) * 32.0D);
         final double d1 = entity.posY + (Reference.random.nextInt(16) - 8);
         final double d2 = entity.posZ + ((Reference.random.nextDouble() - 0.5D) * 32.0D);
@@ -330,7 +329,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         }
     }
 
-    protected boolean teleportToEntity(EntityLivingBase entity, Entity target, float cost) {
+    protected boolean teleportToEntity(@Nonnull EntityLivingBase entity, @Nonnull Entity target, float cost) {
         Vec3d vec3d = new Vec3d(entity.posX - target.posX, ((entity.getEntityBoundingBox().minY + (entity.height / 2.0F)) - target.posY) + target.getEyeHeight(), entity.posZ - target.posZ);
         vec3d = vec3d.normalize();
         final double d0 = 16.0D;
@@ -340,7 +339,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         return this.teleportTo(entity, d1, d2, d3, cost);
     }
 
-    protected boolean attemptTeleport(EntityLivingBase entity, double x, double y, double z) {
+    protected boolean attemptTeleport(@Nonnull EntityLivingBase entity, double x, double y, double z) {
         final double d0 = entity.posX;
         final double d1 = entity.posY;
         final double d2 = entity.posZ;
@@ -402,7 +401,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         }
     }
 
-    public void openEnderChest(Entity entity) {
+    public void openEnderChest(@Nonnull Entity entity) {
         final World world = entity.getEntityWorld();
         if ((entity instanceof EntityPlayer) && !world.isRemote && this.CONFIG.ENDER_CHEST) {
             EntityPlayer player = (EntityPlayer) entity;
@@ -439,7 +438,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         return false;
     }
 
-    public void sendFailMessage(Entity entity) {
+    public void sendFailMessage(@Nonnull Entity entity) {
         final boolean client = entity.world.isRemote;
         if (!client) {
             final TranslationHelper helper = TranslationHelper.INSTANCE;

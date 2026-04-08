@@ -764,7 +764,7 @@ public class TrinketHelper {
     }
 
     public static boolean isEntityRace(final EntityLivingBase entity, final EntityRace race) {
-        return Capabilities.getEntityProperties(entity, false, (prop, rtn) -> prop.getCurrentRace().compareRace(race));
+        return Capabilities.getEntityProperties(entity, false, (prop, rtn) -> prop.getCurrentRaceCache().compareRace(race));
     }
 
     public static boolean isEntityBoss(Entity entity) {

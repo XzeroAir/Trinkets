@@ -26,19 +26,18 @@ import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityLightningBolt;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
-public class AbilityLightningBolt extends Ability implements ITickableAbility, IKeyBindInterface {
+public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
 
     protected static final String MINECRAFT_LIGHTNING = DamageSource.LIGHTNING_BOLT.damageType;
     protected final ConfigAbilityLightningBolt CONFIG;
@@ -51,7 +50,7 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
         this(TrinketsConfig.SERVER.ABILITIES.LIGHTNING_BOLT);
     }
 
-    public AbilityLightningBolt(ConfigAbilityLightningBolt config) {
+    public AbilityLightningBolt(@Nonnull ConfigAbilityLightningBolt config) {
         super(TrinketsRegistryNames.ModAbilities.LIGHTNING_BOLT);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
@@ -62,8 +61,8 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        String langKey = getTranslationKey();
+    protected String addCustomDescriptionTags(@Nonnull TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        String langKey = this.getTranslationKey();
         final TranslationHelper.KeyEntry key1 = new TranslationHelper.LangEntry(langKey, "boltattack", true);
         final TranslationHelper.KeyEntry key2 = new TranslationHelper.OptionEntry("boltcost", true, this.COST);
         final TranslationHelper.KeyEntry key3 = new TranslationHelper.OptionEntry("boltdamage", true, this.DAMAGE);
@@ -71,16 +70,11 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
         return helper.formatAddVariables(key, renderID, key1, key2, key3, key4);
     }
 
-    @Override
-    public void tickAbility(EntityLivingBase entity) {
-        LycanitesCompat.removeParalysis(entity);
-    }
-
-    protected boolean prepareBolt(EntityLivingBase entity, MagicStats magic, boolean def, boolean aux) {
+    protected boolean prepareBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
         final float cfgCost = this.COST;
         final double pct = Math.min(MathHelper.pct(magic.getMana(), 0, cfgCost), 1D);
         final int length = Math.min((int) (this.CHARGE_TIME * pct), this.CHARGE_TIME);
-        final Counter counter = tickHandler.getCounter("heldCounter", length, false, true, false, true, false);
+        final Counter counter = this.tickHandler.getCounter("heldCounter", length, false, true, false, true, false);
         counter.resetTick();
         counter.setLength(length);
         if (pct < 0.10D) {
@@ -89,14 +83,14 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
         return def;
     }
 
-    protected boolean chargeBolt(EntityLivingBase entity, MagicStats magic, boolean def, boolean aux) {
+    protected boolean chargeBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
         final float cfgCost = this.COST;
         final float maxMP = magic.getMaxMana();
         final float mp = magic.getMana();
         if (mp <= 1F) {
             return true;
         }
-        final Counter counter = tickHandler.getCounter("heldCounter");
+        final Counter counter = this.tickHandler.getCounter("heldCounter");
         final int tick = counter.getTick();
         final float multi = (float) MathHelper.pct(tick, 0, counter.getLength());
         final float realCost = (float) (cfgCost * (MathHelper.pct(tick, 0, this.CHARGE_TIME)));//(float) StringUtils.getAccurateDouble((Math.min(cfgCost, mp)) * multi);
@@ -118,12 +112,12 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
         return def;
     }
 
-    protected boolean castBolt(EntityLivingBase entity, MagicStats magic, boolean def, boolean aux) {
+    protected boolean castBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
         final float cfgCost = this.COST;
         final float cfgDmg = this.DAMAGE;
         final float maxMP = magic.getMaxMana();
         final float mp = magic.getMana();
-        final Counter counter = tickHandler.getCounter("heldCounter");
+        final Counter counter = this.tickHandler.getCounter("heldCounter");
         final int tick = counter.getTick();
         final float multi = (float) MathHelper.pct(tick, 0, this.CHARGE_TIME);
         final float realCost = (float) StringUtils.getAccurateDouble(cfgCost * multi);
@@ -154,14 +148,14 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
                     boolean pvpEnabled = false;
                     try {
                         if (entity instanceof EntityPlayerMP) {
-                            pvpEnabled = ((EntityPlayerMP) entity).getServer().isPVPEnabled();
+                            pvpEnabled = entity.getServer().isPVPEnabled();
                         }
                     } catch (final Exception e) {
                         e.printStackTrace();
                     }
                     final AxisAlignedBB bb1 = new AxisAlignedBB(new BlockPos(hitLoc)).grow(1);
 
-                    final List<Entity> splash = entity.world.getEntitiesInAABBexcluding(entity, bb1, Targets);
+                    final List<Entity> splash = entity.world.getEntitiesInAABBexcluding(entity, bb1, this.Targets);
                     for (final Entity e : splash) {
                         if ((e instanceof EntityPlayer) && !pvpEnabled) {
 
@@ -185,7 +179,7 @@ public class AbilityLightningBolt extends Ability implements ITickableAbility, I
     }
 
     protected void reset(Entity entity) {
-        final Counter counter = tickHandler.getCounter("heldCounter");
+        final Counter counter = this.tickHandler.getCounter("heldCounter");
         if (counter != null) {
             counter.resetTick();
             counter.setLength(this.CHARGE_TIME);

@@ -13,20 +13,17 @@ import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ILightningStrikeAbility;
-import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.ConstantsTextTranslations;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
-import xzeroair.trinkets.util.compat.iceandfire.IceAndFireCompat;
-import xzeroair.trinkets.util.compat.lycanitesmobs.LycanitesCompat;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityLightning;
 import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import javax.annotation.Nonnull;
 
-public class AbilityLightningImmunity extends Ability implements ITickableAbility, IPotionAbility, IAttackAbility, ILightningStrikeAbility {
+public class AbilityLightningImmunity extends Ability implements ITickableAbility, IAttackAbility, ILightningStrikeAbility {
 
     protected final ConfigAbilityImmunityLightning CONFIG;
     private final Potion lightning_resist;
@@ -47,8 +44,7 @@ public class AbilityLightningImmunity extends Ability implements ITickableAbilit
     protected String addCustomDescriptionTags(@Nonnull TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
         String langKey = this.getTranslationKey();
         final TranslationHelper.KeyEntry key1 = new TranslationHelper.OptionEntry("potion", ConstantsTextTranslations.LIGHTNING_IMMUNITY.getFormattedText());
-        final TranslationHelper.KeyEntry key2 = new TranslationHelper.LangEntry(langKey, LycanitesCompat.paralysis, LycanitesCompat.isModActive() || IceAndFireCompat.isModActive());
-        return helper.formatAddVariables(key, renderID, key1, key2);
+        return helper.formatAddVariables(key, renderID, key1);
     }
 
     @Override
@@ -77,22 +73,8 @@ public class AbilityLightningImmunity extends Ability implements ITickableAbilit
     }
 
     @Override
-    public boolean potionApplied(EntityLivingBase entity, PotionEffect effect, boolean cancel) {
-        if (LycanitesCompat.isParalysis(effect)) {
-            return true;
-        }
-        if (IceAndFireCompat.isParalysis(effect)) {
-            return true;
-        }
-        return cancel;
-    }
-
-    @Override
-    public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-        if (IceAndFireCompat.isDragonLightningDamage(source)) {
-            return true;
-        }
-        if (DamageTypeConfigParser.parseDamageTypeConfig(source, DamageSource.LIGHTNING_BOLT.getDamageType(), "locks.shock") || DamageTypeConfigParser.isLightningDamage(source.getDamageType())) {
+    public boolean attacked(EntityLivingBase attacked, @Nonnull DamageSource source, float dmg, boolean cancel) {
+        if (DamageTypeConfigParser.isLightningDamage(source.getDamageType())) {
             return true;
         }
         return cancel;

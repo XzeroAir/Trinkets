@@ -316,10 +316,10 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_SKILLED_MINER_NAME = "Skilled Miner";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_COMMENT = "";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE = CONFIG_ABILITIES_SKILLED_MINER + ".fortune";
-    public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_NAME = "Skilled Miner";
+    public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_NAME = "Natural Fortune";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_COMMENT = "";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_STACKS = CONFIG_ABILITIES_SKILLED_MINER_FORTUNE + ".stacks";
-    public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_STACKS_NAME = "Skilled Miner";
+    public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_STACKS_NAME = "Fortune Stacks";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_STACKS_COMMENT = "";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_WHITELIST = CONFIG_ABILITIES_SKILLED_MINER_FORTUNE + ".whitelist";
     public static final String CONFIG_ABILITIES_SKILLED_MINER_FORTUNE_WHITELIST_NAME = "Fortune Whitelist";

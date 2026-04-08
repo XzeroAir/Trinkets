@@ -94,7 +94,6 @@ xat.ability.immunity_fire.tooltip1=§2Даёт §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6Иммунитет к огню и лаве
 xat.ability.immunity_fire.tooltip3=$gui:§6Невозможно поджечь
 xat.ability.immunity_fire.tooltip4=$gui:Невосприимчивость к большинству огненных атак
-xat.ability.immunity_fire.tooltip5=$gui:§6Иммунитет к §c$smouldering:
 
 xat.ability.immunity_ice.name=§bЛедяной §6иммунитет
 xat.ability.immunity_ice.tooltip1=§2Даёт §b$potion:
@@ -102,8 +101,6 @@ xat.ability.immunity_ice.tooltip2=$gui:§6Невосприимчивость к 
 
 xat.ability.immunity_lightning.name=§dИммунитет к молнии §6
 xat.ability.immunity_lightning.tooltip1=§2Даёт §d$potion:
-xat.ability.immunity_lightning.tooltip2=@paralysis:
-xat.ability.immunity_lightning.paralysis=§6Иммунитет к §dпараличу
 
 xat.ability.immunity_dark.name=§8Тёмный §6иммунитет
 xat.ability.immunity_dark.tooltip1=$heal:§6Лечит от §8$wither:
@@ -168,7 +165,6 @@ xat.ability.ender_queen.tooltip5=§3$tpchance: §5шанс телепортир�
 xat.ability.ender_queen.tooltip6=$waterhurts:§cСлабость к воде
 xat.ability.ender_queen.tooltip7=$gui:$chest:§6Удалённый доступ к эндер-сундуку по нажатию §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: маны
 xat.ability.ender_queen.tooltip8=$gui:§6Случайная телепортация поблизости по нажатию §r<§e*tpkey:§r> §3$tpcost: маны
-xat.ability.ender_queen.tooltip9=§6Предотвращает $instability:
 xat.ability.ender_queen.teleport=§2Телепортация $toggle:
 xat.ability.ender_queen.teleport.failed=§cЧто-то мешает вам перемещаться через пустоту.
 

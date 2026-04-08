@@ -52,7 +52,6 @@ public class CommonProxy implements IGuiHandler {
         MinecraftForge.EVENT_BUS.register(EventHandlerServer.instance);
 
         ModSounds.init();
-        MinecraftForge.EVENT_BUS.register(new EventHandlerServer());
 
         MinecraftForge.EVENT_BUS.register(new OnWorldJoinHandler());
 

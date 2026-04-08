@@ -4,6 +4,7 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityNightVision;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
@@ -23,10 +24,15 @@ public class FaelisConfig {
 
     public class ConfigAbilities {
 
-        @Config.Comment("00. " + ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_COMMENT)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_COMMENT)
         @Name(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_NAME)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING)
         public ConfigAbilityClimbing CLIMBING = new ConfigAbilityClimbing();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION)
+        public ConfigAbilityNightVision NIGHT_VISION = new ConfigAbilityNightVision(false);
 
     }
 

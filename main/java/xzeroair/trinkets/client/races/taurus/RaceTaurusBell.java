@@ -9,13 +9,11 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.client.model.BipedJsonModel;
 import xzeroair.trinkets.client.races.IRenderModelInterface;
 import xzeroair.trinkets.util.Reference;
-import xzeroair.trinkets.util.TrinketsConfig;
 
 public class RaceTaurusBell implements IRenderModelInterface {
 
@@ -40,11 +38,9 @@ public class RaceTaurusBell implements IRenderModelInterface {
         if (entity.isSneaking()) {
             GlStateManager.translate(0F, 0.2F, 0F);
         }
-        if (Trinkets.MOD_COMPAT.MoBends && TrinketsConfig.compat.MO_BENDS) {
-            ModelBase model = renderer.getMainModel();
-            if (model instanceof ModelBiped) {
-                ((ModelBiped) model).bipedBody.postRender(scale);
-            }
+        ModelBase model = renderer.getMainModel();
+        if (model instanceof ModelBiped) {
+            ((ModelBiped) model).bipedBody.postRender(scale);
         }
         // Do Bell Ring
         boolean TEST_MODE = false;   // true = shake using time, false = shake using movement

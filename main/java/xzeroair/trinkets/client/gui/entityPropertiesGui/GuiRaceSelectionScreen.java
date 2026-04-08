@@ -240,7 +240,7 @@ public class GuiRaceSelectionScreen extends GuiScreen implements ITrinketGuiInte
                 RaceCache race = new RaceCache(this.selectedRace, this.selectedPrimaryElement == null ? Elements.NEUTRAL : this.selectedPrimaryElement);
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setTag("OriginalRace", race.saveToNBT(new NBTTagCompound()));
-                this.properties.setOriginalRace(race);
+                this.properties.setOriginalRaceCache(race);
                 this.properties.sendInformationToServer(tag);
                 this.mc.player.closeScreen();
             }
@@ -248,7 +248,7 @@ public class GuiRaceSelectionScreen extends GuiScreen implements ITrinketGuiInte
             RaceCache blank = new RaceCache();
             NBTTagCompound tag = new NBTTagCompound();
             tag.setTag("OriginalRace", blank.saveToNBT(new NBTTagCompound()));
-            this.properties.setOriginalRace(blank);
+            this.properties.setOriginalRaceCache(blank);
             this.properties.sendInformationToServer(tag);
             if (button.id == this.BACK) {
                 this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);

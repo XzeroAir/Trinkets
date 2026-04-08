@@ -55,19 +55,19 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
             if (!isClient) {
                 if (this.CONFIG.COST <= 0F) {
                     if ((!potActive || (entity.ticksExisted % (20 * 10)) == 0)) {
-                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
+                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
                     }
                 } else {
                     if (!potActive) {
                         if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(this.CONFIG.COST))) {
-                            entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
+                            entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
                         } else {
                             this.toggleAbility(false);
                         }
                     } else {
                         if ((entity.ticksExisted % 20) == 0) {
                             if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(this.CONFIG.COST))) {
-                                entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
+                                entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
                             } else {
                                 this.toggleAbility(false);
                             }

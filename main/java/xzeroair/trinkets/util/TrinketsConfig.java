@@ -39,6 +39,17 @@ public class TrinketsConfig {
         return ClientConfigStore.INSTANCE;
     }
 
+    @Config.Ignore
+    private static int configVersion = 0;
+
+    private static void markConfigChanged() {
+        configVersion++;
+    }
+
+    public static int getConfigVersion() {
+        return configVersion;
+    }
+
     @Nonnull
     public static NBTTagCompound writeConfigMap() {
         final NBTTagCompound tag = new NBTTagCompound();
@@ -99,6 +110,7 @@ public class TrinketsConfig {
 
     public static void Save() {
         ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+        markConfigChanged();
     }
 
     public static void Load() {

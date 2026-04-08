@@ -65,27 +65,27 @@ public class TrinketCosmetic extends AccessoryBase {
 //            case HUMAN:
 //                break;
             case FAIRY:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.fairy))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.fairy))) {
                     RaceFairyWings.INSTANCE.render(player, renderer, false, isSlim, partialTicks, scale);
                 }
                 break;
             case DWARF:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.dwarf))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.dwarf))) {
                     RaceDwarfBeard.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case ELF:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.elf))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.elf))) {
                     RaceElfEars.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case GOBLIN:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.goblin))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.goblin))) {
                     RaceGoblinEars.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case FAELIS:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.faelis))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.faelis))) {
                     RaceFaelisEars.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                     RaceFaelisClaws.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
@@ -93,34 +93,34 @@ public class TrinketCosmetic extends AccessoryBase {
 //            case TITAN:
 //                break;
             case DRAGON:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.dragon))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.dragon))) {
                     RaceDragonWings.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case TAURUS:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.taurus))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.taurus))) {
                     RaceTaurusHorns.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case TAURUS_BELL:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.taurus))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.taurus))) {
                     RaceTaurusHorns.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                     RaceTaurusBell.INSTANCE.render(player, renderer, true, false, partialTicks, scale);
                 }
                 break;
             case TAURUS_F:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.taurus))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.taurus))) {
                     RaceTaurusFemaleHorns.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;
             case TAURUS_F_BELL:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.taurus))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.taurus))) {
                     RaceTaurusFemaleHorns.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                     RaceTaurusBell.INSTANCE.render(player, renderer, true, true, partialTicks, scale);
                 }
                 break;
             case TAURIAN_BELL:
-                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRace().compareRace(EntityRaces.taurus))) {
+                if (Capabilities.getEntityProperties(player, true, (prop, rtn) -> !prop.getCurrentRaceCache().compareRace(EntityRaces.taurus))) {
                     RaceTaurusBell.INSTANCE.render(player, renderer, true, isSlim, partialTicks, scale);
                 }
                 break;

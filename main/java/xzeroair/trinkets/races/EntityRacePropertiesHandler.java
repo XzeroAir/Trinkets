@@ -32,7 +32,6 @@ import xzeroair.trinkets.traits.abilities.compat.survival.AbilityParasitesImmuni
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
-import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
@@ -40,7 +39,10 @@ import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.handlers.SizeHandler;
-import xzeroair.trinkets.util.helpers.*;
+import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.NBTHelper;
+import xzeroair.trinkets.util.helpers.RayTraceHelper;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.interfaces.IDescriptionInterface;
 
 import javax.annotation.Nonnull;
@@ -49,11 +51,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 
 public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDescriptionInterface {
 
-    protected boolean firstUpdate, firstTransformUpdate, adjustCamera;
+    protected boolean firstUpdate;
+    protected boolean firstTransformUpdate;
+    protected boolean adjustCamera;
 
     private final EntityProperties properties;
     private final EntityLivingBase entity;
@@ -87,6 +90,8 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     protected String[] attributes;
     protected List<UpdatingAttribute> attributeList;
 
+    private int cachedConfigVersion = 1;
+
     public EntityRacePropertiesHandler(@Nonnull EntityLivingBase e, EntityProperties parentProperties, @Nonnull RaceCache cache) {
         this.entity = e;
         this.properties = parentProperties;
@@ -118,44 +123,55 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         return this.getRace().getRaceInformation().getAttributes();
     }
 
-    protected void removeOldAttributes() {
-        final EntityRace previous = this.getProperties().getPreviousRace().getRace();
-        double d1 = Double.parseDouble(Reference.DECIMALFORMAT.format(1D - this.TransformationProgress()));
-        if (d1 != 0) {
-            String[] raceAttributes = previous.getRaceInformation().getAttributes();
+    protected void removeOldAttributes(double progress) {
+        if (progress != 0) {
+            final RaceCache previous = this.getProperties().getPreviousRaceCache();
+            String[] raceAttributes = previous.getRace().getRaceHandler(this.getEntity(), this.getProperties(), previous).getAttributes();
             for (String entry : raceAttributes) {
                 AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
                 if (attributeShell != null) {
                     String name = attributeShell.getAttribute();
                     double amount = attributeShell.getAmount();
                     int operation = attributeShell.getOperation();
-                    boolean isSaved = attributeShell.isSaved();
-                    UpdatingAttribute attribute = new UpdatingAttribute(previous.getName() + "." + name, previous.getUUID(), name).setSavedInNBT(false);
-                    //					attribute.addModifier(entity, (amount), operation);
-                    attribute.addModifier(this.entity, (amount * d1), operation);
+                    UpdatingAttribute attribute = new UpdatingAttribute(previous.getRace().getName() + "." + name, previous.getRace().getUUID(), name).setSavedInNBT(false);
+                    attribute.addModifier(this.entity, (amount * progress), operation);
                 }
             }
         }
     }
 
-    protected void addAttributes(double progress, @Nonnull String... attributes) {
-        for (String entry : attributes) {
+    protected void rebuildAttributeCache() {
+        if (!this.attributeList.isEmpty()) {
+            this.attributeList.clear();
+        }
+        for (String entry : this.getAttributes()) {
             AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
             if (attributeShell != null) {
                 String name = attributeShell.getAttribute();
                 double amount = attributeShell.getAmount();
                 int operation = attributeShell.getOperation();
-                boolean isSaved = attributeShell.isSaved();
-                UpdatingAttribute attribute = new UpdatingAttribute(this.getRace().getName() + "." + name, this.getRace().getUUID(), name).setSavedInNBT(true);
-                attribute.addModifier(this.entity, (amount * progress), operation);
+                UpdatingAttribute attribute = new UpdatingAttribute(this.getRace().getName() + "." + name, this.getRace().getUUID(), name).setAmount(amount).setOperation(operation).setSavedInNBT(true);
+                this.attributeList.add(attribute);
             }
         }
     }
 
+    protected void addAttributes(double progress) {
+        if (this.cachedConfigVersion != TrinketsConfig.getConfigVersion()) {
+            this.rebuildAttributeCache();
+            this.cachedConfigVersion = TrinketsConfig.getConfigVersion();
+        }
+//        System.out.println(progress + "|");
+        for (UpdatingAttribute attribute : this.attributeList) {
+            attribute.addModifier(this.entity, (attribute.amount * progress), attribute.operation);
+        }
+    }
+
     protected void addNewAttributes() {
-        double d = Double.parseDouble(Reference.DECIMALFORMAT.format(this.TransformationProgress()));
+        double d = Math.round(this.TransformationProgress() * 1000D) / 1000D;
+        this.removeOldAttributes(1D - d);
         if (d != 0) {
-            this.addAttributes(d, this.getRace().getRaceInformation().getAttributes());
+            this.addAttributes(d);
         }
     }
 
@@ -250,6 +266,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         if (!this.getActiveAbilities().isEmpty()) {
             this.activeAbilities.clear();
         }
+        this.rebuildAttributeCache();
         this.startTransformation();
         if (!this.getActiveAbilities().isEmpty()) {
             for (IAbilityInterface ability : this.activeAbilities.values()) {
@@ -282,16 +299,13 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         this.updateSize();
         if (this.isTransforming() || this.isTransformed()) {
             SizeHandler.setSize(this.entity, this.getHeight(), this.getWidth());
-            if (this.adjustCamera) {
-                this.eyeHeightHandler();
-            }
+            this.modifyEyeHeight();
         }
         if (this.isTransforming()) {
-            this.removeOldAttributes();
             this.addNewAttributes();
             this.whileTranforming();
         } else if (this.isTransformed()) {
-            this.addAttributes(1, this.getAttributes());
+            this.addAttributes(1);
             if (this.firstTransformUpdate) {
                 if (!this.entity.world.isRemote) {
                     float newMaxHealth = this.entity.getMaxHealth();
@@ -301,7 +315,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
                         this.entity.heal(healAmount);
                     }
                 }
-                final EntityRace previous = this.getProperties().getPreviousRace().getRace();
+                final EntityRace previous = this.getProperties().getPreviousRaceCache().getRace();
                 AttributeHelper.removeAttributesByUUID(this.entity, previous.getUUID());
             }
             SizeAttribute artemis = this.getArtemisAttributeSize();
@@ -381,44 +395,47 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     }
 
     public double TransformationProgress() {
-        if (!this.isTransformed() && !this.isTransforming()) {
-            return 1D;
-        }
-        return this.transformationProgress;
+        return this.isTransformed() ? 1.0D : this.transformationProgress;
     }
 
-    // TODO HERE
     protected void updateSize() {
-        if ((!this.isTransformed() && this.isTransforming()) || (this.TransformationProgress() < 1D)) {
-            final int height = this.getProperties().getHeightValue();
-            final int width = this.getProperties().getWidthValue();
-            final BiFunction<Integer, Integer, Integer> increment = (x, y) -> {
-                if (x < y) {
-                    return x + 1;
-                } else if (x > y) {
-                    return x - 1;
-                } else {
-                    return x;
-                }
-            };
-            final int h = increment.apply(height, this.getTargetHeight());
+        final int targetHeight = this.getTargetHeight();
+        final int targetWidth = this.getTargetWidth();
+        final int height = this.getProperties().getHeightValue();
+        final int width = this.getProperties().getWidthValue();
+
+        if ((height != targetHeight) || (width != targetWidth)) {
+            final int h = stepTowards(height, targetHeight);
+            final int w = stepTowards(width, targetWidth);
+
             this.getProperties().setHeightValue(h);
-            final int w = increment.apply(width, this.getTargetWidth());
             this.getProperties().setWidthValue(w);
-            int previousRaceTargetHeight = this.getProperties().getPreviousRace().getRace().getRaceHeight();
-            int previousRaceTargetWidth = this.getProperties().getPreviousRace().getRace().getRaceWidth();
-            double heightProgress = this.transformProgress(previousRaceTargetHeight, this.getTargetHeight(), height);
-            double widthProgress = this.transformProgress(previousRaceTargetWidth, this.getTargetWidth(), width);
-            double finalValue = this.isTransformed() ? 1D : StringUtils.getAccurateDouble(heightProgress * widthProgress);
-            if ((finalValue >= 0D) && (finalValue <= 1D) && (this.transformationProgress != finalValue)) {
+
+            final int previousRaceTargetHeight = this.getProperties().getPreviousRaceCache().getRace().getRaceHeight();
+            final int previousRaceTargetWidth = this.getProperties().getPreviousRaceCache().getRace().getRaceWidth();
+
+            final double heightProgress = this.transformProgress(previousRaceTargetHeight, targetHeight, height);
+            final double widthProgress = this.transformProgress(previousRaceTargetWidth, targetWidth, width);
+            final double finalValue = MathHelper.clamp((heightProgress + widthProgress) / 2.0D, 0.0D, 1.0D);
+
+            if (this.transformationProgress != finalValue) {
                 this.transformationProgress = finalValue;
             }
         }
     }
 
+    private static int stepTowards(int current, int target) {
+        if (current < target) {
+            return current + 1;
+        } else if (current > target) {
+            return current - 1;
+        }
+        return current;
+    }
+
     protected double transformProgress(int previousTarget, int currentTarget, int currentValue) {
-        double rtn = (MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D));
-        if (rtn < 0.01) {
+        double rtn = MathHelper.pct(currentValue + 0.0D, previousTarget + 0.0D, currentTarget + 0.0D);
+        if (rtn < 0.01D) {
             return 0D;
         }
         return Math.min(rtn, 1D);
@@ -427,47 +444,37 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     /**
      * Jank McJank Eyeheight Handling.
      */
-    protected void eyeHeightHandler() {
+    protected void modifyEyeHeight() {
         if (!(this.entity instanceof EntityPlayer)) {
             return;
         }
-
         EntityPlayer player = (EntityPlayer) this.entity;
-
-        if (this.adjustCamera && !TrinketsConfig.CLIENT.CAMERA_HEIGHT) {
+        if (!this.adjustCamera) {
+            return;
+        }
+        if (!TrinketsConfig.CLIENT.CAMERA_HEIGHT) {
             this.resetEyeHeight(player);
             this.adjustCamera = false;
             return;
         }
-
         if ((this.isTransforming() || this.isTransformed()) && this.getProperties().getHeightValue() != 100) {
             // 165 when sneaking
             // 162 eyeheight, sneaking is -0.8
-            float f = (float) StringUtils.getAccurateDouble(((this.getHeight() * 0.85F)));
-
+            float eyeHeight = Math.round(this.getHeight() * 0.85F * 1000F) / 1000F;
             if (player.isPlayerSleeping()) {
-                f = 0.2F;
-            } else if (!player.isSneaking()) {
-                if (player.isElytraFlying()) {
-                    f *= 0.2F;//0.4F;
-                }
-            } else {
-                f -= f / 20;//0.08F;
+                eyeHeight = 0.2F;
+            } else if (player.isSneaking()) {
+                eyeHeight -= eyeHeight / 20F;
+            } else if (player.isElytraFlying()) {
+                eyeHeight *= 0.2F;
             }
             if (player.isRiding()) {
-                final Entity mount = player.getRidingEntity();
+                Entity mount = player.getRidingEntity();
                 if (mount != null) {
-                    final float mountHeight = mount.height;
-                    //					final double mountOffset = mount.getMountedYOffset();
-                    //					final double t = mountHeight - mountOffset;
-                    //					if (f < mountHeight) {
-                    //						f = mountHeight;
-                    //					}
-                    //					f += t;
-                    f = MathHelper.clamp(f, mountHeight, f);
+                    eyeHeight = MathHelper.clamp(eyeHeight, mount.height, eyeHeight);
                 }
             }
-            player.eyeHeight = f;
+            player.eyeHeight = Math.max(eyeHeight, 0.2F);
         } else {
             this.resetEyeHeight(player);
         }

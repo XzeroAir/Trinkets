@@ -32,7 +32,7 @@ public class ConfigFireDragonsEye {
     @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
-    public String[] EFFECTS_TO_REMOVE = {};
+    public String[] EFFECTS_TO_REMOVE = {"lycanitesmobs:smouldering"};
 
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)

@@ -40,13 +40,13 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
     @Override
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        final TranslationHelper.OptionEntry key1 = new TranslationHelper.OptionEntry("fortune", CONFIG.fortune, "");
+        final TranslationHelper.OptionEntry key1 = new TranslationHelper.OptionEntry("fortune", this.CONFIG.fortune, "");
         return helper.formatAddVariables(key, renderID, key1);
     }
 
     @Override
     public float breakingBlock(EntityLivingBase entity, IBlockState state, BlockPos pos, float originalSpeed, float newSpeed) {
-        if (CONFIG.static_mining) {
+        if (this.CONFIG.static_mining) {
             final ItemStack heldItemStack = entity.getHeldItemMainhand();
             final Item heldItem = heldItemStack.getItem();
             final int toolLevel = heldItem.getHarvestLevel(heldItemStack, "pickaxe", null, state);
@@ -78,11 +78,11 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
         final int fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, heldItemStack);
         final boolean silkTouching = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, toolUsed) > 0;
         try {
-            if (CONFIG.fortune && !silkTouching) {
+            if (this.CONFIG.fortune && !silkTouching) {
                 final Enchantment fortune = Enchantments.FORTUNE;
                 final int fortuneMaxLevel = fortune.getMaxLevel();
                 if (fortuneLevel > 0) {
-                    if (CONFIG.fortune_mix) {
+                    if (this.CONFIG.fortune_mix) {
                         NBTTagList nbttaglist = toolUsed.getEnchantmentTagList();
 
                         for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -103,21 +103,21 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
         if (!toolItem.getToolClasses(toolUsed).isEmpty() && toolItem.getToolClasses(toolUsed).contains("pickaxe")) {
             int tempExp = 0;
             if (!silkTouching && !isClient) {
-                if (CONFIG.BLOCKS.bonus_exp) {
-                    for (String s : CONFIG.BLOCKS.xPBlocks) {
+                if (this.CONFIG.BLOCKS.bonus_exp) {
+                    for (String s : this.CONFIG.BLOCKS.xPBlocks) {
                         ConfigObject object = new ConfigObject(s);
                         if (object.doesBlockMatchEntry(state)) {
-                            final int bonusExp = CONFIG.BLOCKS.bonus_exp_max;
-                            final int min = CONFIG.BLOCKS.bonus_exp_min;
-                            final int rXP = bonusExp < 1 ? min : random.nextInt(bonusExp);
+                            final int bonusExp = this.CONFIG.BLOCKS.bonus_exp_max;
+                            final int min = this.CONFIG.BLOCKS.bonus_exp_min;
+                            final int rXP = bonusExp < 1 ? min : this.random.nextInt(bonusExp);
                             tempExp += Math.max(min, rXP);
                             break;
                         }
                     }
                 }
-                if (CONFIG.BLOCKS.minXpBlocks) {
+                if (this.CONFIG.BLOCKS.minXpBlocks) {
                     if (tempExp < 1) {
-                        for (String s : CONFIG.BLOCKS.MinBlocks) {
+                        for (String s : this.CONFIG.BLOCKS.MinBlocks) {
                             ConfigObject object = new ConfigObject(s);
                             if (object.doesBlockMatchEntry(state)) {
                                 tempExp = 1;
@@ -128,7 +128,7 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
                 }
             }
             final int droppedExp = tempExp;
-            if (CONFIG.skilled_miner && (entity instanceof EntityPlayer)) {
+            if (this.CONFIG.skilled_miner && (entity instanceof EntityPlayer)) {
                 if (BlockHelperUtil.canBreakBlock(toolUsed, world, (EntityPlayer) entity, pos, pos, 1)) {
                     BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false, 1, xp -> {
                         if (xp < -1) {

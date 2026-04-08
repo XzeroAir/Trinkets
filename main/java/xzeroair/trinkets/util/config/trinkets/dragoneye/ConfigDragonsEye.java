@@ -83,7 +83,7 @@ public class ConfigDragonsEye {
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {"onAttacked*;isMagic", "onHurt*;isMagic"};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {"onAttacked:*;isMagic", "onHurt:*;isMagic"};
 
     @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)

@@ -1,9 +1,7 @@
 package xzeroair.trinkets.items.base;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -101,35 +99,15 @@ public class ItemBase extends Item implements IsModelLoaded, IElementProvider {
         if (world == null) {
             return;
         }
-        EntityPlayer entity = null;
-        try {
-            entity = Minecraft.getMinecraft().player;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (entity == null) {
-            return;
-        }
-        final EntityPlayer player = entity;
-        boolean showAdvEnabled = flagIn != null && flagIn.isAdvanced();
         super.addInformation(stack, world, tooltips, flagIn);
         final TranslationHelper helper = TranslationHelper.INSTANCE;
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             final int index = i;
             final String string = helper.getLangTranslation(stack.getTranslationKey() + ".tooltip" + i, lang -> this.customItemInformation(stack, world, flagIn, index, lang));
             if (!helper.isStringEmpty(string)) {
                 tooltips.add(string);
             }
         }
-
-        //(showAdvEnabled ? EnumRenderLocation.ITEM_ADVANCED : EnumRenderLocation.ALWAYS)
-//        EnumRenderLocation modifier = GuiScreen.isCtrlKeyDown() ? EnumRenderLocation.ITEM_CTRL : GuiScreen.isShiftKeyDown() ? EnumRenderLocation.ITEM_SHIFT : GuiScreen.isAltKeyDown() ? EnumRenderLocation.ITEM_ALT : EnumRenderLocation.NEVER;
-//        if (showAdvEnabled && TrinketsConfig.CLIENT.ITEMS.RENDER_ELEMENTS) {
-//            tooltips.add(ConstantsTextTranslations.KEY_CTRL.getFormattedText());
-//            if (modifier.equals(EnumRenderLocation.ITEM_CTRL)) {
-//                tooltips.add(this.getPrimaryElement(stack).getDisplayName());
-//            }
-//        }
     }
 
     @Override
@@ -140,7 +118,6 @@ public class ItemBase extends Item implements IsModelLoaded, IElementProvider {
     @Nullable
     @Override
     public NBTTagCompound getNBTShareTag(@Nonnull ItemStack stack) {
-//        return super.getNBTShareTag(stack);
         return Capabilities.getTrinketProperties(stack, super.getNBTShareTag(stack), (prop, rtn) -> prop.saveToNBT(prop.getTag()));
     }
 
