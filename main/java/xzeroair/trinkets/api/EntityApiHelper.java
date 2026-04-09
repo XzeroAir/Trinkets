@@ -10,19 +10,19 @@ import xzeroair.trinkets.capabilities.Capabilities;
 public class EntityApiHelper {
 
     public static String getEntityRace(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getRace().getName());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRaceCache().getRace().getName());
     }
 
     public static String getEntityRaceRegistryName(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getRace().getRegistryName().toString());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRaceCache().getRace().getRegistryName().toString());
     }
 
     public static String getEntityPrimaryElement(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getName());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRaceCache().getPrimaryElement().getName());
     }
 
     public static String getEntityPrimaryElementRegistryName(Entity entity) {
-        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRace().getPrimaryElement().getRegistryName().toString());
+        return Capabilities.getEntityProperties(entity, "", (prop, name) -> prop.getCurrentRaceCache().getPrimaryElement().getRegistryName().toString());
     }
 
 }

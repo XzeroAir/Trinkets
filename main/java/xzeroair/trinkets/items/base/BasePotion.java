@@ -105,7 +105,7 @@ public class BasePotion extends Potion {
     public void affectEntity(Entity source, Entity indirectSource, EntityLivingBase entity, int amplifier, double health) {
         Capabilities.getEntityProperties(entity, prop -> {
             if (this.name.equals(ModPotionTypes.restore)) {
-                prop.setImbuedRace(null);
+                prop.setImbuedRaceCache(null);
                 MagicHelper.refillMana(entity);
             } else {
                 if (this.name.equals(ModPotionTypes.advancedGlowing)) {

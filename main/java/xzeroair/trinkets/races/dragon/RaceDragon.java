@@ -54,6 +54,21 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     }
 
     @Override
+    public String[] getAttributes() {
+        Element element = this.getRaceCache().getPrimaryElement();
+        // Elemental Features
+        if (element == Elements.FIRE) {
+            return this.CONFIG.ELEMENTS.FIRE.ATTRIBUTES;
+        } else if (element == Elements.ICE) {
+            return this.CONFIG.ELEMENTS.ICE.ATTRIBUTES;
+        } else if (element == Elements.LIGHTNING) {
+            return this.CONFIG.ELEMENTS.LIGHTNING.ATTRIBUTES;
+        } else {
+            return this.CONFIG.ATTRIBUTES;
+        }
+    }
+
+    @Override
     public void startTransformation() {
         // Night Vision
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
@@ -68,9 +83,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
         } else if (element == Elements.LIGHTNING) {
             this.addLightningAbilities(element);
         } else {
-//            if (CONFIG.ABILITIES.FIRE_IMMUNITY.ENABLED) {
             this.addAbility(new AbilityFireImmunity(this.CONFIG.ABILITIES.FIRE_IMMUNITY));
-//            }
         }
 
         // Other Abilities

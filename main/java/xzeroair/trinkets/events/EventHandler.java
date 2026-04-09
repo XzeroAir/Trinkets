@@ -477,7 +477,7 @@ public class EventHandler extends EventBaseHandler {
             }
             try {
                 final FaelisConfig faelisConfig = TrinketsConfig.SERVER.RACES.FAELIS;
-                if (prop.getCurrentRace().compareRace(EntityRaces.faelis) && faelisConfig.MILK_BONUS) {
+                if (prop.getCurrentRaceCache().compareRace(EntityRaces.faelis) && faelisConfig.MILK_BONUS) {
                     final StatusHandler status = Capabilities.getStatusHandler(entity);
                     if (status != null) {
                         final String[] milkList = faelisConfig.MILK;

@@ -217,11 +217,11 @@ public class CommandMain extends CommandBase {
                                         element = args[4].toLowerCase(Locale.ENGLISH);
                                         Element e = Element.getByNameOrId(element);
                                         if (e != null) {
-                                            capability.setOriginalRace(new RaceCache(r, e));
+                                            capability.setOriginalRaceCache(new RaceCache(r, e));
                                             break;
                                         }
                                     }
-                                    capability.setOriginalRace(new RaceCache(r));
+                                    capability.setOriginalRaceCache(new RaceCache(r));
                                 }
                                 break;
                             case "setimbuedrace":
@@ -231,18 +231,18 @@ public class CommandMain extends CommandBase {
                                         element = args[4].toLowerCase(Locale.ENGLISH);
                                         Element e = Element.getByNameOrId(element);
                                         if (e != null) {
-                                            capability.setOriginalRace(new RaceCache(r, e));
+                                            capability.setOriginalRaceCache(new RaceCache(r, e));
                                             break;
                                         }
                                     }
-                                    capability.setImbuedRace(new RaceCache(r));
+                                    capability.setImbuedRaceCache(new RaceCache(r));
                                 }
                                 break;
                             case "reset":
-                                capability.setOriginalRace(null);
+                                capability.setOriginalRaceCache(null);
                                 break;
                             case "resetimbued":
-                                capability.setImbuedRace(null);
+                                capability.setImbuedRaceCache(null);
                                 break;
                             case "gui":
                                 if (target instanceof EntityPlayerMP) {

@@ -56,12 +56,12 @@ public class ConfigEnderCrown {
     @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
-    public String[] EFFECTS_TO_REMOVE = {};
+    public String[] EFFECTS_TO_REMOVE = {"lyacnitesmobs:instability"};
 
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isVoid"};
 
     @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)

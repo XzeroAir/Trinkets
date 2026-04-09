@@ -94,7 +94,6 @@ xat.ability.immunity_fire.tooltip1=§2Otorga §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6Inmune al fuego y la lava
 xat.ability.immunity_fire.tooltip3=$gui:§6No puedes incendiarte
 xat.ability.immunity_fire.tooltip4=$gui:No puede recibir daño de la mayoría de ataques basados en fuego
-xat.ability.immunity_fire.tooltip5=$gui:§6Inmune a §c$smouldering:
 
 xat.ability.immunity_ice.name=§bHielo §6Inmunidad
 xat.ability.immunity_ice.tooltip1=§2Otorga §b$potion:
@@ -102,8 +101,6 @@ xat.ability.immunity_ice.tooltip2=$gui:§6No puede recibir daño de la mayoría 
 
 xat.ability.immunity_lightning.name=§cRelámpago §6Inmunidad
 xat.ability.immunity_lightning.tooltip1=§2Otorga §d$potion:
-xat.ability.immunity_lightning.tooltip2=@paralysis:
-xat.ability.immunity_lightning.paralysis=§6Inmunidad a §dParálisis
 
 xat.ability.immunity_dark.name=§8Oscuridad §6Inmunidad
 xat.ability.immunity_dark.tooltip1=$heal:§6Cura por §8$wither:
@@ -168,7 +165,6 @@ xat.ability.ender_queen.tooltip5=§3$tpchance: §5Probabilidad de teletransporta
 xat.ability.ender_queen.tooltip6=$waterhurts:§cDebilidad al agua
 xat.ability.ender_queen.tooltip7=$gui:$chest:§6Accede remotamente a tu Ender Chest presionando §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
 xat.ability.ender_queen.tooltip8=$gui:§6Teletranspórtate aleatoriamente cerca al presionar §r<§e*tpkey:§r> §3$tpcost: MP
-xat.ability.ender_queen.tooltip9=§6Previene $instability:
 xat.ability.ender_queen.teleport=§2Teletransportación $toggle:
 xat.ability.ender_queen.teleport.failed=§cAlgo te impide moverte a través del vacío.
 

@@ -43,7 +43,7 @@ public class AbilitySkilledSwimmer extends Ability implements ITickableAbility, 
             final IBlockState headBlock = entity.world.getBlockState(head);
             final Block block = headBlock.getBlock();
             if ((entity.isInWater() || entity.isInLava()) && (block != Blocks.AIR)) {
-                if (CONFIG.OLD_TWEAKS) {
+                if (this.CONFIG.OLD_TWEAKS) {
                     this.handleMovementOld(entity);
                 } else {
                     this.handleMovement(entity);
@@ -89,7 +89,7 @@ public class AbilitySkilledSwimmer extends Ability implements ITickableAbility, 
         double swimSpeedBase = movementSpeed * (Math.max(swimMulti, 0D));
         ItemStack feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
         double min = swimSpeedBase * 0.01D;
-        double max = swimSpeedBase * 1D;
+        double max = swimSpeedBase;
         double speed = MathHelper.clamp(swimSpeedBase, min, max);
         double depthStriderLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, feet);
         if (depthStriderLevel > 0) {

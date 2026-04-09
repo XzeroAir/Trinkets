@@ -229,7 +229,7 @@ public class EventHandlerClient {
                     event.getToolTip().add(ItemMaterial);
                 }
                 if (TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {
-                    boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis));
+                    boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRaceCache().compareRace(EntityRaces.faelis));
                     if (isFaelis) {
                         ConfigEquipmentObject entry = null;
                         if (item instanceof ItemArmor) {

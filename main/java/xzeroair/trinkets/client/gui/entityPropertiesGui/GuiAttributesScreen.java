@@ -307,7 +307,7 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
         final Dimension logoDims2 = new Dimension(0, 0);
         final List<String> lines2 = new ArrayList<>();
         try {
-            String[] attributeConfig = this.properties.getCurrentRace().getRace().getRaceInformation().getAttributes();
+            String[] attributeConfig = this.properties.getCurrentRaceCache().getRace().getRaceInformation().getAttributes();
             if (attributeConfig != null) {
                 for (String entry : attributeConfig) {
                     AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);

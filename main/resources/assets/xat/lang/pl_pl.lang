@@ -94,7 +94,6 @@ xat.ability.immunity_fire.tooltip1=§2Zapewnia §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6Odporność na ogień i lawę
 xat.ability.immunity_fire.tooltip3=$gui:§6Nie można cię podpalić
 xat.ability.immunity_fire.tooltip4=$gui:Odporność na większość ataków opartych na ogniu
-xat.ability.immunity_fire.tooltip5=$gui:§6Odporność na §c$smouldering:
 
 xat.ability.immunity_ice.name=§bOdporność na lód
 xat.ability.immunity_ice.tooltip1=§2Zapewnia §b$potion:
@@ -102,8 +101,6 @@ xat.ability.immunity_ice.tooltip2=$gui:§6Odporność na większość ataków op
 
 xat.ability.immunity_lightning.name=§dOdporność na pioruny
 xat.ability.immunity_lightning.tooltip1=§2Zapewnia §d$potion:
-xat.ability.immunity_lightning.tooltip2=@paralysis:
-xat.ability.immunity_lightning.paralysis=§6Odporność na §dparaliż
 
 xat.ability.immunity_dark.name=§8Odporność na mrok
 xat.ability.immunity_dark.tooltip1=$heal:§6Leczy od §8$wither:
@@ -168,7 +165,6 @@ xat.ability.ender_queen.tooltip5=§3$tpchance: §5szansy na teleportację przy o
 xat.ability.ender_queen.tooltip6=$waterhurts:§cSłabość do wody
 xat.ability.ender_queen.tooltip7=$gui:$chest:§6Zdalny dostęp do Skrzyni Kresu po naciśnięciu §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
 xat.ability.ender_queen.tooltip8=$gui:§6Losowo teleportuje w pobliże po naciśnięciu §r<§e*tpkey:§r> §3$tpcost: MP
-xat.ability.ender_queen.tooltip9=§6Zapobiega $instability:
 xat.ability.ender_queen.teleport=§2Teleportacja $toggle:
 xat.ability.ender_queen.teleport.failed=§cCoś uniemożliwia ci przemieszczanie się przez pustkę.
 

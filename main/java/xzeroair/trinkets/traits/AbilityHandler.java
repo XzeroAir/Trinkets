@@ -32,6 +32,7 @@ import java.util.TreeMap;
 public class AbilityHandler {
 
     public static final String capKey = Reference.MODID + ":abilities";
+    private static final String DISABLED_SOURCES = "DisabledSources";
     public static final String KILL_ORDER = "DISABLED";
     public static final String REMOVE_KILL_ORDER = "ENABLED";
     private final EntityProperties parentProperties;
@@ -77,18 +78,18 @@ public class AbilityHandler {
         final String key = ability.getRegistryName().toString();
         if (!entity.world.isRemote) {
             if (!ability.isAbilityEnabled()) {
-                if (!this.hasKillOrder(key)) {
-                    this.addKillOrder(key);
-                    this.sendKillOrder(entity, key);
+                if (!this.hasKillOrder(source, key)) {
+                    this.addKillOrder(source, key);
+                    this.sendKillOrder(entity, source, key);
                 }
                 return ability;
             } else {
-                if (this.hasKillOrder(key)) {
-                    this.removeKillOrder(key);
+                if (this.hasKillOrder(source, key)) {
+                    this.removeKillOrder(source, key);
                 }
             }
         } else {
-            if (this.hasKillOrder(key)) {
+            if (this.hasKillOrder(source, key)) {
                 return ability;
             }
         }
@@ -122,22 +123,22 @@ public class AbilityHandler {
     }
 
     @Nullable
-    public IAbilityInterface registerAbility(EntityLivingBase entity, String source, SlotInformation info, IAbilityInterface ability) {
+    public IAbilityInterface registerAbility(@Nonnull EntityLivingBase entity, String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
         final String key = ability.getRegistryName().toString();
         if (!entity.world.isRemote) {
             if (!ability.isAbilityEnabled()) {
-                if (!this.hasKillOrder(key)) {
-                    this.addKillOrder(key);
-                    this.sendKillOrder(entity, key);
+                if (!this.hasKillOrder(source, key)) {
+                    this.addKillOrder(source, key);
+                    this.sendKillOrder(entity, source, key);
                 }
                 return ability;
             } else {
-                if (this.hasKillOrder(key)) {
-                    this.removeKillOrder(key);
+                if (this.hasKillOrder(source, key)) {
+                    this.removeKillOrder(source, key);
                 }
             }
         } else {
-            if (this.hasKillOrder(key)) {
+            if (this.hasKillOrder(source, key)) {
                 return ability;
             }
         }
@@ -290,13 +291,13 @@ public class AbilityHandler {
         }
     }
 
-    private boolean shouldRemove(Entry<String, AbilityHolder> entry, EntityLivingBase entity) {
+    private boolean shouldRemove(@Nonnull Entry<String, AbilityHolder> entry, EntityLivingBase entity) {
         final String key = entry.getKey();
-        if (this.hasKillOrder(key)) {
-            return true;
-        }
         final AbilityHolder cache = entry.getValue();
         final String source = cache.getSourceID();
+        if (this.hasKillOrder(source, key)) {
+            return true;
+        }
         final SlotInformation sourceInfo = cache.getInfo();
         final IAbilityInterface ability = cache.getAbility();
         switch (sourceInfo.getHandlerType()) {
@@ -305,7 +306,7 @@ public class AbilityHandler {
             case OTHER:
                 return false;
             case RACE:
-                RaceCache raceCache = this.parentProperties.getCurrentRace();
+                RaceCache raceCache = this.parentProperties.getCurrentRaceCache();
                 boolean eleReq = (ability.getRequiredElement() != null && !(raceCache.comparePrimaryElement(ability.getRequiredElement())));
                 boolean race = raceCache.getRace().getRegistryName().toString().contentEquals(source);
                 return !race || raceCache.getRace().isNone() || eleReq;
@@ -370,70 +371,98 @@ public class AbilityHandler {
     }
 
 
-    public boolean hasKillOrder(String ability) {
-        if (ability == null || ability.isEmpty()) {
+    public boolean hasKillOrder(String source, String ability) {
+        if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return false;
         }
-        NBTTagCompound tag = this.parentProperties.getTag();
-        if (tag.hasKey(capKey)) {
-            NBTTagCompound playerCap = tag.getCompoundTag(capKey);
-            if (playerCap.hasKey(ability)) {
-                return playerCap.getCompoundTag(ability).hasKey(KILL_ORDER);
-            }
+
+        NBTTagCompound playerCap = this.parentProperties.getTag().getCompoundTag(capKey);
+        if (!playerCap.hasKey(ability)) {
+            return false;
         }
-        return false;
+
+        NBTTagCompound abilityTag = playerCap.getCompoundTag(ability);
+        if (!abilityTag.hasKey(DISABLED_SOURCES)) {
+            return false;
+        }
+
+        NBTTagCompound disabledSources = abilityTag.getCompoundTag(DISABLED_SOURCES);
+        return disabledSources.hasKey(source) && disabledSources.getBoolean(source);
     }
 
-    public void removeKillOrder(String ability) {
-        if (ability == null || ability.isEmpty()) {
+    public void addKillOrder(String source, String ability) {
+        if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return;
         }
-        NBTTagCompound tag = this.parentProperties.getTag();
-        if (tag.hasKey(capKey)) {
-            NBTTagCompound playerCap = tag.getCompoundTag(capKey);
-            if (playerCap.hasKey(ability)) {
-                NBTTagCompound playerAbilityTag = playerCap.getCompoundTag(ability);
-                if (playerAbilityTag.hasKey(KILL_ORDER)) {
-                    playerAbilityTag.removeTag(KILL_ORDER);
-                    if (playerAbilityTag.isEmpty()) {
-                        playerCap.removeTag(ability);
-                    }
-                    World world = this.parentProperties.getEntity().getEntityWorld();
-                    if (world instanceof WorldServer && this.parentProperties.getEntity() instanceof EntityPlayerMP) {
-                        NBTTagCompound syncTag = new NBTTagCompound();
-                        syncTag.setString("Ability", ability);
-                        syncTag.setBoolean("ENABLED", true);
-                        NetworkHandler.sendToClients((WorldServer) world, this.parentProperties.getEntity().getPosition(), new AbilityCacheSyncPacket(this.parentProperties.getEntity(), syncTag));
-                    }
-                }
-            }
+
+        NBTTagCompound rootTag = this.parentProperties.getTag();
+        if (!rootTag.hasKey(capKey)) {
+            rootTag.setTag(capKey, new NBTTagCompound());
         }
+
+        NBTTagCompound playerCap = rootTag.getCompoundTag(capKey);
+        if (!playerCap.hasKey(ability)) {
+            playerCap.setTag(ability, new NBTTagCompound());
+        }
+
+        NBTTagCompound abilityTag = playerCap.getCompoundTag(ability);
+        if (!abilityTag.hasKey(DISABLED_SOURCES)) {
+            abilityTag.setTag(DISABLED_SOURCES, new NBTTagCompound());
+        }
+
+        abilityTag.getCompoundTag(DISABLED_SOURCES).setBoolean(source, true);
     }
 
-    public void addKillOrder(String ability) {
-        NBTTagCompound tag = this.parentProperties.getTag();
-        if (!tag.hasKey(capKey)) {
-            tag.setTag(capKey, new NBTTagCompound());
-        }
-        NBTTagCompound abilitiesCap = tag.getCompoundTag(capKey);
-        if (!abilitiesCap.hasKey(ability)) {
-            NBTTagCompound disabledTag = new NBTTagCompound();
-            disabledTag.setBoolean(KILL_ORDER, true);
-            abilitiesCap.setTag(ability, disabledTag);
-        } else {
-            NBTTagCompound playerAbilityTag = abilitiesCap.getCompoundTag(ability);
-            playerAbilityTag.setBoolean(KILL_ORDER, true);
-        }
-    }
-
-    public void sendKillOrder(EntityLivingBase entity, String ability) {
-        if (ability == null || ability.isEmpty()) {
+    public void removeKillOrder(String source, String ability) {
+        if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return;
         }
+
+        NBTTagCompound playerCap = this.parentProperties.getTag().getCompoundTag(capKey);
+        if (!playerCap.hasKey(ability)) {
+            return;
+        }
+
+        NBTTagCompound abilityTag = playerCap.getCompoundTag(ability);
+        if (!abilityTag.hasKey(DISABLED_SOURCES)) {
+            return;
+        }
+
+        NBTTagCompound disabledSources = abilityTag.getCompoundTag(DISABLED_SOURCES);
+        if (!disabledSources.hasKey(source)) {
+            return;
+        }
+
+        disabledSources.removeTag(source);
+
+        if (disabledSources.isEmpty()) {
+            abilityTag.removeTag(DISABLED_SOURCES);
+        }
+        if (abilityTag.isEmpty()) {
+            playerCap.removeTag(ability);
+        }
+
+        EntityLivingBase entity = this.parentProperties.getEntity();
         World world = entity.getEntityWorld();
         if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
             NBTTagCompound syncTag = new NBTTagCompound();
             syncTag.setString("Ability", ability);
+            syncTag.setString("Source", source);
+            syncTag.setBoolean("ENABLED", true);
+            NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), new AbilityCacheSyncPacket(entity, syncTag));
+        }
+    }
+
+    public void sendKillOrder(EntityLivingBase entity, String source, String ability) {
+        if (entity == null || source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
+            return;
+        }
+
+        World world = entity.getEntityWorld();
+        if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
+            NBTTagCompound syncTag = new NBTTagCompound();
+            syncTag.setString("Ability", ability);
+            syncTag.setString("Source", source);
             syncTag.setBoolean("DISABLED", true);
             NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), new AbilityCacheSyncPacket(entity, syncTag));
         }
@@ -472,74 +501,86 @@ public class AbilityHandler {
     }
 
     private void saveInfoToEntity(EntityLivingBase entity, IAbilityInterface ability) {
-        final String key = ability.getRegistryName().toString();
+        if (entity == null || ability == null || ability.getRegistryName() == null) {
+            return;
+        }
+
         World world = entity.getEntityWorld();
-        if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
-            NBTTagCompound tag = this.parentProperties.getTag();
-            if (!tag.hasKey(capKey)) {
-                tag.setTag(capKey, new NBTTagCompound());
+        if (!(world instanceof WorldServer) || !(entity instanceof EntityPlayerMP)) {
+            return;
+        }
+
+        NBTTagCompound rootTag = this.parentProperties.getTag();
+        if (!rootTag.hasKey(capKey)) {
+            rootTag.setTag(capKey, new NBTTagCompound());
+        }
+
+        final String abilityName = ability.getRegistryName().toString();
+        NBTTagCompound abilitiesTag = rootTag.getCompoundTag(capKey);
+        if (!abilitiesTag.hasKey(abilityName)) {
+            abilitiesTag.setTag(abilityName, new NBTTagCompound());
+        }
+
+        final String source = ability.getAbilityHolder().getSourceID();
+        NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(abilityName);
+        if (!ability.isAbilityEnabled()) {
+            if (!abilityTag.hasKey(DISABLED_SOURCES)) {
+                abilityTag.setTag(DISABLED_SOURCES, new NBTTagCompound());
             }
-            NBTTagCompound abilitiesTag = tag.getCompoundTag(capKey);
-            if (!abilitiesTag.hasKey(key)) {
-                if (!ability.isAbilityEnabled()) {
-                    NBTTagCompound disabledTag = new NBTTagCompound();
-                    disabledTag.setBoolean(KILL_ORDER, true);
-                    abilitiesTag.setTag(key, disabledTag);
-                    return;
-                }
-                NBTTagCompound abilityTag = ability.saveStorage(new NBTTagCompound());
-                if (abilityTag != null && !abilityTag.isEmpty()) {
-                    abilitiesTag.setTag(key, abilityTag);
-                }
+            abilityTag.getCompoundTag(DISABLED_SOURCES).setBoolean(source, true);
+            return;
+        }
+        if (abilityTag.hasKey(DISABLED_SOURCES)) {
+            NBTTagCompound disabledSources = abilityTag.getCompoundTag(DISABLED_SOURCES);
+            if (disabledSources.hasKey(source)) {
+                disabledSources.removeTag(source);
             }
-            if (abilitiesTag.hasKey(key)) {
-                NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(key);
-                if (!ability.isAbilityEnabled()) {
-                    abilitiesTag.setBoolean(KILL_ORDER, true);
-                    return;
-                }
-                if (abilitiesTag.hasKey(KILL_ORDER)) {
-                    abilitiesTag.removeTag(KILL_ORDER);
-                }
-                ability.saveStorage(abilityTag);
+            if (disabledSources.isEmpty()) {
+                abilityTag.removeTag(DISABLED_SOURCES);
             }
         }
+        ability.saveStorage(abilityTag);
     }
 
-    public void loadAbilityFromEntityOnFirstUpdate(EntityLivingBase entity, IAbilityInterface ability) {
+    public void loadAbilityFromEntityOnFirstUpdate(@Nonnull EntityLivingBase entity, IAbilityInterface ability) {
         if (!entity.world.isRemote) {
             this.loadAbilityFromEntity(entity, ability);
         }
     }
 
     public void loadAbilityFromEntity(EntityLivingBase entity, IAbilityInterface ability) {
-        String key = ability.getRegistryName().toString();
-        NBTTagCompound entityTag = this.parentProperties.getTag();
-        if (!entityTag.hasKey(capKey)) {
-            entityTag.setTag(capKey, new NBTTagCompound());
+        if (ability == null || ability.getRegistryName() == null) {
+            return;
         }
-        NBTTagCompound abilitiesTag = entityTag.getCompoundTag(capKey);
-        if (abilitiesTag.hasKey(key)) {
-            NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(key);
-            if (abilityTag.hasKey(KILL_ORDER)) {
-                ability.scheduleRemoval();
-                ability.setAbilityEnabled(false);
-                return;
-            }
-            if (!abilityTag.isEmpty()) {
-                ability.loadStorage(abilityTag);
-            }
+        NBTTagCompound rootTag = this.parentProperties.getTag();
+        if (!rootTag.hasKey(capKey)) {
+            rootTag.setTag(capKey, new NBTTagCompound());
+        }
+        final String abilityName = ability.getRegistryName().toString();
+        NBTTagCompound abilitiesTag = rootTag.getCompoundTag(capKey);
+        if (!abilitiesTag.hasKey(abilityName)) {
+            return;
+        }
+        final String source = ability.getAbilityHolder().getSourceID();
+        NBTTagCompound abilityTag = abilitiesTag.getCompoundTag(abilityName);
+        if (this.hasKillOrder(source, abilityName)) {
+            ability.scheduleRemoval();
+            ability.setAbilityEnabled(false);
+            return;
+        }
+        if (!abilityTag.isEmpty()) {
+            ability.loadStorage(abilityTag);
         }
     }
 
-    public void loadAbilityFromNBT(IAbilityInterface ability, NBTTagCompound compound) {
+    public void loadAbilityFromNBT(@Nonnull IAbilityInterface ability, @Nonnull NBTTagCompound compound) {
         String key = ability.getRegistryName().toString();
         if (compound.hasKey(key)) {
             ability.loadStorage(compound.getCompoundTag(key));
         }
     }
 
-    public NBTTagCompound saveAbilitiesToNBT(NBTTagCompound compound) {
+    public NBTTagCompound saveAbilitiesToNBT(@Nonnull NBTTagCompound compound) {
         if (!compound.hasKey(capKey)) {
             compound.setTag(capKey, new NBTTagCompound());
         }
@@ -559,7 +600,7 @@ public class AbilityHandler {
                         tag.setTag(key, ability);
                     }
                 } catch (final Exception e) {
-                    Trinkets.LOGGER.error("Error when saving ability:" + key);
+                    Trinkets.LOGGER.error("Error when saving ability:{}", key);
                     e.printStackTrace();
                 }
             }
@@ -567,7 +608,7 @@ public class AbilityHandler {
         return compound;
     }
 
-    public void loadAbilitiesFromNBT(NBTTagCompound compound) {
+    public void loadAbilitiesFromNBT(@Nonnull NBTTagCompound compound) {
         if (compound.hasKey(capKey)) {
             final NBTTagCompound tag = compound.getCompoundTag(capKey);
             for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
@@ -577,7 +618,7 @@ public class AbilityHandler {
                     try {
                         this.loadAbilityFromNBT(value.getAbility(), tag.getCompoundTag(key));
                     } catch (final Exception e) {
-                        Trinkets.LOGGER.error("Error when loading ability:" + key);
+                        Trinkets.LOGGER.error("Error when loading ability:{}", key);
                         e.printStackTrace();
                     }
                 }
@@ -585,7 +626,7 @@ public class AbilityHandler {
         }
     }
 
-    public NBTTagCompound saveToNBT(NBTTagCompound compound) {
+    public NBTTagCompound saveToNBT(@Nonnull NBTTagCompound compound) {
         if (!compound.hasKey(capKey)) {
             compound.setTag(capKey, new NBTTagCompound());
         }
@@ -593,7 +634,7 @@ public class AbilityHandler {
         return compound;
     }
 
-    public void loadFromNBT(NBTTagCompound compound) {
+    public void loadFromNBT(@Nonnull NBTTagCompound compound) {
         if (compound.hasKey(capKey)) {
             NBTTagCompound tag = compound.getCompoundTag(capKey);
 
@@ -607,7 +648,7 @@ public class AbilityHandler {
         protected SlotInformation info;
         protected IAbilityInterface ability;
 
-        public AbilityHolder(String source, SlotInformation info, IAbilityInterface ability) {
+        public AbilityHolder(String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
             this.source = source;
             this.info = info;
             this.ability = ability.cacheAbilityHolder(this);
@@ -625,14 +666,14 @@ public class AbilityHandler {
             return this.ability;
         }
 
-        public final boolean compare(AbilityHolder other) {
+        public final boolean compare(@Nonnull AbilityHolder other) {
             return this.compare(other.getSourceID(), other.getInfo(), other.getAbility());
         }
 
-        public final boolean compare(String otherSource, SlotInformation otherInfo, IAbilityInterface otherAbility) {
+        public final boolean compare(String otherSource, @Nonnull SlotInformation otherInfo, @Nonnull IAbilityInterface otherAbility) {
             boolean isRaceAbility = this.getInfo().getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
             boolean isOtherRaceAbility = otherInfo.getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
-            boolean check = isRaceAbility && !isOtherRaceAbility;
+            boolean check = (isRaceAbility && !isOtherRaceAbility) || (isRaceAbility && isOtherRaceAbility && !this.getSourceID().contentEquals(otherSource));
             boolean sameSource = this.getSourceID().contentEquals(otherSource);
             boolean sameElementRequired = this.getAbility().getRequiredElement() == otherAbility.getRequiredElement();
             boolean sameInfo = this.getInfo().compare(otherInfo);

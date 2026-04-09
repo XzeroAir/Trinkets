@@ -71,7 +71,8 @@ public class TrinketDragonsEye extends AccessoryBase {
 
     @Override
     public Element getPrimaryElement() {
-        return Elements.VOID;
+        return super.getPrimaryElement();
+//        return Elements.VOID;
     }
 
     @Override

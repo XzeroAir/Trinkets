@@ -47,12 +47,25 @@ public class ConfigLightningDragon {
     @Config.Name("02. " + ConstantsConfigLang.CONFIG_RESISTANCES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RESISTANCES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RESISTANCES)
-    public String[] EFFECTS_TO_REMOVE = {};
+    public String[] EFFECTS_TO_REMOVE = {"iceandfire:paralysis", "lycanitesmobs:paralysis"};
 
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isLightning"};
+
+
+    @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ATTRIBUTES)
+    public String[] ATTRIBUTES = {
+            //@formatter:off
+            "Name:generic.maxHealth, Amount:0.25, Operation:1",
+            "Name:generic.attackDamage, Amount:0.5, Operation:1",
+            "Name:generic.armorToughness, Amount:0.5, Operation:1",
+            "Name:xat.flyspeed, Amount:-0.6, Operation:2"
+            //@formatter:on
+    };
 
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)

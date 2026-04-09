@@ -21,6 +21,7 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.OptionEntry;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class AbilityViciousStrike extends Ability implements IAttackAbility {
@@ -33,7 +34,7 @@ public class AbilityViciousStrike extends Ability implements IAttackAbility {
         this(TrinketsConfig.SERVER.ABILITIES.VICIOUS_STRIKE);
     }
 
-    public AbilityViciousStrike(ConfigAbilityViciousStrike config) {
+    public AbilityViciousStrike(@Nonnull ConfigAbilityViciousStrike config) {
         super(TrinketsRegistryNames.ModAbilities.VICIOUS_STRIKE);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
@@ -43,23 +44,23 @@ public class AbilityViciousStrike extends Ability implements IAttackAbility {
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+    protected String addCustomDescriptionTags(@Nonnull TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
         final KeyEntry key1 = new OptionEntry("chance", this.CHANCE > 0, this.CHANCE < 1 ? 0 : (1F / this.CHANCE) * 100 + "%");
         final KeyEntry key2 = new OptionEntry("duration", this.DURATION > 1, (this.DURATION / 20F));
-        final KeyEntry key3 = new OptionEntry("reduceddur", this.DURATION > 1, ((int) this.DURATION / 3) / 20F);
+        final KeyEntry key3 = new OptionEntry("reduceddur", this.DURATION > 1, (this.DURATION / 3) / 20F);
         return helper.formatAddVariables(key, renderID, key1, key2, key3);
     }
 
     @Override
     public float hurtEntity(EntityLivingBase target, DamageSource source, float dmg) {
-        if (!isAbilityEnabled() || this.isIndirectDamage(source)) return dmg;
+        if (!this.isAbilityEnabled() || this.isIndirectDamage(source)) return dmg;
         int chance = this.CHANCE > 0 ? this.random.nextInt(this.CHANCE) : 0;
         if (chance == 0) {
             int max = 3;
-            int amplifier = Capabilities.getEntityProperties(source.getTrueSource(), 0, (prop, rtn) -> prop.getCurrentRace().compareRace(EntityRaces.faelis) ? 1 : rtn);
+            int amplifier = Capabilities.getEntityProperties(source.getTrueSource(), 0, (prop, rtn) -> prop.getCurrentRaceCache().compareRace(EntityRaces.faelis) ? 1 : rtn);
             final int duration = (amplifier > 0 ? this.DURATION : this.DURATION / 3);
             final Potion potion = CompatDefiledLands.getPotionBleeding();
-            if (potion != null && CONFIG.COMPAT.DEFILED_LANDS.BLEED) {
+            if (potion != null && this.CONFIG.COMPAT.DEFILED_LANDS.BLEED) {
                 final boolean hasPot = target.isPotionActive(potion);
                 PotionEffect bleed;
                 if (hasPot) {

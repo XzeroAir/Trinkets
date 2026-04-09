@@ -311,20 +311,20 @@ public abstract class AccessoryBase extends ItemBase implements IAccessoryInterf
         EnumRenderLocation modifier = GuiScreen.isCtrlKeyDown() ? EnumRenderLocation.ITEM_CTRL : GuiScreen.isShiftKeyDown() ? EnumRenderLocation.ITEM_SHIFT : GuiScreen.isAltKeyDown() ? EnumRenderLocation.ITEM_ALT : (showAdvEnabled ? EnumRenderLocation.ITEM_ADVANCED : EnumRenderLocation.ALWAYS);
         Capabilities.getTrinketProperties(stack, (prop) -> {
             prop.initAbilitiesOnce(player);
+            final String itemSource = stack.getItem().getRegistryName().toString();
             for (IAbilityInterface ability : prop.getAbilitiesProvided().values()) {
-                boolean check = Capabilities.getEntityProperties(player, false, (entProp, bool) -> {
-                    if (entProp.getAbilityHandler().hasKillOrder(ability.getRegistryName().toString())) {
-                        return true;
+                if (ability.isAbilityEnabled()) {
+                    final String abilityName = ability.getRegistryName().toString();
+                    final String holderSource = ability.getAbilityHolder() != null ? ability.getAbilityHolder().getSourceID() : "";
+                    boolean disabled = Capabilities.getEntityProperties(player, false, (entProp, bool) -> {
+                        if (entProp.getAbilityHandler().hasKillOrder(itemSource, abilityName)) {
+                            return true;
+                        }
+                        return entProp.getAbilityHandler().hasKillOrder(holderSource, abilityName);
+                    });
+                    if (!disabled) {
+                        ability.getDescription(tooltips, modifier.getId(), EnumRenderLocation.ITEM.getId());
                     }
-                    IAbilityInterface a = entProp.getAbilityHandler().getAbility(ability.getRegistryName().toString());
-                    if (a != null && a.isAbilityEnabled()) {
-                        a.getDescription(tooltips, modifier.getId(), EnumRenderLocation.ITEM.getId());
-                        return true;
-                    }
-                    return bool;
-                });
-                if (!check && ability.isAbilityEnabled()) {
-                    ability.getDescription(tooltips, modifier.getId(), EnumRenderLocation.ITEM.getId());
                 }
             }
         });

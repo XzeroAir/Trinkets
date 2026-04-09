@@ -94,7 +94,6 @@ xat.ability.immunity_fire.tooltip1=§2赋予 §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6免疫火焰与岩浆
 xat.ability.immunity_fire.tooltip3=$gui:§6不会被点燃
 xat.ability.immunity_fire.tooltip4=$gui:不会受到大多数火焰攻击伤害
-xat.ability.immunity_fire.tooltip5=$gui:§6免疫 §c$smouldering:
 
 xat.ability.immunity_ice.name=§b寒冰免疫
 xat.ability.immunity_ice.tooltip1=§2赋予 §b$potion:
@@ -102,8 +101,6 @@ xat.ability.immunity_ice.tooltip2=$gui:§6不会受到大多数冰系攻击伤�
 
 xat.ability.immunity_lightning.name=§c闪电免疫
 xat.ability.immunity_lightning.tooltip1=§2赋予 §d$potion:
-xat.ability.immunity_lightning.tooltip2=@paralysis:
-xat.ability.immunity_lightning.paralysis=§6免疫 §d麻痹
 
 xat.ability.immunity_dark.name=§8暗影免疫
 xat.ability.immunity_dark.tooltip1=$heal:§6从 §8$wither:§6 中恢复
@@ -168,7 +165,6 @@ xat.ability.ender_queen.tooltip5=§3$tpchance: §5受到间接伤害时传送概
 xat.ability.ender_queen.tooltip6=$waterhurts:§c惧怕水
 xat.ability.ender_queen.tooltip7=$gui:$chest:§6按下 §r<§e*auxkb:§r> + §e*tpkey:§r>§6 可远程访问末影箱 §3$chestcost: MP
 xat.ability.ender_queen.tooltip8=$gui:§6按下 §r<§e*tpkey:§r>§6 可随机传送到附近 §3$tpcost: MP
-xat.ability.ender_queen.tooltip9=§6防止 $instability:
 xat.ability.ender_queen.teleport=§2传送 $toggle:
 xat.ability.ender_queen.teleport.failed=§c某种力量阻止你穿越虚空移动。
 

@@ -45,9 +45,7 @@ public class AbilityReduceKinetic extends Ability implements IAttackAbility, IJu
         if (this.AMOUNT <= 0) {
             if (this.COST > 0) {
                 boolean spent = Capabilities.getMagicStats(entity, true, (magic, rtn) -> magic.spendMana(this.COST));
-                if (!spent) {
-                    return false;
-                }
+                return spent;
             }
             return true;
         }
@@ -63,7 +61,7 @@ public class AbilityReduceKinetic extends Ability implements IAttackAbility, IJu
                     return multiplier;
                 }
             }
-            multiplier = AMOUNT;
+            multiplier = this.AMOUNT;
         }
         return multiplier;
     }
@@ -111,7 +109,7 @@ public class AbilityReduceKinetic extends Ability implements IAttackAbility, IJu
     @Nullable
     @Override
     public NBTTagCompound sendAbilityData() {
-        if (CONFIG.ENABLED) {
+        if (this.CONFIG.ENABLED) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setFloat("AMOUNT", this.AMOUNT);
             if (this.COST > 0F) {

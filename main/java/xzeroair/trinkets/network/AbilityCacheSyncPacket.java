@@ -46,40 +46,39 @@ public class AbilityCacheSyncPacket extends ThreadSafePacket {
             return;
         }
         final Minecraft mc = Minecraft.getMinecraft();
-        if (mc.player == null) {
-            return;
-        }
-        final World world = mc.player.getEntityWorld();
-        if (world == null) {
-            return;
-        }
-        final Entity entity = world.getEntityByID(this.entityID);
-        if (entity == null) {
-            return;
-        }
-
-        Capabilities.getEntityProperties(entity, (prop) -> {
-            if (this.tag.hasKey(ABILITY_TAG)) {
-                String abilityName = this.tag.getString(ABILITY_TAG);
-                if (this.tag.hasKey("ENABLED")) {
-                    prop.getAbilityHandler().removeKillOrder(abilityName);
-                } else if (this.tag.hasKey("DISABLED")) {
-                    prop.getAbilityHandler().addKillOrder(abilityName);
-                } else {
-                    IAbilityInterface ability = prop.getAbilityHandler().getAbility(abilityName);
-                    if (ability != null) {
-                        if (this.tag.hasKey(abilityName)) {
-                            NBTTagCompound data = this.tag.getCompoundTag(abilityName);
-                            ability.loadStorage(data);
-                        }
-                        if (this.tag.hasKey(DATA_TAG)) {
-                            NBTTagCompound data = this.tag.getCompoundTag(DATA_TAG);
-                            ability.loadDataCache(data);
+        if (mc.player != null) {
+            final World world = mc.player.getEntityWorld();
+            final Entity entity = world != null ? world.getEntityByID(this.entityID) : null;
+            if (entity != null) {
+                Capabilities.getEntityProperties(entity, (prop) -> {
+                    if (this.tag.hasKey(ABILITY_TAG)) {
+                        String abilityName = this.tag.getString(ABILITY_TAG);
+                        boolean enabled = this.tag.hasKey("ENABLED");
+                        boolean disabled = this.tag.hasKey("DISABLED");
+                        if (enabled || disabled) {
+                            String source = this.tag.getString("Source");
+                            if (!source.isEmpty()) {
+                                if (enabled) {
+                                    prop.getAbilityHandler().removeKillOrder(source, abilityName);
+                                } else {
+                                    prop.getAbilityHandler().addKillOrder(source, abilityName);
+                                }
+                            }
+                        } else {
+                            IAbilityInterface ability = prop.getAbilityHandler().getAbility(abilityName);
+                            if (ability != null) {
+                                if (this.tag.hasKey(abilityName)) {
+                                    ability.loadStorage(this.tag.getCompoundTag(abilityName));
+                                }
+                                if (this.tag.hasKey(DATA_TAG)) {
+                                    ability.loadDataCache(this.tag.getCompoundTag(DATA_TAG));
+                                }
+                            }
                         }
                     }
-                }
+                });
             }
-        });
+        }
     }
 
     @Override

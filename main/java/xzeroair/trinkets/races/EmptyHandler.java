@@ -30,7 +30,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
 
     @Override
     protected void addNewAttributes() {
-        final EntityRace previous = this.getProperties().getPreviousRace().getRace();
+        final EntityRace previous = this.getProperties().getPreviousRaceCache().getRace();
         double d = Double.parseDouble(Reference.DECIMALFORMAT.format(1D - this.TransformationProgress()));
         if (d != 0) {
             String[] raceAttributes = previous.getRaceInformation().getAttributes();
@@ -56,12 +56,12 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
                 SizeHandler.setSize(this.getEntity(), this.getHeight(), this.getWidth());
                 this.updateSize();
                 this.addNewAttributes();
-                this.eyeHeightHandler();
+                this.modifyEyeHeight();
             } else {
                 if (this.firstTransformUpdate) {
-                    final EntityRace previous = this.getProperties().getPreviousRace().getRace();
+                    final EntityRace previous = this.getProperties().getPreviousRaceCache().getRace();
                     AttributeHelper.removeAttributesByUUID(this.getEntity(), previous.getUUID());
-                    this.eyeHeightHandler();
+                    this.modifyEyeHeight();
                     this.firstTransformUpdate = false;
                 }
             }

@@ -45,7 +45,7 @@ public abstract class TransformationEvent extends Event {
 //		}
 
         public RaceUpdateEvent(EntityLivingBase entity, EntityProperties properties, RaceCache cache) {
-            super(entity, properties, properties.getCurrentRace());
+            super(entity, properties, properties.getCurrentRaceCache());
             this.setChanged(!this.getCurrentRaceCache().compare(cache));
             this.setNewRaceCache(cache);
             this.setNewElement(cache.getPrimaryElement());

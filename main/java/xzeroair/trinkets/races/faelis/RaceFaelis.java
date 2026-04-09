@@ -26,6 +26,7 @@ import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.abilities.AbilityClimbing;
+import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
@@ -59,6 +60,7 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
 
     @Override
     public void startTransformation() {
+        this.addAbility(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
         this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }

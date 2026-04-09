@@ -23,12 +23,12 @@ public class TrinketElementsConfig {
     @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_DAMAGE_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_DAMAGE_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_DAMAGE)
-    public String[] Fire_Damage = {"inFire", "onFire", "lava", "hotFloor"};
+    public String[] Fire_Damage = {"inFire", "onFire", "lava", "hotFloor", "dragon_fire"};
 
     @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_DAMAGE_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_DAMAGE_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_DAMAGE)
-    public String[] Ice_Damage = {};
+    public String[] Ice_Damage = {"dragon_ice", "ooze", "cold_fire"};
 
     @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_DAMAGE_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_DAMAGE_COMMENT)
@@ -38,7 +38,7 @@ public class TrinketElementsConfig {
     @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_DAMAGE_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_DAMAGE_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_DAMAGE)
-    public String[] Lightning_Damage = {};
+    public String[] Lightning_Damage = {"lightningBolt", "locks.shock", "dragon_lightning"};
 
     @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_DAMAGE_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_DAMAGE_COMMENT)

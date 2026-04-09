@@ -75,7 +75,7 @@ public class RaceFood extends FoodBase implements IRaceProvider {
         super.onFoodEaten(stack, worldIn, player);
         if (TrinketsConfig.SERVER.FOOD.EFFECTS) {
             Capabilities.getEntityProperties(player, prop -> {
-                prop.setImbuedRace(new RaceCache(this.getRace(), this.getPrimaryElement(stack)));
+                prop.setImbuedRaceCache(new RaceCache(this.getRace(), this.getPrimaryElement(stack)));
             });
         }
         this.setCooldown(20);

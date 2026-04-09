@@ -94,7 +94,6 @@ xat.ability.immunity_fire.tooltip1=§2Grants §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6Immune to Fire and Lava
 xat.ability.immunity_fire.tooltip3=$gui:§6Cannot be set on Fire
 xat.ability.immunity_fire.tooltip4=$gui:Cannot be Harmed by most Fire based attacks
-xat.ability.immunity_fire.tooltip5=$gui:§6Immune to §c$smouldering:
 
 xat.ability.immunity_ice.name=§bIce §6Immunity
 xat.ability.immunity_ice.tooltip1=§2Grants §b$potion:
@@ -102,8 +101,6 @@ xat.ability.immunity_ice.tooltip2=$gui:§6Cannot be Harmed by most Ice based att
 
 xat.ability.immunity_lightning.name=§cLightning §6Immunity
 xat.ability.immunity_lightning.tooltip1=§2Grants §d$potion:
-xat.ability.immunity_lightning.tooltip2=@paralysis:
-xat.ability.immunity_lightning.paralysis=§6Immunity to §dParalysis
 
 xat.ability.immunity_dark.name=§8Dark §6Immunity
 xat.ability.immunity_dark.tooltip1=$heal:§6Heal from §8$wither:
@@ -168,7 +165,6 @@ xat.ability.ender_queen.tooltip5=§3$tpchance: §5Chance to Teleport from indire
 xat.ability.ender_queen.tooltip6=$waterhurts:§cWeakness to water
 xat.ability.ender_queen.tooltip7=$gui:$chest:§6Remotely Access your Enderchest by pressing §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
 xat.ability.ender_queen.tooltip8=$gui:§6Teleport Randomly nearby when pressing §r<§e*tpkey:§r> §3$tpcost: MP
-xat.ability.ender_queen.tooltip9=§6Prevents $instability:
 xat.ability.ender_queen.teleport=§2Teleportation $toggle:
 xat.ability.ender_queen.teleport.failed=§cSomething Prevents you from moving through the void.
 

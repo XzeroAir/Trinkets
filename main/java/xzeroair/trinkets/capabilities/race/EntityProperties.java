@@ -179,7 +179,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         final Counter counter = this.getTickHandler().getCounter("TempRace");
         if (counter != null) {
             if (counter.Tick()) {
-                this.setPotionRace(null);
+                this.setPotionRaceCache(null);
                 this.getTickHandler().removeCounter("TempRace");
             }
         }
@@ -200,7 +200,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 }
                 // Get the players current race handler and information.
                 // Start the end transformation event for the current race.
-                final TransformationEvent.EndTransformation end = new EndTransformation(this.getEntity(), this, this.getCurrentRace());
+                final TransformationEvent.EndTransformation end = new EndTransformation(this.getEntity(), this, this.getCurrentRaceCache());
                 // Bug? Supposed to only continue if the event is not canceled.
                 if (MinecraftForge.EVENT_BUS.post(end)) {
                     return;
@@ -208,8 +208,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 final EntityRacePropertiesHandler oldProperties = this.getRaceHandler();
                 // RUn all the end race transformation methods and remove attributes.
                 oldProperties.onTransformEnd();
-                AttributeHelper.removeAttributesByUUID(this.getEntity(), this.getPreviousRace().getRace().getUUID(), oldProperties.getRace().getUUID());
-                this.setPreviousRace(this.getCurrentRace());
+                AttributeHelper.removeAttributesByUUID(this.getEntity(), this.getPreviousRaceCache().getRace().getUUID(), oldProperties.getRace().getUUID());
+                this.setPreviousRaceCache(this.getCurrentRaceCache());
                 final Entity mount = this.getEntity().getRidingEntity();
                 if (mount instanceof AlphaWolf) {
                     this.getEntity().dismountRidingEntity();
@@ -224,7 +224,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 this.properties = newRace.getRace().getRaceHandler(this.getEntity(), this, newRace);
                 this.properties.loadNBTData(this.getTag());
 
-                this.setCurrent(newRace);
+                this.setCurrentRaceCache(newRace);
                 this.properties.onTransform();
 
                 if (newRace.isTemporary() && newRace.getDuration() > 0) {
@@ -233,7 +233,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 }
 
                 // Trigger start Transformation event. Maybe add a cancel scenario?
-                final TransformationEvent.StartTransformation start = new StartTransformation(this.getEntity(), this, this.getCurrentRace());
+                final TransformationEvent.StartTransformation start = new StartTransformation(this.getEntity(), this, this.getCurrentRaceCache());
                 MinecraftForge.EVENT_BUS.post(start);
                 this.scheduleResync();
             }
@@ -268,7 +268,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
     private RaceCache getEntityRaceWithDetails() {
         this.setFake(true);
-        final RaceCache potionRace = this.getPotionRace();
+        final RaceCache potionRace = this.getPotionRaceCache();
         if ((potionRace != null) && !potionRace.getRace().isNone()) {
             return potionRace;
         }
@@ -277,11 +277,11 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             return new RaceCache(((IRaceProvider) provider.getItem()).getRace(), Capabilities.getTrinketProperties(provider, Elements.NEUTRAL, (prop, ele) -> prop.getElementalAttributes().getPrimaryElement()));
         }
         this.setFake(false);
-        final RaceCache imbuedRace = this.getImbuedRace();
+        final RaceCache imbuedRace = this.getImbuedRaceCache();
         if ((imbuedRace != null) && !imbuedRace.getRace().isNone()) {
             return imbuedRace;
         }
-        return this.getOriginalRace();
+        return this.getOriginalRaceCache();
     }
 
     public ItemStack getRaceProvider() {
@@ -399,7 +399,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
      */
     @Override
     public void onLogoff() {
-        if (this.getCurrentRace().compareRace(EntityRaces.goblin)) {
+        if (this.getCurrentRaceCache().compareRace(EntityRaces.goblin)) {
             if (this.getEntity().getRidingEntity() instanceof AlphaWolf) {
                 this.getEntity().dismountRidingEntity();
             }
@@ -496,11 +496,15 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         return this.properties;
     }
 
-    public RaceCache getPreviousRace() {
+    public EntityRace getPreviousRace() {
+        return this.getPreviousRaceCache().getRace();
+    }
+
+    public RaceCache getPreviousRaceCache() {
         return this.previousRace;
     }
 
-    public void setPreviousRace(RaceCache cache) {
+    public void setPreviousRaceCache(RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
@@ -513,11 +517,15 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
      * Get the current race of the Entity
      *
      */
-    public RaceCache getCurrentRace() {
+    public RaceCache getCurrentRaceCache() {
         return this.currentRace;
     }
 
-    public void setCurrent(RaceCache cache) {
+    public EntityRace getCurrentRace() {
+        return this.getCurrentRaceCache().getRace();
+    }
+
+    public void setCurrentRaceCache(RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
@@ -530,11 +538,11 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
      * Get the current race of the entity given by eating a transformation item.
      *
      */
-    public RaceCache getImbuedRace() {
+    public RaceCache getImbuedRaceCache() {
         return this.imbuedRace;
     }
 
-    public void setImbuedRace(@Nullable RaceCache cache) {
+    public void setImbuedRaceCache(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
@@ -543,11 +551,11 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         }
     }
 
-    public RaceCache getPotionRace() {
+    public RaceCache getPotionRaceCache() {
         return this.potionRace;
     }
 
-    public void setPotionRace(@Nullable RaceCache cache) {
+    public void setPotionRaceCache(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
@@ -556,16 +564,20 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         }
     }
 
+    public EntityRace getOriginalRace() {
+        return this.getOriginalRaceCache().getRace();
+    }
+
     /**
      * Get the entities original race. By default, this is EntityRaces.none.
      * This changes based on if the race selection menu is enabled.
      *
      */
-    public RaceCache getOriginalRace() {
+    public RaceCache getOriginalRaceCache() {
         return this.originalRace;
     }
 
-    public void setOriginalRace(@Nullable RaceCache cache) {
+    public void setOriginalRaceCache(@Nullable RaceCache cache) {
         if (cache == null) {
             cache = new RaceCache();
         }
@@ -728,10 +740,10 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     @Override
     public NBTTagCompound saveToNBT(NBTTagCompound compound) {
         this.getClientInfo().saveInfo(compound);
-        compound.setTag("OriginalRace", this.getOriginalRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("ImbuedRace", this.getImbuedRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("PreviousRace", this.getPreviousRace().saveToNBT(new NBTTagCompound()));
-        compound.setTag("CurrentRace", this.getCurrentRace().saveToNBT(new NBTTagCompound()));
+        compound.setTag("OriginalRace", this.getOriginalRaceCache().saveToNBT(new NBTTagCompound()));
+        compound.setTag("ImbuedRace", this.getImbuedRaceCache().saveToNBT(new NBTTagCompound()));
+        compound.setTag("PreviousRace", this.getPreviousRaceCache().saveToNBT(new NBTTagCompound()));
+        compound.setTag("CurrentRace", this.getCurrentRaceCache().saveToNBT(new NBTTagCompound()));
         compound.setInteger("heightValue", this.getHeightValue());
         compound.setInteger("widthValue", this.getWidthValue());
         compound.setFloat("default_height", this.getDefaultHeight());
