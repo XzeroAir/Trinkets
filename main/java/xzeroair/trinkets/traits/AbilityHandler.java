@@ -673,7 +673,7 @@ public class AbilityHandler {
         public final boolean compare(String otherSource, @Nonnull SlotInformation otherInfo, @Nonnull IAbilityInterface otherAbility) {
             boolean isRaceAbility = this.getInfo().getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
             boolean isOtherRaceAbility = otherInfo.getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
-            boolean check = isRaceAbility && !isOtherRaceAbility;
+            boolean check = (isRaceAbility && !isOtherRaceAbility) || (isRaceAbility && isOtherRaceAbility && !this.getSourceID().contentEquals(otherSource));
             boolean sameSource = this.getSourceID().contentEquals(otherSource);
             boolean sameElementRequired = this.getAbility().getRequiredElement() == otherAbility.getRequiredElement();
             boolean sameInfo = this.getInfo().compare(otherInfo);

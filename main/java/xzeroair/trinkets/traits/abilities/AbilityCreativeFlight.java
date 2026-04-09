@@ -4,6 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -17,6 +18,8 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.PotionHelper;
+
+import javax.annotation.Nullable;
 
 public class AbilityCreativeFlight extends Ability implements ITickableAbility, IPotionAbility, IMiningAbility, IToggleAbility {
 
@@ -99,7 +102,7 @@ public class AbilityCreativeFlight extends Ability implements ITickableAbility, 
                 } else {
                     if (this.SELF_ADDED) {
                         this.removeCreativeFlight(player);
-                        final Counter counter = tickHandler.getCounter("fly_timer", 20, true, true, true, true);
+                        final Counter counter = this.tickHandler.getCounter("fly_timer", 20, true, true, true, true);
                         if ((counter != null)) {
                             counter.resetTick();
                         }
@@ -112,9 +115,9 @@ public class AbilityCreativeFlight extends Ability implements ITickableAbility, 
                 if (this.SELF_ADDED && player.capabilities.isFlying) {
                     player.fallDistance = 0F;
                     if (!player.isRiding()) {
-                        final Counter counter = tickHandler.getCounter("fly_timer", 20, true, true, true, true);
+                        final Counter counter = this.tickHandler.getCounter("fly_timer", 20, true, true, true, true);
                         if ((counter != null) && counter.Tick()) {
-                            if (!magic.spendMana(COST)) {
+                            if (!magic.spendMana(this.COST)) {
                                 this.removeCreativeFlight(player);
                             }
                         }
@@ -130,7 +133,7 @@ public class AbilityCreativeFlight extends Ability implements ITickableAbility, 
             final EntityPlayer player = (EntityPlayer) entity;
             this.removeCreativeFlight(player);
         }
-        tickHandler.removeCounter("fly_timer");
+        this.tickHandler.removeCounter("fly_timer");
     }
 
     private void removeCreativeFlight(EntityPlayer player) {
@@ -185,5 +188,21 @@ public class AbilityCreativeFlight extends Ability implements ITickableAbility, 
     @Override
     public IToggleAbility toggleAbility(int value) {
         return this;
+    }
+
+    @Override
+    public void loadStorage(NBTTagCompound compound) {
+        super.loadStorage(compound);
+        if (compound.hasKey("COST")) {
+            this.COST = compound.getFloat("COST");
+        }
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound sendAbilityData() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setFloat("COST", this.COST);
+        return tag;
     }
 }
