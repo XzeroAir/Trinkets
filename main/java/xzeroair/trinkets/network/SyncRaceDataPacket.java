@@ -16,8 +16,6 @@ public class SyncRaceDataPacket extends ThreadSafePacket {
     public SyncRaceDataPacket() {
     }
 
-    private int entityID;
-    private NBTTagCompound tag;
     private boolean sync;
 
     public SyncRaceDataPacket(EntityLivingBase entity, NBTTagCompound tag) {
@@ -56,8 +54,7 @@ public class SyncRaceDataPacket extends ThreadSafePacket {
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
-        final World world = server.player.getEntityWorld();
-        final Entity entity = world.getEntityByID(this.entityID);
+        final Entity entity = server.player;
         Capabilities.getEntityProperties(entity, prop -> {
             prop.loadFromNBT(this.tag);
             if (this.sync) {

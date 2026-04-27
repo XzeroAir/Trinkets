@@ -118,6 +118,7 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
                         wolf.setDead();
                         return true;
                     }
+                    newWolf.setDead();
                 }
             }
         }

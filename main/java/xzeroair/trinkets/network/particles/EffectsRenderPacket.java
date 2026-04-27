@@ -98,14 +98,7 @@ public class EffectsRenderPacket extends ThreadSafePacket {
         final EntityPlayerMP serverPlayer = server.player;
         WorldServer world = serverPlayer.getServerWorld();
         try {
-            Entity entity = serverPlayer.getEntityWorld().getEntityByID(this.entityID);
-            if (entity != null) {
-                if (entity instanceof EntityPlayerMP) {
-                    world = ((EntityPlayerMP) entity).getServerWorld();
-                }
-            } else {
-                entity = serverPlayer;
-            }
+            Entity entity = serverPlayer;
             NetworkHandler.sendToClients(world, new BlockPos(this.x, this.y, this.z), new EffectsRenderPacket(entity, this.x, this.y, this.z, this.x2, this.y2, this.z2, this.color, this.effectID, this.alpha, this.intensity));
         } catch (final Exception e) {
             e.printStackTrace();

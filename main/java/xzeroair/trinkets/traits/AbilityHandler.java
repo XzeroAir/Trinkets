@@ -23,7 +23,6 @@ import xzeroair.trinkets.util.Reference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,33 +32,34 @@ public class AbilityHandler {
 
     public static final String capKey = Reference.MODID + ":abilities";
     private static final String DISABLED_SOURCES = "DisabledSources";
-    public static final String KILL_ORDER = "DISABLED";
-    public static final String REMOVE_KILL_ORDER = "ENABLED";
     private final EntityProperties parentProperties;
     protected Map<String, AbilityHolder> active = new TreeMap<>();
-    protected List<String> removedAbilities = new ArrayList<>();
     protected boolean hasChanged = false;
 
     public AbilityHandler(EntityProperties properties) {
         this.parentProperties = properties;
     }
 
+    // Exposes the active ability map for event handlers and UI code.
     public Map<String, AbilityHolder> getActiveAbilities() {
         return this.active;
     }
 
+    // Registers a batch of non-item abilities with a generic OTHER source context.
     public void registerAbilities(EntityLivingBase entity, String source, @Nonnull List<? extends IAbilityInterface> abilities) {
         for (IAbilityInterface ability : abilities) {
             this.registerAbility(entity, source, new SlotInformation(ItemHandlerType.OTHER), ability);
         }
     }
 
+    // Registers a batch of abilities using the provided source slot information.
     public void registerAbilities(EntityLivingBase entity, String source, SlotInformation info, @Nonnull List<? extends IAbilityInterface> abilities) {
         for (IAbilityInterface ability : abilities) {
             this.registerAbility(entity, source, info, ability);
         }
     }
 
+    // Registers a race ability, replacing any lower-priority source already owning the same ability key.
     public IAbilityInterface registerRaceAbility(EntityLivingBase entity, String source, IAbilityInterface ability) {
         return this.replaceAbility(entity, source, new SlotInformation(ItemHandlerType.RACE), ability);
     }
@@ -74,6 +74,7 @@ public class AbilityHandler {
      * @param ability
      * @return
      */
+    // Adds or replaces an ability when the incoming source is allowed to take ownership of that key.
     public IAbilityInterface replaceAbility(@Nonnull EntityLivingBase entity, String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
         final String key = ability.getRegistryName().toString();
         if (!entity.world.isRemote) {
@@ -106,7 +107,7 @@ public class AbilityHandler {
             this.active.put(key, holder);
             return null;
         } else {
-            if (!value.compare(source, info, ability)) {
+            if (!value.sameAbilityOrigin(source, info, ability)) {
                 value.getAbility().onAbilityRemoved(entity);
                 AbilityHolder holder = new AbilityHolder(source, info, ability);
                 holder.getAbility().setFirstUpdate(true);
@@ -123,6 +124,7 @@ public class AbilityHandler {
     }
 
     @Nullable
+    // Adds an ability only if no source currently owns that ability key.
     public IAbilityInterface registerAbility(@Nonnull EntityLivingBase entity, String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
         final String key = ability.getRegistryName().toString();
         if (!entity.world.isRemote) {
@@ -158,6 +160,7 @@ public class AbilityHandler {
     }
 
     @Nullable
+    // Removes an active ability by registry key and runs its teardown hook.
     public IAbilityInterface removeAbility(String ability) {
         if (this.active.containsKey(ability)) {
             AbilityHolder oldHolder = this.active.remove(ability);
@@ -169,6 +172,7 @@ public class AbilityHandler {
     }
 
     @Nullable
+    // Returns the cached holder for an active ability key, if present.
     public AbilityHolder getAbilityHolder(String ability) {
         if (this.active.containsKey(ability)) {
             return this.active.get(ability);
@@ -177,6 +181,7 @@ public class AbilityHandler {
     }
 
     @Nullable
+    // Returns the active ability instance for the given registry key.
     public IAbilityInterface getAbility(String ability) {
         AbilityHolder holder = this.getAbilityHolder(ability);
         if (holder != null) {
@@ -185,35 +190,34 @@ public class AbilityHandler {
         return null;
     }
 
+    // Drops abilities that were already marked for removal before the main update pass runs.
     public void onUpdatePre(EntityLivingBase entity) {
-//        for (Entry<String, AbilityHolder> entry : active.entrySet()) {
-//            final String key = entry.getKey();
-//            if (this.removedAbilities.contains(key)) {
-//                entry.getValue().getAbility().scheduleRemoval();
-//                this.removedAbilities.remove(key);
-//            }
-//        }
         this.active.values().removeIf(cache -> cache.getAbility().shouldRemove());
     }
 
+    // Runs first-update initialization, ticking, sync, and removal checks for active abilities.
     public void onUpdate(EntityLivingBase entity) {
         for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
-            final String key = entry.getKey();
             final AbilityHolder cache = entry.getValue();
-            final String source = cache.getSourceID();
-            final SlotInformation sourceInfo = cache.getInfo();
             final IAbilityInterface ability = cache.getAbility();
             if (ability.shouldRemove()) {
                 ability.onAbilityRemoved(entity);
             } else {
                 if (ability.isFirstUpdate()) {
-                    this.loadAbilityFromEntityOnFirstUpdate(this.parentProperties.getEntity(), ability);
+                    if (!entity.world.isRemote) {
+                        this.loadAbilityFromEntity(entity, ability);
+                    }
+                    if (ability.shouldRemove() || !ability.isAbilityEnabled()) {
+                        ability.onAbilityRemoved(entity);
+                        ability.setFirstUpdate(false);
+                        continue;
+                    }
                     ability.onAbilityAdded(this.parentProperties.getEntity());
                 }
                 this.processAbility(ability, this.parentProperties.getEntity());
                 if (ability.hasChanged()) {
                     this.saveInfoOnChange(this.parentProperties.getEntity(), ability);
-                    this.sendNBTToPlayerOnChange(this.parentProperties.getEntity(), ability);
+                    this.sendNBTToPlayer(this.parentProperties.getEntity(), ability);
                     ability.setChanged(false);
                 }
                 ability.setFirstUpdate(false);
@@ -227,16 +231,19 @@ public class AbilityHandler {
         }
     }
 
+    // Clears the dirty flag after the handler has finished its tick work.
     public void onUpdatePost(EntityLivingBase entity) {
         if (this.hasChanged) {
             this.hasChanged = false;
         }
     }
 
+    // Reports whether this handler changed during the current update cycle.
     public boolean hasChanged() {
         return this.hasChanged;
     }
 
+    // Dispatches an ability's per-tick behavior based on the interfaces it implements.
     private void processAbility(IAbilityInterface ability, EntityLivingBase entity) {
         try {
             final AbilityHolder holder = this.getAbilityHolder(ability.getRegistryName().toString());
@@ -291,6 +298,7 @@ public class AbilityHandler {
         }
     }
 
+    // Evaluates whether the current source is still valid for the cached ability owner.
     private boolean shouldRemove(@Nonnull Entry<String, AbilityHolder> entry, EntityLivingBase entity) {
         final String key = entry.getKey();
         final AbilityHolder cache = entry.getValue();
@@ -318,14 +326,13 @@ public class AbilityHandler {
                 if (s.isEmpty()) {
                     return true;
                 }
+                boolean sameSource = s.getItem().getRegistryName().toString().contentEquals(sourceInfo.getItemID());
+                if (!sameSource) {
+                    return true;
+                }
 //                final Element raceEle = Capabilities.getEntityProperties(entity, Elements.NEUTRAL, (prop, rtn) -> prop.getCurrentRace().getElement());
                 boolean remove = Capabilities.getTrinketProperties(s, false, (prop, bool) -> {
-                    boolean sameSource = prop.getItem().getRegistryName().toString().contentEquals(sourceInfo.getItemID());
-                    if (sameSource) {
-                        boolean sameInfo = sourceInfo.compare(prop.getSlotInfo());
-                        return !sameInfo;
-                    }
-                    return !sameSource;// || (ability.getRequiredElement() != null && (raceEle != ability.getRequiredElement()));
+                    return !sourceInfo.compare(prop.getSlotInfo());//|| (ability.getRequiredElement() != null && (raceEle != ability.getRequiredElement()));
                 });
                 return remove;
         }
@@ -360,17 +367,19 @@ public class AbilityHandler {
 //}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+    // Transfers active ability ownership from another handler during capability copy operations.
     public void copyFrom(AbilityHandler source, boolean wasDeath, boolean keepInv) {
 
         if (wasDeath) {
 
         } else {
         }
-        this.active = source.active;
+        this.active = new TreeMap<>(source.active);
         this.hasChanged = true;
     }
 
 
+    // Checks whether a specific source is currently disabled for the given ability key.
     public boolean hasKillOrder(String source, String ability) {
         if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return false;
@@ -390,6 +399,7 @@ public class AbilityHandler {
         return disabledSources.hasKey(source) && disabledSources.getBoolean(source);
     }
 
+    // Marks a specific ability source as disabled in persistent capability data.
     public void addKillOrder(String source, String ability) {
         if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return;
@@ -413,6 +423,7 @@ public class AbilityHandler {
         abilityTag.getCompoundTag(DISABLED_SOURCES).setBoolean(source, true);
     }
 
+    // Removes a disabled source marker and notifies clients that the source is enabled again.
     public void removeKillOrder(String source, String ability) {
         if (source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return;
@@ -453,6 +464,7 @@ public class AbilityHandler {
         }
     }
 
+    // Broadcasts a disabled-source update so clients suppress the same ability source locally.
     public void sendKillOrder(EntityLivingBase entity, String source, String ability) {
         if (entity == null || source == null || source.isEmpty() || ability == null || ability.isEmpty()) {
             return;
@@ -468,10 +480,7 @@ public class AbilityHandler {
         }
     }
 
-    private void sendNBTToPlayerOnChange(EntityLivingBase entity, IAbilityInterface ability) {
-        this.sendNBTToPlayer(entity, ability);
-    }
-
+    // Sends per-ability storage and transient sync data to the owner and tracking clients.
     private void sendNBTToPlayer(EntityLivingBase entity, IAbilityInterface ability) {
         World world = entity.getEntityWorld();
         if (world instanceof WorldServer && entity instanceof EntityPlayerMP) {
@@ -494,12 +503,14 @@ public class AbilityHandler {
         }
     }
 
+    // Writes changed ability data back into the owning entity capability on the server.
     private void saveInfoOnChange(EntityLivingBase entity, IAbilityInterface ability) {
         if (!entity.world.isRemote) {
             this.saveInfoToEntity(entity, ability);
         }
     }
 
+    // Persists the current enabled state and saved storage for a single ability source.
     private void saveInfoToEntity(EntityLivingBase entity, IAbilityInterface ability) {
         if (entity == null || ability == null || ability.getRegistryName() == null) {
             return;
@@ -542,12 +553,7 @@ public class AbilityHandler {
         ability.saveStorage(abilityTag);
     }
 
-    public void loadAbilityFromEntityOnFirstUpdate(@Nonnull EntityLivingBase entity, IAbilityInterface ability) {
-        if (!entity.world.isRemote) {
-            this.loadAbilityFromEntity(entity, ability);
-        }
-    }
-
+    // Restores saved storage for an ability and applies kill-order state on first load.
     public void loadAbilityFromEntity(EntityLivingBase entity, IAbilityInterface ability) {
         if (ability == null || ability.getRegistryName() == null) {
             return;
@@ -573,6 +579,7 @@ public class AbilityHandler {
         }
     }
 
+    // Loads a single ability's saved storage from a keyed NBT payload.
     public void loadAbilityFromNBT(@Nonnull IAbilityInterface ability, @Nonnull NBTTagCompound compound) {
         String key = ability.getRegistryName().toString();
         if (compound.hasKey(key)) {
@@ -580,6 +587,7 @@ public class AbilityHandler {
         }
     }
 
+    // Serializes all active ability storage into a dedicated ability compound.
     public NBTTagCompound saveAbilitiesToNBT(@Nonnull NBTTagCompound compound) {
         if (!compound.hasKey(capKey)) {
             compound.setTag(capKey, new NBTTagCompound());
@@ -608,6 +616,7 @@ public class AbilityHandler {
         return compound;
     }
 
+    // Loads saved storage for any active abilities present in the supplied compound.
     public void loadAbilitiesFromNBT(@Nonnull NBTTagCompound compound) {
         if (compound.hasKey(capKey)) {
             final NBTTagCompound tag = compound.getCompoundTag(capKey);
@@ -626,6 +635,7 @@ public class AbilityHandler {
         }
     }
 
+    // Ensures the ability capability tag exists when the parent capability is serialized.
     public NBTTagCompound saveToNBT(@Nonnull NBTTagCompound compound) {
         if (!compound.hasKey(capKey)) {
             compound.setTag(capKey, new NBTTagCompound());
@@ -634,6 +644,7 @@ public class AbilityHandler {
         return compound;
     }
 
+    // Reserved hook for loading handler-level data from the parent capability compound.
     public void loadFromNBT(@Nonnull NBTTagCompound compound) {
         if (compound.hasKey(capKey)) {
             NBTTagCompound tag = compound.getCompoundTag(capKey);
@@ -648,37 +659,60 @@ public class AbilityHandler {
         protected SlotInformation info;
         protected IAbilityInterface ability;
 
+        // Captures the source metadata for a single active ability owner.
         public AbilityHolder(String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
             this.source = source;
             this.info = info;
             this.ability = ability.cacheAbilityHolder(this);
         }
 
+        // Returns the source id that originally registered this ability.
         public final String getSourceID() {
             return this.source;
         }
 
+        // Returns the cached source slot/type information for this ability owner.
         public final SlotInformation getInfo() {
             return this.info;
         }
 
+        // Returns the active ability instance cached by this holder.
         public final IAbilityInterface getAbility() {
             return this.ability;
         }
 
-        public final boolean compare(@Nonnull AbilityHolder other) {
-            return this.compare(other.getSourceID(), other.getInfo(), other.getAbility());
+        // Compares this holder against another holder using the same ownership rules as registration.
+        public final boolean sameAbilityOrigin(@Nonnull AbilityHolder other) {
+            return this.sameAbilityOrigin(other.getSourceID(), other.getInfo(), other.getAbility());
         }
 
-        public final boolean compare(String otherSource, @Nonnull SlotInformation otherInfo, @Nonnull IAbilityInterface otherAbility) {
-            boolean isRaceAbility = this.getInfo().getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
-            boolean isOtherRaceAbility = otherInfo.getHandlerType().compareTo(ItemHandlerType.RACE) == 0;
-            boolean check = (isRaceAbility && !isOtherRaceAbility) || (isRaceAbility && isOtherRaceAbility && !this.getSourceID().contentEquals(otherSource));
+        // Decides whether this holder keeps ownership against an incoming source for the same ability key.
+        public final boolean sameAbilityOrigin(String otherSource, @Nonnull SlotInformation otherInfo, @Nonnull IAbilityInterface otherAbility) {
+            final ItemHandlerType handlerType = this.getInfo().getHandlerType();
+            final ItemHandlerType otherHandlerType = otherInfo.getHandlerType();
+            final boolean isRaceAbility = handlerType == ItemHandlerType.RACE;
+            final boolean isOtherRaceAbility = otherHandlerType == ItemHandlerType.RACE;
             boolean sameSource = this.getSourceID().contentEquals(otherSource);
             boolean sameElementRequired = this.getAbility().getRequiredElement() == otherAbility.getRequiredElement();
-            boolean sameInfo = this.getInfo().compare(otherInfo);
-            boolean isSame = (sameSource && sameElementRequired);
-            return !check || isSame && sameInfo;
+
+            if (isRaceAbility && !isOtherRaceAbility) {
+                return true;
+            }
+            if (!isRaceAbility && isOtherRaceAbility) {
+                return false;
+            }
+            if (handlerType != otherHandlerType) {
+                return true;
+            }
+
+            switch (handlerType) {
+                case RACE:
+                    return sameSource && sameElementRequired;
+                case POTION:
+                    return sameSource;
+                default:
+                    return sameSource && sameElementRequired;
+            }
         }
     }
 }

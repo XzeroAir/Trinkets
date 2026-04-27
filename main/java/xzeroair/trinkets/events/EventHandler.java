@@ -5,6 +5,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -21,9 +23,8 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
-import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
@@ -95,7 +96,6 @@ public class EventHandler extends EventBaseHandler {
                 }
             }
             this.raceHandlerTick(entity);
-            this.effectHandlerTick(entity);
             this.magicHandlerTick(entity);
         }
     }
@@ -127,20 +127,6 @@ public class EventHandler extends EventBaseHandler {
         try {
             //			entity.world.profiler.startSection("xat.magic.tick");
             Capabilities.getMagicStats(entity, MagicStats::onUpdate);
-            //			entity.world.profiler.endSection();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * TODO, Remove self made effects and just use the Potion Effect System.
-     *
-     */
-    private void effectHandlerTick(EntityLivingBase entity) {
-        try {
-            //			entity.world.profiler.startSection("xat.effects.tick");
-            Capabilities.getStatusHandler(entity, StatusHandler::onUpdate);
             //			entity.world.profiler.endSection();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -478,36 +464,32 @@ public class EventHandler extends EventBaseHandler {
             try {
                 final FaelisConfig faelisConfig = TrinketsConfig.SERVER.RACES.FAELIS;
                 if (prop.getCurrentRaceCache().compareRace(EntityRaces.faelis) && faelisConfig.MILK_BONUS) {
-                    final StatusHandler status = Capabilities.getStatusHandler(entity);
-                    if (status != null) {
-                        final String[] milkList = faelisConfig.MILK;
-                        for (final String milk : milkList) {
-                            final String[] itemConfig = milk.split(";");
-                            final String itemString = StringUtils.getStringFromArray(itemConfig, 0);
-                            final String metaString = StringUtils.getStringFromArray(itemConfig, 1);
-                            final String levelString = StringUtils.getStringFromArray(itemConfig, 2);
-                            final String durationString = StringUtils.getStringFromArray(itemConfig, 3);
-                            //							final PotionHolder potion = PotionHelper.getPotionHolder(milk);
-                            //							if (potion.getPotion() != null) {
-                            //
-                            //							}
-                            if (stack.getItem().getRegistryName().toString().equalsIgnoreCase(itemString)) {
-                                final int meta = metaString.isEmpty() ? OreDictionary.WILDCARD_VALUE : Integer.parseInt(metaString);
-                                final int level = levelString.isEmpty() ? 0 : Integer.parseInt(levelString);
-                                final int Iduration = durationString.isEmpty() ? faelisConfig.MILK_BONUS_DURATION : Integer.parseInt(durationString);
-                                if ((meta == OreDictionary.WILDCARD_VALUE) || (stack.getMetadata() == meta)) {
-                                    status.apply(new TrinketStatusEffect("Invigorated", Iduration, level, null));
-                                    if (!entity.world.isRemote) {
-                                        for (final String potID : faelisConfig.MILK_BUFFS) {
-                                            final PotionHolder potion = PotionHelper.getPotionHolder(potID);
-                                            if (potion.getPotion() != null) {
-                                                entity.addPotionEffect(potion.getPotionEffect());
-                                            }
+                    final String[] milkList = faelisConfig.MILK;
+                    for (final String milk : milkList) {
+                        final String[] itemConfig = milk.split(";");
+                        final String itemString = StringUtils.getStringFromArray(itemConfig, 0);
+                        final String metaString = StringUtils.getStringFromArray(itemConfig, 1);
+                        final String levelString = StringUtils.getStringFromArray(itemConfig, 2);
+                        final String durationString = StringUtils.getStringFromArray(itemConfig, 3);
+                        if (stack.getItem().getRegistryName().toString().equalsIgnoreCase(itemString)) {
+                            final int meta = metaString.isEmpty() ? OreDictionary.WILDCARD_VALUE : Integer.parseInt(metaString);
+                            final int level = levelString.isEmpty() ? 0 : Integer.parseInt(levelString);
+                            final int invigoratedDuration = durationString.isEmpty() ? faelisConfig.MILK_BONUS_DURATION : Integer.parseInt(durationString);
+                            if ((meta == OreDictionary.WILDCARD_VALUE) || (stack.getMetadata() == meta)) {
+                                if (!entity.world.isRemote) {
+                                    final Potion invigorated = ModPotionTypes.TrinketPotions.get(ModPotionTypes.invigorated);
+                                    if (invigorated != null) {
+                                        entity.addPotionEffect(new PotionEffect(invigorated, invigoratedDuration, Math.max(0, level), false, false));
+                                    }
+                                    for (final String potID : faelisConfig.MILK_BUFFS) {
+                                        final PotionHolder potion = PotionHelper.getPotionHolder(potID);
+                                        if (potion.getPotion() != null) {
+                                            entity.addPotionEffect(potion.getPotionEffect());
                                         }
                                     }
                                 }
-                                break;
                             }
+                            break;
                         }
                     }
                 }

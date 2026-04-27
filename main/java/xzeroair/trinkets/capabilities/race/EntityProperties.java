@@ -3,6 +3,7 @@ package xzeroair.trinkets.capabilities.race;
 import com.google.common.base.Objects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.api.events.TransformationEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.EndTransformation;
@@ -23,6 +25,7 @@ import xzeroair.trinkets.api.events.TransformationEvent.RaceUpdateEvent;
 import xzeroair.trinkets.api.events.TransformationEvent.StartTransformation;
 import xzeroair.trinkets.attributes.FlyingAttribute;
 import xzeroair.trinkets.attributes.JumpAttribute;
+import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilityEntityBase;
 import xzeroair.trinkets.entity.AlphaWolf;
@@ -91,7 +94,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         this.previousRace = this.originalRace;
         this.currentRace = this.originalRace;
         this.abilities = new AbilityHandler(this);
-        this.properties = this.currentRace.getRace().getRaceHandler(e, this);
+        this.properties = this.currentRace.getRace().getRaceHandler(e, this, this.currentRace);
         this.clientInfo = new ClientInfo();
     }
 
@@ -141,6 +144,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         if (this.sync) {
             this.sync = false;
             this.sendInformationToPlayer(this.getEntity());
+            this.sendHealthStateToPlayer();
             this.scheduleResyncTracking();
         }
         if (this.syncTracking) {
@@ -386,11 +390,12 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     @Override
     public void onJoinWorld() {
         this.sendInformationToPlayer(this.getEntity(), this.saveToNBT(this.getTag()));
+        this.sendHealthStateToPlayer();
     }
 
     @Override
     public void onChangedDimension(int from, int to) {
-
+        this.scheduleResync();
     }
 
     /**
@@ -491,7 +496,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
      */
     public EntityRacePropertiesHandler getRaceHandler() {
         if (this.properties == null) {
-            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this);
+            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this, this.currentRace);
         }
         return this.properties;
     }
@@ -703,6 +708,10 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         this.syncTracking = true;
     }
 
+    private void sendHealthStateToPlayer() {
+        UpdatingAttribute.syncMaxHealthState(this.getEntity(), this.getEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH));
+    }
+
     @Override
     public void copyFrom(@Nonnull EntityProperties source, boolean wasDeath, boolean keepInv) {
         this.first_login = source.first_login;
@@ -729,7 +738,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             this.potionRace = source.potionRace;
             this.heightValue = source.heightValue;
             this.widthValue = source.widthValue;
-            this.properties = source.properties;
+            this.properties = this.currentRace.getRace().getRaceHandler(this.getEntity(), this, this.currentRace);
         }
 
         this.getRaceHandler().copyFrom(source.getRaceHandler(), wasDeath, keepInv);

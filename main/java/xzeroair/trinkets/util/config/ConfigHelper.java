@@ -26,14 +26,14 @@ import java.util.function.Predicate;
 
 public class ConfigHelper {
 
-    private static String nameRegex = "([a-zA-Z0-9_*]{1,})";
-    private static String itemIDRegex = "(" + nameRegex + ":" + nameRegex + ")";
-    private static String materialRegex = "(material" + nameRegex + ")";
-    private static String metaRegex = "(([0-9]*)|([*]))";
-    private static String metaRegexOptional = "(;" + metaRegex + ")?";
-    private static String doubleRegex = "(([-])?([0-9]{1,})([.][0-9]{1,})?)";
-    private static String doubleRegexOptional = "(;" + doubleRegex + ")?";
-    private static String optionalWordRegex = "(;[a-zA-Z]*)?";
+    private static final String nameRegex = "([a-zA-Z0-9_*]{1,})";
+    private static final String itemIDRegex = "(" + nameRegex + ":" + nameRegex + ")";
+    private static final String materialRegex = "(material" + nameRegex + ")";
+    private static final String metaRegex = "(([0-9]*)|([*]))";
+    private static final String metaRegexOptional = "(;" + metaRegex + ")?";
+    private static final String doubleRegex = "(([-])?([0-9]{1,})([.][0-9]{1,})?)";
+    private static final String doubleRegexOptional = "(;" + doubleRegex + ")?";
+    private static final String optionalWordRegex = "(;[a-zA-Z]*)?";
 
     public static String cleanConfigEntry(final String config) {
         if (!config.isEmpty()) {
@@ -265,7 +265,7 @@ public class ConfigHelper {
 
         public ConfigTreasureObject(String configEntry) {
             super(configEntry);
-            color = 16766720;
+            this.color = 16766720;
             this.initValues(this.getObjectArgs());
         }
 
@@ -273,21 +273,21 @@ public class ConfigHelper {
             String Color = StringUtils.getStringFromArray(args, 0);
             if (!Color.isEmpty()) {
                 try {
-                    color = ColorHelper.getColorFromString(Color.replace("*", OreDictionaryCompat.wildcard + ""));
+                    this.color = ColorHelper.getColorFromString(Color.replace("*", OreDictionaryCompat.wildcard + ""));
                 } catch (Exception e) {
                     Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
-                    color = 16766720;
+                    this.color = 16766720;
                 }
             }
         }
 
         public final int getColor() {
-            return color;
+            return this.color;
         }
 
         public String parseTargetName() {
-            return parseTargetName(this).trim();
+            return this.parseTargetName(this).trim();
         }
 
         public String parseTargetName(final ConfigTreasureObject treasure) {
@@ -373,25 +373,25 @@ public class ConfigHelper {
             String Amount = StringUtils.getStringFromArray(args, 0);
             if (!Amount.isEmpty()) {
                 if (Amount.endsWith("%")) {
-                    multiplied = true;
+                    this.multiplied = true;
                 }
                 Amount = Amount.replace("%", "");
                 try {
-                    amount = Float.parseFloat(Amount);
+                    this.amount = Float.parseFloat(Amount);
                 } catch (Exception e) {
                     Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
-                    amount = 0;
+                    this.amount = 0;
                 }
             }
         }
 
         public final float getAmount() {
-            return amount;
+            return this.amount;
         }
 
         public final boolean isMultiplied() {
-            return multiplied;
+            return this.multiplied;
         }
 
     }
@@ -414,8 +414,8 @@ public class ConfigHelper {
 
         @Override
         protected void generateConfigObject(String configEntry) {
-            slotType = "";
-            equipmentType = "";
+            this.slotType = "";
+            this.equipmentType = "";
             configEntry.replaceAll("([\\[\\]\\|,;] ?)", ";").trim();
             final String[] checkArgs = configEntry.split(";", 2);
             final String entry = StringUtils.getStringFromArray(checkArgs, 0);
@@ -437,8 +437,8 @@ public class ConfigHelper {
                 String t = this.getEquipmentType();
                 String s = this.getEquipmentSlot();
                 final String itemType = getItemType(stack).toLowerCase();
-                boolean typeMatch = t.isEmpty() ? true : t.equals("tool") ? (item instanceof ItemTool) || !isValidTools(itemType).isEmpty() : t.equals("armor") ? (item instanceof ItemArmor) || !isValidArmor(itemType).isEmpty() : t.equals(itemType);
-                boolean slotMatch = s.isEmpty() ? true : isValidArmor(itemType).isEmpty();
+                boolean typeMatch = t.isEmpty() || (t.equals("tool") ? (item instanceof ItemTool) || !isValidTools(itemType).isEmpty() : t.equals("armor") ? (item instanceof ItemArmor) || !isValidArmor(itemType).isEmpty() : t.equals(itemType));
+                boolean slotMatch = s.isEmpty() || isValidArmor(itemType).isEmpty();
                 final String regName = item.getRegistryName().toString();
                 boolean regMatch = this.getObjectRegistryName().contentEquals(regName);
                 if (regMatch && typeMatch && slotMatch) {
@@ -487,10 +487,10 @@ public class ConfigHelper {
         private boolean addArmType(String entry) {
             String toolType = isValidArms(entry);
             if (!toolType.isEmpty() || entry.equals("tool")) {
-                equipmentType = entry;
+                this.equipmentType = entry;
                 return true;
             } else {
-                equipmentType = "";
+                this.equipmentType = "";
                 return false;
             }
             //			if (!entry.isEmpty() && entry.matches("([a-zA-Z]{1,})")) {
@@ -517,14 +517,14 @@ public class ConfigHelper {
         private boolean addEquipmentWeight(String entry) {
             if (!entry.isEmpty() && entry.matches(doubleRegex)) {
                 try {
-                    equipmentWeight = Double.parseDouble(entry);
+                    this.equipmentWeight = Double.parseDouble(entry);
                     return true;
                 } catch (Exception e) {
                     Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
                 }
             }
-            equipmentWeight = 0;
+            this.equipmentWeight = 0;
             return false;
         }
 
@@ -627,15 +627,15 @@ public class ConfigHelper {
         }
 
         public String getEquipmentSlot() {
-            return slotType;
+            return this.slotType;
         }
 
         public String getEquipmentType() {
-            return equipmentType;
+            return this.equipmentType;
         }
 
         public double getEquipmentWeight() {
-            return equipmentWeight;
+            return this.equipmentWeight;
         }
     }
 
@@ -661,10 +661,10 @@ public class ConfigHelper {
 
     public static class AttributeEntry {
 
-        private String attribute;
-        private double amount;
-        private int operation;
-        private boolean isSaved;
+        private final String attribute;
+        private final double amount;
+        private final int operation;
+        private final boolean isSaved;
 
         public AttributeEntry(String attribute, double amount, int operation, boolean isSaved) {
             this.attribute = attribute;
@@ -674,24 +674,24 @@ public class ConfigHelper {
         }
 
         public String getAttribute() {
-            return attribute;
+            return this.attribute;
         }
 
         public double getAmount() {
-            return amount;
+            return this.amount;
         }
 
         public int getOperation() {
-            return operation;
+            return this.operation;
         }
 
         public boolean isSaved() {
-            return isSaved;
+            return this.isSaved;
         }
 
         @Override
         public String toString() {
-            return "AttributeEntry [attribute=" + attribute + ", amount=" + amount + ", operation=" + operation + ", isSaved=" + isSaved + "]";
+            return "AttributeEntry [attribute=" + this.attribute + ", amount=" + this.amount + ", operation=" + this.operation + ", isSaved=" + this.isSaved + "]";
         }
 
     }
@@ -712,25 +712,25 @@ public class ConfigHelper {
 
         public ConfigObject(String config) {
             this("minecraft", "air", OreDictionaryCompat.wildcard);
-            originalEntry = config;
+            this.originalEntry = config;
             this.generateConfigObject(config);
         }
 
         public ConfigObject(String modID, String objectID, int meta, String[] args) {
-            originalEntry = modID + ":" + objectID + ";" + meta;
+            this.originalEntry = modID + ":" + objectID + ";" + meta;
             this.modID = modID;
             this.objectID = objectID;
             this.meta = meta;
-            objectType = EntryType.UNKNOWN;
-            objectArgs = args;
+            this.objectType = EntryType.UNKNOWN;
+            this.objectArgs = args;
         }
 
         public final String getModID() {
-            return modID;
+            return this.modID;
         }
 
         public final String getObjectID() {
-            return objectID;
+            return this.objectID;
         }
 
         public final String getObjectRegistryName() {
@@ -738,19 +738,19 @@ public class ConfigHelper {
         }
 
         public final int getMeta() {
-            return meta;
+            return this.meta;
         }
 
         public final EntryType getObjectType() {
-            return objectType;
+            return this.objectType;
         }
 
         public final String[] getObjectArgs() {
-            return objectArgs;
+            return this.objectArgs;
         }
 
         public final String getOriginalEntry() {
-            return originalEntry;
+            return this.originalEntry;
         }
 
         public final boolean isEmpty() {
@@ -782,58 +782,58 @@ public class ConfigHelper {
         }
 
         protected void configureOreDictEntry(String entry, String configArgs) {
-            objectType = EntryType.OREDICTIONARY;
-            modID = "oreDict";
-            objectID = entry;
+            this.objectType = EntryType.OREDICTIONARY;
+            this.modID = "oreDict";
+            this.objectID = entry;
             if (!configArgs.isEmpty()) {
-                objectArgs = configArgs.split(";");
+                this.objectArgs = configArgs.split(";");
             }
         }
 
         protected void configureEntityEntry(String entry, String configArgs) {
-            objectType = EntryType.ENTITY;
+            this.objectType = EntryType.ENTITY;
             if (entry.contains(":")) {
                 final String[] entryArgs = entry.split(":");
                 final String mod = StringUtils.getStringFromArray(entryArgs, 0);
                 final String entity = StringUtils.getStringFromArray(entryArgs, 1);
                 if (!mod.isEmpty()) {
-                    modID = mod;
+                    this.modID = mod;
                 }
                 if (!entity.isEmpty()) {
-                    objectID = entity;
+                    this.objectID = entity;
                 }
             } else {
-                objectID = entry;
+                this.objectID = entry;
             }
             if (!configArgs.isEmpty()) {
-                objectArgs = configArgs.split(";");
+                this.objectArgs = configArgs.split(";");
             }
         }
 
         protected void configureMaterialEntry(String entry, String configArgs) {
-            objectType = EntryType.MATERIAL;
-            modID = "ObjectMaterial";
-            objectID = entry;
+            this.objectType = EntryType.MATERIAL;
+            this.modID = "ObjectMaterial";
+            this.objectID = entry;
             if (!configArgs.isEmpty()) {
-                objectArgs = configArgs.split(";");
+                this.objectArgs = configArgs.split(";");
             }
         }
 
         protected void configureNormalEntry(String entry, String configArgs) {
-            objectType = EntryType.NORMAL;
+            this.objectType = EntryType.NORMAL;
             final String[] itemArgs = entry.split(":");
             final String mod = StringUtils.getStringFromArray(itemArgs, 0);
             final String item = StringUtils.getStringFromArray(itemArgs, 1);
             if (!mod.isEmpty()) {
-                modID = mod;
+                this.modID = mod;
             }
             if (!item.isEmpty()) {
-                objectID = item;
+                this.objectID = item;
             }
             if (mod.equalsIgnoreCase("minecraft") && item.equalsIgnoreCase("potion")) {
-                objectType = EntryType.POTION;
+                this.objectType = EntryType.POTION;
                 if (!configArgs.isEmpty()) {
-                    objectArgs = configArgs.split(";");
+                    this.objectArgs = configArgs.split(";");
                 }
             } else {
                 final String[] args = configArgs.split(";", 2);
@@ -843,7 +843,7 @@ public class ConfigHelper {
                     if (Meta.contentEquals("*")) {
                     } else if (Meta.matches("([0-9]{1,})")) {
                         try {
-                            meta = Math.min(Math.max(Integer.parseInt(Meta), 0), OreDictionaryCompat.wildcard);
+                            this.meta = Math.min(Math.max(Integer.parseInt(Meta), 0), OreDictionaryCompat.wildcard);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -852,18 +852,18 @@ public class ConfigHelper {
                     }
                     String leftoverArgs = StringUtils.getStringFromArray(args, index);
                     if (!leftoverArgs.isEmpty()) {
-                        objectArgs = leftoverArgs.split(";");
+                        this.objectArgs = leftoverArgs.split(";");
                     }
                 }
             }
         }
 
         protected void configureUnknownEntry(String entry, String configArgs) {
-            objectType = EntryType.UNKNOWN;
-            modID = "unknown";
-            objectID = entry;
+            this.objectType = EntryType.UNKNOWN;
+            this.modID = "unknown";
+            this.objectID = entry;
             if (!configArgs.isEmpty()) {
-                objectArgs = configArgs.split(";");
+                this.objectArgs = configArgs.split(";");
             }
         }
 
@@ -885,35 +885,26 @@ public class ConfigHelper {
         }
 
         protected boolean doesPotionMatch(@Nonnull ItemStack stack) {
-            if (this.doesItemMatch(stack)) {
-                return true;
-            }
-            return false;
+            return this.doesItemMatch(stack);
         }
 
         protected boolean doesItemMatch(@Nonnull ItemStack stack) {
             String mod = stack.getItem().getRegistryName().getNamespace();
             String item = stack.getItem().getRegistryName().getPath();
-            if (modID.contentEquals("*") || modID.contentEquals(mod)) {
-                boolean metaMatches = (meta == OreDictionaryCompat.wildcard) || (stack.getMetadata() == meta);
-                if (objectID.contentEquals(item) && metaMatches) {
+            if (this.modID.contentEquals("*") || this.modID.contentEquals(mod)) {
+                boolean metaMatches = (this.meta == OreDictionaryCompat.wildcard) || (stack.getMetadata() == this.meta);
+                if (this.objectID.contentEquals(item) && metaMatches) {
                     return true;
                 }
-                String objectEntry = objectID.replace("*", "");
-                final boolean startWildcard = objectID.startsWith("*");
-                final boolean endWildcard = objectID.endsWith("*");
+                String objectEntry = this.objectID.replace("*", "");
+                final boolean startWildcard = this.objectID.startsWith("*");
+                final boolean endWildcard = this.objectID.endsWith("*");
                 if (startWildcard && endWildcard) {
-                    if (item.contains(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.contains(objectEntry) && metaMatches;
                 } else if (endWildcard) {
-                    if (item.startsWith(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.startsWith(objectEntry) && metaMatches;
                 } else if (startWildcard) {
-                    if (item.endsWith(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.endsWith(objectEntry) && metaMatches;
                 }
             }
             return false;
@@ -922,26 +913,20 @@ public class ConfigHelper {
         protected boolean doesConfigObjectMatch(@Nonnull ConfigObject object) {
             String mod = object.getModID();
             String item = object.getObjectID();
-            if (modID.contentEquals("*") || modID.contentEquals(mod)) {
-                boolean metaMatches = (meta == OreDictionaryCompat.wildcard) || (object.getMeta() == meta);
-                if (objectID.contentEquals(item) && metaMatches) {
+            if (this.modID.contentEquals("*") || this.modID.contentEquals(mod)) {
+                boolean metaMatches = (this.meta == OreDictionaryCompat.wildcard) || (object.getMeta() == this.meta);
+                if (this.objectID.contentEquals(item) && metaMatches) {
                     return true;
                 }
-                String objectEntry = objectID.replace("*", "");
-                final boolean startWildcard = objectID.startsWith("*");
-                final boolean endWildcard = objectID.endsWith("*");
+                String objectEntry = this.objectID.replace("*", "");
+                final boolean startWildcard = this.objectID.startsWith("*");
+                final boolean endWildcard = this.objectID.endsWith("*");
                 if (startWildcard && endWildcard) {
-                    if (item.contains(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.contains(objectEntry) && metaMatches;
                 } else if (endWildcard) {
-                    if (item.startsWith(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.startsWith(objectEntry) && metaMatches;
                 } else if (startWildcard) {
-                    if (item.endsWith(objectEntry) && metaMatches) {
-                        return true;
-                    }
+                    return item.endsWith(objectEntry) && metaMatches;
                 }
             }
             return false;
@@ -949,7 +934,7 @@ public class ConfigHelper {
 
         protected boolean doesOreDictMatch(@Nonnull ItemStack stack) {
             for (final String oreDictionary : OreDictionaryCompat.getOreNames(stack)) {
-                if (oreDictionary.equalsIgnoreCase(objectID)) {
+                if (oreDictionary.equalsIgnoreCase(this.objectID)) {
                     return true;
                 }
             }
@@ -957,7 +942,7 @@ public class ConfigHelper {
         }
 
         protected boolean doesMaterialMatch(@Nonnull ItemStack stack) {
-            String[] checkForType = objectID.split(":");
+            String[] checkForType = this.objectID.split(":");
             String mat = StringUtils.getStringFromArray(checkForType, 0);
             String ItemMaterial = ConfigEquipmentObject.getItemMaterial(stack).toLowerCase();
             return !ItemMaterial.isEmpty() && mat.equalsIgnoreCase(ItemMaterial);

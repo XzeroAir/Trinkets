@@ -183,28 +183,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
     }
 
     public EntityRacePropertiesHandler getRaceHandler(@Nullable EntityLivingBase e, @Nullable EntityProperties properties) {
-        switch (this.name) {
-            case "Fairy":
-                return new RaceFairy(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Dwarf":
-                return new RaceDwarf(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Titan":
-                return new RaceTitan(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Goblin":
-                return new RaceGoblin(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Elf":
-                return new RaceElf(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Faelis":
-                return new RaceFaelis(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Dragon":
-                return new RaceDragon(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Human":
-                return new RaceHuman(e, properties, new RaceCache(EntityRaces.fairy));
-            case "Taurus":
-                return new RaceTaurus(e, properties, new RaceCache(EntityRaces.fairy));
-            default:
-                return new EmptyHandler(e, properties);
-        }
+        return this.getRaceHandler(e, properties, new RaceCache(this));
     }
 
     public EntityRacePropertiesHandler getRaceHandler(@Nullable EntityLivingBase e, @Nullable EntityProperties properties, RaceCache raceCache) {

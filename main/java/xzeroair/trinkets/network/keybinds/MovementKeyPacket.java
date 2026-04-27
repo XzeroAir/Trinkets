@@ -45,7 +45,7 @@ public class MovementKeyPacket extends ThreadSafePacket {
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
-        final Entity entity = server.player.getEntityWorld().getEntityByID(this.entityID);
+        final Entity entity = server.player;
         Capabilities.getEntityProperties(entity, prop -> {
             prop.getKeybindHandler().pressKey(entity, this.key, this.state);
         });

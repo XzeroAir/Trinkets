@@ -136,13 +136,11 @@ public class AbilityGreedyEyes extends Ability implements ITickableAbility, ITog
                 this.cache.clear();
             }
             final ConfigTreasureObject treasure = this.getTreasure(this.getToggleMode());
-            if (treasure == null) {
-                return;
-            } else if (treasure.getObjectRegistryName().contentEquals("*:*")) {
+            if (treasure == null || treasure.isEmpty() || treasure.getObjectRegistryName().contentEquals("*:*")) {
                 return;
             }
-            if (treasure.getObjectType().compareTo(EntryType.BLOCK) == 0 || treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0) {
 //            System.out.println("" + treasure.parseTargetName() + "|" + treasure.getObjectRegistryName() + "|" + treasure.getObjectType());
+            if (treasure.getObjectType().compareTo(EntryType.NORMAL) == 0 || treasure.getObjectType().compareTo(EntryType.BLOCK) == 0 || treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0) {
                 final int i = MathHelper.floor(aabb.minX);
                 final int j = MathHelper.floor(aabb.maxX + 1.0D);
                 final int k = MathHelper.floor(aabb.minY);
@@ -245,7 +243,7 @@ public class AbilityGreedyEyes extends Ability implements ITickableAbility, ITog
                         this.targetTreasure = ConfigTreasureObject.EMPTY;
                         final String message = helper.formatAddVariables(new TextComponentTranslation(this.getTranslationKey() + ".treasurefinder.off").getFormattedText(), new TranslationHelper.OptionEntry("looking", true, helper.toggleCheckTranslation(false)));
                         StringUtils.sendStatusMessageToPlayer(entity, message, true);
-                        this.toggleAbility(false);
+                        this.toggleAbility(-1);
                     }
                 } else {
                     this.IterateBlocks(entity, entity.getPositionVector(), world, aabb);
@@ -397,6 +395,7 @@ public class AbilityGreedyEyes extends Ability implements ITickableAbility, ITog
                     hasTarget = true;
                 }
             }
+            this.targetTreasure = hasTarget ? entry : ConfigTreasureObject.EMPTY;
             if (hasTarget) {
                 for (int i = 0; i < tag.getSize(); i++) {
                     NBTTagCompound blockTag = tag.getCompoundTag(i + "");
@@ -420,7 +419,16 @@ public class AbilityGreedyEyes extends Ability implements ITickableAbility, ITog
         int index = 0;
         for (String entry : treasures) {
             ConfigTreasureObject treasure = new ConfigTreasureObject(entry);
-            boolean existsCheck = treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0 || Block.getBlockFromName(treasure.getObjectRegistryName()) != null;
+            boolean oreDictEntry = treasure.getObjectType().compareTo(EntryType.OREDICTIONARY) == 0;
+            boolean blockEntry = Block.getBlockFromName(treasure.getObjectRegistryName()) != null;
+            boolean entityEntry = false;
+            if (treasure.getObjectType().compareTo(EntryType.ENTITY) == 0) {
+                try {
+                    entityEntry = EntityList.isRegistered(new ResourceLocation(treasure.getObjectRegistryName()));
+                } catch (Exception ignored) {
+                }
+            }
+            boolean existsCheck = oreDictEntry || blockEntry || entityEntry;
             if (!treasure.isEmpty() && existsCheck) {
                 this.TreasureBlocks.put(index, treasure);
                 index++;

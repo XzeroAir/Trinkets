@@ -65,11 +65,10 @@ public class IncreasedReachPacket extends ThreadSafePacket {
         if (!TrinketsConfig.SERVER.MISC.REACH) {
             return;
         }
-        final World world = server.player.getEntityWorld();
-        final Entity entity = world.getEntityByID(this.entityID);
+        final EntityPlayer player = server.player;
+        final World world = player.getEntityWorld();
         final Entity interacted = world.getEntityByID(this.targetEntityID);
-        if ((entity instanceof EntityPlayer) && (interacted != null)) {
-            final EntityPlayer player = (EntityPlayer) entity;
+        if (interacted != null) {
             if (this.hand == 1) {
                 //				final EnumActionResult action = interacted.applyPlayerInteraction(player, new Vec3d(x, y, z), EnumHand.MAIN_HAND);
                 if (!interacted.processInitialInteract(player, EnumHand.OFF_HAND)) {

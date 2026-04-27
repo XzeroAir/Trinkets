@@ -82,7 +82,7 @@ public class AbilityIceBreath extends Ability implements IKeyBindInterface {
             world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
             if (!world.isRemote) {
                 //TODO Have a max life, tick it down, then kill the projectile, use the life to show decide on the look
-                final EntityRangedAttack breath = new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, d2, d3, d4, bcolor).setElement(this.getRequiredElement()).setEffects(this.EFFECTS).setAllowTerrainInteraction(this.INTERACT_WITH_TERRAIN);
+                final EntityRangedAttack breath = new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, bcolor).setElement(this.getRequiredElement()).setEffects(this.EFFECTS).setAllowTerrainInteraction(this.INTERACT_WITH_TERRAIN);
                 breath.setDamage(this.DAMAGE);
                 breath.setPosition(headPosX, headPosY, headPosZ);
                 breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 0.0F);
@@ -138,6 +138,16 @@ public class AbilityIceBreath extends Ability implements IKeyBindInterface {
         }
         if (compound.hasKey("DAMAGE")) {
             this.DAMAGE = compound.getFloat("DAMAGE");
+        }
+    }
+
+    @Override
+    public void loadDataCache(NBTTagCompound tag) {
+        if (tag.hasKey("COST")) {
+            this.COST = tag.getFloat("COST");
+        }
+        if (tag.hasKey("DAMAGE")) {
+            this.DAMAGE = tag.getFloat("DAMAGE");
         }
     }
 

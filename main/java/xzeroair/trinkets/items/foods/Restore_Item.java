@@ -50,8 +50,10 @@ public class Restore_Item extends FoodBase {
 
         stack.shrink(1);
         Capabilities.getEntityProperties(entity, prop -> {
+            if (prop.getImbuedRaceCache().getRace().isNone()) {
+                prop.setOriginalRaceCache(null);
+            }
             prop.setImbuedRaceCache(null);
-//            prop.setOriginalRace(null);
         });
         MagicHelper.refillMana(entity);
         if (TrinketsConfig.SERVER.MAGIC.MAGIC_ITEMS.MAGIC_REAGENT.reagentHarmful) {

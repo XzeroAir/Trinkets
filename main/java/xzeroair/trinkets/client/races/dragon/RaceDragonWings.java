@@ -116,7 +116,7 @@ public class RaceDragonWings implements IRenderModelInterface {
         final float backwardFlap = Math.max(0.0F, -flap);
         final float downFlap = 0.5F + 0.5F * flap;
 
-        final float anchorX = (onGround ? 1.0F : -1.0F) - downFlap * 1.5F;
+        final float anchorX = (isSlim ? 0 : 0.2F) + ((onGround ? 1.0F : -1.0F) - downFlap * 1.5F);
         final float anchorY = onGround ? -2.0F : -3.0F;
 
         final float wingSeparation = (onGround ? 0.0F : 2.0F) + backwardFlap * 0.15F;

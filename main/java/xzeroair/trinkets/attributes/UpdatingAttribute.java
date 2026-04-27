@@ -5,7 +5,9 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityProperties;
+import net.minecraft.network.play.server.SPacketUpdateHealth;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.util.Reference;
@@ -92,25 +94,12 @@ public class UpdatingAttribute {
         }
         if (amount != 0 && existingModifier == null) {
             if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
-                final AttributeModifier modifier = this.createModifier(amount, operation);
-                //					float oldHealth = entity.getHealth();
-                //					float oldMax = entity.getMaxHealth();
-                AttributeInstance.applyModifier(modifier);
-                //					entity.setHealth(oldHealth);
-                //					float newMax = entity.getMaxHealth();
-                //					float newHealth = entity.getHealth();
-                //					float diff = newMax - oldMax;
-                //					if (diff > 0) {
-                //						entity.heal(diff);
-                //					} else {
-                //					}
-                FirstAidCompat.rescale(entity);
-                if (!world.isRemote) {
-                    if (world instanceof WorldServer) {
-                        final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(AttributeInstance));
-                        ((WorldServer) world).getEntityTracker().sendToTrackingAndSelf(entity, packet);
-                    }
+                if (world.isRemote) {
+                    return;
                 }
+                final AttributeModifier modifier = this.createModifier(amount, operation);
+                AttributeInstance.applyModifier(modifier);
+                syncMaxHealthState(entity, AttributeInstance);
             } else {
                 AttributeInstance.applyModifier(this.createModifier(amount, operation));
             }
@@ -131,6 +120,46 @@ public class UpdatingAttribute {
                 entity.stepHeight = (float) AttributeInstance.getBaseValue();
             }
         }
+        if (AttributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
+            if (world.isRemote) {
+                return;
+            }
+            AttributeInstance.removeModifier(this.uuid);
+            syncMaxHealthState(entity, AttributeInstance);
+            return;
+        }
         AttributeInstance.removeModifier(this.uuid);
+    }
+
+    public static void removeModifier(EntityLivingBase entity, IAttributeInstance attributeInstance, UUID uuid) {
+        final World world = entity == null ? null : entity.getEntityWorld();
+        if ((entity == null) || (world == null) || (attributeInstance == null) || (attributeInstance.getModifier(uuid) == null)) {
+            return;
+        }
+        if (attributeInstance.getAttribute() == SharedMonsterAttributes.MAX_HEALTH) {
+            if (world.isRemote) {
+                return;
+            }
+            attributeInstance.removeModifier(uuid);
+            syncMaxHealthState(entity, attributeInstance);
+            return;
+        }
+        attributeInstance.removeModifier(uuid);
+    }
+
+    public static void syncMaxHealthState(EntityLivingBase entity, IAttributeInstance attributeInstance) {
+        final World world = entity == null ? null : entity.getEntityWorld();
+        if ((entity == null) || (world == null) || world.isRemote || (attributeInstance == null)) {
+            return;
+        }
+        FirstAidCompat.rescale(entity);
+        if (world instanceof WorldServer) {
+            final SPacketEntityProperties packet = new SPacketEntityProperties(entity.getEntityId(), Collections.singleton(attributeInstance));
+            ((WorldServer) world).getEntityTracker().sendToTrackingAndSelf(entity, packet);
+        }
+        if (entity instanceof EntityPlayerMP) {
+            final EntityPlayerMP player = (EntityPlayerMP) entity;
+            player.connection.sendPacket(new SPacketUpdateHealth(player.getHealth(), player.getFoodStats().getFoodLevel(), player.getFoodStats().getSaturationLevel()));
+        }
     }
 }

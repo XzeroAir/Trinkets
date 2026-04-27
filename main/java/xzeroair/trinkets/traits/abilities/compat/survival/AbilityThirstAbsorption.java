@@ -10,7 +10,7 @@ import xzeroair.trinkets.util.config.abilities.external.survival.ConfigAbilitySu
 public class AbilityThirstAbsorption extends AbilitySurvivalMod implements ITickableAbility {
 
     private final ConfigAbilitySurvivalThirstAbsorption CONFIG;
-    protected float AMOUNT;
+    protected int AMOUNT;
     protected int FREQUENCY;
 
     public AbilityThirstAbsorption() {
@@ -28,7 +28,7 @@ public class AbilityThirstAbsorption extends AbilitySurvivalMod implements ITick
     @Override
     public void tickAbility(EntityLivingBase entity) {
         if (!entity.world.isRemote && entity.isInWater() && entity.ticksExisted % FREQUENCY == 0) {
-            SurvivalCompat.addThirst(entity, 1, 0);
+            SurvivalCompat.addThirst(entity, this.AMOUNT, 0);
         }
     }
 

@@ -14,7 +14,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
-import xzeroair.trinkets.client.events.ScreenOverlayEvents;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.traits.abilities.base.AbilityRaceSpecific;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -178,20 +177,20 @@ public class AbilityStampede extends AbilityRaceSpecific {
             if ((entity instanceof EntityPlayer) && entity.world.isRemote) {
                 if (entity.ticksExisted % 4 == 0) {
                     entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.ENTITY_POLAR_BEAR_STEP, SoundCategory.PLAYERS, 0.3F, (float) StringUtils.getAccurateDouble((Math.min(0.4F + (0.6F * multi), 1F))));
-                    ScreenOverlayEvents.instance.SyncCost(realCost);
                 }
                 entity.setVelocity(0, entity.motionY, 0);
                 entity.setPosition(this.prev_posx, entity.posY, this.prev_posz);
                 entity.velocityChanged = true;
             }
+            magic.syncToManaCostToHud(realCost);
             if (realCost == mp) {
                 return false;
             }
         } else {
             if ((entity instanceof EntityPlayer) && entity.world.isRemote) {
                 entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.ENTITY_ZOMBIE_PIG_ANGRY, SoundCategory.PLAYERS, 0.4F, 0.2F);
-                ScreenOverlayEvents.instance.SyncCost(realCost);
             }
+            magic.syncToManaCostToHud(realCost);
             return false;
         }
         return def;
@@ -231,8 +230,8 @@ public class AbilityStampede extends AbilityRaceSpecific {
             counter.setLength(this.maxChargeTicks);
         }
         this.resetCharge();
-        if (entity.world.isRemote) {
-            ScreenOverlayEvents.instance.SyncCost(0);
+        if (entity instanceof EntityLivingBase) {
+            Capabilities.getMagicStats(entity, magic -> magic.syncToManaCostToHud(0));
         }
     }
 

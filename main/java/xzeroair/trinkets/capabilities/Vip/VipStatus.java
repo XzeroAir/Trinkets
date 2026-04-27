@@ -155,6 +155,7 @@ public class VipStatus extends CapabilityEntityPlayerBase<VipStatus, EntityPlaye
     @Override
     public void copyFrom(@Nonnull VipStatus source, boolean wasDeath, boolean keepInv) {
         this.status = source.status;
+        this.quotes = new ArrayList<>(source.quotes);
     }
 
     @Override
