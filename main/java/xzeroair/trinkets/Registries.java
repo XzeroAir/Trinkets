@@ -2,6 +2,7 @@ package xzeroair.trinkets;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -109,6 +110,12 @@ public class Registries {
         event.getRegistry().registerAll(ModBlocks.Flowers.BLOCKS.toArray(new Block[0]));
         Trinkets.LOGGER.info("Registering Placeable Blocks");
         event.getRegistry().registerAll(ModBlocks.Placeables.BLOCKS.toArray(new Block[0]));
+    }
+
+    @SubscribeEvent
+    public static void registerPotionEffects(RegistryEvent.Register<Potion> event) {
+        Trinkets.LOGGER.info("Registering Internal Potion Effects");
+        ModPotionTypes.registerPotionEffects();
     }
 
     @SubscribeEvent

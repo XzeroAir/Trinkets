@@ -231,7 +231,7 @@ public class CommandMain extends CommandBase {
                                         element = args[4].toLowerCase(Locale.ENGLISH);
                                         Element e = Element.getByNameOrId(element);
                                         if (e != null) {
-                                            capability.setOriginalRaceCache(new RaceCache(r, e));
+                                            capability.setImbuedRaceCache(new RaceCache(r, e));
                                             break;
                                         }
                                     }

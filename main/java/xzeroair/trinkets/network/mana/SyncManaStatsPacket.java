@@ -20,9 +20,6 @@ public class SyncManaStatsPacket extends ThreadSafePacket {
     public SyncManaStatsPacket() {
     }
 
-    private int entityID;
-    private NBTTagCompound tag;
-
     @Override
     public void fromBytes(ByteBuf buf) {
         this.entityID = buf.readInt();

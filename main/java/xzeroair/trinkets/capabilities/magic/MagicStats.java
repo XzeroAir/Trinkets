@@ -35,6 +35,7 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
 
     private double manaUpdateTickRate = 0;
     private double manaRegenTimeout = 0;
+    private float lastSyncedManaCost = Float.NaN;
 
     private final UpdatingAttribute MANA_BONUS;
 
@@ -107,7 +108,7 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
         }
         if (this.sync) {
             this.sync = false;
-            this.refillMana(); // this only triggers when changing dimension from the end to the overworld, or when the player dies
+            this.sendInformationToPlayer(); // defer a snapshot sync without mutating the copied mana state
         }
     }
 
@@ -146,13 +147,16 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
         if (!manaEnabled || isCreative) {
             return true;
         }
-        if (cost <= 0 && !this.getEntity().world.isRemote) {
+        if (!Float.isFinite(cost) || cost < 0F) {
+            return false;
+        }
+        if (cost == 0F) {
             return true;
-        } else if ((cost > 0) && (cost <= this.getMana())) {
+        } else if (cost <= this.getMana()) {
             this.setMana(this.mana - cost);
             this.setManaRegenTimeout();
             return true;
-        } else if ((cost > this.getMana())) {
+        } else {
             StringUtils.sendStatusMessageToPlayer(this.getEntity(), "No MP", true);
         }
         return false;
@@ -267,7 +271,11 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
 
     public void syncToManaCostToHud(float cost) {
         if ((this.getEntity() instanceof EntityPlayer) && !this.getEntity().world.isRemote) {
-            NetworkHandler.sendTo(new SyncManaCostToHudPacket(cost), (EntityPlayerMP) this.getEntity());
+            final float roundedCost = Math.round(cost * 1000.0F) / 1000.0F;
+            if (Float.compare(this.lastSyncedManaCost, roundedCost) != 0) {
+                this.lastSyncedManaCost = roundedCost;
+                NetworkHandler.sendTo(new SyncManaCostToHudPacket(roundedCost), (EntityPlayerMP) this.getEntity());
+            }
         }
     }
 

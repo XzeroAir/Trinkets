@@ -11,6 +11,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.races.IRaceProvider;
@@ -64,6 +65,16 @@ public class TrinketRaceBase extends AccessoryBase implements IRaceProvider {
     @Override
     public String[] getAttributeConfig() {
         return this.getAttributes().getAttributes();
+    }
+
+    @Override
+    public String[] getAttributeConfig(ItemStack stack) {
+        final EntityRace race = this.getRace();
+        if (race == null) {
+            return this.getAttributeConfig();
+        }
+        final Element element = this.getPrimaryElement(stack);
+        return race.getRaceHandler(null, null, new RaceCache(race, element)).getAttributes();
     }
 
     @Override

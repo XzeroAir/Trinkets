@@ -88,7 +88,7 @@ public class ParticleGreed extends Particle {
         if (i <= 15) {
             final float f = (i % 16) / 16.0F;
             final float f1 = f + 0.0625f;
-            final float f2 = (float) i / 16 / 16.0F;
+            final float f2 = 0F;//i / 16 / 16.0F;
             final float f3 = f2 + 0.0625f;
             //float f4 effects size/scale
             final float f4 = 0.25f;//2.0F * this.size;

@@ -7,12 +7,10 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import xzeroair.trinkets.api.TrinketHelper;
@@ -183,11 +181,6 @@ public class SyncItemDataPacket extends ThreadSafePacket {
 
     @Override
     public void handleServerSafe(@Nonnull NetHandlerPlayServer server) {
-        final EntityPlayerMP serverPlayer = server.player;
-        final WorldServer world = serverPlayer.getServerWorld();
-        final Entity entity = world.getEntityByID(this.entityID);
-        if ((entity instanceof EntityLivingBase)) {
-            this.handlePacket((EntityLivingBase) entity, Side.SERVER);
-        }
+        this.handlePacket(server.player, Side.SERVER);
     }
 }

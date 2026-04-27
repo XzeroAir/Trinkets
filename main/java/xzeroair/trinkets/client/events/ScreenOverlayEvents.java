@@ -136,6 +136,9 @@ public class ScreenOverlayEvents {
     }
 
     private void setCost(float cost) {
-        this.manaCost = cost;
+        if (this.manaCost != cost) {
+            this.manaCost = cost;
+            this.resetCounter();
+        }
     }
 }

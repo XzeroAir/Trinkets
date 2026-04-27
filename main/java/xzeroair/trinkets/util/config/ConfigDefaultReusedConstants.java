@@ -4,6 +4,21 @@ public class ConfigDefaultReusedConstants {
 
     public static String[] EMPTY_STRING_ARRAY = {};
 
+    public static String[] TREASURE_BLOCKS_DECIMAL = new String[]{
+            //@formatter:off
+            "oreCoal;4605510",
+            "oreIron;16764057",
+            "oreGold;16766720",
+            "oreLapis;2515356",
+            "oreRedstone;11546150",
+            "oreDiamond;59135",
+            "oreEmerald;65357",
+            "oreQuartz;15461355",
+            "minecraft:chest;*;16766720",
+            "minecraft:chest_minecart;16766720"
+            //@formatter:on
+    };
+
     public static String[] DEFAULT_HEAVY_ARMOR = {
             //@formatter:off
             "minecraft:chainmail_helmet;*;0.01",

@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.enums.BowScalingMode;
@@ -39,6 +40,8 @@ import java.util.TreeMap;
 
 public class AbilitySkilledArcher extends Ability implements ITickableAbility, IBowAbility, IAttackAbility {
 
+    private static final boolean DEBUG_LOGGING = false;
+
     protected TreeMap<String, ConfigHelper.ConfigEquipmentObject> BowWeights = new TreeMap<>();
 
     protected ConfigAbilitySkilledArcher CONFIG;
@@ -46,22 +49,15 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     private final int MAX_SHOT_WINDOW = 10;
     protected boolean drawnBow = false;
     protected boolean drawingBow = false;
-    protected boolean isUsingABow = false;
     protected boolean released = false;
     protected boolean hitPending = false;
     protected boolean crit = false;
-    protected boolean explosion = false;
     protected boolean usedMana = false;
     protected boolean usedFullCost = false;
     protected boolean isSneaking = false;
 
-    protected int heldTicks, waitTicks, distanceTicks, defaultDrawTime;
-    protected float bowWeight, drawWeight, defaultDrawWeight, damageMultiplier;
-
-    private static final String TAG_MULT = "chargedShotMultiplier";
-    private static final String TAG_WEIGHT = "chargedShotWeight";
-    private static final String TAG_CRIT = "chargedShotCrit";
-    private static final String TAG_FULL = "chargedShotFullCost";
+    protected int waitTicks, defaultDrawTime;
+    protected float drawWeight, defaultDrawWeight, damageMultiplier;
 
     public AbilitySkilledArcher() {
         this(TrinketsConfig.SERVER.ABILITIES.SKILLED_ARCHER);
@@ -88,28 +84,94 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         return charge;
     }
 
+    private void logUseTick(EntityLivingBase entity, int duration, float charge, float baseCost, float hudCost, float mana) {
+        if (!DEBUG_LOGGING) {
+            return;
+        }
+        Trinkets.LOGGER.info(
+                "[SkilledArcherDebug][UseTick][{}] duration={}, ticksUsed={}, chargeCurve={}, baseCost={}, hudCost={}, mana={}, sneaking={}, remote={}",
+                entity.getName(),
+                duration,
+                72000 - duration,
+                charge,
+                baseCost,
+                hudCost,
+                mana,
+                this.isSneaking,
+                entity.world.isRemote
+        );
+    }
+
+    private void logLooseArrowPre(EntityPlayer player, int chargeTicks, float charge, float pounds) {
+        if (!DEBUG_LOGGING) {
+            return;
+        }
+        Trinkets.LOGGER.info(
+                "[SkilledArcherDebug][LooseArrow-Pre][{}] eventCharge={}, releaseChargeCurve={}, bowWeight={}, sneaking={}, remote={}",
+                player.getName(),
+                chargeTicks,
+                charge,
+                pounds,
+                player.isSneaking(),
+                player.world.isRemote
+        );
+    }
+
+    private void logLooseArrowMana(EntityPlayer player, int chargeTicks, float manaCost, float mana, float ratio, float manaSpent, float charge) {
+        if (!DEBUG_LOGGING) {
+            return;
+        }
+        Trinkets.LOGGER.info(
+                "[SkilledArcherDebug][LooseArrow-Mana][{}] eventCharge={}, manaCost={}, manaBefore={}, ratio={}, manaSpent={}, releaseCharge={}, drawWeight={}, crit={}, remote={}",
+                player.getName(),
+                chargeTicks,
+                manaCost,
+                mana,
+                ratio,
+                manaSpent,
+                charge,
+                this.drawWeight,
+                this.crit,
+                player.world.isRemote
+        );
+    }
+
+    private void logLooseArrowSpend(EntityPlayer player, boolean spent, float manaAfter, boolean fullCost) {
+        if (!DEBUG_LOGGING) {
+            return;
+        }
+        Trinkets.LOGGER.info(
+                "[SkilledArcherDebug][LooseArrow-Spend][{}] spent={}, manaAfter={}, usedFullCost={}",
+                player.getName(),
+                spent,
+                manaAfter,
+                fullCost
+        );
+    }
+
+    private void logDamage(DamageSource source, EntityLivingBase target, float baseDamage, float drawScale, float shotMultiplier, float finalMultiplier, float finalDamage) {
+        if (!DEBUG_LOGGING) {
+            return;
+        }
+        Trinkets.LOGGER.info(
+                "[SkilledArcherDebug][Damage][{} -> {}] baseDamage={}, drawWeight={}, drawScale={}, shotMultiplier={}, finalMultiplier={}, finalDamage={}, crit={}, usedMana={}, usedFullCost={}",
+                source.getTrueSource() != null ? source.getTrueSource().getName() : "unknown",
+                target.getName(),
+                baseDamage,
+                this.drawWeight,
+                drawScale,
+                shotMultiplier,
+                finalMultiplier,
+                finalDamage,
+                this.crit,
+                this.usedMana,
+                this.usedFullCost
+        );
+    }
+
     @Override
     public void tickAbility(EntityLivingBase entity) {
         if (!(entity instanceof EntityPlayer)) return;
-//        if (shotPending) {
-//            shotTicks++;
-//            if (shotTicks > MAX_SHOT_WINDOW) {
-//                shotPending = false;
-//                reset();
-//            }
-//        }
-//        ItemStack stack = entity.getActiveItemStack();
-//        boolean usingBow = entity.isHandActive() && !stack.isEmpty();
-//        if (!usingBow) {
-//            reset();
-//            return;
-//        }
-//        boolean isBow = isUsingABow;
-//        if (!isBow) {
-//            reset();
-//            return;
-//        }
-//
 
         if (entity.isSneaking()) {
             if (!this.isSneaking) {
@@ -145,11 +207,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
     @Override
     public int onItemUseTick(EntityLivingBase entity, ItemStack stack, int duration) {
         if (!this.drawingBow) {
-//            reset();
             return duration;
-        }
-        if (!this.isUsingABow) {
-            this.isUsingABow = true;
         }
 
         float charge = this.getChargeCurve(72000 - duration);
@@ -159,6 +217,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
             final MagicStats magic = Capabilities.getMagicStats(entity);
             if (magic != null) {
                 final float Cost = MathHelper.clamp(ManaCost * (charge * 10), 0, magic.getMana());
+                this.logUseTick(entity, duration, charge, ManaCost, Cost, magic.getMana());
                 magic.syncToManaCostToHud(Cost);
             }
         }
@@ -178,8 +237,6 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
 
     @Override
     public void onItemUseStop(EntityLivingBase entity, ItemStack stack, int duration) {
-//        if (!charging) return;
-        this.isUsingABow = false;
         this.drawingBow = false;
         this.drawnBow = false;
     }
@@ -193,10 +250,10 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         EntityPlayer player = event.getEntityPlayer();
         World world = player.world;
         int chargeTicks = event.getCharge();
-        float charge = this.getChargeCurve(72000 - chargeTicks);
-        float c = this.getChargeCurve(chargeTicks);
-        this.drawWeight = pounds * c;
-        this.crit = c >= 1F;
+        float charge = this.getChargeCurve(chargeTicks);
+        this.logLooseArrowPre(player, chargeTicks, charge, pounds);
+        this.drawWeight = pounds * charge;
+        this.crit = charge >= 1F;
 
         float scale = this.CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
         if (!this.released) {
@@ -210,11 +267,14 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                         float mana = magic.getMana();
                         float ratio = Math.min(1F, mana / manaCost);
                         float manaSpent = manaCost * ratio;
+                        this.logLooseArrowMana(player, chargeTicks, manaCost, mana, ratio, manaSpent, charge);
 
                         /* Base bonus from mana usage */
                         scale += ratio;
 
-                        if (magic.spendMana(manaSpent)) {
+                        boolean spent = magic.spendMana(manaSpent);
+                        this.logLooseArrowSpend(player, spent, magic.getMana(), ratio >= 1F);
+                        if (spent) {
                             this.usedMana = true;
                             this.usedFullCost = ratio >= 1F;
                         }
@@ -234,71 +294,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
             this.waitTicks = 0;
             this.released = true;
         }
-
-
-//        event.setCanceled(true);
-
-
-//        spawnChargedArrow(player, world, event.getBow(), chargeTicks);
-//        reset();
     }
-
-//    private void spawnChargedArrow(EntityPlayer player, @Nonnull World world, ItemStack bow, int chargeTicks) {
-//
-//        if (world.isRemote || CHARGE_SHOT_MAX_DRAW_WEIGHT <= 0F) return;
-//
-//        boolean infinite = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, bow) > 0;
-//
-//        ItemStack ammo = findAmmo(player);
-//
-//        if (ammo.isEmpty() && !infinite) return;
-//
-//        if (ammo.isEmpty()) {
-//            ammo = new ItemStack(Items.ARROW);
-//        }
-//
-//        ItemArrow itemarrow = (ItemArrow) (ammo.getItem() instanceof ItemArrow ? ammo.getItem() : Items.ARROW);
-//
-//        EntityArrow arrow = itemarrow.createArrow(world, ammo, player);
-//        arrow.shootingEntity = player;
-//
-//        this.applyArrowVelocity(arrow, player, chargeTicks, CHARGE_SHOT_MAX_DRAW_WEIGHT);
-//
-//        if (critReady) {
-//            arrow.setIsCritical(true);
-//        }
-//
-//        int power = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, bow);
-//        if (power > 0) {
-//            arrow.setDamage(arrow.getDamage() + power * 0.5D + 0.5D);
-//        }
-//
-//        int punch = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
-//        if (punch > 0) {
-//            arrow.setKnockbackStrength(punch);
-//        }
-//
-//        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow) > 0) {
-//            arrow.setFire(100);
-//        }
-//
-//        NBTTagCompound data = arrow.getEntityData();
-//        data.setFloat(TAG_MULT, damageMultiplier);
-//        data.setFloat(TAG_WEIGHT, drawWeight);
-//        data.setBoolean(TAG_CRIT, critReady);
-//        data.setBoolean(TAG_FULL, fullManaBoost);
-//
-//        bow.damageItem(1, player);
-//
-//        if (!infinite) {
-//            ammo.shrink(1);
-//            if (ammo.isEmpty()) {
-//                player.inventory.deleteStack(ammo);
-//            }
-//        }
-//
-//        world.spawnEntity(arrow);
-//    }
 
     public float getBowWeight(@Nonnull ItemStack stack) {
         if (!stack.isEmpty()) {
@@ -327,37 +323,6 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         return this.CONFIG.DEFAULT_WEIGHT;
     }
 
-//    private float getVanillaVelocity(int charge) {
-//        float f = charge / 20.0F;
-//        f = (f * f + f * 2.0F) / 3.0F;
-//
-//        if (f > 1.0F) {
-//            f = 1.0F;
-//        }
-//
-//        return f;
-//    }
-
-//    private ItemStack findAmmo(@Nonnull EntityPlayer player) {
-//
-//        if (isArrow(player.getHeldItem(EnumHand.OFF_HAND))) return player.getHeldItem(EnumHand.OFF_HAND);
-//        if (isArrow(player.getHeldItem(EnumHand.MAIN_HAND))) return player.getHeldItem(EnumHand.MAIN_HAND);
-//
-//        for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-//            ItemStack itemstack = player.inventory.getStackInSlot(i);
-//
-//            if (isArrow(itemstack)) {
-//                return itemstack;
-//            }
-//        }
-//
-//        return ItemStack.EMPTY;
-//    }
-
-//    private boolean isArrow(@Nonnull ItemStack stack) {
-//        return stack.getItem() instanceof ItemArrow;
-//    }
-
     @Override
     public void arrowImpact(@Nonnull ProjectileImpactEvent.Arrow event) {
         EntityArrow arrow = event.getArrow();
@@ -376,9 +341,12 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         if (!(source.getImmediateSource() instanceof EntityArrow)) return dmg;
         EntityArrow arrow = (EntityArrow) source.getImmediateSource();
 
-        float mult = this.damageMultiplier;
         float weight = this.drawWeight;
-        float scaledDamage = this.applyArrowDamage(dmg * this.damageMultiplier, this.drawWeight);
+        float drawScale = this.getDamageScale(this.drawWeight);
+        float shotMultiplier = Math.max(this.damageMultiplier, this.CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI);
+        float finalMultiplier = drawScale * shotMultiplier;
+        float scaledDamage = dmg * finalMultiplier;
+        this.logDamage(source, target, dmg, drawScale, shotMultiplier, finalMultiplier, scaledDamage);
 
         if (scaledDamage > 0 && this.crit && this.usedFullCost && this.CONFIG.CHARGE_SHOT_EXPLODES) {
             float strength = this.getExplosionStrength(weight);
@@ -431,7 +399,7 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
                 scale = velocity * velocity;
                 break;
         }
-        return scale * this.CONFIG.CHARGE_SHOT_DAMAGE_MULTI;
+        return Math.max(scale, this.CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI);
     }
 
     public float getExplosionStrength(float drawWeight) {
@@ -441,45 +409,28 @@ public class AbilitySkilledArcher extends Ability implements ITickableAbility, I
         return base + factor * maxBonus;
     }
 
-//    public void applyArrowVelocity(EntityArrow arrow, EntityPlayer player, int chargeTicks, float drawWeight) {
-//        float vanillaVelocity = getVanillaVelocity(chargeTicks);
-//        float velocityScale = getVelocityScale(drawWeight);
-//        float finalVelocity = vanillaVelocity * 3.0F * velocityScale;
-//        arrow.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, finalVelocity, 1.0F);
-//    }
-
     public float applyArrowDamage(float baseDamage, float drawWeight) {
         float damageScale = this.getDamageScale(drawWeight);
         return baseDamage * damageScale;
     }
 
-//    public float getArmorPenetration(float drawWeight) {
-//        float factor = getWeightFactor(drawWeight);
-//        return Math.min(0.35F, factor * 0.35F);
-//    }
+    public float getFinalDamageMultiplier(float drawWeight, float shotMultiplier) {
+        return this.getDamageScale(drawWeight) * Math.max(shotMultiplier, this.CONFIG.CHARGE_SHOT_MIN_DAMAGE_MULTI);
+    }
 
     public BowScalingMode getScalingMode() {
         return this.CONFIG.SCALING_MODE;
     }
 
-    private boolean arrowReleased() {
-        return false;
-    }
-
     private void reset() {
-        this.heldTicks = 0;
         this.waitTicks = 0;
-        this.distanceTicks = 0;
-        this.bowWeight = 0F;
         this.drawWeight = 0F;
         this.damageMultiplier = 0F;
         this.drawnBow = false;
         this.drawingBow = false;
-        this.isUsingABow = false;
         this.released = false;
         this.hitPending = false;
         this.crit = false;
-        this.explosion = false;
         this.usedMana = false;
         this.usedFullCost = false;
     }

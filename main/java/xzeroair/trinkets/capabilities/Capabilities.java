@@ -17,7 +17,6 @@ import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.container.TrinketContainerHandler;
 import xzeroair.trinkets.util.Reference;
 
@@ -40,9 +39,6 @@ public class Capabilities {
 
         // MAGIC
         registerNewCap(MagicStats.class, new CapabilityStorage<MagicStats>());
-
-        // STATUS EFFECTS
-        registerNewCap(StatusHandler.class, new CapabilityStorage<StatusHandler>());
 
         // VIP STATUS COSMETICS
         registerNewCap(VipStatus.class, new CapabilityStorage<VipStatus>());
@@ -72,24 +68,6 @@ public class Capabilities {
 
     public static <R> R getTEProperties(TileEntity tileEntity, R ret, BiFunction<TileEntityProperties, R, R> func) {
         return getCapabilityWithReturn(tileEntity, TILE_ENTITY_PROPERTIES, ret, func);
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    @CapabilityInject(StatusHandler.class)
-    public static Capability<StatusHandler> STATUS_HANDLER;
-
-    @Nullable
-    public static StatusHandler getStatusHandler(Entity entity) {
-        return getCapabilityWithConsumer(entity, STATUS_HANDLER, null);
-    }
-
-    @Nullable
-    public static StatusHandler getStatusHandler(Entity entity, Consumer<StatusHandler> consumer) {
-        return getCapabilityWithConsumer(entity, STATUS_HANDLER, consumer);
-    }
-
-    public static <R> R getStatusHandler(Entity entity, R ret, BiFunction<StatusHandler, R, R> func) {
-        return getCapabilityWithReturn(entity, STATUS_HANDLER, ret, func);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -6,13 +6,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.client.ConstantsTextureResourceLocation;
 import xzeroair.trinkets.items.base.BasePotion;
+import xzeroair.trinkets.items.potions.BleedPotion;
 import xzeroair.trinkets.items.potions.IceResistance;
+import xzeroair.trinkets.items.potions.InvigoratedPotion;
 import xzeroair.trinkets.items.potions.LightningResistance;
+import xzeroair.trinkets.items.potions.ParalysisPotion;
 import xzeroair.trinkets.items.potions.PotionObject;
 import xzeroair.trinkets.items.potions.TransformationPotion;
 import xzeroair.trinkets.races.EntityRace;
@@ -32,6 +36,9 @@ public class ModPotionTypes {
     public static final String restore = "restorative";
     public static final String iceResist = "ice_resistance";
     public static final String lightningResist = "lightning_resistance";
+    public static final String bleed = "bleed";
+    public static final String paralysis = "paralysis";
+    public static final String invigorated = "invigorated";
 
     public static final String dragon = TrinketsRegistryNames.ModRaces.DRAGON;
     public static final String dragon_fire = TrinketsRegistryNames.ModRaces.DRAGON + "_" + TrinketsRegistryNames.ModElements.FIRE;
@@ -43,40 +50,71 @@ public class ModPotionTypes {
     public static HashMap<String, PotionObject> TrinketPotionObjects = new HashMap();//new ArrayList<>();
     public static HashMap<String, PotionObject> TrinketRacePotionObjects = new HashMap();//new ArrayList<>();
 
-    /*
-     * Base Potions
-     */
+    // Registers only the Potion effect instance and skips PotionType/brewing registration.
+    public static Potion registerPotionEffect(String potionName, int color, int duration, boolean isBadEffect) {
+        return registerPotionEffect(new BasePotion(potionName, color, duration, isBadEffect));
+    }
 
+    // Registers only the Potion effect instance for the given namespace.
+    public static Potion registerPotionEffect(String modid, String potionName, int color, int duration, boolean isBadEffect) {
+        return registerPotionEffect(new BasePotion(modid, potionName, color, duration, isBadEffect));
+    }
+
+    // Effect-only registration path used when gameplay needs a Potion without creating PotionTypes.
+    public static Potion registerPotionEffect(Potion potion) {
+        ForgeRegistries.POTIONS.register(potion);
+        final boolean isInternal = potion.getRegistryName() != null && potion.getRegistryName().getNamespace().contentEquals(Reference.MODID);
+        if (isInternal) {
+            TrinketPotions.put(potion.getRegistryName().getPath(), potion);
+        }
+        return potion;
+    }
+
+    // Registers internal gameplay effects that should exist without creating PotionTypes or brewing recipes.
+    public static void registerPotionEffects() {
+        registerPotionEffect(new BleedPotion(bleed, 0, 8912896, true));
+        registerPotionEffect(new ParalysisPotion(paralysis, 0, 12648447, true));
+        registerPotionEffect(new InvigoratedPotion(invigorated, 0, 16309159, false));
+    }
+
+    // Creates a base PotionObject that will later register both a Potion effect and PotionType data.
     protected static PotionObject createBasePotion(String potionName, int color, int duration, Ingredient craftingIngredient) {
         return createBasePotion(potionName, color, duration, false, craftingIngredient);
     }
 
+    // Creates a base PotionObject with explicit bad-effect behavior.
     protected static PotionObject createBasePotion(String potionName, int color, int duration, boolean isBadEffect, Ingredient craftingIngredient) {
         return createBasePotion(potionName, color, duration, duration * 3, isBadEffect, craftingIngredient);
     }
 
+    // Creates a base PotionObject with a custom extended PotionType duration.
     protected static PotionObject createBasePotion(String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
         return createBasePotion(potionName, color, duration, extendedDuration, false, craftingIngredient);
     }
 
+    // Full internal helper for creating a base PotionObject and its paired PotionTypes.
     protected static PotionObject createBasePotion(String potionName, int color, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
         return createBasePotion(Reference.MODID, potionName, color, duration, extendedDuration, isBadEffect, craftingIngredient);
     }
 
+    // Creates a PotionObject around a new BasePotion without manually supplying an extended duration.
     public static PotionObject createBasePotion(String modid, String potionName, int color, int duration, boolean isBadEffect, Ingredient craftingIngredient) {
         final Potion potion = new BasePotion(potionName, color, duration, isBadEffect);
         return getBasePotionObject(potion, modid, potionName, color, duration, craftingIngredient);
     }
 
+    // Creates a PotionObject around a new BasePotion with an explicit extended duration.
     public static PotionObject createBasePotion(String modid, String potionName, int color, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
         final Potion potion = new BasePotion(potionName, color, duration, isBadEffect);
         return getBasePotionObject(potion, modid, potionName, color, duration, extendedDuration, craftingIngredient);
     }
 
+    // Wraps an existing Potion in a PotionObject so it can register PotionTypes and recipes.
     public static PotionObject getBasePotionObject(Potion potionProduct, String modid, String potionName, int color, int duration, Ingredient craftingIngredient) {
         return getBasePotionObject(potionProduct, modid, potionName, color, duration, duration * 3, craftingIngredient);
     }
 
+    // Shared constructor path for base PotionObjects that should be tracked by this mod.
     public static PotionObject getBasePotionObject(Potion potionProduct, String modid, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
         final PotionObject obj = new PotionObject(potionProduct, modid, potionName, color, duration, extendedDuration, craftingIngredient);
         final boolean isInternal = modid.contentEquals(Reference.MODID);
@@ -86,31 +124,34 @@ public class ModPotionTypes {
         return obj;
     }
 
-    /*
-     *
-     */
+    // Creates a derived PotionObject brewed from another PotionType using a new BasePotion effect.
     protected static PotionObject createCompoundPotion(PotionType craftingBase, String potionName, int color, int duration, Ingredient craftingIngredient) {
         final Potion potion = new BasePotion(potionName, color, duration, false);
         return createCompoundPotion(potion, craftingBase, Reference.MODID, potionName, color, duration, duration * 3, craftingIngredient);
     }
 
+    // Creates a derived PotionObject with a custom extended duration.
     protected static PotionObject createCompoundPotion(PotionType craftingBase, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
         final Potion potion = new BasePotion(potionName, color, duration, false);
         return createCompoundPotion(potion, craftingBase, Reference.MODID, potionName, color, duration, extendedDuration, craftingIngredient);
     }
 
+    // Creates a derived PotionObject from an existing Potion using the default extended duration.
     protected static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String potionName, int color, int duration, Ingredient craftingIngredient) {
         return createCompoundPotion(potionProduct, craftingBase, Reference.MODID, potionName, color, duration, duration * 3, craftingIngredient);
     }
 
+    // Creates a derived PotionObject from an existing Potion with explicit durations.
     protected static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
         return createCompoundPotion(potionProduct, craftingBase, Reference.MODID, potionName, color, duration, extendedDuration, craftingIngredient);
     }
 
+    // Public helper for cross-mod or external potion registrations that still need PotionTypes.
     public static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String modid, String potionName, int color, int duration, Ingredient craftingIngredient) {
         return createCompoundPotion(potionProduct, craftingBase, modid, potionName, color, duration, duration * 3, craftingIngredient);
     }
 
+    // Shared constructor path for brewed PotionObjects created from an existing base PotionType.
     public static PotionObject createCompoundPotion(Potion potionProduct, PotionType craftingBase, String modid, String potionName, int color, int duration, int extendedDuration, Ingredient craftingIngredient) {
         final PotionObject obj = new PotionObject(potionProduct, craftingBase, modid, potionName, color, duration, extendedDuration, craftingIngredient);
         final boolean isInternal = modid.contentEquals(Reference.MODID);
@@ -120,14 +161,17 @@ public class ModPotionTypes {
         return obj;
     }
 
+    // Creates a race transformation PotionObject using the default extended duration.
     public static PotionObject createRacePotion(EntityRace race, Element element, PotionType craftingBase, int duration, Ingredient craftingIngredient) {
         return createRacePotion(race, element, craftingBase, duration, duration * 3, craftingIngredient);
     }
 
+    // Creates a race transformation PotionObject with explicit extended duration.
     public static PotionObject createRacePotion(EntityRace race, Element element, PotionType craftingBase, int duration, int extendedDuration, Ingredient craftingIngredient) {
         return createRacePotion(race, element, craftingBase, duration, extendedDuration, false, craftingIngredient);
     }
 
+    // Creates a transformation potion effect plus PotionTypes for a race and optional element variant.
     public static PotionObject createRacePotion(EntityRace race, Element element, PotionType craftingBase, int duration, int extendedDuration, boolean isBadEffect, Ingredient craftingIngredient) {
         final String modid = race.getRegistryName().getNamespace().toString();
         final String name = race.getRegistryName().getPath().toString() + (element.equals(Elements.NEUTRAL) ? "" : "_" + element.getName());
@@ -138,6 +182,7 @@ public class ModPotionTypes {
         return obj;
     }
 
+    // Generates and registers all brewed potion content owned by this mod.
     public static void registerPotionTypes() {
 
         Trinkets.LOGGER.info("Generating Potions");
@@ -166,6 +211,7 @@ public class ModPotionTypes {
         Trinkets.LOGGER.info("Finished Generating Potions");
     }
 
+    // Parses the configured catalyst string into a brewing Ingredient.
     private static Ingredient getCatalyst(String catalyst) {
         final String[] itemConfig = catalyst.replace(";", ":").split(":");
         final String modIDString = StringUtils.getStringFromArray(itemConfig, 0);

@@ -88,6 +88,11 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 
     @Override
     public int brokeBlock(EntityLivingBase entity, World world, IBlockState state, BlockPos pos, int expToDrop) {
+        if (world.isRemote || !(entity instanceof EntityPlayer)) {
+            return expToDrop;
+        }
+
+        final EntityPlayer player = (EntityPlayer) entity;
         final ActivationMethod method = CONFIG.MINING_EXTENDED;
         if (method == ActivationMethod.NEVER || expToDrop <= 0) {
             return expToDrop;
@@ -97,36 +102,36 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
         if (!(method == ActivationMethod.ALWAYS || sneaking || standing)) {
             return expToDrop;
         }
-        for (final String s : CONFIG.MINING_EXTENDED_BLACKLIST) {
-            ConfigObject object = new ConfigObject(s);
-            if (object.doesBlockMatchEntry(state)) {
-                return expToDrop;
-            }
+        if (this.isBlacklisted(state)) {
+            return expToDrop;
         }
-        final ItemStack heldItemStack = entity instanceof EntityPlayer ? ((EntityPlayer) entity).inventory.getCurrentItem() : entity.getActiveItemStack();
+        final ItemStack heldItemStack = player.inventory.getCurrentItem();
         final Block block = state.getBlock();
         final String neededTool = block.getHarvestTool(state);
         final ItemStack toolUsed = this.getHarvestTool(neededTool, heldItemStack);
         if (BlockHelperUtil.canToolHarvestBlock(toolUsed, state)) {
             if (BlockHelperUtil.isToolEffective(toolUsed, state)) {
-                final ImmutableList<BlockPos> list = BlockHelperUtil.getBlockList(toolUsed, world, (EntityPlayer) entity, pos, 3, 3, 3, checkPos -> {
-                    boolean skip = false;
-                    for (final String s : CONFIG.MINING_EXTENDED_BLACKLIST) {
-                        ConfigObject object = new ConfigObject(s);
-                        if (object.doesBlockMatchEntry(world.getBlockState(pos))) {
-                            skip = true;
-                        }
-                    }
-                    return !skip;
-                });
+                final ImmutableList<BlockPos> list = BlockHelperUtil.getBlockList(toolUsed, world, player, pos, 3, 3, 3, checkPos -> !this.isBlacklisted(world.getBlockState(checkPos)));
                 for (BlockPos ePos : list) {
-                    BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, ePos, true);
+                    if (BlockHelperUtil.canBreakBlock(toolUsed, world, player, pos, ePos)) {
+                        BlockHelperUtil.breakBlock(player, toolUsed, world, state, pos, ePos, true);
+                    }
                 }
-                BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false);
+                BlockHelperUtil.breakBlock(player, toolUsed, world, state, pos, pos, false);
                 return 0;
             }
         }
         return expToDrop;
+    }
+
+    protected boolean isBlacklisted(IBlockState state) {
+        for (final String s : CONFIG.MINING_EXTENDED_BLACKLIST) {
+            final ConfigObject object = new ConfigObject(s);
+            if (object.doesBlockMatchEntry(state)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ItemStack getHarvestTool(String needed, ItemStack heldTool) {

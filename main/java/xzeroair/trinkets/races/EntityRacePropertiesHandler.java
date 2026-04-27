@@ -298,7 +298,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     public void onTick() {
         this.updateSize();
         if (this.isTransforming() || this.isTransformed()) {
-            SizeHandler.setSize(this.entity, this.getHeight(), this.getWidth());
+            SizeHandler.setSizeForEntity(this.entity, this.getHeight(), this.getWidth());
             this.modifyEyeHeight();
         }
         if (this.isTransforming()) {
@@ -524,6 +524,9 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         final boolean isNormal = this.getRace().isNone();
         if (!isNormal) {
             this.transformationProgress = source.transformationProgress;
+            this.healthBeforeTransformation = source.healthBeforeTransformation;
+            this.maxHealthBeforeTransformation = source.maxHealthBeforeTransformation;
+            this.firstTransformUpdate = source.firstTransformUpdate;
             if (this.getRaceCache().compareRace(source.getRaceCache())) {
                 this.showTraits = source.showTraits;
                 this.traitPrimaryColor = source.traitPrimaryColor;

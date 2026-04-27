@@ -2,6 +2,10 @@ package xzeroair.trinkets.util.helpers;
 
 public class ColorHelper {
 
+    private static final int MAX_RGB_COLOR = 0xFFFFFF;
+    private static final int MAX_DECIMAL_COLOR_LENGTH = String.valueOf(MAX_RGB_COLOR).length();
+    private static final int MAX_HEX_COLOR_LENGTH = 6;
+
     public static String getHexFromRGB(int r, int g, int b) {
         final int decimal = getDecimalFromRGB(r, g, b);
         return convertDecimalColorToHexadecimal(decimal);
@@ -76,22 +80,7 @@ public class ColorHelper {
     }
 
     public static int convertHexToDecimal(String color) {
-        if (color == null || color.isEmpty()) {
-            return 0;
-        }
-
-        color = color.trim();
-
-        try {
-            if (color.startsWith("#")) {
-                return Integer.parseInt(color.substring(1), 16);
-            }
-
-            return Integer.parseInt(color); // decimal only
-
-        } catch (NumberFormatException ignored) {
-            return 0;
-        }
+        return getColorFromString(color);
     }
 
     public static int getColorFromString(String color) {
@@ -105,22 +94,49 @@ public class ColorHelper {
         }
 
         try {
-            // #RRGGBB or #RGB (optional, depending on your needs)
-            if (color.matches("^#?[0-9a-fA-F]+$")) {
-                String hex = color.startsWith("#") ? color.substring(1) : color;
+            if (color.contains("#")) {
+                final String hex = sanitizeHexColor(color);
+                if (hex.isEmpty()) {
+                    return 0;
+                }
+
                 return Integer.parseInt(hex, 16);
             }
 
-            // decimal
-            if (color.matches("^[0-9]+$")) {
-                return Integer.parseInt(color);
+            final String decimal = sanitizeDecimalColor(color);
+            if (decimal.isEmpty()) {
+                return 0;
             }
 
+            final int value = Integer.parseInt(decimal);
+            return value <= MAX_RGB_COLOR ? value : 0;
         } catch (NumberFormatException ignored) {
-            ignored.printStackTrace();
+            return 0;
         }
+    }
 
-        return 0;
+    private static String sanitizeHexColor(String color) {
+        final char[] sanitized = new char[Math.min(color.length(), MAX_HEX_COLOR_LENGTH)];
+        int length = 0;
+        for (int i = 0; i < color.length() && length < MAX_HEX_COLOR_LENGTH; i++) {
+            final char character = color.charAt(i);
+            if (Character.digit(character, 16) != -1) {
+                sanitized[length++] = character;
+            }
+        }
+        return length > 0 ? new String(sanitized, 0, length) : "";
+    }
+
+    private static String sanitizeDecimalColor(String color) {
+        final char[] sanitized = new char[Math.min(color.length(), MAX_DECIMAL_COLOR_LENGTH)];
+        int length = 0;
+        for (int i = 0; i < color.length() && length < MAX_DECIMAL_COLOR_LENGTH; i++) {
+            final char character = color.charAt(i);
+            if (Character.isDigit(character)) {
+                sanitized[length++] = character;
+            }
+        }
+        return length > 0 ? new String(sanitized, 0, length) : "";
     }
 
     public static class ColorObject {

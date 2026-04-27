@@ -14,7 +14,6 @@ import xzeroair.trinkets.network.keybinds.MovementKeyPacket;
 import xzeroair.trinkets.network.mana.SyncManaCostToHudPacket;
 import xzeroair.trinkets.network.mana.SyncManaStatsPacket;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
-import xzeroair.trinkets.network.status.StatusEffectPacket;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.network.vip.VipStatusPacket;
 import xzeroair.trinkets.util.Reference;
@@ -36,10 +35,7 @@ public class NetworkHandler extends BasicNetworkWrapper {
         this.registerPacket(SyncRaceDataPacket.class);
 
         // ITEM DATA
-        this.registerPacket(SyncItemDataPacket.class);
-
-        // STATUS EFFECTS
-        this.registerPacket(StatusEffectPacket.class);
+        this.registerPacketClient(SyncItemDataPacket.class);
 
         // MAGIC STATS
         this.registerPacketClient(SyncManaStatsPacket.class);
@@ -55,16 +51,15 @@ public class NetworkHandler extends BasicNetworkWrapper {
         this.registerPacket(EffectsRenderPacket.class);
 
         // MISC
-        this.registerPacket(VipStatusPacket.class);
+        this.registerPacketClient(VipStatusPacket.class);
 
         this.registerPacket(OpenTrinketGui.class);
-//        this.registerPacket(OpenRaceSelectionScreen.class);
 
         this.registerPacketClient(PacketConfigSync.class);
         // TODO Make sure to do something with the Chat Message Packet, its probably unnecessary
         this.registerPacketClient(GenericChatMessage.class);
-        this.registerPacket(AbilityCacheSyncPacket.class);
-        this.registerPacket(UpdateDataForTrinketPacket.class);
+        this.registerPacketClient(AbilityCacheSyncPacket.class);
+        this.registerPacketClient(UpdateDataForTrinketPacket.class);
 
     }
 

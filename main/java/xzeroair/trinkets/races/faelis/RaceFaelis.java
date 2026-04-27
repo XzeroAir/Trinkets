@@ -23,11 +23,11 @@ import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.client.races.IRenderRaceHandler;
 import xzeroair.trinkets.client.races.faelis.RaceFaelisRenderer;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.abilities.AbilityClimbing;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
-import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.ConfigEquipmentObject;
@@ -79,12 +79,10 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
         if (this.getEntity().world.isRemote) {
             return;
         }
-        boolean hasMilkBuff = Capabilities.getStatusHandler(this.getEntity(), false, (status, rtn) -> {
-            if (status.getActiveEffects().containsKey(StatusEffectsEnum.Invigorated.getName())) {
-                return true;
-            }
-            return rtn;
-        });
+        boolean hasMilkBuff = false;
+        if (ModPotionTypes.TrinketPotions.containsKey(ModPotionTypes.invigorated)) {
+            hasMilkBuff = this.getEntity().isPotionActive(ModPotionTypes.TrinketPotions.get(ModPotionTypes.invigorated));
+        }
         if (this.CONFIG.HEAVY_ARMOR_PENALTY) {
             double amount = 0;
             if (TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {

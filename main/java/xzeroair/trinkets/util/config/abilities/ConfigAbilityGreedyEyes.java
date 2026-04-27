@@ -70,16 +70,16 @@ public class ConfigAbilityGreedyEyes {
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_GREEDY_EYES_BLOCKS)
     public String[] BLOCKS = new String[]{
             //@formatter:off
-            "oreCoal;4605510",
-            "oreIron;16764057",
-            "oreGold;16766720",
-            "oreLapis;2515356",
-            "oreRedstone;11546150",
-            "oreDiamond;59135",
-            "oreEmerald;65357",
-            "oreQuartz;15461355",
-            "minecraft:chest;*;16766720",
-            "minecraft:chest_minecart;16766720"
+            "oreCoal;#464646",
+            "oreIron;#FFCC99",
+            "oreGold;#FFD700",
+            "oreLapis;#26619C",
+            "oreRedstone;#B02E26",
+            "oreDiamond;#00E6FF",
+            "oreEmerald;#00FF4D",
+            "oreQuartz;#EBEBEB",
+            "minecraft:chest;*;#FFD700",
+            "minecraft:chest_minecart;#FFD700"
             //@formatter:on
     };
 

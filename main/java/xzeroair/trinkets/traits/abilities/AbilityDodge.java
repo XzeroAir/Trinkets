@@ -2,6 +2,8 @@ package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -9,13 +11,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
-import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
+import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
 import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
-import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityDodge;
@@ -123,10 +123,13 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
         final List<EntityLivingBase> stunTargets = entity.world.getEntitiesWithinAABB(EntityLivingBase.class, entity.getEntityBoundingBox().grow(distance, 1, distance));
         for (final EntityLivingBase targetEntity : stunTargets) {
             if (targetEntity != entity) {
-                final StatusHandler status = Capabilities.getStatusHandler(targetEntity);
-                if (status != null) {
-                    final TrinketStatusEffect effect = new TrinketStatusEffect(StatusEffectsEnum.paralysis, 3 * 20, 1, entity);
-                    status.apply(effect);
+                final Potion potion = ModPotionTypes.TrinketPotions.get(ModPotionTypes.paralysis);
+                if (potion != null) {
+                    final PotionEffect activeEffect = targetEntity.getActivePotionEffect(potion);
+                    final int duration = 3 * 20;
+                    if (activeEffect == null || activeEffect.getDuration() < duration) {
+                        targetEntity.addPotionEffect(new PotionEffect(potion, duration, 0, false, false));
+                    }
                 }
             }
         }

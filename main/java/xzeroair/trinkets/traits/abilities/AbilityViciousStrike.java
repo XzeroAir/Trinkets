@@ -8,10 +8,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
-import xzeroair.trinkets.capabilities.statushandler.TrinketStatusEffect;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
-import xzeroair.trinkets.traits.statuseffects.StatusEffectsEnum;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.defiledlands.CompatDefiledLands;
@@ -71,13 +70,16 @@ public class AbilityViciousStrike extends Ability implements IAttackAbility {
                 }
                 target.addPotionEffect(new PotionEffect(potion, duration, Math.max(amplifier, max), false, false));
             } else {
-                final int finalAmplifier = amplifier + 1;
-                Capabilities.getStatusHandler(target, (status) -> {
-                    if (!status.getActiveEffects().containsKey(StatusEffectsEnum.bleed.getName())) {
-                        final TrinketStatusEffect effect = new TrinketStatusEffect(StatusEffectsEnum.bleed, duration, finalAmplifier, source.getTrueSource());
-                        status.apply(effect);
+                final Potion bleed = ModPotionTypes.TrinketPotions.get(ModPotionTypes.bleed);
+                if (bleed != null) {
+                    final int finalAmplifier = Math.max(0, amplifier);
+                    final PotionEffect activeBleed = target.getActivePotionEffect(bleed);
+                    if (activeBleed != null) {
+                        target.addPotionEffect(new PotionEffect(bleed, activeBleed.getDuration() + duration, activeBleed.getAmplifier() + finalAmplifier, false, false));
+                    } else {
+                        target.addPotionEffect(new PotionEffect(bleed, duration, finalAmplifier, false, false));
                     }
-                });
+                }
             }
         }
         return dmg;

@@ -1,8 +1,10 @@
 package xzeroair.trinkets.traits.abilities.compat.enhancedvisuals;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.traits.abilities.interfaces.IAttackAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
@@ -17,6 +19,7 @@ public class AbilityEnhancedVisualsBlur extends AbilityEnhancedVisualsMod implem
 
     protected ConfigAbilityEnhancedVisualsBlur CONFIG;
     protected boolean IsShield;
+    protected boolean HasCombinedProtection;
     protected int COOLDOWN;
 
     public AbilityEnhancedVisualsBlur() {
@@ -34,10 +37,12 @@ public class AbilityEnhancedVisualsBlur extends AbilityEnhancedVisualsMod implem
     public void onAbilityAdded(EntityLivingBase entity) {
         this.SOURCE = getAbilityHolder().getSourceID();
         this.IsShield = this.SOURCE.compareTo(TrinketsRegistryNames.ModItems.ModItemsReg.REG_HONOR_SHIELD) == 0;
+        this.HasCombinedProtection = this.hasCombinedProtection(entity);
     }
 
     @Override
     public void tickAbility(EntityLivingBase entity) {
+        this.HasCombinedProtection = this.hasCombinedProtection(entity);
         if (isAbilityToggled()) {
             if (COOLDOWN > 0) {
                 this.COOLDOWN--;
@@ -58,7 +63,7 @@ public class AbilityEnhancedVisualsBlur extends AbilityEnhancedVisualsMod implem
 
     @Override
     public boolean isAbilityToggled() {
-        return !IsShield || this.COOLDOWN > 0;
+        return this.HasCombinedProtection || !IsShield || this.COOLDOWN > 0;
     }
 
     @Override
@@ -97,5 +102,20 @@ public class AbilityEnhancedVisualsBlur extends AbilityEnhancedVisualsMod implem
         }
         tag.setInteger(COOLDOWN_TAG, this.COOLDOWN);
         return tag;
+    }
+
+    protected boolean hasCombinedProtection(EntityLivingBase entity) {
+        return this.hasAccessory(entity, TrinketsRegistryNames.ModItems.ModItemsReg.REG_SEA_STONE)
+                && this.hasAccessory(entity, TrinketsRegistryNames.ModItems.ModItemsReg.REG_HONOR_SHIELD);
+    }
+
+    protected boolean hasAccessory(EntityLivingBase entity, String registryName) {
+        return TrinketHelper.AccessoryCheck(entity, this.matchesRegistryName(registryName));
+    }
+
+    protected java.util.function.Predicate<ItemStack> matchesRegistryName(String registryName) {
+        return stack -> !stack.isEmpty()
+                && stack.getItem().getRegistryName() != null
+                && stack.getItem().getRegistryName().toString().contentEquals(registryName);
     }
 }

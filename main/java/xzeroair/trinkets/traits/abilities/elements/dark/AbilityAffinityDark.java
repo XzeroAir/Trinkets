@@ -85,7 +85,6 @@ public class AbilityAffinityDark extends Ability implements ITickableAbility, IA
             if (attacker instanceof EntityLivingBase) {
                 if (this.TRUE_LEECH) {
                     ((EntityLivingBase) attacker).heal(dmg);
-                    System.out.println("Healing: " + dmg);
                 } else {
                     if (this.LEECH_AMOUNT > 0) {
                         if (dmg >= this.LEECH_AMOUNT) {

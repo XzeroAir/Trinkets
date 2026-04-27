@@ -19,7 +19,6 @@ import xzeroair.trinkets.capabilities.Trinket.TrinketProperties;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.statushandler.StatusHandler;
 import xzeroair.trinkets.container.TrinketContainerHandler;
 import xzeroair.trinkets.traits.elements.IElementProvider;
 import xzeroair.trinkets.util.Reference;
@@ -49,9 +48,6 @@ public class CapabilitiesHandler {
 //                if (!entity.hasCapability(Capabilities.ENTITY_ELEMENTAL_ATTRIBUTES, null)) {
 //                    event.addCapability(new ResourceLocation(Reference.MODID, "Elements"), new CapabilityProviderBase<>(Capabilities.ENTITY_ELEMENTAL_ATTRIBUTES, new EntityElementalAttributes((EntityPlayer) entity)));
 //                }
-            }
-            if (!entity.hasCapability(Capabilities.STATUS_HANDLER, null)) {
-                event.addCapability(new ResourceLocation(Reference.MODID, "status"), new CapabilityProviderBase<>(Capabilities.STATUS_HANDLER, new StatusHandler((EntityLivingBase) entity)));
             }
         }
     }

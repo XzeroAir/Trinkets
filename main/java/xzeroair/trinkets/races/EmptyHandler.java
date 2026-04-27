@@ -53,7 +53,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
     public void onTick() {
         if (this.getEntity() instanceof EntityPlayer) {
             if (this.isTransforming()) {
-                SizeHandler.setSize(this.getEntity(), this.getHeight(), this.getWidth());
+                SizeHandler.setSizeForEntity(this.getEntity(), this.getHeight(), this.getWidth());
                 this.updateSize();
                 this.addNewAttributes();
                 this.modifyEyeHeight();
