@@ -5,23 +5,51 @@ import ichttt.mods.firstaid.api.damagesystem.AbstractPlayerDamageModel;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.capabilities.race.EntityProperties;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 public class FirstAidCompat {
+
+    private static final int TRANSFORM_RESCALE_INTERVAL_TICKS = 20;
 
     public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.FirstAid && TrinketsConfig.compat.FIRST_AID;
     }
 
+    private static boolean shouldRescaleDuringTransform(EntityLivingBase entity) {
+        final EntityProperties properties = Capabilities.getEntityProperties(entity);
+        if (properties == null) {
+            return true;
+        }
+        if (!properties.getRaceHandler().isTransforming()) {
+            return true;
+        }
+        final double progress = properties.getRaceHandler().TransformationProgress();
+        if (progress >= 1D) {
+            return true;
+        }
+        if (progress <= 0D) {
+            return false;
+        }
+        return (entity.ticksExisted % TRANSFORM_RESCALE_INTERVAL_TICKS) == 0;
+    }
+
     public static void rescale(EntityLivingBase entity) {
         if (isModEnabled() && (entity instanceof EntityPlayer)) {
             try {
+                if (!shouldRescaleDuringTransform(entity)) {
+                    return;
+                }
                 AbstractPlayerDamageModel cap = entity.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
-                cap.runScaleLogic((EntityPlayer) entity);
+                if (cap != null) {
+                    cap.runScaleLogic((EntityPlayer) entity);
+                }
             } catch (Exception e) {
             }
         }
     }
+
     //	public static void resetHP(EntityLivingBase entity) {
     //		if (entity instanceof EntityPlayer) {
     //			if (!entity.hasCapability(CapabilityExtendedHealthSystem.INSTANCE, null)) {

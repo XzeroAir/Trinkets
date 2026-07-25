@@ -408,6 +408,7 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
                 this.getSlotInfo().setHandler(info.getHandlerType());
                 this.getSlotInfo().setSlot(info.getSlot());
                 this.getSlotInfo().setChanged();
+                this.saveToNBT(this.getTag());
                 this.sendInformationToPlayer(entity);
                 this.scheduleResync();
             }
@@ -423,6 +424,7 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
             if (this.getItem() instanceof TrinketDamageShield) {
                 this.setVariant(0);
             }
+            this.saveToNBT(this.getTag());
             this.getTickHandler().clearCounters();
             this.sendInformationToPlayer(entity);
             this.scheduleResync();
@@ -551,9 +553,9 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
                 this.getSlotInfo().setHandler(string);
             });
         }
-        NBTHelper.hasInteger(compound, "exp", this::setStoredExp);
-        NBTHelper.hasInteger(compound, "mana", this::setStoredMana);
         NBTHelper.hasInteger(compound, "variant", this::setVariant);
+        NBTHelper.hasInteger(compound, "exp", this::setStoredExp);
+        NBTHelper.hasFloat(compound, "mana", this::setStoredMana);
         if (this.getItem() instanceof AccessoryBase) {
             NBTHelper.hasBoolean(compound, "main.ability", this::toggleMainAbility);
             NBTHelper.hasBoolean(compound, "alt.ability", this::toggleAltAbility);

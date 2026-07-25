@@ -136,9 +136,7 @@ public class Ability implements IAbilityInterface {
 
     @Override
     public Ability cacheAbilityHolder(AbilityHolder holder) {
-        if (this.abilityHolder == null) {
-            this.abilityHolder = holder;
-        }
+        this.abilityHolder = holder;
         return this;
     }
 

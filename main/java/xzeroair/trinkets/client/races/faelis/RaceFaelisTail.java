@@ -43,12 +43,15 @@ public class RaceFaelisTail implements IRenderModelInterface {
             ((ModelBiped) model).bipedBody.postRender(scale);
         }
         boolean TEST_MODE = false;   // true = shake using time, false = shake using movement
-        double maxAngleZ = 20;    // main bell swing (side-to-side)
-        double maxAngleX = 0.8;     // movement drag tilt
-        double maxAngleY = 0.0;    // optional twist
-        double speed = 0.35;        // shake speed
-        double followStrength = 6.0;
+        double maxAngleZ = isSlim ? 20 : 18;    // main sway (side-to-side)
+        double maxAngleX = isSlim ? 0.8 : 0.6;     // movement drag tilt clamp
+        double speed = isSlim ? 0.35 : 0.33;        // sway speed
+        double followStrength = isSlim ? 6.0 : 4.5;
         double damping = 0.9;
+        double motionGain = isSlim ? 1.5 : 1.35;
+        double amplitudeCap = isSlim ? 1.0 : 0.9;
+        double amplitudeDecay = isSlim ? 0.95 : 0.94;
+        double tiltMultiplier = isSlim ? -20 : -14;
         double phase = (entity.ticksExisted + partialTicks) * speed;
         double forwardMotion = clientInfo.getForwardMotion();
         double amplitude = clientInfo.getAmplitude();
@@ -56,9 +59,9 @@ public class RaceFaelisTail implements IRenderModelInterface {
         if (TEST_MODE) {
             amplitude = 1.0;
         } else {
-            amplitude += clientInfo.getMotion() * 1.5;
-            amplitude = Math.min(amplitude, 1.0);
-            amplitude *= 0.95;
+            amplitude += clientInfo.getMotion() * motionGain;
+            amplitude = Math.min(amplitude, amplitudeCap);
+            amplitude *= amplitudeDecay;
         }
 
         clientInfo.setAmplitude(amplitude);
@@ -67,23 +70,24 @@ public class RaceFaelisTail implements IRenderModelInterface {
         tiltX += (targetTilt - clientInfo.getTiltX()) * 0.08; // follow strength
         tiltX *= damping;
         clientInfo.setTiltX(tiltX);
-        double bellTiltX = tiltX * amplitude;
-        bellTiltX = Math.max(-maxAngleX, Math.min(maxAngleX, bellTiltX));
-        bellTiltX *= -20;
+        double tailTiltX = tiltX * amplitude;
+        tailTiltX = Math.max(-maxAngleX, Math.min(maxAngleX, tailTiltX));
+        tailTiltX *= tiltMultiplier;
         double angleZ = Math.sin(phase + tiltX * 0.3) * amplitude * maxAngleZ;
-        double angleY = Math.sin(phase + 2.4) * amplitude * maxAngleY;
         GlStateManager.rotate((float) angleZ, 0F, 1F, 0F);
-        GlStateManager.rotate((float) bellTiltX, 1F, 0F, 0F);
+        GlStateManager.rotate((float) tailTiltX, 1F, 0F, 0F);
 
         // Set Position
-        boolean hasHelmet = entity.hasItemInSlot(EntityEquipmentSlot.CHEST);
-        double helmetOffsetY = hasHelmet ? 0.12 : 0.1;
-        double helmetOffsetZ = hasHelmet ? -0.04 : 0 + 0.04;
+        boolean hasChestArmor = entity.hasItemInSlot(EntityEquipmentSlot.CHEST);
+        double armorOffsetY = hasChestArmor ? 0.12 : 0.1;
+        double armorOffsetZ = hasChestArmor ? -0.04 : 0.04;
+        double offsetY = isSlim ? 1.15 : 1.27;
+        double offsetZ = isSlim ? 0.3 : 0.34;
+        float cScale = isSlim ? 0.7F : 0.82F;
         GlStateManager.rotate(15F, 1F, 0F, 0F);
-        GlStateManager.translate(0.0, 1.15 + (isSlim ? 0 : 0.12), 0.3);
-        float cScale = isSlim ? 0.7F : 1.0F;
+        GlStateManager.translate(0.0, offsetY, offsetZ);
         GlStateManager.scale(cScale, cScale, cScale);
-        GlStateManager.translate(0.0F, helmetOffsetY, helmetOffsetZ);
+        GlStateManager.translate(0.0F, armorOffsetY, armorOffsetZ);
         // Change Rotation and Adjust to body.
         GlStateManager.rotate(180F, 0F, 0F, 1F);
         GlStateManager.translate(-8F * scale, -8F * scale, 8F * scale);

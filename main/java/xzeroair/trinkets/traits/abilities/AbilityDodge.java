@@ -71,7 +71,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
     }
 
     public void handleDodge(Entity entity, int direction) {
-        if (entity == null || !entity.onGround) {
+        if (entity == null || !this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
             return;
         }
         if (!entity.world.isRemote) {
@@ -138,7 +138,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
     public boolean triggerDodge(Entity entity) {
         if (this.trigger) {
             this.trigger = false;
-            if (!entity.onGround || entity.isSneaking()) {
+            if (!this.getAbilityHolder().getHandler().getParentProperties().isGrounded() || entity.isSneaking()) {
                 return false;
             }
             if (Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE) {

@@ -11,6 +11,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.OreDictionaryCompat;
 import xzeroair.trinkets.util.helpers.ColorHelper;
@@ -78,7 +79,7 @@ public class ConfigHelper {
         boolean isAttribute = false;
         if (!arg1.isEmpty()) {
             if (arg1.matches(attributeRegex)) {
-                attribute = arg1;
+                attribute = normalizeAttributeName(arg1);
                 if (!arg2.isEmpty() && arg2.matches(amountRegex)) {
                     try {
                         amount = Double.parseDouble(arg2.replace("+", ""));
@@ -102,6 +103,24 @@ public class ConfigHelper {
             }
         }
         return isAttribute && !attribute.isEmpty() && (amount != 0.0) ? new ConfigHelper.AttributeEntry(attribute, amount, op, saved) : NULL_ENTRY;
+    }
+
+    private static String normalizeAttributeName(String attribute) {
+        if (attribute == null) {
+            return "";
+        }
+        switch (attribute) {
+            case "magic.regen.cooldown":
+                return Reference.MODID + ".entityMagic.regen.cooldown";
+            case "magic.regen":
+                return Reference.MODID + ".entityMagic.regen";
+            case "magic.maxMana":
+                return Reference.MODID + ".entityMagic.maxMana";
+            case "magic.affinity":
+                return Reference.MODID + ".entityMagic.affinity";
+            default:
+                return attribute;
+        }
     }
 
     private static <T> T continueCommand(String string, Function<String, T> func) {

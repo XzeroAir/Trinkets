@@ -89,7 +89,7 @@ public class ParticleGreed extends Particle {
             final float f = (i % 16) / 16.0F;
             final float f1 = f + 0.0625f;
             final float f2 = 0F;//i / 16 / 16.0F;
-            final float f3 = f2 + 0.0625f;
+            final float f3 = 1F;
             //float f4 effects size/scale
             final float f4 = 0.25f;//2.0F * this.size;
             final float f5 = (float) ((this.prevPosX + ((this.posX - this.prevPosX) * partialTicks)) - interpPosX);

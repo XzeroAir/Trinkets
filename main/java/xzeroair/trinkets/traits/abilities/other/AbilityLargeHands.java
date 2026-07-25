@@ -30,8 +30,8 @@ import xzeroair.trinkets.util.helpers.BlockHelperUtil;
 import java.util.List;
 
 public class AbilityLargeHands extends Ability implements IAttackAbility, IMiningAbility {
-
     protected final ConfigAbilityLargeHands CONFIG;
+    protected boolean breakingExtendedArea;
 
     public AbilityLargeHands() {
         this(TrinketsConfig.SERVER.ABILITIES.LARGE_HANDS);
@@ -74,7 +74,8 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
             final Block block = state.getBlock();
             final String neededTool = block.getHarvestTool(state);
             final ItemStack toolUsed = this.getHarvestTool(neededTool, heldItemStack);
-            final float newDigSpeed = BlockHelperUtil.getEntityDigSpeed(entity, toolUsed, state, pos, false);
+            float newDigSpeed = BlockHelperUtil.getEntityDigSpeed(entity, toolUsed, state, pos, false);
+            newDigSpeed = this.correctGroundedDigSpeed(entity, newDigSpeed);
             final float hardness = state.getBlockHardness(world, pos);
             if ((hardness > 0F) && (entity instanceof EntityPlayer)) {
                 if (!ForgeHooks.canHarvestBlock(block, (EntityPlayer) entity, world, pos)) {
@@ -83,7 +84,8 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
             }
             return newDigSpeed;
         }
-        return newSpeed;
+        final float correctedSpeed = this.correctGroundedDigSpeed(entity, newSpeed);
+        return correctedSpeed;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
 
         final EntityPlayer player = (EntityPlayer) entity;
         final ActivationMethod method = CONFIG.MINING_EXTENDED;
-        if (method == ActivationMethod.NEVER || expToDrop <= 0) {
+        if (method == ActivationMethod.NEVER || this.breakingExtendedArea) {
             return expToDrop;
         }
         final boolean sneaking = method == ActivationMethod.SNEAK && entity.isSneaking();
@@ -111,15 +113,20 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
         final ItemStack toolUsed = this.getHarvestTool(neededTool, heldItemStack);
         if (BlockHelperUtil.canToolHarvestBlock(toolUsed, state)) {
             if (BlockHelperUtil.isToolEffective(toolUsed, state)) {
-                final ImmutableList<BlockPos> list = BlockHelperUtil.getBlockList(toolUsed, world, player, pos, 3, 3, 3, checkPos -> !this.isBlacklisted(world.getBlockState(checkPos)));
-                for (BlockPos ePos : list) {
-                    if (BlockHelperUtil.canBreakBlock(toolUsed, world, player, pos, ePos)) {
-                        BlockHelperUtil.breakBlock(player, toolUsed, world, state, pos, ePos, true);
+                final ImmutableList<BlockPos> list = BlockHelperUtil.getBlockList(toolUsed, world, player, state, pos, 3, 3, 3, checkPos -> !this.isBlacklisted(world.getBlockState(checkPos)));
+                this.breakingExtendedArea = true;
+                try {
+                    for (BlockPos ePos : list) {
+                        if (BlockHelperUtil.canBreakBlock(toolUsed, world, player, state, pos, ePos)) {
+                            BlockHelperUtil.breakBlock(player, toolUsed, world, state, pos, ePos, true);
+                        }
                     }
+                } finally {
+                    this.breakingExtendedArea = false;
                 }
-                BlockHelperUtil.breakBlock(player, toolUsed, world, state, pos, pos, false);
                 return 0;
             }
+            return expToDrop;
         }
         return expToDrop;
     }
@@ -152,6 +159,13 @@ public class AbilityLargeHands extends Ability implements IAttackAbility, IMinin
         } else {
             return heldTool.copy();
         }
+    }
+
+    protected float correctGroundedDigSpeed(EntityLivingBase entity, float speed) {
+        if ((speed > 0F) && !entity.onGround && this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
+            return speed * 5F;
+        }
+        return speed;
     }
 
 }

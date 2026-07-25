@@ -68,8 +68,8 @@ public class BaubleEventHandler {
                         if (!empty) {
                             Capabilities.getTrinketProperties(stack, properties -> properties.itemEquipped(player));
                         }
-                        final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.BAUBLES, true, !empty);
-                        NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+//                        final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.BAUBLES, true, !empty);
+//                        NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
                     }
                     if (!empty && (stack.getItem() instanceof IAccessoryInterface)) {
                         final IAccessoryInterface item = (IAccessoryInterface) stack.getItem();
@@ -112,8 +112,12 @@ public class BaubleEventHandler {
                     for (int i = 0; i < handler.getSlots(); i++) {
                         final ItemStack stack = handler.getStackInSlot(i);
                         final boolean empty = stack.isEmpty();
-                        final SyncItemDataPacket packet = new SyncItemDataPacket(targetPlayer, stack, stack.getTagCompound(), i, ItemHandlerType.BAUBLES, true, !empty);
-                        NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+                        if (empty) {
+                            final SyncItemDataPacket packet = new SyncItemDataPacket(targetPlayer, stack, stack.getTagCompound(), i, ItemHandlerType.BAUBLES, true, false);
+                            NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+                        } else {
+                            Capabilities.getTrinketProperties(stack, properties -> properties.sendInformationToPlayer(targetPlayer, player));
+                        }
                     }
                 });
             }

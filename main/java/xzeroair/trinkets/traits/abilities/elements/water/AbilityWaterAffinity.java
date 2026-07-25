@@ -81,7 +81,7 @@ public class AbilityWaterAffinity extends Ability implements ITickableAbility, I
             if (entity.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(entity)) {
                 float speed = originalSpeed;
                 speed *= 5F;
-                if (!entity.onGround) {
+                if (!this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
                     speed *= 5F;
                 }
                 if (newSpeed < speed) {

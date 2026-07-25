@@ -1,6 +1,5 @@
 package xzeroair.trinkets.api;
 
-import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,7 +39,7 @@ public class TrinketHelper {
      * @return Trinket Container
      */
     public static ITrinketContainerHandler getTrinketHandler(EntityLivingBase entity) {
-        return Capabilities.getTrinketContainer(entity);
+        return Capabilities.getTrinketContainer(entity, handler -> handler.setPlayer(entity));
     }
 
     /**
@@ -49,7 +48,12 @@ public class TrinketHelper {
      * @return Trinket Container
      */
     public static ITrinketContainerHandler getTrinketHandler(EntityLivingBase entity, Consumer<ITrinketContainerHandler> consumer) {
-        return Capabilities.getTrinketContainer(entity, consumer);
+        return Capabilities.getTrinketContainer(entity, handler -> {
+            handler.setPlayer(entity);
+            if (consumer != null) {
+                consumer.accept(handler);
+            }
+        });
     }
 
     /**
@@ -57,7 +61,10 @@ public class TrinketHelper {
      * @return function return
      */
     public static <R> R getTrinketHandler(EntityLivingBase entity, R ret, BiFunction<ITrinketContainerHandler, R, R> func) {
-        return Capabilities.getTrinketContainer(entity, ret, func);
+        return Capabilities.getTrinketContainer(entity, ret, (handler, rtn) -> {
+            handler.setPlayer(entity);
+            return func.apply(handler, rtn);
+        });
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -613,7 +620,7 @@ public class TrinketHelper {
 
     public static ItemStack getBaubleStack(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
-            final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(entity);
             if (baubles != null) {
                 for (int i = 0; i < baubles.getSlots(); i++) {
                     final ItemStack stack = baubles.getStackInSlot(i);
@@ -628,7 +635,7 @@ public class TrinketHelper {
 
     public static void applyToBaubles(EntityLivingBase entity, Consumer<ItemStack> consumer) {
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
-            final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(entity);
             if (baubles != null) {
                 for (int i = 0; i < baubles.getSlots(); i++) {
                     if (!baubles.getStackInSlot(i).isEmpty()) {
@@ -645,7 +652,7 @@ public class TrinketHelper {
     public static int countBaubles(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         int ret = 0;
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
-            final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(entity);
             if (baubles != null) {
                 for (int i = 0; i < baubles.getSlots(); i++) {
                     if (!baubles.getStackInSlot(i).isEmpty()) {
@@ -663,7 +670,7 @@ public class TrinketHelper {
     @Nullable
     public static SlotInformation getBaubleSlotInformation(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
-            final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(entity);
             if (baubles != null) {
                 for (int i = 0; i < baubles.getSlots(); i++) {
                     if (!baubles.getStackInSlot(i).isEmpty()) {
@@ -681,7 +688,7 @@ public class TrinketHelper {
     public static List<SlotInformation> getSlotInfoForBaubles(EntityLivingBase entity, Predicate<ItemStack> predicate) {
         final List<SlotInformation> list = new ArrayList<>();
         if (Trinkets.MOD_COMPAT.Baubles && (entity instanceof EntityPlayer)) {
-            final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+            final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(entity);
             if (baubles != null) {
                 for (int i = 0; i < baubles.getSlots(); i++) {
                     if (!baubles.getStackInSlot(i).isEmpty()) {
@@ -707,7 +714,7 @@ public class TrinketHelper {
                     return Trinket.getStackInSlot(slot);
                 }
             } else if (Trinkets.MOD_COMPAT.Baubles && (handler == 2)) {
-                final IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) player);
+                final IBaublesItemHandler baubles = BaublesHelper.getBaublesHandler(player);
                 if (!baubles.getStackInSlot(slot).isEmpty()) {
                     return baubles.getStackInSlot(slot);
                 }

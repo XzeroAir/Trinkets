@@ -3,7 +3,9 @@ package xzeroair.trinkets.races.fairy.config;
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityHealCloud;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
@@ -28,10 +30,20 @@ public class FairyConfig {
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT)
         public ConfigAbilityFlight FLIGHT = new ConfigAbilityFlight();
 
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT)
+        public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight(false, true, 0F, 10F, 0.42D);
+
         @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_NAME)
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING)
         public ConfigAbilityClimbing CLIMBING = new ConfigAbilityClimbing();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_RESTORATION_FIELD_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_RESTORATION_FIELD_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_RESTORATION_FIELD)
+        public ConfigAbilityHealCloud RESTORATION_FIELD = new ConfigAbilityHealCloud();
 
     }
 

@@ -144,16 +144,12 @@ public class EventHandler extends EventBaseHandler {
             final EntityPlayer player = (EntityPlayer) entity;
             final boolean client = player.world.isRemote;
             Capabilities.getEntityProperties(player, prop -> {
-                if (!prop.isNormalSize()) {
-                    if ((event.getSound() == SoundEvents.BLOCK_STONE_STEP) || (event.getSound() == SoundEvents.BLOCK_GRASS_STEP) || (event.getSound() == SoundEvents.BLOCK_CLOTH_STEP) || (event.getSound() == SoundEvents.BLOCK_WOOD_STEP) || (event.getSound() == SoundEvents.BLOCK_GRAVEL_STEP) || (event.getSound() == SoundEvents.BLOCK_SNOW_STEP) || (event.getSound() == SoundEvents.BLOCK_GLASS_STEP) || (event.getSound() == SoundEvents.BLOCK_METAL_STEP) || (event.getSound() == SoundEvents.BLOCK_ANVIL_STEP) || (event.getSound() == SoundEvents.BLOCK_LADDER_STEP) || (event.getSound() == SoundEvents.BLOCK_SLIME_STEP)) {
-                        if (!client) {
-                            if (!event.getEntity().isSprinting()) {
-                                event.setVolume(0.0F);
-                            } else {
-                                event.setVolume(0.1F);
-                            }
-                        }
-                    }
+                final boolean stepSound = (event.getSound() == SoundEvents.BLOCK_STONE_STEP) || (event.getSound() == SoundEvents.BLOCK_GRASS_STEP) || (event.getSound() == SoundEvents.BLOCK_CLOTH_STEP) || (event.getSound() == SoundEvents.BLOCK_WOOD_STEP) || (event.getSound() == SoundEvents.BLOCK_GRAVEL_STEP) || (event.getSound() == SoundEvents.BLOCK_SNOW_STEP) || (event.getSound() == SoundEvents.BLOCK_GLASS_STEP) || (event.getSound() == SoundEvents.BLOCK_METAL_STEP) || (event.getSound() == SoundEvents.BLOCK_ANVIL_STEP) || (event.getSound() == SoundEvents.BLOCK_LADDER_STEP) || (event.getSound() == SoundEvents.BLOCK_SLIME_STEP);
+                if (client || prop.isNormalSize() || !stepSound) {
+                    return;
+                }
+                if (prop.isGrounded() && prop.getHorizontalSpeed() <= 1.0E-5D) {
+                    event.setVolume(0.0F);
                 }
             });
         }

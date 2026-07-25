@@ -74,8 +74,13 @@ public class ManaHud extends GuiScreen implements ITrinketGuiInterface {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.oldMouseX = mouseX;
         this.oldMouseY = mouseY;
-        TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX = ((mouseX * 100D) / this.width) * 0.01D;
-        TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY = ((mouseY * 100D) / this.height) * 0.01D;
+        if (TrinketsConfig.CLIENT.MANA_BAR_HUD.usePixelPosition) {
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.xPixels = mouseX;
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.yPixels = mouseY;
+        } else {
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX = ((mouseX * 100D) / this.width) * 0.01D;
+            TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY = ((mouseY * 100D) / this.height) * 0.01D;
+        }
         //		this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         //		drawHoveringText(text, mouseX, y);

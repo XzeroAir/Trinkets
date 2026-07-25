@@ -28,7 +28,7 @@ public class AbilityWeightless extends Ability implements ITickableAbility, IPot
 
     @Override
     public void tickAbility(@Nonnull EntityLivingBase entity) {
-        if (!entity.onGround) {
+        if (!this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
             entity.motionY = 0;
             if ((!(entity.isSneaking())) && entity.isSwingInProgress) {
                 entity.motionY += 0.1;

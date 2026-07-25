@@ -26,6 +26,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
+import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.init.ModBlocks;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.util.Reference;
@@ -38,7 +39,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class BlockHelperUtil {
-
     public static void freezeWater(World world, double x, double y, double z, int strength, double range) {
         try {
             BlockPos pos = new BlockPos(x, y, z);
@@ -257,7 +257,7 @@ public class BlockHelperUtil {
             f /= 5.0F;
         }
 
-        if (!entity.onGround) {
+        if (!Capabilities.getEntityProperties(entity, entity.onGround, (prop, grounded) -> prop.isGrounded())) {
             f /= 5.0F;
         }
         if (callDigSpeedEvent && (entity instanceof EntityPlayer)) {
@@ -279,18 +279,21 @@ public class BlockHelperUtil {
     }
 
     public static ImmutableList<BlockPos> getBlockList(ItemStack stack, @Nonnull World world, EntityPlayer player, BlockPos origin, int width, int height, int depth, int distance, @Nullable Predicate<BlockPos> predicate) {
-        IBlockState state = world.getBlockState(origin);
+        return getBlockList(stack, world, player, world.getBlockState(origin), origin, width, height, depth, distance, predicate);
+    }
 
-        if ((state.getMaterial() == Material.AIR) || !canToolHarvestBlock(stack, state)) {
-            return ImmutableList.of();
-        }
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, World world, EntityPlayer player, IBlockState originState, BlockPos origin, int width, int height, int depth, Predicate<BlockPos> predicate) {
+        return getBlockList(stack, world, player, originState, origin, width, height, depth, -1, predicate);
+    }
 
+    public static ImmutableList<BlockPos> getBlockList(ItemStack stack, @Nonnull World world, EntityPlayer player, IBlockState originState, BlockPos origin, int width, int height, int depth, int distance, @Nullable Predicate<BlockPos> predicate) {
         // raytrace to get the side, but has to result in the same block
         RayTraceResult targetPoint = RayTraceHelper.rayTrace(world, player, true);
         if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
             targetPoint = RayTraceHelper.rayTrace(world, player, false);
             if ((targetPoint == null) || !origin.equals(targetPoint.getBlockPos())) {
-                return ImmutableList.of();
+                final RayTraceResult fallbackTargetPoint = getFallbackTargetPoint(player, origin);
+                targetPoint = fallbackTargetPoint;
             }
         }
 
@@ -371,7 +374,8 @@ public class BlockHelperUtil {
                 }
             }
         }
-        return builder.build();
+        final ImmutableList<BlockPos> list = builder.build();
+        return list;
     }
 
     public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos) {
@@ -379,45 +383,52 @@ public class BlockHelperUtil {
     }
 
     public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, BlockPos harvestedPos, BlockPos targetPos, int bonusToolLevel) {
+        return canBreakBlock(stack, world, player, world.getBlockState(harvestedPos), harvestedPos, targetPos, bonusToolLevel);
+    }
+
+    public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos) {
+        return canBreakBlock(stack, world, player, harvestedBlockState, harvestedPos, targetPos, 0);
+    }
+
+    public static boolean canBreakBlock(ItemStack stack, World world, EntityPlayer player, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, int bonusToolLevel) {
         if (world.isAirBlock(targetPos)) {
             return false;
         }
 
         IBlockState state = world.getBlockState(targetPos);
         Block block = state.getBlock();
-
-        // only effective materials
-        if (!isToolEffective(stack, state)) {
+        final boolean canEdit = player.canPlayerEdit(targetPos, EnumFacing.UP, stack);
+        if (!canEdit) {
             return false;
         }
 
-        IBlockState refState = world.getBlockState(harvestedPos);
-        float refStrength = ForgeHooks.blockStrength(refState, player, world, harvestedPos);
-        float strength = ForgeHooks.blockStrength(state, player, world, targetPos);
+        // only effective materials
+        final boolean toolEffective = isToolEffective(stack, state);
+        if (!toolEffective) {
+            return false;
+        }
 
-        //		final boolean forgeSaidNo = !ForgeHooks.canHarvestBlock(block, player, world, targetPos);
-        final boolean tooSlow = ((refStrength / strength) > 10f);
+        final float originHardness = harvestedBlockState.getBlockHardness(world, harvestedPos);
+        final float targetHardness = state.getBlockHardness(world, targetPos);
+        final boolean hardnessAllowed = (originHardness >= 0F) && (targetHardness >= 0F) && (targetHardness <= originHardness);
+        if (!hardnessAllowed) {
+            return false;
+        }
+        final boolean canHarvest = canPlayerHarvestBlock(block, player, stack, world, targetPos, bonusToolLevel);
 
-        // only harvestable blocks that aren't impossibly slow to harvest
-        if (!canPlayerHarvestBlock(block, player, stack, world, targetPos, bonusToolLevel) || tooSlow) {
+        if (!canHarvest) {
             return false;
         }
 
         // From this point on it's clear that the player CAN break the block
 
-        if (player.capabilities.isCreativeMode) {
-            block.onBlockHarvested(world, targetPos, state, player);
-            if (block.removedByPlayer(state, world, targetPos, player, false)) {
-                block.onPlayerDestroy(world, targetPos, state);
-            }
-
-            // send update to client
-            if (!world.isRemote) {
-                NetworkHandler.sendPacket(player, new SPacketBlockChange(world, targetPos));
-            }
-            return false;
-        }
         return true;
+    }
+
+    private static RayTraceResult getFallbackTargetPoint(EntityPlayer player, BlockPos origin) {
+        final Vec3d look = player.getLookVec();
+        final EnumFacing sideHit = EnumFacing.getFacingFromVector((float) -look.x, (float) -look.y, (float) -look.z);
+        return new RayTraceResult(new Vec3d(origin).add(0.5D, 0.5D, 0.5D), sideHit, origin);
     }
 
     /*
@@ -439,14 +450,11 @@ public class BlockHelperUtil {
     }
 
     public static void breakBlock(EntityPlayer entity, ItemStack harvestTool, World world, IBlockState harvestedBlockState, BlockPos harvestedPos, BlockPos targetPos, boolean callBreakEvent, int bonusToolLevel, @Nullable Function<Integer, Integer> handleXP) {
-        if (!canBreakBlock(harvestTool, world, entity, harvestedPos, targetPos, bonusToolLevel)) {
+        if (!canBreakBlock(harvestTool, world, entity, harvestedBlockState, harvestedPos, targetPos, bonusToolLevel)) {
             return;
         }
         IBlockState state = world.getBlockState(targetPos);
         final Block block = state.getBlock();
-
-        // callback to the tool the player uses. Called on both sides. This damages the tool n stuff.
-        harvestTool.onBlockDestroyed(world, state, targetPos, entity);
 
         // server sided handling
         if (!world.isRemote) {
@@ -462,9 +470,17 @@ public class BlockHelperUtil {
                 return;
             }
 
+            // callback to the tool the player uses. This damages the tool n stuff.
+            harvestTool.onBlockDestroyed(world, state, targetPos, entity);
+
             TileEntity tileEntity = world.getTileEntity(targetPos);
             // ItemInWorldManager.removeBlock
-            if (block.removedByPlayer(state, world, targetPos, entity, true)) { // boolean is if block can be harvested, checked above
+            if (entity.capabilities.isCreativeMode) {
+                block.onBlockHarvested(world, targetPos, state, entity);
+                if (block.removedByPlayer(state, world, targetPos, entity, false)) {
+                    block.onPlayerDestroy(world, targetPos, state);
+                }
+            } else if (block.removedByPlayer(state, world, targetPos, entity, true)) { // boolean is if block can be harvested, checked above
                 block.onPlayerDestroy(world, targetPos, state);
                 block.harvestBlock(world, entity, targetPos, state, tileEntity, harvestTool);
                 block.dropXpOnBlockBreak(world, targetPos, xp);

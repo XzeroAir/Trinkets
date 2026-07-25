@@ -13,7 +13,6 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.InventoryContainerCapability.ITrinketContainerHandler;
-import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContainerProvider;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
@@ -36,7 +35,7 @@ public class TrinketInventoryContainer extends Container {
         this.SLOTS = TrinketsConfig.SERVER.GUI.SLOTS;
         this.player = player;
 
-        this.trinket = player.getCapability(TrinketContainerProvider.containerCap, null);
+        this.trinket = TrinketHelper.getTrinketHandler(player);
 
         this.addSlotToContainer(new SlotCrafting(playerInv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
 

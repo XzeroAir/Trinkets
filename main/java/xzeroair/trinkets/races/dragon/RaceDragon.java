@@ -21,6 +21,7 @@ import xzeroair.trinkets.races.dragon.config.ConfigIceDragon;
 import xzeroair.trinkets.races.dragon.config.ConfigLightningDragon;
 import xzeroair.trinkets.races.dragon.config.DragonConfig;
 import xzeroair.trinkets.traits.abilities.AbilityCreativeFlight;
+import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
 import xzeroair.trinkets.traits.abilities.AbilityGreedyEyes;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireBreath;
@@ -72,6 +73,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     public void startTransformation() {
         // Night Vision
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
+        this.addAbility(new AbilityElytraFlight(this.CONFIG.ABILITIES.ELYTRA_FLIGHT));
         this.addAbility(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
 
         Element element = this.getRaceCache().getPrimaryElement();
@@ -160,11 +162,11 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     @Override
     public float isHurt(DamageSource source, float dmg) {
         if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else {
             return dmg * DamageTypeConfigParser.parseDamageTypeConfig(1, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
         }
@@ -173,11 +175,11 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     @Override
     public float isDamaged(DamageSource source, float dmg) {
         if (this.getRaceCache().comparePrimaryElement(Elements.FIRE)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.FIRE.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else if (this.getRaceCache().comparePrimaryElement(Elements.ICE)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.ICE.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else if (this.getRaceCache().comparePrimaryElement(Elements.LIGHTNING)) {
-            return DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
+            return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.ELEMENTS.LIGHTNING.DAMAGE_TYPES_TO_IGNORE).getSecond();
         } else {
             return dmg * DamageTypeConfigParser.parseDamageTypeConfig(2, source, dmg, this.raceCache.getPrimaryElement(), this.CONFIG.DAMAGE_TYPES_TO_IGNORE).getSecond();
         }

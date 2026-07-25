@@ -22,6 +22,10 @@ public class ConfigDefaultAbilityStorage {
     public ConfigAbilityFlight CREATIVE_FLIGHT = new ConfigAbilityFlight();
 
     @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT)
+    public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight();
+
+    @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_NIGHT_VISION)
     public ConfigAbilityNightVision NIGHT_VISION = new ConfigAbilityNightVision();
 
@@ -32,6 +36,10 @@ public class ConfigDefaultAbilityStorage {
     @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING)
     public ConfigAbilityClimbing CLIMBING = new ConfigAbilityClimbing();
+
+    @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_RESTORATION_FIELD)
+    public ConfigAbilityHealCloud RESTORATION_FIELD = new ConfigAbilityHealCloud();
 
     @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_AFFINITY_WATER)

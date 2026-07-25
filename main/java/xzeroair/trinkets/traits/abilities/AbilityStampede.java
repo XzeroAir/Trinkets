@@ -1,6 +1,7 @@
 package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -9,6 +10,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -71,6 +73,9 @@ public class AbilityStampede extends AbilityRaceSpecific {
         List<Entity> nearby = player.world.getEntitiesWithinAABBExcludingEntity(player, swept);
 
         for (Entity target : nearby) {
+            if (!this.canChargeHit(player, target)) {
+                continue;
+            }
             if (!this.hitEntities.contains(target)) {
                 this.hitEntities.add(target);
                 if (target instanceof EntityPlayer) {
@@ -90,6 +95,28 @@ public class AbilityStampede extends AbilityRaceSpecific {
                 }
             }
         }
+    }
+
+    private boolean canChargeHit(EntityLivingBase player, Entity target) {
+        if ((target == null) || target.isDead || (target.world != player.world)) {
+            return false;
+        }
+        if (target instanceof EntityHanging) {
+            return false;
+        }
+        return this.hasChargeLineOfSight(player, target);
+    }
+
+    private boolean hasChargeLineOfSight(EntityLivingBase player, Entity target) {
+        final AxisAlignedBB targetBox = target.getEntityBoundingBox();
+        final Vec3d start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        final Vec3d end = new Vec3d(
+                (targetBox.minX + targetBox.maxX) * 0.5D,
+                (targetBox.minY + targetBox.maxY) * 0.5D,
+                (targetBox.minZ + targetBox.maxZ) * 0.5D
+        );
+        final RayTraceResult result = player.world.rayTraceBlocks(start, end, false, true, false);
+        return result == null;
     }
 
     private void applyChargeHit(EntityLivingBase player, Entity target, double curve, BiConsumer<Entity, Double> consumer) {
@@ -166,9 +193,6 @@ public class AbilityStampede extends AbilityRaceSpecific {
             return false;
         }
         final float mp = magic.getMana();
-        if (mp < this.cost) {
-            return true;
-        }
         final Counter counter = this.tickHandler.getCounter("heldCounter");
         final int tick = counter.getTick();
         final float multi = (float) MathHelper.pct(tick, 0, counter.getLength());
@@ -206,7 +230,7 @@ public class AbilityStampede extends AbilityRaceSpecific {
         final float realCost = (float) StringUtils.getAccurateDouble(this.cost * multi);
         if (tick > (counter.getLength() * 0.1)) {
             if (magic.spendMana(realCost)) {
-                double groundMulti = entity.onGround ? 1D : 0.25D;
+                double groundMulti = this.getAbilityHolder().getHandler().getParentProperties().isGrounded() ? 1D : 0.25D;
                 this.applyChargedPush(entity, tick, this.maxChargeTicks, this.minVelocity * groundMulti, this.maxVelocity * groundMulti, (e, d) -> {
                     float damage = (float) (this.minDamage + (this.maxDamage - this.minDamage) * d);
                     if (entity instanceof EntityPlayer) {

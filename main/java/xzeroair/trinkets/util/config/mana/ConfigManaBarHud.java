@@ -41,6 +41,21 @@ public class ConfigManaBarHud {
     @Config.LangKey(ConstantsConfigLang.CONFIG_LOCATION_Y)
     public double translatedY = 0.94;
 
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_MODE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_MODE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_MODE)
+    public boolean usePixelPosition = false;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_X_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_X_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_X)
+    public int xPixels = 0;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC_HUD_POSITION_PIXELS_Y)
+    public int yPixels = 0;
+
     @Config.Name(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_TEXTURE_WIDTH)

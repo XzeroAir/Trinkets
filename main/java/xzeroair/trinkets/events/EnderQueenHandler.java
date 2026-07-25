@@ -83,7 +83,7 @@ public class EnderQueenHandler {
 
     @SubscribeEvent
     public void EnderTeleportEvent(EnderTeleportEvent event) {
-        if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.BLOCK_TELEPORTATION) {
+        if (!TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.BLOCK_TELEPORTATION) {
             return;
         }
         final Entity entity = event.getEntity();

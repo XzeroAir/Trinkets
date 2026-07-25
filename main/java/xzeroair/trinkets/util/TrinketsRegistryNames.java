@@ -112,9 +112,11 @@ public class TrinketsRegistryNames {
         public static final String AFFINITY_LIGHTNING			="affinity_" + ModElements.LIGHTNING;
 
         public static final String CREATIVE_FLIGHT				="creative_flight";
+        public static final String ELYTRA_FLIGHT					="elytra_flight";
         public static final String GREEDY_EYES					="greedy_eyes";
         public static final String NIGHT_VISION 				="night_vision";
         public static final String CLIMBING						="climbing";
+        public static final String RESTORATION_FIELD				="mending_bloom";
         public static final String WEIGHTLESS					="weightless";
         public static final String WELL_RESTED					="well_rested";
         public static final String NULLIFY_KINETIC				="nullify_kinetic";
@@ -305,8 +307,10 @@ public class TrinketsRegistryNames {
         //@formatter:off
         public static final String ALPHA_WOLF                   = "AlphaWolf";
         public static final String DRAGON_BREATH                = "DragonBreath";
+        public static final String AREA_EFFECT                  = "AreaEffect";
         public static final String REG_ALPHA_WOLF               = MODID + ":" + ALPHA_WOLF;
         public static final String REG_DRAGON_BREATH            = MODID + ":" + DRAGON_BREATH;
+        public static final String REG_AREA_EFFECT              = MODID + ":" + AREA_EFFECT;
         //@formatter:on
 
     }

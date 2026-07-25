@@ -193,7 +193,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     }
 
     private boolean blockDamage(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-        final int chanceNum = this.CONFIG.SPAWN_CHANCE;
+        final int chanceNum = this.CONFIG.IGNORE_CHANCE;
         if (chanceNum > 0) {
             final int chance = this.random.nextInt(chanceNum);
             if ((chance == 0)) {
@@ -207,10 +207,8 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                         }
                     }
                 }
-                if (this.CONFIG.IGNORE_CHANCE > 0) {
-                    StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, false);
-                    return true;
-                }
+                StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, false);
+                return true;
             }
         }
         return cancel;
@@ -467,10 +465,10 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
             return Capabilities.getMagicStats(entity, this.CONFIG.ENDER_CHEST, (magic, allow) -> {
                 boolean isRemote = magic.getEntity().world.isRemote;
                 if (!isRemote && allow && magic.spendMana(magic.getMaxMana())) {
-                    this.openEnderChest(magic.getObject());
+                    this.openEnderChest(magic.getEntity());
                     return true;
                 }
-                return false;
+                return isRemote;
             });
         }
     }

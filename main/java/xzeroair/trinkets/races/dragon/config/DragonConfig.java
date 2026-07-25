@@ -2,6 +2,7 @@ package xzeroair.trinkets.races.dragon.config;
 
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
@@ -44,6 +45,11 @@ public class DragonConfig {
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT)
         public ConfigAbilityFlight FLIGHT = new ConfigAbilityFlight(true, 5F);
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT)
+        public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight(false, true, 0F, 10F, 0.42D);
 
     }
 

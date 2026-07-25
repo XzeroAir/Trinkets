@@ -22,6 +22,7 @@ public class ScreenOverlayEvents {
     private float maxMana = 0;
 
     private float manaCost = 0;
+    private int manaCostSyncTimeout = 0;
 
     private int updateCounter = 0;
 
@@ -68,6 +69,7 @@ public class ScreenOverlayEvents {
             this.setMana(stats.getMana());
             this.setMaxMana(stats.getMaxMana());
         }
+        this.updateManaCostSyncTimeout();
         if (!this.needMana() && (this.getCost() <= 0)) {
             if (this.updateCounter()) {
                 if (!(Minecraft.getMinecraft().currentScreen instanceof ManaHud)) {
@@ -81,10 +83,17 @@ public class ScreenOverlayEvents {
         }
         final int h = event.getResolution().getScaledHeight();
         final int w = event.getResolution().getScaledWidth();
-        final double x = (TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX);
-        final double y = (TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY);
-        final int xPos = (int) Math.round(w * x);
-        final int yPos = (int) Math.round(h * y);
+        final int xPos;
+        final int yPos;
+        if (TrinketsConfig.CLIENT.MANA_BAR_HUD.usePixelPosition) {
+            xPos = TrinketsConfig.CLIENT.MANA_BAR_HUD.xPixels;
+            yPos = TrinketsConfig.CLIENT.MANA_BAR_HUD.yPixels;
+        } else {
+            final double x = TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedX;
+            final double y = TrinketsConfig.CLIENT.MANA_BAR_HUD.translatedY;
+            xPos = (int) Math.round(w * x);
+            yPos = (int) Math.round(h * y);
+        }
         GlStateManager.pushMatrix();
         this.manaGui.renderManaGui(event, MathHelper.clamp(xPos, 0, w), MathHelper.clamp(yPos, 0, h), this.updateCounter, this.getMana(), this.getMaxMana(), this.getCost());
         GlStateManager.popMatrix();
@@ -103,6 +112,12 @@ public class ScreenOverlayEvents {
 
     private void resetCounter() {
         this.updateCounter = 0;
+    }
+
+    private void updateManaCostSyncTimeout() {
+        if ((this.manaCost > 0) && (this.manaCostSyncTimeout > 0) && (--this.manaCostSyncTimeout <= 0)) {
+            this.setCost(0);
+        }
     }
 
     private void setMana(float mana) {
@@ -136,6 +151,7 @@ public class ScreenOverlayEvents {
     }
 
     private void setCost(float cost) {
+        this.manaCostSyncTimeout = cost > 0 ? 20 : 0;
         if (this.manaCost != cost) {
             this.manaCost = cost;
             this.resetCounter();
