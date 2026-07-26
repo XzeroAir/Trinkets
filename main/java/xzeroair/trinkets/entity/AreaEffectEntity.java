@@ -3,8 +3,11 @@ package xzeroair.trinkets.entity;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockSnow;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -12,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +35,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import xzeroair.trinkets.init.ModBlocks;
+import xzeroair.trinkets.util.Reference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +51,12 @@ public class AreaEffectEntity extends Entity {
     private static final String ACTION_POTION = "potion";
     private static final String ACTION_REPAIR_ITEM = "repair_item";
     private static final String ACTION_GROW_BLOCK = "grow_block";
+    private static final String ACTION_PLACE_FIRE = "place_fire";
+    private static final String ACTION_PLACE_SNOW = "place_snow";
+    private static final String ACTION_FREEZE_LIQUID = "freeze_liquid";
+    private static final String WATER_BEHAVIOR_TAG = "WaterBehavior";
+    private static final String LAVA_BEHAVIOR_TAG = "LavaBehavior";
+    private static final double LIQUID_MOVEMENT_PER_TICK = 0.1D;
     private static final DataParameter<Float> RADIUS = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Float> VERTICAL_RADIUS = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.VARINT);
@@ -66,6 +78,8 @@ public class AreaEffectEntity extends Entity {
     private boolean colorSet;
     private boolean affectedByGravity;
     private double gravityPerTick;
+    private LiquidBehavior waterBehavior;
+    private LiquidBehavior lavaBehavior;
     private int durationOnUse;
     private float radiusOnUse;
     private float radiusPerTick;
@@ -75,6 +89,13 @@ public class AreaEffectEntity extends Entity {
     private EntityLivingBase owner;
     @Nullable
     private UUID ownerUniqueId;
+
+    public enum LiquidBehavior {
+        EXPIRE,
+        STAY,
+        FLOAT,
+        SINK
+    }
 
     public AreaEffectEntity(World worldIn) {
         super(worldIn);
@@ -90,6 +111,8 @@ public class AreaEffectEntity extends Entity {
         this.reapplicationDelay = 20;
         this.pulseInterval = 20;
         this.gravityPerTick = 0.03D;
+        this.waterBehavior = LiquidBehavior.STAY;
+        this.lavaBehavior = LiquidBehavior.STAY;
         this.entityTargetPredicate = entity -> true;
         this.blockTargetPredicate = pos -> true;
         this.noClip = true;
@@ -169,6 +192,16 @@ public class AreaEffectEntity extends Entity {
 
     public double getGravityPerTick() {
         return this.gravityPerTick;
+    }
+
+    public AreaEffectEntity setWaterBehavior(LiquidBehavior behavior) {
+        this.waterBehavior = behavior == null ? LiquidBehavior.STAY : behavior;
+        return this;
+    }
+
+    public AreaEffectEntity setLavaBehavior(LiquidBehavior behavior) {
+        this.lavaBehavior = behavior == null ? LiquidBehavior.STAY : behavior;
+        return this;
     }
 
     public AreaEffectEntity addAction(AreaEffectAction action) {
@@ -317,12 +350,44 @@ public class AreaEffectEntity extends Entity {
     public void onUpdate() {
         super.onUpdate();
 
+        if (!this.world.isRemote && !this.handleLiquidBehavior()) {
+            return;
+        }
+
         this.updateGravityMotion();
 
         if (this.world.isRemote) {
             this.spawnClientParticles();
         } else {
             this.updateServerEffect();
+        }
+    }
+
+    private boolean handleLiquidBehavior() {
+        final Material material = this.world.getBlockState(new BlockPos(this)).getMaterial();
+        if (material == Material.WATER) {
+            return this.applyLiquidBehavior(this.waterBehavior);
+        }
+        if (material == Material.LAVA) {
+            return this.applyLiquidBehavior(this.lavaBehavior);
+        }
+        return true;
+    }
+
+    private boolean applyLiquidBehavior(LiquidBehavior behavior) {
+        switch (behavior) {
+            case EXPIRE:
+                this.setDead();
+                return false;
+            case FLOAT:
+                this.move(MoverType.SELF, 0.0D, LIQUID_MOVEMENT_PER_TICK, 0.0D);
+                return true;
+            case SINK:
+                this.move(MoverType.SELF, 0.0D, -LIQUID_MOVEMENT_PER_TICK, 0.0D);
+                return true;
+            case STAY:
+            default:
+                return true;
         }
     }
 
@@ -685,6 +750,17 @@ public class AreaEffectEntity extends Entity {
         return this.owner;
     }
 
+    private LiquidBehavior readLiquidBehavior(NBTTagCompound compound, String key) {
+        if (!compound.hasKey(key, 8)) {
+            return LiquidBehavior.STAY;
+        }
+        try {
+            return LiquidBehavior.valueOf(compound.getString(key));
+        } catch (IllegalArgumentException ignored) {
+            return LiquidBehavior.STAY;
+        }
+    }
+
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
         this.actions.clear();
@@ -704,6 +780,8 @@ public class AreaEffectEntity extends Entity {
         this.radiusPerTick = compound.getFloat("RadiusPerTick");
         this.affectedByGravity = compound.getBoolean("AffectedByGravity");
         this.gravityPerTick = compound.hasKey("GravityPerTick") ? compound.getDouble("GravityPerTick") : 0.03D;
+        this.waterBehavior = this.readLiquidBehavior(compound, WATER_BEHAVIOR_TAG);
+        this.lavaBehavior = this.readLiquidBehavior(compound, LAVA_BEHAVIOR_TAG);
         this.setRadius(compound.getFloat("Radius"));
         this.setVerticalRadius(compound.hasKey("VerticalRadius") ? compound.getFloat("VerticalRadius") : 1.5F);
         this.noClip = !this.affectedByGravity;
@@ -775,6 +853,8 @@ public class AreaEffectEntity extends Entity {
         compound.setFloat("VerticalRadius", this.getVerticalRadius());
         compound.setBoolean("AffectedByGravity", this.affectedByGravity);
         compound.setDouble("GravityPerTick", this.gravityPerTick);
+        compound.setString(WATER_BEHAVIOR_TAG, this.waterBehavior.name());
+        compound.setString(LAVA_BEHAVIOR_TAG, this.lavaBehavior.name());
         EnumParticleTypes particle = this.getParticle();
         if (particle == null) {
             particle = EnumParticleTypes.SPELL_MOB;
@@ -852,6 +932,15 @@ public class AreaEffectEntity extends Entity {
             case ACTION_GROW_BLOCK:
                 this.addAction(new GrowBlockAreaAction(actionTag.getInteger("MaxBlocksPerPulse")));
                 break;
+            case ACTION_PLACE_FIRE:
+                this.addAction(new PlaceFireAreaAction());
+                break;
+            case ACTION_PLACE_SNOW:
+                this.addAction(new PlaceSnowAreaAction());
+                break;
+            case ACTION_FREEZE_LIQUID:
+                this.addAction(new FreezeLiquidAreaAction(actionTag.getInteger("MaxBlocksPerPulse")));
+                break;
             default:
                 break;
         }
@@ -874,6 +963,14 @@ public class AreaEffectEntity extends Entity {
             GrowBlockAreaAction growAction = (GrowBlockAreaAction) action;
             actionTag.setString(ACTION_TYPE, ACTION_GROW_BLOCK);
             actionTag.setInteger("MaxBlocksPerPulse", growAction.maxBlocksPerPulse);
+        } else if (action instanceof PlaceFireAreaAction) {
+            actionTag.setString(ACTION_TYPE, ACTION_PLACE_FIRE);
+        } else if (action instanceof PlaceSnowAreaAction) {
+            actionTag.setString(ACTION_TYPE, ACTION_PLACE_SNOW);
+        } else if (action instanceof FreezeLiquidAreaAction) {
+            FreezeLiquidAreaAction freezeAction = (FreezeLiquidAreaAction) action;
+            actionTag.setString(ACTION_TYPE, ACTION_FREEZE_LIQUID);
+            actionTag.setInteger("MaxBlocksPerPulse", freezeAction.maxBlocksPerPulse);
         }
         return actionTag;
     }
@@ -1037,6 +1134,124 @@ public class AreaEffectEntity extends Entity {
                 this.lastPulseTick = area.ticksExisted;
                 this.blocksGrownThisPulse = 0;
             }
+        }
+    }
+
+    public static class PlaceFireAreaAction implements AreaEffectAction {
+        @Override
+        public boolean canAffectBlock(AreaEffectEntity area, BlockPos pos) {
+            if (!area.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING)
+                    || !area.canOwnerModifyBlock(pos, EnumFacing.UP)) {
+                return false;
+            }
+
+            final IBlockState state = area.world.getBlockState(pos);
+            return (area.world.isAirBlock(pos) || state.getMaterial().isReplaceable())
+                    && Blocks.FIRE.canPlaceBlockAt(area.world, pos);
+        }
+
+        @Override
+        public void affectBlock(AreaEffectEntity area, BlockPos pos) {
+            area.world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+            area.world.neighborChanged(pos, Blocks.FIRE, pos);
+        }
+    }
+
+    public static class FreezeLiquidAreaAction implements AreaEffectAction {
+        private final int maxBlocksPerPulse;
+        private int blocksFrozenThisPulse;
+        private int lastPulseTick = -1;
+
+        public FreezeLiquidAreaAction(int maxBlocksPerPulse) {
+            this.maxBlocksPerPulse = Math.max(0, maxBlocksPerPulse);
+        }
+
+        @Override
+        public boolean canAffectBlock(AreaEffectEntity area, BlockPos pos) {
+            this.resetPulse(area);
+            if (this.maxBlocksPerPulse <= 0 || this.blocksFrozenThisPulse >= this.maxBlocksPerPulse
+                    || !area.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING)
+                    || !area.canOwnerModifyBlock(pos, EnumFacing.UP)) {
+                return false;
+            }
+
+            final IBlockState state = area.world.getBlockState(pos);
+            final Block block = state.getBlock();
+            final IBlockState above = area.world.getBlockState(pos.up());
+            if (!above.getMaterial().isReplaceable()) {
+                return false;
+            }
+            if (state.getMaterial() == Material.WATER) {
+                return (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
+                        && state.getValue(BlockLiquid.LEVEL) == 0
+                        && area.world.mayPlace(Blocks.FROSTED_ICE, pos, false, EnumFacing.DOWN, null);
+            }
+            return state.getMaterial() == Material.LAVA
+                    && (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
+                    && state.getValue(BlockLiquid.LEVEL) == 0
+                    && area.world.mayPlace(ModBlocks.Placeables.TEMP_BLOCK, pos, false, EnumFacing.DOWN, null);
+        }
+
+        @Override
+        public void affectBlock(AreaEffectEntity area, BlockPos pos) {
+            this.resetPulse(area);
+            if (this.blocksFrozenThisPulse >= this.maxBlocksPerPulse) {
+                return;
+            }
+
+            final IBlockState state = area.world.getBlockState(pos);
+            if (state.getMaterial() == Material.WATER) {
+                area.world.setBlockState(pos, Blocks.FROSTED_ICE.getDefaultState());
+                area.world.scheduleUpdate(pos, Blocks.FROSTED_ICE, MathHelper.getInt(Reference.random, 60, 120));
+            } else if (state.getMaterial() == Material.LAVA) {
+                area.world.setBlockState(pos, ModBlocks.Placeables.TEMP_BLOCK.getDefaultState());
+                area.world.scheduleUpdate(pos, ModBlocks.Placeables.TEMP_BLOCK, MathHelper.getInt(Reference.random, 60, 120));
+            } else {
+                return;
+            }
+            this.blocksFrozenThisPulse++;
+        }
+
+        private void resetPulse(AreaEffectEntity area) {
+            if (this.lastPulseTick != area.ticksExisted) {
+                this.lastPulseTick = area.ticksExisted;
+                this.blocksFrozenThisPulse = 0;
+            }
+        }
+    }
+
+    public static class PlaceSnowAreaAction implements AreaEffectAction {
+        @Override
+        public boolean canAffectBlock(AreaEffectEntity area, BlockPos pos) {
+            if (!area.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING)
+                    || !area.canOwnerModifyBlock(pos, EnumFacing.UP)) {
+                return false;
+            }
+
+            final IBlockState state = area.world.getBlockState(pos);
+            final Block block = state.getBlock();
+            if (block instanceof BlockSnow) {
+                return block.getMetaFromState(state) < 7;
+            }
+            return (area.world.isAirBlock(pos) || state.getMaterial().isReplaceable())
+                    && Blocks.SNOW_LAYER.canPlaceBlockAt(area.world, pos);
+        }
+
+        @Override
+        public void affectBlock(AreaEffectEntity area, BlockPos pos) {
+            final IBlockState state = area.world.getBlockState(pos);
+            final Block block = state.getBlock();
+            if (block instanceof BlockSnow) {
+                final int layers = block.getMetaFromState(state);
+                if (layers < 7) {
+                    area.world.setBlockState(pos, block.getStateFromMeta(layers + 1));
+                    area.world.neighborChanged(pos, block, pos);
+                }
+                return;
+            }
+
+            area.world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState());
+            area.world.neighborChanged(pos, Blocks.SNOW_LAYER, pos);
         }
     }
 

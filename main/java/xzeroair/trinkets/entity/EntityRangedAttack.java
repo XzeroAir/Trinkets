@@ -8,7 +8,6 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,6 +17,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
@@ -29,8 +31,6 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.init.Elements;
-import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.particles.EffectsRenderPacket;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.helpers.BlockHelperUtil;
@@ -40,11 +40,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class EntityRangedAttack extends Entity {
+
+    private static final DataParameter<Integer> BREATH_COLOR = EntityDataManager.createKey(EntityRangedAttack.class, DataSerializers.VARINT);
+    private static final float IMPACT_AREA_RADIUS = 3.0F;
+    private static final float IMPACT_AREA_VERTICAL_RADIUS = 1.5F;
+    private static final int IMPACT_AREA_DURATION = 60;
+    private static final int IMPACT_AREA_PULSE_INTERVAL = 10;
+    private static final int IMPACT_AREA_REAPPLICATION_DELAY = 20;
 
     @Nullable
     public Entity ignoreEntity;
@@ -116,7 +122,14 @@ public class EntityRangedAttack extends Entity {
 
     public EntityRangedAttack setColor(int color) {
         this.color = color;
+        if (!this.world.isRemote) {
+            this.getDataManager().set(BREATH_COLOR, color);
+        }
         return this;
+    }
+
+    public int getColor() {
+        return this.getDataManager().get(BREATH_COLOR);
     }
 
     public EntityRangedAttack setAirDrag(float airDrag) {
@@ -258,7 +271,6 @@ public class EntityRangedAttack extends Entity {
         this.applyMotionDecay();
 
         this.setPosition(this.posX, this.posY, this.posZ);
-        this.spawnTrailParticle();
 
         if (this.shouldExpire()) {
             this.setDead();
@@ -296,6 +308,7 @@ public class EntityRangedAttack extends Entity {
                 return true;
             }
             BlockHelperUtil.freezeWater(this.world, this.posX, this.posY, this.posZ, 0, 1.0D);
+            this.spawnImpactArea(new Vec3d(this.posX, this.posY, this.posZ));
             this.setDead();
             return false;
         }
@@ -305,6 +318,7 @@ public class EntityRangedAttack extends Entity {
                 return true;
             }
             BlockHelperUtil.freezeLava(this.world, this.posX, this.posY, this.posZ, 0, 1.0D);
+            this.spawnImpactArea(new Vec3d(this.posX, this.posY, this.posZ));
             this.setDead();
             return false;
         }
@@ -475,33 +489,6 @@ public class EntityRangedAttack extends Entity {
         this.updateRotationFromMotion();
     }
 
-    /*
-     * Visuals
-     */
-
-    protected void spawnTrailParticle() {
-        try {
-            final Random random = Reference.random;
-            final double d0 = (random.nextFloat() * 2.0F) - 1.0F;
-            final double d1 = (random.nextFloat() * 2.0F) - 1.0F;
-            final double d2 = (random.nextFloat() * 2.0F) - 1.0F;
-
-            if (((d0 * d0) + (d1 * d1) + (d2 * d2)) <= 1.0D) {
-                final double d3 = this.posX + ((d0 * 1F) / 4.0D);
-                final double d4 = this.posY + (1F / 2.0F) + ((d1 * 1F) / 4.0D);
-                final double d5 = this.posZ + ((d2 * 1F) / 4.0D);
-                if ((this.world instanceof WorldServer)) {
-                    if (Elements.LIGHTNING.equals(this.element)) {
-                        NetworkHandler.sendToClients((WorldServer) this.world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, this.color, 7, 0.8F, 1F));
-                    } else {
-                        NetworkHandler.sendToClients((WorldServer) this.world, this.getPosition(), new EffectsRenderPacket(this, d3, d4, d5, d0, d1 + 0.2D, d2, this.color, 4, 1F, 1F));
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /*
      * Hit dispatch
@@ -521,32 +508,50 @@ public class EntityRangedAttack extends Entity {
     }
 
     private void handleBlockHit(RayTraceResult movingObject) {
-        if (!this.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING) || !this.interactWithTerrain) {
-            return;
-        }
+        final Vec3d impact = movingObject.hitVec == null
+                ? new Vec3d(movingObject.getBlockPos()).add(0.5D, 0.5D, 0.5D)
+                : movingObject.hitVec;
+        this.spawnImpactArea(impact);
+    }
 
-        final BlockPos hitBlock = movingObject.getBlockPos();
-        if (hitBlock == null) {
-            return;
-        }
-
-        final IBlockState state = this.world.getBlockState(hitBlock);
-        final Block block = state.getBlock();
-        final EnumFacing impactSide = movingObject.sideHit != null ? movingObject.sideHit : this.getImpactSide();
-        final BlockPos offsetBlock = hitBlock.offset(impactSide);
-
-        if (Elements.LIGHTNING.equals(this.element)) {
-            this.spawnLightningImpactCloud();
-            return;
-        }
-
+    private void spawnImpactArea(Vec3d impact) {
+        final AreaEffectEntity area = new AreaEffectEntity(this.world, impact.x, impact.y, impact.z);
+        area.setOwner(this.getShootingEntity());
+        area.setRadius(IMPACT_AREA_RADIUS);
+        area.setVerticalRadius(IMPACT_AREA_VERTICAL_RADIUS);
+        area.setWaitTime(0);
+        area.setDuration(IMPACT_AREA_DURATION);
+        area.setRadiusPerTick(-IMPACT_AREA_RADIUS / (float) IMPACT_AREA_DURATION);
+        area.setPulseInterval(IMPACT_AREA_PULSE_INTERVAL);
+        area.setReapplicationDelay(IMPACT_AREA_REAPPLICATION_DELAY);
+        area.setColor(this.color);
         if (Elements.ICE.equals(this.element)) {
-            this.applyIceTerrainEffect(hitBlock, offsetBlock);
-            return;
+            area.setWaterBehavior(AreaEffectEntity.LiquidBehavior.FLOAT);
+            area.setLavaBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
+        } else {
+            area.setWaterBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
+            area.setLavaBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
+        }
+        area.setEntityTargetPredicate(target -> this.canAffectTarget(target, this.isPvpEnabled()));
+
+        for (final String effectId : this.EFFECTS) {
+            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(effectId);
+            if (potion.getPotion() != null) {
+                area.addAction(new AreaEffectEntity.PotionAreaAction(potion.getPotionEffect()));
+            }
         }
 
-        if (Elements.FIRE.equals(this.element)) {
-            this.applyFireTerrainEffect(hitBlock, offsetBlock, impactSide);
+        if (this.interactWithTerrain) {
+            if (Elements.FIRE.equals(this.element)) {
+                area.addAction(new AreaEffectEntity.PlaceFireAreaAction());
+            } else if (Elements.ICE.equals(this.element)) {
+                area.addAction(new AreaEffectEntity.FreezeLiquidAreaAction(4));
+                area.addAction(new AreaEffectEntity.PlaceSnowAreaAction());
+            }
+        }
+
+        if (!area.getActions().isEmpty()) {
+            this.world.spawnEntity(area);
         }
     }
 
@@ -604,30 +609,6 @@ public class EntityRangedAttack extends Entity {
     /*
      * Block and terrain effects
      */
-
-    private void spawnLightningImpactCloud() {
-        if (this.EFFECTS.length <= 0) {
-            return;
-        }
-
-        final EntityAreaEffectCloud cloud = new EntityAreaEffectCloud(this.world, this.posX, this.posY, this.posZ);
-        cloud.setOwner(this.shootingEntity);
-        cloud.setRadius(3.0F);
-        cloud.setRadiusOnUse(-0.5F);
-        cloud.setWaitTime(10);
-        cloud.setDuration(60);
-        cloud.setRadiusPerTick(-cloud.getRadius() / (float) cloud.getDuration());
-
-        for (final String effectId : this.EFFECTS) {
-            final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(effectId);
-            if (potion.getPotion() != null) {
-                cloud.addEffect(potion.getPotionEffect());
-            }
-        }
-
-        cloud.setColor(this.color);
-        this.world.spawnEntity(cloud);
-    }
 
     private void applyIceTerrainEffect(BlockPos hitBlock, BlockPos offsetBlock) {
         this.placeOrGrowSnow(hitBlock);
@@ -852,12 +833,13 @@ public class EntityRangedAttack extends Entity {
 
     @Override
     protected void entityInit() {
+        this.getDataManager().register(BREATH_COLOR, 12582912);
     }
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
         if (compound.hasKey("BreathColor")) {
-            this.color = compound.getInteger("BreathColor");
+            this.setColor(compound.getInteger("BreathColor"));
         }
         if (compound.hasKey("Damage")) {
             this.damage = compound.getFloat("Damage");
@@ -899,7 +881,7 @@ public class EntityRangedAttack extends Entity {
 
     @Override
     protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
-        compound.setInteger("BreathColor", this.color);
+        compound.setInteger("BreathColor", this.getColor());
         compound.setFloat("Damage", this.damage);
         compound.setInteger("ElementId", Element.getIdFromElement(this.element));
         if (this.shootingEntity != null) {
