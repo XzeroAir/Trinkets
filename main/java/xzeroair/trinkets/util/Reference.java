@@ -17,7 +17,11 @@ public class Reference {
     public static final String GUIFACTORY = "xzeroair.trinkets.client.gui.TrinketsGuiFactory";
     public static final String FINGERPRINT = "@FINGERPRINT@";
 
-    public static final String VIP_LIST = "https://raw.githubusercontent.com/XzeroAir/AuxFiles/master/VipsV2.json";
+    /**
+     * V3 is the only VIP document read by current builds. V2 remains a compatibility
+     * output for older releases and must not be repurposed.
+     */
+    public static final String VIP_LIST = "https://raw.githubusercontent.com/XzeroAir/AuxFiles/master/VipsV3.json";
 
     public static final String filePath = "/trinkets/";
     public static final String configPath = filePath + "Trinkets_And_Baubles";

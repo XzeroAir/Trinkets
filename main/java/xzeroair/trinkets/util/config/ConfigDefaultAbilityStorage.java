@@ -118,6 +118,9 @@ public class ConfigDefaultAbilityStorage {
     @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_LIGHTNING)
     public ConfigAbilityBreath LIGHTNING_BREATH = new ConfigAbilityBreath();
+    @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_DRAGON)
+    public ConfigAbilityBreath DRAGON_BREATH = new ConfigAbilityBreath();
 
     @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_LIGHTNING_BOLT)

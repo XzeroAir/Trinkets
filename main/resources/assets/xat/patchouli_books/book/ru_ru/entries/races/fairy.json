@@ -1,0 +1,29 @@
+{
+    "name": "Фея",
+    "icon": "xat:textures/potions/fairy.png",
+    "category": "races",
+    "sortnum": 20,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Феи — крошечные путешественники по открытому воздуху и скрытым местам.$(br2)Они могут летать, карабкаться и призывать Mending Bloom."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_dew",
+            "text": "Этот рецепт навсегда превратит вас в Фею."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_ring",
+            "text": "Наденьте Кольцо Феи, чтобы принять участие в этой гонке, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:ghast_tear",
+            "result": "minecraft:potion{Potion:'xat:fairy'}"
+        }
+    ]
+}

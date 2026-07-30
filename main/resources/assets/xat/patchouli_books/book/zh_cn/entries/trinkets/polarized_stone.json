@@ -1,20 +1,17 @@
 {
-    "name": "磁石",
+    "name": "极化石",
     "icon": "xat:polarized_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "拥有两种模式，吸引模式和排斥模式，能在快捷栏、副手、饰品栏中生效。"
+            "text": "偏光石具有磁铁和排斥能力。$(br2)磁铁会将附近的物品吸引到您身边；击退花费法力来推开射弹和附近的威胁。$(br2)它在装备时、在你的快捷栏或在你的副手上时起作用。"
         },
-		{
-            "type": "text",
-            "text": "吸引模式在启用时能吸引物品（按下吸引模式绑定键或在手中右击）。$(br2)排斥模式会消耗魔力排斥弹射物（按下辅助键和吸引模式绑定键或在手中潜行并右击）"
-        },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Waht will I do without my $(l)Ggravitational pull",
-			"recipe": "xat:polarized_stone"
+            "recipe": "xat:polarized_stone",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 60
 }

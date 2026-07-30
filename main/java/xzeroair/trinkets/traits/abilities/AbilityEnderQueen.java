@@ -30,6 +30,7 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.init.TrinketsDamageSource;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
@@ -179,7 +180,8 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                     final double y = attacked.getPosition().getY();
                     final double z = attacked.getPosition().getZ();
                     knight.setPosition(x, y, z);
-                    knight.getEntityData().setBoolean("xat:summoned", true);
+                    knight.getEntityData().setBoolean(EnderQueensKnightAI.SUMMONED_TAG, true);
+                    knight.getEntityData().setString(EnderQueensKnightAI.QUEEN_UUID_TAG, attacked.getCachedUniqueIdString());
                     knight.setCanPickUpLoot(false);
                     attacked.getEntityWorld().spawnEntity(knight);
                     knight.setAttackTarget(attacker);

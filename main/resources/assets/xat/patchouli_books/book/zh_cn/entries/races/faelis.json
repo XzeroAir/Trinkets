@@ -1,24 +1,29 @@
 {
-    "name": "猫灵",
-    "icon": "xat:faelis_ring",
+    "name": "法埃利斯",
+    "icon": "xat:textures/potions/faelis.png",
     "category": "races",
+    "sortnum": 40,
     "pages": [
         {
             "type": "text",
-            "text": "猫灵是基于高移动速度和高攻击速度的灵活种族。猫灵在空手攻击时会造成额外的伤害，但是使用武器时仍会造成少量额外伤害。猫灵在装备比皮革甲或鞘翅更重的装备时获得移动速度惩罚。$(br2)种族灵感源自 NyanMinecrafter"
+            "text": "Faelis 是喜欢高地的敏捷猎人。$(br2)夜视和攀爬让他们在太阳下山后继续前进。"
         },
-		{
-            "type": "text",
-            "text": "$(l)默认属性调整：$()$(br)85%体型$(br)$(2)+15%$()攻击速度$(br)$(4)-25%$()攻击伤害$(br)$(4)-25%$()生命值$(br)$(4)-15%$()盔甲韧性$(br)$(2)+25%$()移动速度$(br)$(2)+50%$()游泳速度$(br)$(2)+60%$()跳跃高度$(br)$(2)+0.6$()上坡高度$(br)"
-        },
-		{
-            "type": "text",
-            "text": "$(l)能力：消耗钙质$()$(br)当猫灵饮用奶后，他们会增强体质并在30秒内免疫重甲惩罚。"
-        },
-		{
+        {
             "type": "crafting",
-			"recipe": "xat:faelis_food",
-			"recipe2": "xat:faelis_ring"
+            "recipe": "xat:faelis_food",
+            "text": "这个食谱会让你永久变成一个Faelis。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_ring",
+            "text": "佩戴 Faelis 戒指，在装备好它后参加这场比赛。"
+        },
+        {
+            "type": "default_brewing",
+            "title": "默认冲泡配方",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "xat:faelis_claw",
+            "result": "minecraft:potion{Potion:'xat:faelis'}"
         }
     ]
 }

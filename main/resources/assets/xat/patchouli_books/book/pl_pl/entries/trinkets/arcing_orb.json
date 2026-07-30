@@ -1,0 +1,17 @@
+{
+    "name": "Łukowa Kula",
+    "icon": "xat:arcing_orb",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Naciśnij dwukrotnie klawisz ruchu na ziemi, aby wykonać unik kosztem many; pobliscy wrogowie mogą zostać na krótko ogłuszeni.$(br2)Użyj Arcing Orb ability key, aby naładować i rzucić błyskawicę.$(br)Dłuższy ładunek kosztuje więcej many i uderza mocniej."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:arcing_orb",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 120
+}

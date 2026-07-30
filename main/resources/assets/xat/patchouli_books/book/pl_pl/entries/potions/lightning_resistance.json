@@ -1,0 +1,19 @@
+{
+    "name": "Odporność na błyskawice",
+    "icon": "xat:textures/potions/lightning_resistance.png",
+    "category": "potions",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Odporność na błyskawice chroni Cię przed obrażeniami od błyskawic."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "xat:spark_powder",
+            "result": "minecraft:potion{Potion:'xat:lightning_resistance'}"
+        }
+    ]
+}

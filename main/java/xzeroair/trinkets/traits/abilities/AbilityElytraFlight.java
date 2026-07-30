@@ -2,14 +2,22 @@ package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
+import xzeroair.trinkets.traits.abilities.interfaces.IInteractionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IJumpAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
@@ -21,18 +29,19 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import javax.annotation.Nullable;
 
-public class AbilityElytraFlight extends Ability implements ITickableAbility, IMovementAbility, IJumpAbility {
+public class AbilityElytraFlight extends Ability implements ITickableAbility, IMovementAbility, IJumpAbility, IInteractionAbility {
 
     protected static final String GLIDING_TAG = "GLIDING";
     protected static final String LIFT_COST_TAG = "LIFT_COST";
     protected static final String LIFT_STRENGTH_TAG = "LIFT_STRENGTH";
+    protected static final String FIREWORK_BOOST_TICKS_TAG = "FIREWORK_BOOST_TICKS";
     protected static final int VANILLA_FLIGHT_EXIT_DELAY = 7;
 
     protected ConfigAbilityElytraFlight CONFIG;
     protected float COST, LIFT_COST;
     protected double LIFT_STRENGTH;
     protected boolean GLIDING, LIFT_ENABLED, LIFT_REQUESTED, VANILLA_FLIGHT_ACTIVE;
-    protected int VANILLA_FLIGHT_EXIT_TICKS;
+    protected int VANILLA_FLIGHT_EXIT_TICKS, FIREWORK_BOOST_TICKS;
 
     public AbilityElytraFlight() {
         this(TrinketsConfig.SERVER.ABILITIES.ELYTRA_FLIGHT);
@@ -117,6 +126,41 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     }
 
     @Override
+    public void rightClickWithItem(EntityLivingBase entity, World world, ItemStack stack, EnumHand hand, EnumFacing face, BlockPos pos) {
+        if (!(entity instanceof EntityPlayer) || world.isRemote || !this.GLIDING || stack.getItem() != Items.FIREWORKS) {
+            return;
+        }
+        final EntityPlayer player = (EntityPlayer) entity;
+        if (this.isUsingVanillaFlight(player)) {
+            return;
+        }
+        this.FIREWORK_BOOST_TICKS = Math.max(this.FIREWORK_BOOST_TICKS, fireworkLifetime(stack, player));
+        this.setChanged(true);
+        world.spawnEntity(new EntityFireworkRocket(world, stack.copy(), player));
+        if (!player.capabilities.isCreativeMode) {
+            stack.shrink(1);
+        }
+    }
+
+    protected void applyFireworkBoost(EntityPlayer player) {
+        if (this.FIREWORK_BOOST_TICKS <= 0) {
+            return;
+        }
+        this.FIREWORK_BOOST_TICKS--;
+        final Vec3d look = player.getLookVec();
+        player.motionX += look.x * 0.1D + (look.x * 1.5D - player.motionX) * 0.5D;
+        player.motionY += look.y * 0.1D + (look.y * 1.5D - player.motionY) * 0.5D;
+        player.motionZ += look.z * 0.1D + (look.z * 1.5D - player.motionZ) * 0.5D;
+        player.velocityChanged = true;
+    }
+
+    protected int fireworkLifetime(ItemStack stack, EntityPlayer player) {
+        final NBTTagCompound fireworks = stack.hasTagCompound() ? stack.getTagCompound().getCompoundTag("Fireworks") : null;
+        final int flight = fireworks == null ? 0 : fireworks.getByte("Flight");
+        return 10 * (1 + flight) + player.getRNG().nextInt(6) + player.getRNG().nextInt(7);
+    }
+
+    @Override
     public float fallDistance(EntityLivingBase entity, float distance) {
         if (this.GLIDING) {
             return 0F;
@@ -163,6 +207,7 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
             return;
         }
         this.applyElytraMotion(player);
+        this.applyFireworkBoost(player);
         if (this.LIFT_REQUESTED) {
             this.LIFT_REQUESTED = false;
             final boolean liftApplied = this.LIFT_ENABLED && this.spendLiftCost(player);
@@ -296,6 +341,13 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
         }
     }
 
+    @Override
+    public void loadDataCache(NBTTagCompound tag) {
+        if (tag != null && tag.hasKey(FIREWORK_BOOST_TICKS_TAG)) {
+            this.FIREWORK_BOOST_TICKS = Math.max(0, tag.getInteger(FIREWORK_BOOST_TICKS_TAG));
+        }
+    }
+
     @Nullable
     @Override
     public NBTTagCompound sendAbilityData() {
@@ -304,6 +356,7 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
         tag.setFloat(LIFT_COST_TAG, this.LIFT_COST);
         tag.setDouble(LIFT_STRENGTH_TAG, this.LIFT_STRENGTH);
         tag.setBoolean(GLIDING_TAG, this.GLIDING);
+        tag.setInteger(FIREWORK_BOOST_TICKS_TAG, this.FIREWORK_BOOST_TICKS);
         return tag;
     }
 }

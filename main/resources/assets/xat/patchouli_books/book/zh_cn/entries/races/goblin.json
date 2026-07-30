@@ -1,24 +1,29 @@
 {
-    "name": "地精",
-    "icon": "xat:goblin_ring",
+    "name": "哥布林",
+    "icon": "xat:textures/potions/goblin.png",
     "category": "races",
+    "sortnum": 50,
     "pages": [
         {
             "type": "text",
-            "text": "地精具有抵抗爆炸和骑乘狼的能力。地精的体型只有人类的一半。$(br2)种族灵感源自 CowSaysBoom"
+            "text": "哥布林是斗志旺盛的登山者，具有在千钧一发的情况下生存的天赋。$(br2)他们的狼骑能力让驯服的狼成为可怕的伙伴。"
         },
-		{
-            "type": "text",
-            "text": "$(l)默认属性调整：$()$(br)50%体型$(br)$(4)-50%$()攻击伤害$(br)$(4)-40%$()生命值$(br)$(2)+20%$()移动速度$(br)$(2)+10%$()游泳速度$(br)"
-        },
-		{
-            "type": "text",
-            "text": "$(l)能力：骑狼$()$(br)地精能够通过右击骑乘任一已驯服的狗（消耗地精60%的魔力值）。骑狗时，这只狗会暂时变成狼王。狼王和它的骑手都会获得力量和生命恢复效果，狼王可以通过撞到实体来伤害它们。"
-        },
-		{
+        {
             "type": "crafting",
-			"recipe": "xat:goblin_soup",
-			"recipe2": "xat:goblin_ring"
+            "recipe": "xat:goblin_soup",
+            "text": "这个食谱可以让你永久变成妖精。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_ring",
+            "text": "佩戴妖精戒指，在装备好它后参加这场比赛。"
+        },
+        {
+            "type": "default_brewing",
+            "title": "默认冲泡配方",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:leather",
+            "result": "minecraft:potion{Potion:'xat:goblin'}"
         }
     ]
 }

@@ -1,0 +1,17 @@
+{
+    "name": "Piedra de Inercia Nula",
+    "icon": "xat:inertia_null_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Piedra de la Inercia Null detiene el daño por caída y el retroceso.$(br2)También se utiliza para crear la Piedra de la Inercia Mayor."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:inertia_null_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 40
+}

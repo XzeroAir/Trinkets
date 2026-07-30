@@ -534,6 +534,10 @@ public class EntityRangedAttack extends Entity {
         }
         area.setEntityTargetPredicate(target -> this.canAffectTarget(target, this.isPvpEnabled()));
 
+        if (Elements.NEUTRAL.equals(this.element)) {
+            area.addAction(new AreaEffectEntity.DamageAreaAction(this.getDamage() * 0.1F));
+        }
+
         for (final String effectId : this.EFFECTS) {
             final PotionHelper.PotionHolder potion = PotionHelper.getPotionHolder(effectId);
             if (potion.getPotion() != null) {

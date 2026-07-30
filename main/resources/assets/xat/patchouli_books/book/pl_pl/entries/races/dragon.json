@@ -1,0 +1,29 @@
+{
+    "name": "Smok",
+    "icon": "xat:textures/potions/dragon.png",
+    "category": "races",
+    "sortnum": 70,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Smoki wzbijają się w niebo dzięki lotowi i ostremu widzeniu w nocy.$(br2)Smoki Ognia, Lodu i Błyskawic zyskują własny oddech i dary żywiołów."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_food",
+            "text": "Ten przepis trwale przemienia Cię w Smoka."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_ring",
+            "text": "Noś Smoczy Pierścień, aby wziąć udział w tym wyścigu, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:dragon_breath",
+            "result": "minecraft:potion{Potion:'xat:dragon'}"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Taurus",
+    "icon": "xat:textures/potions/taurus.png",
+    "category": "races",
+    "sortnum": 80,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los Taurus son ​​caminantes robustos y con cuernos, construidos para mantenerse firmes.$(br2)Su habilidad Estampida convierte una carga en una entrada adecuada."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_tea",
+            "text": "Esta receta te transforma permanentemente en un Taurus."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_ring",
+            "text": "Usa el anillo Taurus para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:milk_bucket",
+            "result": "minecraft:potion{Potion:'xat:taurus'}"
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "name": "Базовые зелья",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "category": "potions",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:sparkling'}",
+            "text": "Зелье сверкающего — это первое базовое зелье алхимии.$(br2)Выпивка его восстанавливает 25% от максимального запаса маны."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glittering'}",
+            "text": "Зелье сверкания — это улучшенное базовое зелье алхимии. $(br2) Его употребление восстанавливает 50 % от максимального запаса маны."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glowing'}",
+            "text": "Зелье сияния — самое мощное базовое зелье алхимии. $(br2) Его употребление восстанавливает 100% вашего максимального запаса маны."
+        }
+    ]
+}

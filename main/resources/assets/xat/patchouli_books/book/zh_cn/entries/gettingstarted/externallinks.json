@@ -5,7 +5,8 @@
     "pages": [
         {
             "type": "text",
-            "text": "$(l:https://discord.gg/es2AEVs)Trinkets Discord server$(/l) （欢迎与我们联系）$(br)$(l:https://github.com/XzeroAir/Trinkets/issues)Trinkets Github Issues Page$(/l) （你可以在这里反馈 bug 或提建议）"
+            "text": "需要帮助或想要报告问题？$(br2)$(l:https://discord.gg/es2AEVs)Trinkets Discord Server$(/l)$(br)$(l:https://github.com/XzeroAir/Trinkets/issues)GitHub 问题$(/l)$(br2)请包含您的 Minecraft 版本， Trinkets 版本，以及报告错误时的任何相关 modpack 详细信息。"
         }
-    ]
+    ],
+    "sortnum": 6
 }

@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -58,25 +59,40 @@ public class EnderQueenHandler {
 
     @SubscribeEvent
     public void EndermanJoinWorld(EntityJoinWorldEvent event) {
-        //Add Tiara AI to Enderman
-        if (event.getEntity() instanceof EntityEnderman) {
-            final EntityEnderman enderman = (EntityEnderman) event.getEntity();
-            if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ENABLED && TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENABLED) {
-//                final NBTTagCompound tag = NBTHelper.getEntityTag(enderman);
-//                if (tag != null) {
-//                    tag.setBoolean("isFollower", false);
-//                }
-                for (final Object a : enderman.targetTasks.taskEntries.toArray()) {
-                    final EntityAIBase ai = ((EntityAITaskEntry) a).action;
-                    if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
-                        enderman.targetTasks.removeTask(ai);
-                    }
-                }
-                enderman.targetTasks.addTask(1, new EnderAiEdit(enderman));
-                enderman.targetTasks.addTask(2, new EnderQueensKnightAI(enderman));
-                if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENDERMAN_FOLLOW) {
-                    enderman.targetTasks.addTask(3, new EnderMoveAI(enderman));
-                }
+        if (event.getWorld().isRemote || !(event.getEntity() instanceof EntityEnderman)) {
+            return;
+        }
+
+        final EntityEnderman enderman = (EntityEnderman) event.getEntity();
+        final NBTTagCompound data = enderman.getEntityData();
+        data.removeTag(EnderQueensKnightAI.FOLLOWING_TAG);
+        if (!TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ENABLED || !TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENABLED) {
+            return;
+        }
+
+        boolean hasEnderAiEdit = false;
+        boolean hasKnightAi = false;
+        for (final Object taskEntry : enderman.targetTasks.taskEntries.toArray()) {
+            final EntityAIBase ai = ((EntityAITaskEntry) taskEntry).action;
+            hasEnderAiEdit |= ai instanceof EnderAiEdit;
+            hasKnightAi |= ai instanceof EnderQueensKnightAI;
+            if (ai.toString().startsWith("net.minecraft.entity.monster.EntityEnderman$AIFindPlayer")) {
+                enderman.targetTasks.removeTask(ai);
+            }
+        }
+        if (!hasEnderAiEdit) {
+            enderman.targetTasks.addTask(1, new EnderAiEdit(enderman));
+        }
+        if (!hasKnightAi) {
+            enderman.targetTasks.addTask(2, new EnderQueensKnightAI(enderman));
+        }
+        if (TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENDERMAN_FOLLOW) {
+            boolean hasFollowAi = false;
+            for (final Object taskEntry : enderman.tasks.taskEntries.toArray()) {
+                hasFollowAi |= ((EntityAITaskEntry) taskEntry).action instanceof EnderMoveAI;
+            }
+            if (!hasFollowAi) {
+                enderman.tasks.addTask(3, new EnderMoveAI(enderman));
             }
         }
     }

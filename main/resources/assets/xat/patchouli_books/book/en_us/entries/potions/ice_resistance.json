@@ -1,0 +1,19 @@
+{
+    "name": "Ice Resistance",
+    "icon": "xat:textures/potions/ice_resistance.png",
+    "category": "potions",
+    "sortnum": 1,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Ice Resistance protects you from ice damage."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Default Brewing Recipe",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:snow",
+            "result": "minecraft:potion{Potion:'xat:ice_resistance'}"
+        }
+    ]
+}

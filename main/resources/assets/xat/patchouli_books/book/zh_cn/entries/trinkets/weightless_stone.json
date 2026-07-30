@@ -1,16 +1,17 @@
 {
-    "name": "零重力之石",
+    "name": "失重之石",
     "icon": "xat:weightless_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "零重力之石使它的装备者豁免重力，允许他们在薄薄的空气上行走。在这个状态下左击使你向上移动，潜行并右击是你向下移动。当把它拿在手上时，持有者会获得漂浮 II 。"
+            "text": "负重力之石让你在装备时漂浮。$(br2)摆动上升；潜行并摆动下降。"
         },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Falling with style!",
-			"recipe": "xat:weightless_stone"
+            "recipe": "xat:weightless_stone",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 30
 }

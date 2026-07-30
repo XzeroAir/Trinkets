@@ -1,0 +1,17 @@
+{
+    "name": "Kamień Większej Inercji",
+    "icon": "xat:greater_inertia_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Kamień Większej Bezwładności sprzyja szybkiemu ruchowi, jednocześnie łagodząc upadki i odrzuty.$(br2)Jest lżejszym, bardziej mobilnym kuzynem Kamienia Bezwładności Null."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:greater_inertia_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 50
+}

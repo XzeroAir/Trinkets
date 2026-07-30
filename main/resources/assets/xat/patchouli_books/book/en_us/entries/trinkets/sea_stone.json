@@ -5,16 +5,13 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Stone of the Sea grants its wearer the ability to breathe underwater, and changes swimming controls to a method more closely resembling 1.13+ swimming mechanics."
+            "text": "The Stone of the Sea lets you breathe and mine freely underwater.$(br2)It also gives you controlled three-dimensional swimming: use movement, jump, and sneak to steer through the water."
         },
-		{
-            "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+400%$() Swim Speed$(br2)$(l)Mod Compatibility:$()$(br)$(n)Tough as Nails$() / $(n)Simple Difficulty$(): Immunity to thirst status effect$(br)$(n)Enhanced Visuals$(): Removes the blur visual effect for entering water"
-        },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)bloop bloop am fish",
-			"recipe": "xat:sea_stone"
+            "recipe": "xat:sea_stone",
+            "text": "Crafting"
         }
-    ]
+    ],
+    "sortnum": 70
 }

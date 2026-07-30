@@ -1,0 +1,12 @@
+{
+    "name": "Trinkets Container",
+    "icon": "xat:textures/gui/patchouli_textures/trinkets_container_button.png",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Abre tu inventario y usa el Trinkets button en el área superior izquierda para revelar el Trinkets Container.$(br2)Coloca una baratija en una ranura válida para equiparla."
+        }
+    ],
+    "sortnum": 1
+}

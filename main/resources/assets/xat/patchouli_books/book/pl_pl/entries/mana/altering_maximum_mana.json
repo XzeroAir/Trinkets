@@ -1,0 +1,12 @@
+{
+    "name": "Zmiana maksymalnej many",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 1,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Twoja rasa i niektóre przedmioty mogą zmieniać twoją maksymalną manę.$(br2)Jedz $(l:mana/mana_crystal)Kryształy Many$(/l), aby uzyskać trwały wzrost, lub czerp z esencji pobliskich $(l:mana/moon_rose)Księżycowych Róż$(/l) z biegiem czasu."
+        }
+    ]
+}

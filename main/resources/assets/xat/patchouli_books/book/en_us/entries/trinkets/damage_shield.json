@@ -5,16 +5,13 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Shield of Honor grants its wearer the resistance status effect as well as the ability to ignore one hit every few hits."
+            "text": "The Shield of Honor grants Resistance and softens explosion damage.$(br2)After enough heavy hits, its safeguard can turn aside an attack."
         },
-		{
-            "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)$(2)+75%$() Explosion Damage Resistance$(br2)$(l)Mod Compatibility:$()$(br)$(n)First Aid$(): 1% chance to ignore headshot$(br)$(n)Enhanced Visuals$(): Removes the blur from explosions"
-        },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Disclaimer: Does not allow you to take 25% of other players' damage.",
-			"recipe": "xat:shield_of_honor"
+            "recipe": "xat:shield_of_honor",
+            "text": "Crafting"
         }
-    ]
+    ],
+    "sortnum": 100
 }

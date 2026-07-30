@@ -1,0 +1,19 @@
+{
+    "name": "人类",
+    "icon": "xat:textures/potions/human.png",
+    "category": "races",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "人类是熟悉的形态。$(br2)选择它作为你的原始种族，或者使用恢复血清返回到它。"
+        },
+        {
+            "type": "default_brewing",
+            "title": "默认冲泡配方",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:apple",
+            "result": "minecraft:potion{Potion:'xat:human'}"
+        }
+    ]
+}

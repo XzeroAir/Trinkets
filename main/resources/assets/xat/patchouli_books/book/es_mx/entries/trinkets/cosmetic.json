@@ -1,0 +1,12 @@
+{
+    "name": "Cosmético Trinkets",
+    "icon": "xat:cosmetic",
+    "category": "trinkets",
+    "sortnum": 150,
+    "pages": [
+        {
+            "type": "text",
+            "text": "El cosmético Trinkets agrega rasgos visuales como alas, orejas, cuernos y colas sin cambiar tu raza.$(br2)Haz clic derecho para avanzar a través de su apariencia; sigilosamente y haga clic derecho para retroceder."
+        }
+    ]
+}

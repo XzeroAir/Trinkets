@@ -1,0 +1,17 @@
+{
+    "name": "Камень великой инерции",
+    "icon": "xat:greater_inertia_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Камень Великой Инерции способствует быстрому движению, смягчая падения и отбрасывание.$(br2)Это более легкий и мобильный родственник Камня Инерции Нуль."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:greater_inertia_stone",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 50
+}

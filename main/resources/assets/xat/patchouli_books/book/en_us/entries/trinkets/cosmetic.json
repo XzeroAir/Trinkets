@@ -1,0 +1,12 @@
+{
+    "name": "Cosmetic Trinkets",
+    "icon": "xat:cosmetic",
+    "category": "trinkets",
+    "sortnum": 150,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Cosmetic Trinkets add visual traits such as wings, ears, horns, and tails without changing your race.$(br2)Right-click to cycle forward through their looks; sneak and right-click to cycle backward."
+        }
+    ]
+}

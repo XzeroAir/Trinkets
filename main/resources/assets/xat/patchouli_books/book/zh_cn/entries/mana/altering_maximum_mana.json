@@ -1,0 +1,12 @@
+{
+    "name": "改变最大法力值",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 1,
+    "pages": [
+        {
+            "type": "text",
+            "text": "你的种族和某些物品可以改变你的最大法力值。$(br2)吃$(l:mana/mana_crystal)法力水晶$(/l)可以永久增加法力值，或者随着时间的推移吸取附近$(l:mana/moon_rose)月亮玫瑰$(/l)的精华。"
+        }
+    ]
+}

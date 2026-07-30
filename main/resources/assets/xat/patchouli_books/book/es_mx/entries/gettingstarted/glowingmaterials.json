@@ -1,0 +1,36 @@
+{
+    "name": "Materiales de elaboración",
+    "icon": "xat:glowing_gem",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El polvo resplandeciente, los lingotes resplandecientes y las gemas resplandecientes son materiales de elaboración estables cargados de maná que se utilizan en Trinkets.$(br2)Una silenciosa energía mágica irradia de cada uno.$(br2)Mantén sus recetas a mano: muchos elementos posteriores se construyen a partir de estos materiales."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_powder",
+            "text": "Elaboración de polvo brillante"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_ingot",
+            "text": "Elaborar un lingote resplandeciente"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_gem",
+            "text": "Elaborar una gema brillante"
+        },
+        {
+            "type": "text",
+            "text": "Spark Powder es un material de elaboración poderoso e inestable que se utiliza en objetos como Arcing Orb.$(br2)Su maná crepita con una energía violenta.$(br2)Créalo a partir de Mana Reagent una vez que estés listo para trabajar con él."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:spark_powder",
+            "text": "Elaboración de polvo de chispa"
+        }
+    ],
+    "sortnum": 3
+}

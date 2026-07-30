@@ -1,0 +1,17 @@
+{
+    "name": "Ojo de Dragón",
+    "icon": "xat:dragons_eye",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Ojo del Dragón otorga visión nocturna y revela un mineral elegido a través de la piedra.$(br2)Usa la tecla Dragon's Eye Cycle para elegir lo que busca."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragons_eye",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 20
+}

@@ -21,8 +21,6 @@ import javax.annotation.Nullable;
 public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
 
     private final EntityEnderman ENDER_MAN;
-    private final String FOLLOWER_TAG = "isFollower";
-    private final String QUEEN_TAG = "QUEEN_UUID";
     @Nullable
     private EntityPlayer player;
     private int aggroTime;
@@ -39,7 +37,7 @@ public class EnderAiEdit extends EntityAINearestAttackableTarget<EntityPlayer> {
             return false;
         }
         NBTTagCompound tag = this.ENDER_MAN.getEntityData();
-        if ((itemstack.getItem() == ModItems.trinkets.TrinketEnderTiara) || (tag.hasKey(this.QUEEN_TAG) && tag.getString(this.QUEEN_TAG).compareTo(player.getCachedUniqueIdString()) == 0) || (TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN)) || (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye, ModItems.trinkets.TrinketEnderTiara)) || TrinketHelper.isEntityRace(player, EntityRaces.dragon)) {
+        if ((itemstack.getItem() == ModItems.trinkets.TrinketEnderTiara) || (tag.hasKey(EnderQueensKnightAI.QUEEN_UUID_TAG) && tag.getString(EnderQueensKnightAI.QUEEN_UUID_TAG).compareTo(player.getCachedUniqueIdString()) == 0) || (TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN)) || (TrinketHelper.AccessoryCheck(player, ModItems.trinkets.TrinketDragonsEye, ModItems.trinkets.TrinketEnderTiara)) || TrinketHelper.isEntityRace(player, EntityRaces.dragon)) {
             return false;
         } else {
             final Vec3d vec3d = player.getLook(1.0F).normalize();

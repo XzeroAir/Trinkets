@@ -1,24 +1,29 @@
 {
     "name": "Dragon",
-    "icon": "xat:dragon_ring",
+    "icon": "xat:textures/potions/dragon.png",
     "category": "races",
+    "sortnum": 70,
     "pages": [
         {
             "type": "text",
-            "text": "The Dragon race is a powerful being which gets creative flight (at the cost of mana) as well as strong combat affinity. More overpowered than all other races, however also the hardest to obtain."
+            "text": "Dragons take to the sky with flight and sharp night vision.$(br2)Fire, Ice, and Lightning dragons each gain their own breath and elemental gifts."
         },
-		{
-            "type": "text",
-            "text": "$(l)Default Attribute modifiers:$()$(br)120% Size$(br)$(2)+50%$() Attack Damage$(br)$(2)+25%$() Health$(br)$(2)+50%$() Armor Toughness"
-        },
-		{
-            "type": "text",
-            "text": "$(l)Ability: Fire Breath$()$(br)Holding the Race Ability key causes the Dragon to shoot flames from their mouth. These flames ignite whatever they strike, however maintaining the fire breath costs huge amounts of mana. The color of these flames is the same as the color of the player's racial trait."
-        },
-		{
+        {
             "type": "crafting",
-			"recipe": "xat:dragon_food",
-			"recipe2": "xat:dragon_ring"
+            "recipe": "xat:dragon_food",
+            "text": "This recipe permanently transforms you into a Dragon."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_ring",
+            "text": "Wear the Dragon Ring to take on this race while it is equipped."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Default Brewing Recipe",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:dragon_breath",
+            "result": "minecraft:potion{Potion:'xat:dragon'}"
         }
     ]
 }

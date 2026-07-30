@@ -29,6 +29,7 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.abilities.interfaces.IInteractionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IItemUseAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -303,19 +304,20 @@ public class EventHandler extends EventBaseHandler {
 
     @SubscribeEvent
     public void playerRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        //		Capabilities.getEntityProperties(event.getEntityLiving(), prop -> {
-        //			for (final IAbilityInterface ability : prop.getAbilityHandler().getAbilitiesList()) {
-        //				try {
-        //					final IAbilityHandler handler = prop.getAbilityHandler().getAbilityInstance(ability);
-        //					if ((handler != null) && (handler instanceof IInteractionAbility)) {
-        //						((IInteractionAbility) handler).rightClickWithItem(event.getEntityLiving(), event.getWorld(), event.getItemStack(), event.getHand(), event.getFace(), event.getPos());
-        //					}
-        //				} catch (final Exception e) {
-        //					Trinkets.log.error("Trinkets had an Error with Potion Ability:" + ability.getRegistryID());
-        //					e.printStackTrace();
-        //				}
-        //			}
-        //		});
+        final EntityLivingBase entity = event.getEntityLiving();
+        Capabilities.getEntityProperties(entity, prop -> {
+            for (Entry<String, AbilityHolder> entry : prop.getAbilityHandler().getActiveAbilities().entrySet()) {
+                try {
+                    final IAbilityInterface ability = entry.getValue().getAbility();
+                    if (ability instanceof IInteractionAbility) {
+                        ((IInteractionAbility) ability).rightClickWithItem(entity, event.getWorld(), event.getItemStack(), event.getHand(), event.getFace(), event.getPos());
+                    }
+                } catch (final Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Interaction Ability:{}", entry.getKey());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @SubscribeEvent

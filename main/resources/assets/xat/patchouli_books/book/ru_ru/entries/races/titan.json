@@ -1,0 +1,29 @@
+{
+    "name": "Титан",
+    "icon": "xat:textures/potions/titan.png",
+    "category": "races",
+    "sortnum": 30,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Титаны встречают мир тяжелым шагом и тяжелыми руками.$(br2)Их большие руки и тяжелые способности подходят для жизни, полной грубой силы."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titans_spirit",
+            "text": "Этот рецепт навсегда превратит вас в Титана."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titan_ring",
+            "text": "Наденьте Кольцо Титана, чтобы принять участие в этой гонке, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:golden_apple",
+            "result": "minecraft:potion{Potion:'xat:titan'}"
+        }
+    ]
+}

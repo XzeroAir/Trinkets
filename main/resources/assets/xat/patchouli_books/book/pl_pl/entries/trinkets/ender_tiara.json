@@ -1,0 +1,17 @@
+{
+    "name": "Korona Królowej Endu",
+    "icon": "xat:ender_tiara",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Noś Koronę Królowej Endera, a Enderman będzie cię traktował jak swoją królową.$(br2)Mogą podążać za tobą i bronić cię, podczas gdy korona może wezwać Endermana na twoją pomoc, gdy zostaniesz ranny."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:ender_tiara",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 110
+}

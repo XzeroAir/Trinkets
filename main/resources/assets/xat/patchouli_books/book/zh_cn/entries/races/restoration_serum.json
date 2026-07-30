@@ -1,0 +1,13 @@
+{
+    "name": "复原血清",
+    "icon": "xat:restoration_serum",
+    "category": "races",
+    "pages": [
+        {
+            "type": "crafting",
+            "recipe": "xat:restoration_serum",
+            "text": "喝恢复精华液即可恢复原来的状态。"
+        }
+    ],
+    "sortnum": 100
+}

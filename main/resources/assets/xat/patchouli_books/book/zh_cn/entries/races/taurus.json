@@ -1,0 +1,29 @@
+{
+    "name": "牛头族",
+    "icon": "xat:textures/potions/taurus.png",
+    "category": "races",
+    "sortnum": 80,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Taurus 是有角、坚固的流浪者，为坚守阵地而生。$(br2)他们的踩踏能力将冲锋转化为正确的入口。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_tea",
+            "text": "这个食谱会让你永久变成一个Taurus。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_ring",
+            "text": "佩戴 Taurus 戒指，在装备好它后参加这场比赛。"
+        },
+        {
+            "type": "default_brewing",
+            "title": "默认冲泡配方",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:milk_bucket",
+            "result": "minecraft:potion{Potion:'xat:taurus'}"
+        }
+    ]
+}

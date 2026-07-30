@@ -1,0 +1,17 @@
+{
+    "name": "Garra Faelis",
+    "icon": "xat:faelis_claw",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Faelis Las garras hacen que tus ataques cuerpo a cuerpo extraigan sangre.$(br2)El sangrado dura más cuando se empuña con un Faelis."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_claw",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 140
+}

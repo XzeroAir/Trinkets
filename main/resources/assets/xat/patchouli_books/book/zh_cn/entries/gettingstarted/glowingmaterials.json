@@ -1,26 +1,36 @@
 {
-    "name": "闪耀的材料",
+    "name": "制作材料",
     "icon": "xat:glowing_gem",
     "category": "gettingstarted",
     "pages": [
         {
             "type": "text",
-            "text": "模组包含三个等级的材料，它们是制作模组大多数物品的材料。"
+            "text": "发光粉、发光锭和发光宝石是稳定的注入法力的制作材料，在 Trinkets 中使用。$(br2)每一个都散发着安静的魔法能量。$(br2)将它们的配方放在附近：许多后来的物品都是用这些材料制作的。"
         },
-		{
+        {
             "type": "crafting",
-            "text": "制作闪耀粉",
-			"recipe": "xat:glowing_powder"
+            "recipe": "xat:glowing_powder",
+            "text": "制作发光粉"
         },
-		{
+        {
             "type": "crafting",
-            "text": "制作闪耀锭",
-			"recipe": "xat:glowing_ingot"
+            "recipe": "xat:glowing_ingot",
+            "text": "制作发光锭"
         },
-		{
+        {
             "type": "crafting",
-            "text": "制作闪耀宝石",
-			"recipe": "xat:glowing_gem"
+            "recipe": "xat:glowing_gem",
+            "text": "制作发光的宝石"
+        },
+        {
+            "type": "text",
+            "text": "火花粉是一种强大而不稳定的制作材料，用于电弧宝珠等物品。$(br2)它的法力会随着剧烈的能量而爆裂。$(br2)一旦你准备好使用它，就可以用法力试剂来制作它。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:spark_powder",
+            "text": "制作火花粉"
         }
-    ]
+    ],
+    "sortnum": 3
 }

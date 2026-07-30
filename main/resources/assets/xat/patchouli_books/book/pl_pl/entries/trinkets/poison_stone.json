@@ -1,0 +1,17 @@
+{
+    "name": "Kamień Trucizny",
+    "icon": "xat:poison_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Trujący Kamień chroni cię przed trucizną.$(br2)Twoje ataki mogą zatruwać wrogów, a zatrute cele otrzymują od ciebie silniejsze trafienia."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:poison_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 80
+}

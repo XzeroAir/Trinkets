@@ -5,12 +5,13 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Ring of Enchanted Eyes is a wearable ring which grants its wearer night vision and immunity to blindness. This is used to craft the Dragon's Eye."
+            "text": "The Ring of Enchanted Eyes grants night vision.$(br2)It is also a component of the Dragon's Eye."
         },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Well boys, we did it. Nyctophobia is no more.",
-			"recipe": "xat:glow_ring"
+            "recipe": "xat:glow_ring",
+            "text": "Crafting"
         }
-    ]
+    ],
+    "sortnum": 10
 }

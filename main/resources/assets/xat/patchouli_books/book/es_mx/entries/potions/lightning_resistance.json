@@ -1,0 +1,19 @@
+{
+    "name": "Resistencia a los rayos",
+    "icon": "xat:textures/potions/lightning_resistance.png",
+    "category": "potions",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "La resistencia a los rayos te protege de los daños causados ​​por los rayos."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "xat:spark_powder",
+            "result": "minecraft:potion{Potion:'xat:lightning_resistance'}"
+        }
+    ]
+}

@@ -1,16 +1,17 @@
 {
-    "name": "魔眼之戒",
+    "name": "附魔之眼戒指",
     "icon": "xat:glow_ring",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "魔眼之戒是一种可穿戴的戒指，使它的装备者获得夜视并免疫失明。它被用于制作巨龙之眼。"
+            "text": "魔法之眼戒指赋予夜视能力。$(br2)它也是龙眼的组成部分。"
         },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Well boys, we did it. Nyctophobia is no more.",
-			"recipe": "xat:glow_ring"
+            "recipe": "xat:glow_ring",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 10
 }

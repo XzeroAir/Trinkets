@@ -1,0 +1,6 @@
+{
+    "name": "Pociones",
+    "description": "Aprende las pociones básicas utilizadas en la alquimia y luego elabora protección contra ataques elementales peligrosos.",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "sortnum": 4
+}

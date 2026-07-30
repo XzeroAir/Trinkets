@@ -1,0 +1,12 @@
+{
+    "name": "化妆品 Trinkets",
+    "icon": "xat:cosmetic",
+    "category": "trinkets",
+    "sortnum": 150,
+    "pages": [
+        {
+            "type": "text",
+            "text": "外观Trinkets添加视觉特征，如翅膀、耳朵、角和尾巴，而不改变你的种族。$(br2)右键单击可向前循环浏览他们的外观；潜行并右键单击向后循环。"
+        }
+    ]
+}

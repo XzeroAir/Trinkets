@@ -5,16 +5,13 @@
     "pages": [
         {
             "type": "text",
-            "text": "泰迪熊使它的装备者在睡觉时获得可配置的效果。$(br2)物品灵感源自 Rembo"
+            "text": "当你睡觉醒来时，在你的物品栏里放一只泰迪熊，享受休息良好的奖励。$(br2)用它右键单击一个表面，将它作为一个小伙伴。"
         },
-		{
-            "type": "text",
-            "text": "$(l)默认效果：$()$(br)$(d)生命恢复$()$(br)$(2)幸运$()$(br)$(4)生命提升 II$()$(br2)$(l)兼容模组：$()$(br)$(n)恐怖生物$()：免疫恐惧和失眠效果"
-        },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Some are still traumatized from its original fear-striking stare.",
-			"recipe": "xat:teddy_bear"
+            "recipe": "xat:teddy_bear",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 130
 }

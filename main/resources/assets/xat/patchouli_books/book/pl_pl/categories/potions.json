@@ -1,0 +1,6 @@
+{
+    "name": "Mikstury",
+    "description": "Naucz się podstawowych mikstur używanych w alchemii, a następnie przygotuj ochronę przed niebezpiecznymi atakami żywiołów.",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "sortnum": 4
+}

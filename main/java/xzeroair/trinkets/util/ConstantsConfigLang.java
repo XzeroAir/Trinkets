@@ -569,6 +569,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_BREATH_ICE = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_ICE;
     public static final String CONFIG_ABILITIES_BREATH_ICE_NAME = "Ice Breath";
     public static final String CONFIG_ABILITIES_BREATH_ICE_COMMENT = "";
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_DRAGON;
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON_NAME = "Dragon Breath";
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON_COMMENT = "";
 
     public static final String CONFIG_ABILITIES_IMMUNITY_FIRE = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_FIRE;
     public static final String CONFIG_ABILITIES_IMMUNITY_FIRE_NAME = "Fire Immunity";
@@ -1097,6 +1100,14 @@ public class ConstantsConfigLang {
     public static final String CONFIG_POTIONS_SURVIVAL_WATER = CONFIG_POTIONS + ".water";
     public static final String CONFIG_POTIONS_SURVIVAL_WATER_NAME = "Potions give water";
     public static final String CONFIG_POTIONS_SURVIVAL_WATER_COMMENT = "Should Potions give Water if a survival mod is installed.";
+
+    public static final String CONFIG_POTIONS_RESISTANCE = CONFIG_POTIONS + ".resistance";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE = CONFIG_POTIONS_RESISTANCE + ".ice";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE_NAME = "Ice Resistance Potion";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE_COMMENT = "";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING = CONFIG_POTIONS_RESISTANCE + ".lightning";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING_NAME = "Lightning Resistance Potion";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING_COMMENT = "";
 
     public static final String CONFIG_POTIONS_RACE = CONFIG_POTIONS + ".race";
     public static final String CONFIG_POTIONS_RACE_DRAGON = CONFIG_POTIONS_RACE + "." + TrinketsRegistryNames.ModRaces.DRAGON;

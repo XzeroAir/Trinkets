@@ -1,0 +1,17 @@
+{
+    "name": "Orbe electrica",
+    "icon": "xat:arcing_orb",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Toca dos veces una tecla de movimiento mientras estás en el suelo para esquivarla con un coste de maná; Los enemigos cercanos pueden quedar aturdidos brevemente.$(br2)Usa el Arcing Orb ability key para cargar y lanzar un rayo.$(br)Una carga más larga cuesta más maná y golpea más fuerte."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:arcing_orb",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 120
+}

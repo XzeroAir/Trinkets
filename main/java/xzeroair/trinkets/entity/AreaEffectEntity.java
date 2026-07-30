@@ -29,6 +29,7 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -54,6 +55,7 @@ public class AreaEffectEntity extends Entity {
     private static final String ACTION_PLACE_FIRE = "place_fire";
     private static final String ACTION_PLACE_SNOW = "place_snow";
     private static final String ACTION_FREEZE_LIQUID = "freeze_liquid";
+    private static final String ACTION_DAMAGE = "damage";
     private static final String WATER_BEHAVIOR_TAG = "WaterBehavior";
     private static final String LAVA_BEHAVIOR_TAG = "LavaBehavior";
     private static final double LIQUID_MOVEMENT_PER_TICK = 0.1D;
@@ -941,6 +943,9 @@ public class AreaEffectEntity extends Entity {
             case ACTION_FREEZE_LIQUID:
                 this.addAction(new FreezeLiquidAreaAction(actionTag.getInteger("MaxBlocksPerPulse")));
                 break;
+            case ACTION_DAMAGE:
+                this.addAction(new DamageAreaAction(actionTag.getFloat("Damage")));
+                break;
             default:
                 break;
         }
@@ -971,6 +976,10 @@ public class AreaEffectEntity extends Entity {
             FreezeLiquidAreaAction freezeAction = (FreezeLiquidAreaAction) action;
             actionTag.setString(ACTION_TYPE, ACTION_FREEZE_LIQUID);
             actionTag.setInteger("MaxBlocksPerPulse", freezeAction.maxBlocksPerPulse);
+        } else if (action instanceof DamageAreaAction) {
+            DamageAreaAction damageAction = (DamageAreaAction) action;
+            actionTag.setString(ACTION_TYPE, ACTION_DAMAGE);
+            actionTag.setFloat("Damage", damageAction.damage);
         }
         return actionTag;
     }
@@ -1031,6 +1040,24 @@ public class AreaEffectEntity extends Entity {
             } else {
                 living.addPotionEffect(new PotionEffect(this.effect));
             }
+        }
+    }
+
+    public static class DamageAreaAction implements AreaEffectAction {
+        private final float damage;
+
+        public DamageAreaAction(float damage) {
+            this.damage = Math.max(0.0F, damage);
+        }
+
+        @Override
+        public boolean canAffectEntity(AreaEffectEntity area, Entity entity) {
+            return this.damage > 0.0F && entity instanceof EntityLivingBase;
+        }
+
+        @Override
+        public void affectEntity(AreaEffectEntity area, Entity entity) {
+            entity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(area, area.getOwner()), this.damage);
         }
     }
 

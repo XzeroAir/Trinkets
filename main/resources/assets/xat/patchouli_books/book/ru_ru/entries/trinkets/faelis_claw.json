@@ -1,0 +1,17 @@
+{
+    "name": "Коготь фаэлиса",
+    "icon": "xat:faelis_claw",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Faelis Когти заставляют ваши удары ближнего боя проливать кровь.$(br2)Кровотечение длится дольше, если ими владеет Faelis."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_claw",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 140
+}

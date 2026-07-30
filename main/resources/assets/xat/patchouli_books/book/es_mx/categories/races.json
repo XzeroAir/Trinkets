@@ -1,0 +1,6 @@
+{
+    "name": "Razas",
+    "description": "Elige un camino, aprende sus dones y luego decide si transformarte, usar su anillo o probar su poción.",
+    "icon": "xat:textures/potions/fairy.png",
+    "sortnum": 2
+}

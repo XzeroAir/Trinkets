@@ -1,0 +1,29 @@
+{
+    "name": "Гоблин",
+    "icon": "xat:textures/potions/goblin.png",
+    "category": "races",
+    "sortnum": 50,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Гоблины — неуклюжие альпинисты с талантом выживать на близком расстоянии.$(br2)Их способность верховой езды на волке позволяет прирученному волку стать грозным компаньоном."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_soup",
+            "text": "Этот рецепт навсегда превратит вас в гоблина."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_ring",
+            "text": "Наденьте Кольцо гоблина, чтобы сразиться с этой расой, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:leather",
+            "result": "minecraft:potion{Potion:'xat:goblin'}"
+        }
+    ]
+}

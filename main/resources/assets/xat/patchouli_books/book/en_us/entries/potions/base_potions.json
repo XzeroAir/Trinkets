@@ -1,0 +1,23 @@
+{
+    "name": "Base Potions",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "category": "potions",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:sparkling'}",
+            "text": "Potion of Sparkling is the first alchemy base potion.$(br2)Drinking it restores 25% of your maximum mana."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glittering'}",
+            "text": "Potion of Glittering is an improved alchemy base potion.$(br2)Drinking it restores 50% of your maximum mana."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glowing'}",
+            "text": "Potion of Glowing is the most potent alchemy base potion.$(br2)Drinking it restores 100% of your maximum mana."
+        }
+    ]
+}

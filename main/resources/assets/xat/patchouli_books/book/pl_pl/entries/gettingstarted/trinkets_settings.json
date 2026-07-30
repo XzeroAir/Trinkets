@@ -1,0 +1,20 @@
+{
+    "name": "Race Information",
+    "icon": "xat:textures/gui/patchouli_textures/blue_orb.png",
+    "category": "gettingstarted",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Otworzy się niebieska kula w twoim ekwipunku Race Information.$(br2)Użyj jej, aby sprawdzić i dostosować wygląd swoich cech rasowych."
+        },
+        {
+            "type": "text",
+            "text": "Przełącz Show Trait, aby ukryć lub pokazać swoje cechy rasowe.$(br2)Wybierz styl lub wariant cechy, dostosuj kolory cech i odwróć podgląd, aby sprawdzić swoją postać."
+        },
+        {
+            "type": "text",
+            "text": "Wybierz przycisk Race Information, aby wyświetlić atrybuty swojej rasy i aktywne zdolności.$(br2)Wybierz zdolność, aby przeczytać jej opis i źródło. Aktywne zdolności mogą pochodzić z twojej rasy, bibelotów i innych źródeł.$(br2)Przycisk Mana Bar otwiera opcje układu."
+        }
+    ]
+}

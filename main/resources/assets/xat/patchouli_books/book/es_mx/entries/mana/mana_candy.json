@@ -1,0 +1,17 @@
+{
+    "name": "Dulce de maná",
+    "icon": "xat:mana_candy",
+    "category": "mana",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Mana Candy es un pequeño refrigerio siempre comestible que restaura el maná.$(br2)Mantén algunos cerca cuando tus reservas se agoten."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_candy",
+            "text": "Elaboración de caramelos de maná"
+        }
+    ]
+}

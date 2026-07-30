@@ -33,7 +33,7 @@ public class FairyConfig {
         @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_NAME)
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT)
-        public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight(false, true, 0F, 10F, 0.42D);
+        public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight(true, true, 0F, 0F, 0.42D);
 
         @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_NAME)
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CLIMBING_COMMENT)
@@ -102,7 +102,7 @@ public class FairyConfig {
             "Name:forge.swimSpeed, Amount:-0.25, Operation:2",
             "Name:xat.jump, Amount:-0.25, Operation:2",
             "Name:xat.stepheight, Amount:-0.35, Operation:0",
-            "Name:xat.flyspeed, Amount:-0.6, Operation:2"
+            "Name:xat.flyspeed, Amount:-0.4, Operation:2"
             //@formatter:on
     };
 

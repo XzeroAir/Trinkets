@@ -1,0 +1,16 @@
+{
+    "name": "Introducción al maná",
+    "icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
+    "category": "mana",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "El maná es la energía que impulsa ciertos abalorios y habilidades raciales.$(br2)Se recarga con el tiempo, así que usa efectos poderosos con cuidado."
+        },
+        {
+            "type": "text",
+            "text": "Mana responde a la intención. Con conocimiento y práctica, se pueden transformar en efectos poderosos.$(br2)Usa $(l:mana/mana_candy)Mana Candy$(/l) para recuperar maná, o lee $(l:mana/altering_maximum_mana)Alteración de maná máximo$(/l) para aprender cómo aumentar tus reservas."
+        }
+    ]
+}

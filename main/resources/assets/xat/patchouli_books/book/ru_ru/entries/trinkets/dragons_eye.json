@@ -1,0 +1,17 @@
+{
+    "name": "Око дракона",
+    "icon": "xat:dragons_eye",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Глаз Дракона дает ночное зрение и позволяет обнаружить выбранную руду сквозь камень.$(br2)Используйте клавишу Dragon's Eye Cycle, чтобы выбрать то, что он ищет."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragons_eye",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 20
+}

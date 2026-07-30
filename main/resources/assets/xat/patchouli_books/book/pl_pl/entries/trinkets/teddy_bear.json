@@ -1,0 +1,17 @@
+{
+    "name": "Pluszowy miś",
+    "icon": "xat:teddy_bear",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Trzymaj pluszowego misia w swoim ekwipunku, gdy zasypiasz i budzisz się, dzięki bonusom za dobry odpoczynek.$(br2)Kliknij prawym przyciskiem myszy powierzchnię z nim, aby umieścić go jako małego towarzysza."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:teddy_bear",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 130
+}

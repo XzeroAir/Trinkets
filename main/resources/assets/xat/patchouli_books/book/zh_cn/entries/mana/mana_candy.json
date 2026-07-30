@@ -1,0 +1,17 @@
+{
+    "name": "法力糖果",
+    "icon": "xat:mana_candy",
+    "category": "mana",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "法力糖果是一种可以随时食用的小零食，可以恢复法力。$(br2)当你的储备不足时，请随身携带一些。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_candy",
+            "text": "制作法力糖果"
+        }
+    ]
+}

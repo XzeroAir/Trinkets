@@ -1,0 +1,29 @@
+{
+    "name": "Trasgo",
+    "icon": "xat:textures/potions/goblin.png",
+    "category": "races",
+    "sortnum": 50,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los duendes son escaladores luchadores con talento para sobrevivir situaciones cercanas.$(br2)Su habilidad para montar lobos permite que un lobo domesticado se convierta en un compañero temible."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_soup",
+            "text": "Esta receta te transforma permanentemente en un Duende."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_ring",
+            "text": "Usa el Anillo Goblin para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:leather",
+            "result": "minecraft:potion{Potion:'xat:goblin'}"
+        }
+    ]
+}

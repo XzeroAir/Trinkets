@@ -1,0 +1,19 @@
+{
+    "name": "Сопротивление молнии",
+    "icon": "xat:textures/potions/lightning_resistance.png",
+    "category": "potions",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Сопротивление молнии защищает вас от урона молнией."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "xat:spark_powder",
+            "result": "minecraft:potion{Potion:'xat:lightning_resistance'}"
+        }
+    ]
+}

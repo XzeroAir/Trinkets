@@ -3,10 +3,11 @@
     "icon": "xat:restoration_serum",
     "category": "races",
     "pages": [
-		{
+        {
             "type": "crafting",
-			"recipe": "xat:restoration_serum",
-			"text": "Tired of your current race? You can create a Restoration Serum to return to being a human. This is a very costly recipe, however."
+            "recipe": "xat:restoration_serum",
+            "text": "Drink a Restoration Serum to return to your original form."
         }
-    ]
+    ],
+    "sortnum": 100
 }

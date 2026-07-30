@@ -88,6 +88,7 @@ public class TrinketsRegistryNames {
         public static final String BREATH_FIRE					="breath_" + ModElements.FIRE;
         public static final String BREATH_ICE					="breath_" + ModElements.ICE;
         public static final String BREATH_LIGHTNING				="breath_" + ModElements.LIGHTNING;
+        public static final String BREATH_DRAGON					="breath_dragon";
 
         public static final String IMMUNITY_VOID				="immunity_" + ModElements.VOID;
         public static final String IMMUNITY_LIGHT				="immunity_" + ModElements.LIGHT;

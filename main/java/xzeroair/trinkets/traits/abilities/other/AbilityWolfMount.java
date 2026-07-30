@@ -6,11 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
@@ -19,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.traits.abilities.Ability;
-import xzeroair.trinkets.traits.abilities.interfaces.IInteractionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -28,7 +23,7 @@ import xzeroair.trinkets.util.config.abilities.ConfigAbilityWolfRider;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 
-public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyBindInterface, IInteractionAbility {
+public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyBindInterface {
 
     protected final ConfigAbilityWolfRider CONFIG;
 
@@ -50,10 +45,6 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
                 counter.Tick();
             }
         }
-    }
-
-    @Override
-    public void interactEntity(EntityLivingBase entityLiving, World world, ItemStack itemStack, EnumHand hand, EnumFacing face, BlockPos pos, Entity target) {
     }
 
     @Override

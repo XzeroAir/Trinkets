@@ -1,0 +1,17 @@
+{
+    "name": "Anillo Marchito",
+    "icon": "xat:wither_ring",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Wither Ring te protege de Wither y otros daños oscuros.$(br2)Tus golpes pueden infligir Wither, y herir a enemigos marchitos restaura parte de tu salud."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:wither_ring",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 90
+}

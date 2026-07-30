@@ -1,0 +1,29 @@
+{
+    "name": "Дворф",
+    "icon": "xat:textures/potions/dwarf.png",
+    "category": "races",
+    "sortnum": 10,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Под камнем гномы чувствуют себя как дома.$(br2)Их способность «Умелый шахтер» помогает им прокладывать путь сквозь бездну."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_stout",
+            "text": "Этот рецепт навсегда превратит вас в гнома."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_ring",
+            "text": "Чтобы сразиться с этой расой, наденьте Кольцо гномов, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:iron_block",
+            "result": "minecraft:potion{Potion:'xat:dwarf'}"
+        }
+    ]
+}

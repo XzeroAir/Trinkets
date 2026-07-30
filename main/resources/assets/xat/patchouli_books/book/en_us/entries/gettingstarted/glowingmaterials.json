@@ -1,26 +1,36 @@
 {
-    "name": "Glowing Materials",
+    "name": "Crafting Materials",
     "icon": "xat:glowing_gem",
     "category": "gettingstarted",
     "pages": [
         {
             "type": "text",
-            "text": "There are three tiers of glowing materials, which are all used for the majority of items in the mod."
+            "text": "Glowing Powder, Glowing Ingots, and Glowing Gems are stable mana-infused crafting materials used throughout Trinkets.$(br2)A quiet magical energy radiates from each one.$(br2)Keep their recipes nearby: many later items build from these materials."
         },
-		{
+        {
             "type": "crafting",
-            "text": "Crafting the Glowing Powder",
-			"recipe": "xat:glowing_powder"
+            "recipe": "xat:glowing_powder",
+            "text": "Crafting Glowing Powder"
         },
-		{
+        {
             "type": "crafting",
-            "text": "Crafting the Glowing Ingot",
-			"recipe": "xat:glowing_ingot"
+            "recipe": "xat:glowing_ingot",
+            "text": "Crafting a Glowing Ingot"
         },
-		{
+        {
             "type": "crafting",
-            "text": "Crafting the Glowing Gem",
-			"recipe": "xat:glowing_gem"
+            "recipe": "xat:glowing_gem",
+            "text": "Crafting a Glowing Gem"
+        },
+        {
+            "type": "text",
+            "text": "Spark Powder is a powerful, unstable crafting material used in items such as the Arcing Orb.$(br2)Its mana crackles with a violent energy.$(br2)Craft it from Mana Reagent once you are ready to work with it."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:spark_powder",
+            "text": "Crafting Spark Powder"
         }
-    ]
+    ],
+    "sortnum": 3
 }

@@ -1,0 +1,17 @@
+{
+    "name": "Mana Candy",
+    "icon": "xat:mana_candy",
+    "category": "mana",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Mana Candy is a small, always-edible snack that restores mana.$(br2)Keep some close when your reserves run low."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_candy",
+            "text": "Crafting Mana Candy"
+        }
+    ]
+}

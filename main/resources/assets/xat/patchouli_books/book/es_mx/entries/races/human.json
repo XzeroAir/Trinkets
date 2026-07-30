@@ -1,0 +1,19 @@
+{
+    "name": "Humano",
+    "icon": "xat:textures/potions/human.png",
+    "category": "races",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Humano es la forma familiar.$(br2)Elígelo como tu raza original o regresa a él con un Suero Restaurador."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:apple",
+            "result": "minecraft:potion{Potion:'xat:human'}"
+        }
+    ]
+}

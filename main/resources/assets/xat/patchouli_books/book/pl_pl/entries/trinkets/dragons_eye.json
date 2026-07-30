@@ -1,0 +1,17 @@
+{
+    "name": "Smocze Oko",
+    "icon": "xat:dragons_eye",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Oko Smoka zapewnia widzenie w nocy i odkrywa wybraną rudę poprzez kamień.$(br2)Użyj klawisza Dragon's Eye Cycle, aby wybrać, czego szuka."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragons_eye",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 20
+}

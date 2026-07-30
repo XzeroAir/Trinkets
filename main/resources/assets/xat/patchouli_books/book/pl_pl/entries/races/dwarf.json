@@ -1,0 +1,29 @@
+{
+    "name": "Krasnolud",
+    "icon": "xat:textures/potions/dwarf.png",
+    "category": "races",
+    "sortnum": 10,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Krasnoludy czują się jak w domu pod kamieniem.$(br2)Ich umiejętność Wykwalifikowanego Górnika pomaga im wyrzeźbić ścieżkę w głębinach."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_stout",
+            "text": "Ten przepis trwale przemienia Cię w Krasnoluda."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_ring",
+            "text": "Noś Krasnoludzki Pierścień, aby zmierzyć się z tą rasą, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:iron_block",
+            "result": "minecraft:potion{Potion:'xat:dwarf'}"
+        }
+    ]
+}

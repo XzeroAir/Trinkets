@@ -1,0 +1,17 @@
+{
+    "name": "Mana Crystal",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 3,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Eat a Mana Crystal to permanently raise your maximum mana."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_crystal",
+            "text": "Crafting a Mana Crystal"
+        }
+    ]
+}

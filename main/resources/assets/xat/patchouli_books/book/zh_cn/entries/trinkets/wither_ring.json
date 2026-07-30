@@ -1,16 +1,17 @@
 {
-    "name": "枯萎之戒",
+    "name": "凋零戒指",
     "icon": "xat:wither_ring",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "枯萎之戒使它的佩戴者免疫凋零效果。另外，佩戴者有概率使受到他们攻击的敌人承受凋零效果，并且可以从凋零的实体偷取生命值。$(br2)物品灵感源自 BlockBreaker1361"
+            "text": "枯萎戒指可以保护你免受枯萎和其他黑暗伤害。$(br2)你的攻击可以造成枯萎，伤害枯萎的敌人可以恢复你的一些生命值。"
         },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Finally, revenge for all those times Wither Skeletons decided to be annoying.",
-			"recipe": "xat:wither_ring"
+            "recipe": "xat:wither_ring",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 90
 }

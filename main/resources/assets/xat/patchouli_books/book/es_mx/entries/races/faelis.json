@@ -1,0 +1,29 @@
+{
+    "name": "Faelis",
+    "icon": "xat:textures/potions/faelis.png",
+    "category": "races",
+    "sortnum": 40,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Faelis son ​​cazadores veloces que prefieren los terrenos elevados.$(br2)La visión nocturna y la escalada los mantienen en movimiento después de que se pone el sol."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_food",
+            "text": "Esta receta te transforma permanentemente en un Faelis."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_ring",
+            "text": "Usa el anillo Faelis para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "xat:faelis_claw",
+            "result": "minecraft:potion{Potion:'xat:faelis'}"
+        }
+    ]
+}

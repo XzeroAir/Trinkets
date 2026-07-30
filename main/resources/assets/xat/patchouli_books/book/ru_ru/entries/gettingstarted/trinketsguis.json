@@ -1,0 +1,12 @@
+{
+    "name": "Trinkets Container",
+    "icon": "xat:textures/gui/patchouli_textures/trinkets_container_button.png",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Откройте свой инвентарь и используйте Trinkets button в верхнем левом углу, чтобы найти Trinkets Container.$(br2)Поместите брелок в подходящий слот, чтобы надеть его."
+        }
+    ],
+    "sortnum": 1
+}

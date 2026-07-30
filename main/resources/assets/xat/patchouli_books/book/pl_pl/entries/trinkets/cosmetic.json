@@ -1,0 +1,12 @@
+{
+    "name": "Kosmetyk Trinkets",
+    "icon": "xat:cosmetic",
+    "category": "trinkets",
+    "sortnum": 150,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Kosmetyki Trinkets dodają cechy wizualne, takie jak skrzydła, uszy, rogi i ogony, bez zmiany rasy.$(br2)Kliknij prawym przyciskiem myszy, aby przeglądać ich wygląd; przekradnij się i kliknij prawym przyciskiem myszy, aby cofnąć się."
+        }
+    ]
+}

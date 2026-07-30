@@ -1,0 +1,17 @@
+{
+    "name": "Escudo de honor",
+    "icon": "xat:damage_shield",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Escudo de Honor otorga resistencia y suaviza el daño de la explosión.$(br2)Después de suficientes golpes fuertes, su protección puede desviar un ataque."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:shield_of_honor",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 100
+}

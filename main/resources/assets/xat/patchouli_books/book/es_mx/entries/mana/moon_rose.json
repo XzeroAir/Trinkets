@@ -1,0 +1,17 @@
+{
+    "name": "Rosa lunar",
+    "icon": "xat:moon_rose",
+    "category": "mana",
+    "sortnum": 4,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Coloca una rosa lunar sobre hierba, tierra o tierra de cultivo.$(br2)Acércate sigilosamente para extraer su esencia y aumentar gradualmente tu maná máximo.$(br2)Dale espacio a cada planta para que trabaje."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:moon_rose",
+            "text": "Elaborar una rosa lunar"
+        }
+    ]
+}

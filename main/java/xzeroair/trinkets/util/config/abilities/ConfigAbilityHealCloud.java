@@ -6,7 +6,7 @@ import xzeroair.trinkets.util.ConstantsConfigLang;
 public class ConfigAbilityHealCloud {
 
     public ConfigAbilityHealCloud() {
-        this.ENABLED = false;
+        this.ENABLED = true;
         this.EFFECTS = new String[]{"minecraft:instant_health:60:0"};
         this.RADIUS = 3.0F;
         this.VERTICAL_RADIUS = 2.0F;

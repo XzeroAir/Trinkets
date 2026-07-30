@@ -1,15 +1,12 @@
 {
-    "name": "饰品 GUI",
-    "icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
+    "name": "Trinkets Container",
+    "icon": "xat:textures/gui/patchouli_textures/trinkets_container_button.png",
     "category": "gettingstarted",
     "pages": [
         {
             "type": "text",
-            "text": "在背包界面中有两个独特的按钮。第一个看起来像一个蓝色的球，用于打开一个小型配置菜单。你可以在这个菜单中设置你种族特征的颜色和调整你魔力条的位置。"
-        },
-		{
-            "type": "text",
-            "text": "另一个按钮在界面的左上角。这个按钮可以打开饰品栏。这是你装备时评并使它们生效的位置。（如果已安装 baubles 模组，饰品也可以装备在 baubles 模组的饰品栏。）"
+            "text": "打开你的物品栏并使用左上角区域的Trinkets button来显示Trinkets Container。$(br2)将饰品放入有效的插槽中以装备它。"
         }
-    ]
+    ],
+    "sortnum": 1
 }

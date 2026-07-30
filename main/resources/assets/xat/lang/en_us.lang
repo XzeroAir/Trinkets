@@ -36,7 +36,7 @@ key.xat.trinket_target.desc=Dragons Eye: Cycle
 key.xat.trinket_toggle_effect.desc=Dragons Eye: Night Vision
 key.xat.magnet_toggle_effect.desc=Polarized Stone: Magnet
 key.xat.aux_key.desc=Aux Key
-key.xat.trinket_gui.desc=Trinkets Gui
+key.xat.trinket_gui.desc=Trinkets GUI
 
 key.xat.trinket_arcing_attack.desc=Arcing Orb: Attack
 key.xat.trinket_ender_crown.desc=Ender Crown: Active
@@ -103,6 +103,10 @@ xat.ability.breath_lightning.name=§cLightning Breath
 xat.ability.breath_lightning.tooltip1=$gui:§6Grants Lightning Breath
 xat.ability.breath_lightning.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breathe Lightning §3$fbcost: MP
 
+xat.ability.breath_dragon.name=§6Dragon Breath
+xat.ability.breath_dragon.tooltip1=$gui:§6Grants Dragon Breath
+xat.ability.breath_dragon.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breathe §3$fbcost: MP
+
 xat.ability.immunity_fire.name=§cFire §6Immunity
 xat.ability.immunity_fire.tooltip1=§2Grants §c$potion:
 xat.ability.immunity_fire.tooltip2=$gui:§6Immune to Fire and Lava
@@ -135,7 +139,7 @@ xat.ability.affinity_dark.tooltip4=$true_leech:§6Leech §3$amount: §6Damage do
 
 xat.ability.affinity_poison.name=§2Poison §6Affinity
 xat.ability.affinity_poison.tooltip1=§6When Attacking has a §3$chance: §6chance to poison the target
-xat.ability.affinity_poison.tooltip2=§6If Attacking a Poisoned Enemy does $bonus: damage.
+xat.ability.affinity_poison.tooltip2=§6Attacking a poisoned enemy deals $bonus: damage.
 
 xat.ability.affinity_water.name=§9Water Affinity
 xat.ability.affinity_water.tooltip1=§6Infinite oxygen at §r[§3$bubbles:§r]§6 bubbles
@@ -177,7 +181,7 @@ xat.ability.ender_queen.tooltip3=§3$spawnchance: §6Chance to spawn an Enderman
 xat.ability.ender_queen.tooltip4=$follow:§2Enderman will follow you
 xat.ability.ender_queen.tooltip5=§3$tpchance: §5Chance to Teleport from indirect damage §3$hurtcost: MP
 xat.ability.ender_queen.tooltip6=$waterhurts:§cWeakness to water
-xat.ability.ender_queen.tooltip7=$gui:$chest:§6Remotely Access your Enderchest by pressing §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
+xat.ability.ender_queen.tooltip7=$gui:$chest:§6Remotely Access your Ender Chest by pressing §r<§e*auxkb:§r> + §e*tpkey:§r> §3$chestcost: MP
 xat.ability.ender_queen.tooltip8=$gui:§6Teleport Randomly nearby when pressing §r<§e*tpkey:§r> §3$tpcost: MP
 xat.ability.ender_queen.teleport=§2Teleportation $toggle:
 xat.ability.ender_queen.teleport.failed=§cSomething Prevents you from moving through the void.
@@ -209,7 +213,7 @@ xat.ability.skilled_archer.name=Skilled Archer
 xat.ability.skilled_archer.tooltip1=§6Sneaking while using a Bow activates a Power Shot at the cost of MP
 xat.ability.skilled_archer.tooltip2=$gui:Able to use Mana to imbue an arrow with power
 xat.ability.skilled_archer.tooltip3=$gui:Sneak before drawing your bow to trigger
-xat.ability.skilled_archer.tooltip4=$gui:Causes a small explosion on impact with a full charge dealing aoe damage
+xat.ability.skilled_archer.tooltip4=$gui:Causes a small explosion on impact with a full charge, dealing AoE damage
 
 xat.ability.large_hands.name=Large Hands
 xat.ability.large_hands.tooltip1=§6Mine a 3x3x3 radius
@@ -293,7 +297,7 @@ xat.race.fairy.tooltip1=You're a Fairy of the $element: Element.
 xat.race.dwarf.name=Dwarf
 xat.race.dwarf.tooltip1=You're a Dwarf of the $element: Element.
 xat.race.elf.name=Elf
-xat.race.elf.tooltip1=You're a Elf of the $element: Element.
+xat.race.elf.tooltip1=You're an Elf of the $element: Element.
 xat.race.titan.name=Titan
 xat.race.titan.tooltip1=You're a Titan of the $element: Element.
 xat.race.faelis.name=Faelis
@@ -310,9 +314,9 @@ xat.race.taurus.tooltip1=You're a Taurian of the $element: Element.
 xat.damagetype.damage_water=water
 xat.damagetype.damage_water.attack=%1$s died to %2$s
 xat.damagetype.damage_water.attack.crown=%1$s died to %2$s while wearing an Ender Queen's Crown
-xat.danagetype.damage_poison=poison
+xat.damagetype.damage_poison=poison
 xat.damagetype.damage_poison.attack=%1$s died to %2$s
-xat.danagetype.damage_bleed=Bleed
+xat.damagetype.damage_bleed=bleed
 xat.damagetype.damage_bleed.attack=%1$s died to %2$s
 
 ##################################### Attributes ####################################
@@ -396,7 +400,7 @@ item.elf_ring.tooltip2=§6Gains Movement and Attack Speed in Forests
 item.fairy_ring.name=§6Ring of the Fairies
 item.fairy_ring.tooltip1=§6Entity Size $rsize: of normal
 
-item.faelis_ring.name=§6Ring of the Faeles
+item.faelis_ring.name=§6Ring of the Faelis
 item.faelis_ring.tooltip1=§6Entity Size $rsize: of normal
 item.faelis_ring.tooltip2=§aIncreased bare handed damage
 item.faelis_ring.tooltip3=§aBuff when drinking milk
@@ -457,7 +461,7 @@ item.titan_spirit.food.name=Titan's Spirit
 item.titan_spirit.food.tooltip1=§6Transform into a Titan
 
 item.elf_sap.food.name=Elf Sap
-item.elf_sap.food.tooltip1=§6Transform into a Elf
+item.elf_sap.food.tooltip1=§6Transform into an Elf
 
 item.goblin_soup.food.name=Goblin Soup
 item.goblin_soup.food.tooltip1=§6Transform into a Goblin
@@ -742,7 +746,7 @@ xat.config.container.slots.tooltip=How many slots should the Trinkets container 
 xat.config.container.color=Color Overlay
 xat.config.container.color.tooltip=Hex Color Followed by Alpha float value
 xat.config.container.potions=Show Potion Icons
-xat.config.container.potions.tooltip=Show Active Potion Effects while in the Trinkets Gui
+xat.config.container.potions.tooltip=Show Active Potion Effects while in the Trinkets GUI
 xat.config.container.limited=Accessories Use T&B Container Only
 xat.config.container.limited.tooltip=Should Trinkets & Baubles Items only work in the T&B Container
 
@@ -1003,6 +1007,8 @@ xat.config.abilities.breath.breath_ice=Ice Breath
 xat.config.abilities.breath.breath_ice.tooltip=
 xat.config.abilities.breath.breath_lightning=Lightning Breath
 xat.config.abilities.breath.breath_lightning.tooltip=
+xat.config.abilities.breath.breath_dragon=Dragon Breath
+xat.config.abilities.breath.breath_dragon.tooltip=
 xat.config.abilities.breath.terrain=Terrain Effects
 xat.config.abilities.breath.terrain.tooltip=Should the Breath interact with the terrain
 xat.config.abilities.breath.effects=Breath Effects
@@ -1029,7 +1035,7 @@ xat.config.abilities.affinity_water.tooltip=
 xat.config.abilities.magnetic=Magnetic
 xat.config.abilities.magnetic.tooltip=
 xat.config.abilities.magnetic.xp=Collect Exp
-xat.config.abilities.magnetic.xp.tooltip=Should the ability effect exp orbs
+xat.config.abilities.magnetic.xp.tooltip=Should the ability affect XP orbs
 xat.config.abilities.magnetic.instant=Instant Pickup
 xat.config.abilities.magnetic.instant.tooltip=Should the You Instantly pickup Items, or Pull them toward you.
 xat.config.abilities.magnetic.instant.xp=Instant XP
@@ -1056,7 +1062,7 @@ xat.config.abilities.well_rested.tooltip=
 xat.config.abilities.well_rested.buffs=Sleep Effects
 xat.config.abilities.well_rested.buffs.tooltip=Effects given after a good nights rest
 xat.config.abilities.well_rested.buffs.random=Random Effects
-xat.config.abilities.well_rested.buffs.random.tooltip=If this value is greater then 0, instead of giving every effect in the list, it gives x random effects
+xat.config.abilities.well_rested.buffs.random.tooltip=If this value is greater than 0, instead of giving every effect in the list, it gives X random effects
 
 xat.config.abilities.vicious_strike=Vicious Strike
 xat.config.abilities.vicious_strike.tooltip=
@@ -1159,7 +1165,7 @@ xat.config.races.faelis.barehand.tooltip=Can the Faelis deal bonus damage bare h
 xat.config.races.faelis.barehand.bonus=Default bonus damage
 xat.config.races.faelis.barehand.bonus.tooltip=The Default bonus damage applied to attacks when bare handed
 xat.config.races.faelis.barehand.list=Bare hands
-xat.config.races.faelis.barehand.list.tooltip=List of Items that cound as a barehanded weapon
+xat.config.races.faelis.barehand.list.tooltip=List of items that count as barehanded weapons
 xat.config.races.faelis.milk.buff=Milk Bonus
 xat.config.races.faelis.milk.buff.tooltip=Should the Faelis gain a bonus when drinking milk
 xat.config.races.faelis.milk.buff.list=Milk Effects
@@ -1271,7 +1277,7 @@ xat.config.items.titan_ring=Titan Ring
 xat.config.items.titan_ring.tooltip=
 
 xat.config.items.transformation=Transformation Items
-xat.config.items.transformation.tooltip=Configuration for Tranformation Items
+xat.config.items.transformation.tooltip=Configuration for Transformation Items
 
 xat.config.items.food=Magical Foods
 xat.config.items.food.tooltip=Configuration for Food Items
@@ -1302,6 +1308,13 @@ xat.config.potions.survival.water=Potions Give Water
 xat.config.potions.survival.water.tooltip=Should Potions give Water if a survival mod is installed.
 xat.config.potions.catalyst=Catalyst
 xat.config.potions.catalyst.tooltip=The Item used as a Catalyst to brew this Potion
+
+xat.config.potions.resistance=Resistance Potions
+xat.config.potions.resistance.tooltip=Configuration for Resistance Potions
+xat.config.potions.resistance.ice=Ice Resistance Potion
+xat.config.potions.resistance.ice.tooltip=
+xat.config.potions.resistance.lightning=Lightning Resistance Potion
+xat.config.potions.resistance.lightning.tooltip=
 
 xat.config.potions.race=Race Potions
 xat.config.potions.race.tooltip=Configuration for Race Transformation Potions
@@ -1344,7 +1357,7 @@ xat.config.misc.movement.tooltip=If enabled, the player will be unable to move w
 xat.config.misc.interaction.fix=Reach Interaction Fix
 xat.config.misc.interaction.fix.tooltip=Vanilla MC doesn't handle interaction with increased reach properly, this fixes it
 xat.config.misc.vip=VIP Enabled
-xat.config.misc.vip.tooltip=The VIP list may be unaccessible under some circumstance, use this to shorten game launching time.
+xat.config.misc.vip.tooltip=The VIP list may be inaccessible under some circumstances; use this to shorten game launch time.
 xat.config.misc.blessings=Blessings
 xat.config.misc.blessings.tooltip=Hidden feature, add anything into this list to disable it.
 
@@ -1391,3 +1404,8 @@ xat.config.compat.survival.thirst.absorption=Absorption
 xat.config.compat.survival.thirst.absorption.tooltip=Configuration for Absorption
 xat.config.compat.survival.parasites=Parasites
 xat.config.compat.survival.parasites.tooltip=Configuration for Parasites
+
+advancement.xat.refined_radiance=Refined Radiance
+advancement.xat.refined_radiance.description=Obtain a Glowing Ingot
+advancement.xat.patchouli_guide=Trinkets Field Guide
+advancement.xat.patchouli_guide.description=A guide can be crafted with a Book and Quill and Glowing Powder

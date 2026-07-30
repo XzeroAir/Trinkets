@@ -5,16 +5,13 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Ender Queen's Crown causes endermen to view the wearer as royalty, causing them to follow and fight for the wearer. The wearer also has a small chance upon taking damage to ignore the damage taken and summon an enderman.$(br2)Item idea originally by MigMolRod"
+            "text": "Wear the Ender Queen's Crown and Endermen will treat you as their queen.$(br2)They can follow and defend you, while the crown may call an Enderman to your aid when you are hurt."
         },
-		{
-            "type": "text",
-            "text": "$(l)Mod Compatibility:$()$(br)$(n)Tough as Nails$() / $(n)Simple Difficulty$(): Immunity to hypothermia$(br)$(n)Enhanced Visuals$(): Removes the static effect from endermen"
-        },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Ah yes, the ruler of $(l)EEEURAUGH",
-			"recipe": "xat:ender_tiara"
+            "recipe": "xat:ender_tiara",
+            "text": "Crafting"
         }
-    ]
+    ],
+    "sortnum": 110
 }

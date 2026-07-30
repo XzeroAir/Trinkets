@@ -1,0 +1,17 @@
+{
+    "name": "Cukierek Many",
+    "icon": "xat:mana_candy",
+    "category": "mana",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Cukierki Mana to mała, zawsze jadalna przekąska, która przywraca manę.$(br2)Trzymaj trochę blisko, gdy kończą Ci się rezerwy."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_candy",
+            "text": "Tworzenie Cukierków Mana"
+        }
+    ]
+}

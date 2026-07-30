@@ -1,6 +1,6 @@
 {
-	"name": "种族",
-	"description": "种族极大地改变了你的游戏体验，增加新的强项和弱点以及可利用的新能力。",
-	"icon": "xat:textures/items/fairy_ring.png",
-	"sortnum": 3
+    "name": "种族",
+    "description": "选择一条道路，了解它的天赋，然后决定是否变形、佩戴它的戒指或尝试它的魔药。",
+    "icon": "xat:textures/potions/fairy.png",
+    "sortnum": 2
 }

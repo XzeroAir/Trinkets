@@ -1,6 +1,5 @@
 package xzeroair.trinkets.init;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -190,8 +189,8 @@ public class ModPotionTypes {
         createBasePotion(baseSparkling, 16777160, 0, Ingredient.fromItem(ModItems.crafting.glowing_powder)).registerWithPotion();
         createCompoundPotion(TrinketPotionObjects.get(baseSparkling).getPotionType(), enhancedGlittering, 16777120, 0, Ingredient.fromItem(ModItems.crafting.glowing_ingot)).registerWithPotion();
         createCompoundPotion(TrinketPotionObjects.get(enhancedGlittering).getPotionType(), advancedGlowing, 16777080, 0, Ingredient.fromItem(ModItems.crafting.glowing_gem)).registerWithPotion();
-        createCompoundPotion(new IceResistance(iceResist, 3600, 15132390, false), TrinketPotionObjects.get(baseSparkling).getPotionType(), iceResist, 15132390, 3600, 9600, Ingredient.fromItem(Item.getItemFromBlock(Blocks.SNOW))).registerWithPotion();
-        createCompoundPotion(new LightningResistance(lightningResist, 3600, 15132390, false), TrinketPotionObjects.get(baseSparkling).getPotionType(), lightningResist, 15132390, 3600, 9600, Ingredient.fromItem(ModItems.foods.mana_crystal)).registerWithPotionWithoutRecipe();
+        createCompoundPotion(new IceResistance(iceResist, TrinketsConfig.SERVER.POTIONS.ICE_RESISTANCE.Duration, 15132390, false), TrinketPotionObjects.get(advancedGlowing).getPotionType(), iceResist, 15132390, TrinketsConfig.SERVER.POTIONS.ICE_RESISTANCE.Duration, TrinketsConfig.SERVER.POTIONS.ICE_RESISTANCE.Duration * 8 / 3, getCatalyst(TrinketsConfig.SERVER.POTIONS.ICE_RESISTANCE.catalyst)).registerWithPotion();
+        createCompoundPotion(new LightningResistance(lightningResist, TrinketsConfig.SERVER.POTIONS.LIGHTNING_RESISTANCE.Duration, 15132390, false), TrinketPotionObjects.get(advancedGlowing).getPotionType(), lightningResist, 15132390, TrinketsConfig.SERVER.POTIONS.LIGHTNING_RESISTANCE.Duration, TrinketsConfig.SERVER.POTIONS.LIGHTNING_RESISTANCE.Duration * 8 / 3, getCatalyst(TrinketsConfig.SERVER.POTIONS.LIGHTNING_RESISTANCE.catalyst)).registerWithPotion();
         /*
          * Create Race Potions
          */

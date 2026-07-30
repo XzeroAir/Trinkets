@@ -1,0 +1,17 @@
+{
+    "name": "Piedra de Gran Inercia",
+    "icon": "xat:greater_inertia_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Piedra de la Inercia Mayor favorece el movimiento rápido y al mismo tiempo suaviza las caídas y los golpes.$(br2)Es la prima más ligera y móvil de la Piedra de la Inercia Null."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:greater_inertia_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 50
+}

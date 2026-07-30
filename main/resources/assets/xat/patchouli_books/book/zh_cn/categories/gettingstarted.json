@@ -1,6 +1,6 @@
 {
-	"name": "入门",
-	"description": "本节将介绍帮助你开始使用 mod 的信息。",
-	"icon": "xat:textures/items/dragons_eye.png",
-	"sortnum": 1
+    "name": "入门",
+    "description": "从这里开始：打开你的Trinkets Container，学习核心材料，并发现第一个有用的项目。",
+    "icon": "xat:glowing_ingot",
+    "sortnum": 1
 }

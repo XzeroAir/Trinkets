@@ -1,0 +1,29 @@
+{
+    "name": "Elf",
+    "icon": "xat:textures/potions/elf.png",
+    "category": "races",
+    "sortnum": 60,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Elfy to cierpliwi łucznicy i leśni wędrowcy.$(br2)Ich naładowany strzał z łuku zamienia w pełni naciągnięty łuk w podmuch napędzany maną."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_sap",
+            "text": "Ten przepis trwale przemienia Cię w Elfa."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_ring",
+            "text": "Noś Pierścień Elfa, aby wziąć udział w tej rasie, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:leaves",
+            "result": "minecraft:potion{Potion:'xat:elf'}"
+        }
+    ]
+}

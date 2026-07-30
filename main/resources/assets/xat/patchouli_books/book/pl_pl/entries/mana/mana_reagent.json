@@ -1,0 +1,17 @@
+{
+    "name": "Odczynnik Many",
+    "icon": "xat:mana_reagent",
+    "category": "mana",
+    "sortnum": 5,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Jedzenie Odczynnika Many trwale obniża maksymalną manę.$(br2)Jest również używany w zaawansowanych przepisach, w tym w Proszku Iskry i Serum Regeneracyjnym."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_reagent",
+            "text": "Tworzenie odczynnika many"
+        }
+    ]
+}

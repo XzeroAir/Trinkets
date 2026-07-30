@@ -1,0 +1,19 @@
+{
+    "name": "Human",
+    "icon": "xat:textures/potions/human.png",
+    "category": "races",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Human is the familiar form.$(br2)Choose it as your original race, or return to it with a Restoration Serum."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Default Brewing Recipe",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:apple",
+            "result": "minecraft:potion{Potion:'xat:human'}"
+        }
+    ]
+}

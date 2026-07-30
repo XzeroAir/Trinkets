@@ -1,0 +1,29 @@
+{
+    "name": "Тавр",
+    "icon": "xat:textures/potions/taurus.png",
+    "category": "races",
+    "sortnum": 80,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Taurus — рогатые, крепкие странники, созданные для того, чтобы удерживать свою позицию.$(br2)Их способность «Паническое бегство» превращает заряд в подходящий вход."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_tea",
+            "text": "Этот рецепт навсегда превратит вас в Taurus."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_ring",
+            "text": "Наденьте кольцо Taurus и сразитесь с этой расой, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:milk_bucket",
+            "result": "minecraft:potion{Potion:'xat:taurus'}"
+        }
+    ]
+}

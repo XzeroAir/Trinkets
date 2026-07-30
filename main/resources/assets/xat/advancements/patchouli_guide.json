@@ -1,0 +1,28 @@
+{
+  "parent": "xat:refined_radiance",
+  "display": {
+    "icon": {
+      "item": "minecraft:writable_book"
+    },
+    "title": {
+      "translate": "advancement.xat.patchouli_guide"
+    },
+    "description": {
+      "translate": "advancement.xat.patchouli_guide.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {
+    "guide_available": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "guide_available"
+    ]
+  ]
+}
