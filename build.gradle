@@ -4,6 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'org.spongepowered.mixin' version "${mixin_gradle_version}"
     id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'com.gradleup.shadow' version "${shadow_gradle_version}"
 }
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
@@ -67,6 +68,7 @@ minecraft {
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
             jvmArg "-Dmixin.hotSwap=true"
             jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
             workingDirectory 'run'
             ideaModule "${project.name}.main"
             taskName 'Client'
@@ -77,6 +79,9 @@ minecraft {
             }
         }
         server {
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
             workingDirectory 'runServer'
             ideaModule "${project.name}.main"
             taskName 'Server'
@@ -102,8 +107,10 @@ dependencies {
 //    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     //Mixin
     implementation "org.spongepowered:mixin:${mixin_version}"
+    shadow "org.spongepowered:mixin:${mixin_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
     implementation "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+    shadow "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
     annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
     implementation fileTree(dir: 'libs', include: '*.jar')
     //FermiumBooter
@@ -147,6 +154,21 @@ dependencies {
 
 }
 
+shadowJar {
+    configurations = [project.configurations.shadow]
+    mergeServiceFiles()
+
+    exclude 'org/spongepowered/asm/launch/MixinLaunchPlugin*'
+    exclude 'org/spongepowered/asm/launch/MixinTransformationService*'
+    exclude 'org/spongepowered/asm/launch/platform/container/ContainerHandleModLauncherEx*'
+
+    archiveClassifier.set('1.12.2')
+}
+
+reobf {
+    shadowJar {}
+}
+
 jar {
     manifest {
         attributes([
@@ -161,12 +183,14 @@ jar {
                 'Timestamp'                  : System.currentTimeMillis(),
                 'Built-On-Java'              : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                 'Built-On-Minecraft'         : minecraft_version,
-//                'FMLCorePlugin': mixin_loader_class,
+                'FMLCorePlugin'              : mixin_loader_class,
                 'FMLCorePluginContainsFMLMod': 'true',
                 'ForceLoadAsMod'             : 'true', //Comment out in dev environment, uncomment for building
-//                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
+                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
         ])
     }
+
+    archiveClassifier.set('1.12.2-THIN')
 }
 
 processResources {
@@ -178,6 +202,7 @@ processResources {
     rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
+build.dependsOn(shadowJar)
 jar.finalizedBy('reobfJar')
 
 //publishing {
