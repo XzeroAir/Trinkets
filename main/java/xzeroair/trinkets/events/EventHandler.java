@@ -495,41 +495,24 @@ public class EventHandler extends EventBaseHandler {
                 e.printStackTrace();
             }
         });
-        if (TrinketsConfig.SERVER.MAGIC.mana_enabled) {
-            try {
-                Map<String, MPRecoveryItem> MagicRecoveryItems = ConfigHelper.TrinketConfigStorage.MagicRecoveryItems;
-                float amount = 0;
-                boolean multiplied = false;
-                for (MPRecoveryItem entry : MagicRecoveryItems.values()) {
-                    if (entry.doesItemMatchEntry(stack)) {
-                        amount = entry.getAmount();
-                        multiplied = entry.isMultiplied();
-                        break;
-                    }
-                }
-                final float finalAmount = amount;
-                final boolean finalMultiplied = multiplied;
-                if ((finalAmount > 0) || (finalAmount < 0)) {
-                    Capabilities.getMagicStats(entity, magic -> {
-                        if (finalAmount > 0) {
-                            if (finalMultiplied) {
-                                magic.addMana(magic.getMaxMana() * (finalAmount * 0.01F));
-                            } else {
-                                magic.addMana(finalAmount);
-                            }
-                        } else {
-                            if (finalMultiplied) {
-                                magic.spendMana(magic.getMaxMana() * (finalAmount * 0.01F));
-                            } else {
-                                magic.spendMana(finalAmount);
-                            }
-                        }
-                    });
-                }
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+        this.applyRecoveryItem(entity, stack, duration);
+    }
+
+    private void applyRecoveryItem(Entity entity, ItemStack stack, int duration) {
+        if (entity.world.isRemote || !TrinketsConfig.SERVER.MAGIC.mana_enabled) {
+            return;
         }
+        Capabilities.getMagicStats(entity, magic -> {
+            final MPRecoveryItem recoveryItem = ConfigHelper.TrinketConfigStorage.getRecoveryItem(stack);
+            if ((recoveryItem != null) && (recoveryItem.getAmount() != 0F)) {
+                final float manaAdjustment = recoveryItem.isMultiplied()
+                        ? magic.getMaxMana() * (recoveryItem.getAmount() * 0.01F)
+                        : recoveryItem.getAmount();
+                if (manaAdjustment != 0F) {
+                    magic.addMana(manaAdjustment);
+                }
+            }
+        });
     }
 
     //	@SubscribeEvent // Server only?

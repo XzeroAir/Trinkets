@@ -151,6 +151,7 @@ public class TrinketsRegistryNames {
         public static final String SURVIVAL_THIRST_ABSORPTION	="absorption_thirst";
         public static final String FIRST_AID_HARD_HEAD    		="hard_head";
         public static final String ENHANCED_VISUALS_BLUR        ="clear_vision";
+        public static final String ENHANCED_VISUALS_SPLASH      ="clear_splash";
         public static final String ENHANCED_VISUALS_STATIC      ="ender_eyes";
         //@formatter:on
     }

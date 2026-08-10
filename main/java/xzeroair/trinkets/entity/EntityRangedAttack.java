@@ -48,9 +48,14 @@ public class EntityRangedAttack extends Entity {
     private static final DataParameter<Integer> BREATH_COLOR = EntityDataManager.createKey(EntityRangedAttack.class, DataSerializers.VARINT);
     private static final float IMPACT_AREA_RADIUS = 3.0F;
     private static final float IMPACT_AREA_VERTICAL_RADIUS = 1.5F;
-    private static final int IMPACT_AREA_DURATION = 60;
+    private static final int IMPACT_AREA_DURATION = 80;
+    private static final float IMPACT_AREA_MIN_RADIUS = 0.5F;
+    private static final int MAX_ACTIVE_IMPACT_AREAS_PER_PLAYER = 3;
     private static final int IMPACT_AREA_PULSE_INTERVAL = 10;
     private static final int IMPACT_AREA_REAPPLICATION_DELAY = 20;
+    private static final int FIRE_IMPACT_INITIAL_MAX_BLOCKS = 6;
+    private static final int FIRE_IMPACT_DELAYED_ATTEMPT_INTERVAL = 20;
+    private static final float FIRE_IMPACT_DELAYED_ATTEMPT_CHANCE = 0.7F;
 
     @Nullable
     public Entity ignoreEntity;
@@ -67,6 +72,7 @@ public class EntityRangedAttack extends Entity {
 
     private boolean ignoreBlocks = false;
     protected boolean interactWithTerrain;
+    protected boolean renderImpactAreaCircle;
     protected float airDrag;
     protected float waterDrag;
     protected float lavaDrag;
@@ -85,6 +91,7 @@ public class EntityRangedAttack extends Entity {
         this.element = Elements.NEUTRAL;
         this.damage = 1.0F;
         this.interactWithTerrain = false;
+        this.renderImpactAreaCircle = true;
         this.airDrag = 0.99F;
         this.waterDrag = 0.8F;
         this.lavaDrag = 0.8F;
@@ -203,6 +210,11 @@ public class EntityRangedAttack extends Entity {
 
     public EntityRangedAttack setAllowTerrainInteraction(boolean can) {
         this.interactWithTerrain = can;
+        return this;
+    }
+
+    public EntityRangedAttack setRenderImpactAreaCircle(boolean renderImpactAreaCircle) {
+        this.renderImpactAreaCircle = renderImpactAreaCircle;
         return this;
     }
 
@@ -517,17 +529,22 @@ public class EntityRangedAttack extends Entity {
     private void spawnImpactArea(Vec3d impact) {
         final AreaEffectEntity area = new AreaEffectEntity(this.world, impact.x, impact.y, impact.z);
         area.setOwner(this.getShootingEntity());
+        area.setBreathImpact(true);
         area.setRadius(IMPACT_AREA_RADIUS);
         area.setVerticalRadius(IMPACT_AREA_VERTICAL_RADIUS);
         area.setWaitTime(0);
         area.setDuration(IMPACT_AREA_DURATION);
-        area.setRadiusPerTick(-IMPACT_AREA_RADIUS / (float) IMPACT_AREA_DURATION);
+        area.setRadiusPerTick(-(IMPACT_AREA_RADIUS - IMPACT_AREA_MIN_RADIUS) / (float) IMPACT_AREA_DURATION);
         area.setPulseInterval(IMPACT_AREA_PULSE_INTERVAL);
         area.setReapplicationDelay(IMPACT_AREA_REAPPLICATION_DELAY);
         area.setColor(this.color);
+        area.setRenderCircle(this.renderImpactAreaCircle);
         if (Elements.ICE.equals(this.element)) {
             area.setWaterBehavior(AreaEffectEntity.LiquidBehavior.FLOAT);
             area.setLavaBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
+        } else if (Elements.FIRE.equals(this.element)) {
+            area.setWaterBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
+            area.setLavaBehavior(AreaEffectEntity.LiquidBehavior.FLOAT);
         } else {
             area.setWaterBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
             area.setLavaBehavior(AreaEffectEntity.LiquidBehavior.EXPIRE);
@@ -547,7 +564,7 @@ public class EntityRangedAttack extends Entity {
 
         if (this.interactWithTerrain) {
             if (Elements.FIRE.equals(this.element)) {
-                area.addAction(new AreaEffectEntity.PlaceFireAreaAction());
+                area.addAction(new AreaEffectEntity.PlaceFireAreaAction(FIRE_IMPACT_INITIAL_MAX_BLOCKS, FIRE_IMPACT_DELAYED_ATTEMPT_INTERVAL, FIRE_IMPACT_DELAYED_ATTEMPT_CHANCE));
             } else if (Elements.ICE.equals(this.element)) {
                 area.addAction(new AreaEffectEntity.FreezeLiquidAreaAction(4));
                 area.addAction(new AreaEffectEntity.PlaceSnowAreaAction());
@@ -555,7 +572,31 @@ public class EntityRangedAttack extends Entity {
         }
 
         if (!area.getActions().isEmpty()) {
+            this.enforceImpactAreaLimit(area);
             this.world.spawnEntity(area);
+        }
+    }
+
+    private void enforceImpactAreaLimit(AreaEffectEntity newArea) {
+        final EntityLivingBase owner = newArea.getOwner();
+        if (!(owner instanceof EntityPlayer)) {
+            return;
+        }
+
+        final List<AreaEffectEntity> activeAreas = this.world.getEntities(AreaEffectEntity.class,
+                area -> area != null && !area.isDead && area.isBreathImpact() && area.isOwnedBy(owner.getUniqueID()));
+        while (activeAreas.size() >= MAX_ACTIVE_IMPACT_AREAS_PER_PLAYER) {
+            AreaEffectEntity oldest = null;
+            for (AreaEffectEntity area : activeAreas) {
+                if (oldest == null || area.ticksExisted > oldest.ticksExisted) {
+                    oldest = area;
+                }
+            }
+            if (oldest == null) {
+                return;
+            }
+            oldest.setDead();
+            activeAreas.remove(oldest);
         }
     }
 

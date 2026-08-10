@@ -107,7 +107,7 @@ public class AbilityRepel extends Ability implements ITickableAbility, IHeldAbil
             if (this.COST > 0F) {
                 final MagicStats magic = Capabilities.getMagicStats(entity);
                 if (magic != null) {
-                    if (magic.getMana() < this.COST) {
+                    if (!magic.canSpendMana(this.COST)) {
                         this.toggleAbility(false);
                         return;
                     }

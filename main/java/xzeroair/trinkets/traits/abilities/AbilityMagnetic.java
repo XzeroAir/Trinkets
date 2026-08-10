@@ -93,7 +93,7 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
             if (this.CONFIG.COST > 0F) {
                 final MagicStats magic = Capabilities.getMagicStats(entity);
                 if (magic != null) {
-                    if (magic.getMana() < this.CONFIG.COST) {
+                    if (!magic.canSpendMana(this.CONFIG.COST)) {
                         this.toggleAbility(false);
                         return;
                     }

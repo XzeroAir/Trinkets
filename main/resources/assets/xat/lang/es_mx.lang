@@ -39,6 +39,7 @@ key.xat.aux_key.desc=Tecla auxiliar
 key.xat.trinket_gui.desc=GUI de Trinkets
 
 key.xat.trinket_arcing_attack.desc=Orbe Eléctrico: Ataque
+key.xat.trinket_arcing_dodge.desc=Orbe Eléctrico: Esquivar
 key.xat.trinket_ender_crown.desc=Corona Ender: Activo
 key.xat.race_ability.desc=Raza: Activo
 
@@ -271,6 +272,8 @@ xat.ability.hard_head.tooltip1=§3$headshotchance:§6 Probabilidad de ignorar di
 # ENHANCED VISUALS
 xat.ability.clear_vision.name=Ojos claros
 xat.ability.clear_vision.tooltip1=$gui:Elimina el efecto borroso
+xat.ability.clear_splash.name=Aguas claras
+xat.ability.clear_splash.tooltip1=$gui:Elimina el efecto de desenfoque del agua
 xat.ability.ender_eyes.name=Ojos Ender
 xat.ability.ender_eyes.tooltip1=$gui:Elimina el efecto estático de Enderman
 
@@ -1003,6 +1006,8 @@ xat.config.abilities.reduce_kinetic=Reducir la cinética
 xat.config.abilities.reduce_kinetic.tooltip=
 xat.config.abilities.weightless=Ingravidez
 xat.config.abilities.weightless.tooltip=
+xat.config.abilities.dodging.keybind_movement=Tecla de esquivar + movimiento
+xat.config.abilities.dodging.keybind_movement.tooltip=Usa la tecla de esquivar junto con una tecla de movimiento en vez de pulsar dos veces una tecla de movimiento para esquivar
 xat.config.abilities.dodging=Esquivando
 xat.config.abilities.dodging.tooltip=
 xat.config.abilities.dodging.stuns=Esquivando aturdimientos

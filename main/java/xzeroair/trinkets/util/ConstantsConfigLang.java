@@ -543,6 +543,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_DODGE = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.DODGING;
     public static final String CONFIG_ABILITIES_DODGE_NAME = "Dodging";
     public static final String CONFIG_ABILITIES_DODGE_COMMENT = "";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT = CONFIG_ABILITIES_DODGE + ".keybind_movement";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_NAME = "Keybind + Movement";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_COMMENT = "Use the configured Dodge key plus a movement key instead of double-tapping movement to Dodge";
     public static final String CONFIG_ABILITIES_DODGE_STUN = CONFIG_ABILITIES_DODGE + ".stuns";
     public static final String CONFIG_ABILITIES_DODGE_STUN_NAME = "Dodge Stuns";
     public static final String CONFIG_ABILITIES_DODGE_STUN_COMMENT = "Should triggering a dodge stun nearby entities";

@@ -29,6 +29,10 @@ public class RenderAreaEffectEntity extends Render<AreaEffectEntity> {
     }
 
     protected void renderAreaEffect(AreaEffectEntity entity, double x, double y, double z, float partialTicks) {
+        if (!entity.shouldRenderCircle()) {
+            return;
+        }
+
         final int color = entity.getColor();
         final float red = (color >> 16 & 255) / 255.0F;
         final float green = (color >> 8 & 255) / 255.0F;

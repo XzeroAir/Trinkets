@@ -128,16 +128,12 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     @Override
     public void onAbilityAdded(EntityLivingBase entity) {
         super.onAbilityAdded(entity);
-        if (true) {
-            ItemStack stack = this.getAbilityHolder().getInfo().getStackFromHandler(entity);
-            Capabilities.getTrinketProperties(stack, prop -> {
-                if (this.isAbilityToggled() != prop.mainAbility()) {
-                    this.toggleAbility(prop.mainAbility());
-                    this.sendMessageToPlayer(entity);
-                    this.setChanged(false);
-                }
-            });
-        }
+        final ItemStack stack = this.getAbilityHolder().getInfo().getStackFromHandler(entity);
+        Capabilities.getTrinketProperties(stack, prop -> {
+            this.toggleAbility(prop.mainAbility());
+            this.sendMessageToPlayer(entity);
+            this.setChanged(false);
+        });
     }
 
     @Override
@@ -225,7 +221,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                     final boolean isBoss = TrinketHelper.isEntityBoss(source.getTrueSource());
                     final MagicStats magic = Capabilities.getMagicStats(attacked);
                     if (!isBoss && !attacked.isActiveItemStackBlocking()) {
-                        if ((magic != null) && (magic.getMana() >= (magic.getMaxMana() * this.HURT_COST))) {
+                        if ((magic != null) && (magic.canSpendMana(magic.getMaxMana() * this.HURT_COST))) {
                             for (int i = 0; i < 32; ++i) {
                                 if (this.teleportRandomly(attacked, (magic.getMaxMana() * this.HURT_COST))) {
                                     return true;
@@ -453,7 +449,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         if (!Aux) {
             return Capabilities.getMagicStats(entity, this.CONFIG.TELEPORT_CHANCE > 0, (magic, allow) -> {
                 boolean isRemote = magic.getEntity().world.isRemote;
-                if (!isRemote && allow && (magic.getMana() >= (magic.getMaxMana() * this.ACTIVE_COST))) {
+                if (!isRemote && allow && (magic.canSpendMana(magic.getMaxMana() * this.ACTIVE_COST))) {
                     for (int i = 0; i < 32; ++i) {
                         if (this.teleportRandomly(magic.getEntity(), magic.getMaxMana() * this.ACTIVE_COST)) {
                             return true;

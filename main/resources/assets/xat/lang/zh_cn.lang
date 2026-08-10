@@ -39,6 +39,7 @@ key.xat.aux_key.desc=辅助键
 key.xat.trinket_gui.desc=饰品界面
 
 key.xat.trinket_arcing_attack.desc=电弧宝珠：攻击
+key.xat.trinket_arcing_dodge.desc=电弧宝珠：闪避
 key.xat.trinket_ender_crown.desc=末影王冠：主动
 key.xat.race_ability.desc=种族：主动
 
@@ -273,6 +274,8 @@ xat.ability.hard_head.tooltip1=§3$headshotchance:§6 概率无视爆头伤害
 # ENHANCED VISUALS
 xat.ability.clear_vision.name=清晰之眼
 xat.ability.clear_vision.tooltip1=$gui:移除模糊效果
+xat.ability.clear_splash.name=清澈之水
+xat.ability.clear_splash.tooltip1=$gui:移除水下模糊效果
 xat.ability.ender_eyes.name=末影之眼
 xat.ability.ender_eyes.tooltip1=$gui:移除末影人静电影响
 
@@ -1003,6 +1006,8 @@ xat.config.abilities.reduce_kinetic=减少动能
 xat.config.abilities.reduce_kinetic.tooltip=
 xat.config.abilities.weightless=失重
 xat.config.abilities.weightless.tooltip=
+xat.config.abilities.dodging.keybind_movement=闪避键 + 移动
+xat.config.abilities.dodging.keybind_movement.tooltip=使用闪避键加移动键进行闪避，而不是双击移动键
 xat.config.abilities.dodging=闪避
 xat.config.abilities.dodging.tooltip=
 xat.config.abilities.dodging.stuns=躲避眩晕

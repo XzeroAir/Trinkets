@@ -37,7 +37,10 @@ public class AbilitySafeGuard extends Ability implements ITickableAbility, IAtta
     protected final boolean EFFECT_STACKS;
     protected final int MAX_HIT_COUNT, EFFECT_STACK_LIMIT;
     protected final float MIN_DAMAGE_TO_COUNT, MIN_DAMAGE_TO_TRIGGER, EXPLOSION_REDUCED_AMOUNT;
+    protected static final int SOUND_COOLDOWN_TICKS = 20;
+
     protected int HIT_COUNT, MODIFIED_AMOUNT;
+    protected int LAST_SOUND_TICK;
     protected boolean SELF_ADDED;
     protected String EFFECT;
 
@@ -59,6 +62,7 @@ public class AbilitySafeGuard extends Ability implements ITickableAbility, IAtta
         this.SELF_ADDED = false;
         this.MODIFIED_AMOUNT = 0;
         this.HIT_COUNT = 0;
+        this.LAST_SOUND_TICK = -SOUND_COOLDOWN_TICKS;
     }
 
     @Override
@@ -169,8 +173,9 @@ public class AbilitySafeGuard extends Ability implements ITickableAbility, IAtta
                     final TextComponentString message = new TextComponentString(TextFormatting.BOLD + "" + TextFormatting.GOLD + string);
                     player.sendStatusMessage(message, true);
 
-                    if (this.CONFIG.CLIENT.VOLUME > 0) {
+                    if ((this.CONFIG.CLIENT.VOLUME > 0) && ((player.ticksExisted - this.LAST_SOUND_TICK) >= SOUND_COOLDOWN_TICKS)) {
                         player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, this.CONFIG.CLIENT.VOLUME, this.CONFIG.CLIENT.PITCH);
+                        this.LAST_SOUND_TICK = player.ticksExisted;
                     }
                 }
             }

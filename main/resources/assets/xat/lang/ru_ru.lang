@@ -39,6 +39,7 @@ key.xat.aux_key.desc=Доп. клавиша
 key.xat.trinket_gui.desc=Интерфейс Trinkets
 
 key.xat.trinket_arcing_attack.desc=Искрящаяся сфера: Атака
+key.xat.trinket_arcing_dodge.desc=Искрящаяся сфера: Уклонение
 key.xat.trinket_ender_crown.desc=Корона Эндера: Активация
 key.xat.race_ability.desc=Раса: Активная способность
 
@@ -271,6 +272,8 @@ xat.ability.hard_head.tooltip1=§3$headshotchance:§6 шанс проигнор�
 # ENHANCED VISUALS
 xat.ability.clear_vision.name=Ясное зрение
 xat.ability.clear_vision.tooltip1=$gui:Убирает эффект размытия
+xat.ability.clear_splash.name=Чистая вода
+xat.ability.clear_splash.tooltip1=$gui:Убирает эффект размытия в воде
 xat.ability.ender_eyes.name=Глаза Эндера
 xat.ability.ender_eyes.tooltip1=$gui:Убирает эффект помех эндермена
 
@@ -999,6 +1002,8 @@ xat.config.abilities.reduce_kinetic=Уменьшить кинетический
 xat.config.abilities.reduce_kinetic.tooltip=
 xat.config.abilities.weightless=Невесомость
 xat.config.abilities.weightless.tooltip=
+xat.config.abilities.dodging.keybind_movement=Клавиша уклонения + движение
+xat.config.abilities.dodging.keybind_movement.tooltip=Используйте клавишу уклонения вместе с клавишей движения вместо двойного нажатия клавиши движения для уклонения
 xat.config.abilities.dodging=Уклонение
 xat.config.abilities.dodging.tooltip=
 xat.config.abilities.dodging.stuns=Уклонение от оглушения

@@ -35,7 +35,7 @@ public class ElenaiDodgeCompat extends EventBaseHandler {
                         final float cost = TrinketsConfig.SERVER.ITEMS.ARCING_ORB.ABILITIES.DODGE.COST;
                         if (magic.spendMana(cost)) {
                             final AbilityDodge dodge = (AbilityDodge) ability;
-                            dodge.dodge(player);
+                            dodge.applyDodgeEffects(player);
                         }
                     });
                 }

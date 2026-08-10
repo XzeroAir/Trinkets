@@ -109,7 +109,7 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     }
 
     @Override
-    public boolean jump(Entity entity, int state) {
+    public boolean jump(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
         if (entity instanceof EntityPlayer) {
             final EntityPlayer player = (EntityPlayer) entity;
             if (state == 0) {
@@ -259,7 +259,7 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
             return true;
         }
         final MagicStats magic = Capabilities.getMagicStats(player);
-        return (magic != null) && (magic.getMana() >= this.COST);
+        return (magic != null) && magic.canSpendMana(this.COST);
     }
 
     protected boolean spendFlightCost(EntityPlayer player) {

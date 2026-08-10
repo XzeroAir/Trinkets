@@ -4,16 +4,16 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsBlur;
 
-public class AbilityEnhancedVisualsBlur extends AbilityEnhancedVisualsMod {
+public class AbilityEnhancedVisualsSplash extends AbilityEnhancedVisualsMod {
 
     protected ConfigAbilityEnhancedVisualsBlur CONFIG;
 
-    public AbilityEnhancedVisualsBlur() {
+    public AbilityEnhancedVisualsSplash() {
         this(TrinketsConfig.SERVER.ABILITIES.EXTERNAL.CLEAR_VISION);
     }
 
-    public AbilityEnhancedVisualsBlur(ConfigAbilityEnhancedVisualsBlur config) {
-        super(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR);
+    public AbilityEnhancedVisualsSplash(ConfigAbilityEnhancedVisualsBlur config) {
+        super(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_SPLASH);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
     }

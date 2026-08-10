@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -30,11 +31,11 @@ import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.keybinds.KeybindPacket;
-import xzeroair.trinkets.network.keybinds.MovementKeyPacket;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
+import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
@@ -56,11 +57,7 @@ public class EventHandlerClient {
     public void clientTickEvent(TickEvent.ClientTickEvent event) {
         if ((event.side == Side.CLIENT) && (event.phase == Phase.START)) {
             final EntityPlayerSP player = Minecraft.getMinecraft().player;
-            if ((player != null)) {
-                if (TrinketsConfig.getClientStore().TRINKET_CONTAINER_ENABLED && ModKeyBindings.TRINKET_GUI.isPressed()) {
-                    NetworkHandler.sendToServer(new OpenTrinketGui(Reference.GUI));
-                }
-            }
+            this.handleTrinketContainerKeybind(player);
         }
         if (event.phase == Phase.END) {
             if (!FMLClientHandler.instance().getClient().inGameHasFocus) {
@@ -68,135 +65,51 @@ public class EventHandlerClient {
             }
             final EntityPlayerSP player = Minecraft.getMinecraft().player;
             if ((player != null) && (player.world != null)) {
-                try {
-                    if (player.isRiding()) {
-                        final Entity mount = player.getRidingEntity();
-                        if (mount instanceof AlphaWolf) {
-                            final AlphaWolf wolf = (AlphaWolf) mount;
-                            if (player.movementInput.jump) {
-                                wolf.setJumping(true);
-                            }
-                        }
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
+                this.handleAlphaWolfJump(player);
                 final EntityProperties cap = Capabilities.getEntityProperties(player, prop -> {
-                    Map<String, AbilityHolder> abilities = prop.getAbilityHandler().getActiveAbilities();
-                    for (Entry<String, AbilityHolder> entry : abilities.entrySet()) {
-                        String key = entry.getKey();
-                        AbilityHolder holder = entry.getValue();
-                        try {
-                            IAbilityInterface ability = holder.getAbility();
-                            if ((ability instanceof IKeyBindInterface)) {
-                                final IKeyBindInterface keybind = (IKeyBindInterface) ability;
-                                final String keybind1 = keybind.getKey().replace(" ", "");
-                                final String keybind2 = keybind.getAuxKey().replace(" ", "");
-                                final boolean keyDown = !keybind1.isEmpty() && ModKeyBindings.isKeyDownFromName(keybind1);
-                                final boolean auxDown = !keybind2.isEmpty() && ModKeyBindings.isKeyDownFromName(keybind2);
-                                final KeyHandler keyHand = prop.getKeybindHandler().getKeyHandler(key + "." + keybind1);
-                                if (keyHand != null) {
-                                    keyHand.handler(keyDown, press -> {
-                                        if (keybind.onKeyPress(player, auxDown)) {
-                                            NetworkHandler.sendToServer(new KeybindPacket(player, key, keyDown, auxDown, 0));
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    }, down -> {
-                                        if (keybind.onKeyDown(player, auxDown)) {
-                                            NetworkHandler.sendToServer(new KeybindPacket(player, key, keyDown, auxDown, 1));
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    }, release -> {
-                                        if (keybind.onKeyRelease(player, auxDown)) {
-                                            NetworkHandler.sendToServer(new KeybindPacket(player, key, false, auxDown, 2));
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    });
-                                }
-                            }
-                        } catch (final Exception e) {
-                            Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", key);
-                            e.printStackTrace();
-                        }
-                    }
-                    final GameSettings s = Minecraft.getMinecraft().gameSettings;
-                    keyEnum[] defaultKeys = keyEnum.values();
-                    for (keyEnum key : defaultKeys) {
-                        KeyBinding kb = null;
-                        switch (key) {
-                            case LEFT:
-                                kb = s.keyBindLeft;
-                                break;
-                            case RIGHT:
-                                kb = s.keyBindRight;
-                                break;
-                            case FORWARD:
-                                kb = s.keyBindForward;
-                                break;
-                            case BACK:
-                                kb = s.keyBindBack;
-                                break;
-                            case JUMP:
-                                kb = s.keyBindJump;
-                                break;
-                            case SNEAK:
-                                kb = s.keyBindSneak;
-                                break;
-                            default:
-                        }
-                        if (kb != null) {
-                            final KeyHandler handler = prop.getKeybindHandler().getKeyHandler(key.getName());
-                            if (handler != null) {
-                                handler.handler(kb.isKeyDown(), press -> {
-                                    if (prop.getKeybindHandler().pressKey(player, key.getName(), 0)) {
-                                        final MovementKeyPacket message = new MovementKeyPacket(player, key.getName(), 0);
-                                        NetworkHandler.sendToServer(message);
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }, down -> {
-                                    if (prop.getKeybindHandler().pressKey(player, key.getName(), 1)) {
-                                        final MovementKeyPacket message = new MovementKeyPacket(player, key.getName(), 1);
-                                        NetworkHandler.sendToServer(message);
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }, release -> {
-                                    if (prop.getKeybindHandler().pressKey(player, key.getName(), 2)) {
-                                        final MovementKeyPacket message = new MovementKeyPacket(player, key.getName(), 2);
-                                        NetworkHandler.sendToServer(message);
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                });
-                            }
-                        }
-                    }
-                    if (TrinketsConfig.getClientStore().BLOCK_MOVEMENT && prop.getRaceHandler().isTransforming()) {
-                        if ((player.posX != player.prevPosX) || (player.posZ != player.prevPosZ)) {
-                            player.setPositionAndUpdate(player.prevPosX, player.posY, player.prevPosZ);
-                        }
-                        if (player == Minecraft.getMinecraft().player) {
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode(), false);
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode(), false);
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode(), false);
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode(), false);
-                            //							if (((EntityPlayer) player).capabilities.isFlying) {
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), false);
-                            KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode(), false);
-                            //							}
-                        }
-                    }
+                    prop.getKeybindHandler().handleClientInput();
+                    this.blockMovementDuringTransformation(player, prop);
                 });
+            }
+        }
+    }
+
+    public void handleTrinketContainerKeybind(EntityPlayerSP player) {
+        if ((player != null) && TrinketsConfig.getClientStore().TRINKET_CONTAINER_ENABLED && ModKeyBindings.TRINKET_GUI.isPressed()) {
+            NetworkHandler.sendToServer(new OpenTrinketGui(Reference.GUI));
+        }
+    }
+
+    public void handleAlphaWolfJump(EntityPlayerSP player) {
+        try {
+            if (player.isRiding()) {
+                final Entity mount = player.getRidingEntity();
+                if (mount instanceof AlphaWolf) {
+                    final AlphaWolf wolf = (AlphaWolf) mount;
+                    if (player.movementInput.jump) {
+                        wolf.setJumping(true);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void blockMovementDuringTransformation(EntityPlayerSP player, EntityProperties prop) {
+        if (TrinketsConfig.getClientStore().BLOCK_MOVEMENT && prop.getRaceHandler().isTransforming()) {
+            if ((player.posX != player.prevPosX) || (player.posZ != player.prevPosZ)) {
+                player.setPositionAndUpdate(player.prevPosX, player.posY, player.prevPosZ);
+            }
+            if (player == Minecraft.getMinecraft().player) {
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode(), false);
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode(), false);
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode(), false);
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode(), false);
+                //							if (((EntityPlayer) player).capabilities.isFlying) {
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), false);
+                KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode(), false);
+                //							}
             }
         }
     }
@@ -273,22 +186,15 @@ public class EventHandlerClient {
         }
         if (TrinketsConfig.SERVER.MAGIC.mana_enabled) {
             try {
-                final Map<String, MPRecoveryItem> MagicRecoveryItems = ConfigHelper.TrinketConfigStorage.MagicRecoveryItems;
-                float amount = 0;
-                boolean multiplied = false;
-                for (MPRecoveryItem entry : MagicRecoveryItems.values()) {
-                    if (entry.doesItemMatchEntry(stack)) {
-                        amount = entry.getAmount();
-                        multiplied = entry.isMultiplied();
-                        break;
-                    }
-                }
-                if (amount != 0) {
-                    String additive = amount > 0 ? TextFormatting.DARK_AQUA + "+" : TextFormatting.DARK_RED + "-";
-                    if (multiplied) {
-                        event.getToolTip().add(additive + amount + "% MP");
+                final MPRecoveryItem recoveryItem = ConfigHelper.TrinketConfigStorage.getRecoveryItem(stack);
+                if ((recoveryItem != null) && (recoveryItem.getAmount() != 0F)) {
+                    final float amount = recoveryItem.getAmount();
+                    final float displayAmount = amount < 0 ? -amount : amount;
+                    final String additive = amount > 0 ? TextFormatting.DARK_AQUA + "+" : TextFormatting.DARK_RED + "-";
+                    if (recoveryItem.isMultiplied()) {
+                        event.getToolTip().add(additive + displayAmount + "% MP");
                     } else {
-                        event.getToolTip().add(additive + amount + " MP");
+                        event.getToolTip().add(additive + displayAmount + " MP");
                     }
                 }
             } catch (final Exception e) {

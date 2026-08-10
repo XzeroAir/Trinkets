@@ -15,6 +15,20 @@ public class ConfigAbilityDodge {
         this.COST = cost;
     }
 
+    @Config.Name(ConstantsConfigLang.CONFIG_CLIENT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_CLIENT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_CLIENT)
+    public ClientConfig CLIENT = new ClientConfig();
+
+    public class ClientConfig {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT)
+        public boolean KEYBIND_MOVEMENT = false;
+
+    }
+
     @Config.RequiresWorldRestart
     @Config.Name("00. " + ConstantsConfigLang.REGISTRY_ENABLED_NAME)
     @Config.Comment(ConstantsConfigLang.REGISTRY_ENABLED_COMMENT)
@@ -36,5 +50,11 @@ public class ConfigAbilityDodge {
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_DODGE_STUN_RANGE)
     @Config.RangeDouble(min = 1)
     public double STUN_RADIUS = 2;
+
+    @Config.Name("04. " + ConstantsConfigLang.CONFIG_COOLDOWN_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_COOLDOWN_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_COOLDOWN)
+    @Config.RangeInt(min = 0)
+    public int COOLDOWN = 20;
 
 }

@@ -36,6 +36,7 @@ public class ClientConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_CAMERA_ADJUSTMENTS)
     public boolean CAMERA_HEIGHT = true;
 
+
     @Config.Name(ConstantsConfigLang.CONFIG_RENDERING_MAIN_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RENDERING_MAIN_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RENDERING_MAIN)

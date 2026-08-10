@@ -39,6 +39,7 @@ key.xat.aux_key.desc=Klawisz pomocniczy
 key.xat.trinket_gui.desc=Interfejs Trinketów
 
 key.xat.trinket_arcing_attack.desc=Łukowa Kula: Atak
+key.xat.trinket_arcing_dodge.desc=Łukowa Kula: Unik
 key.xat.trinket_ender_crown.desc=Korona Królowej Endu: Aktywacja
 key.xat.race_ability.desc=Rasa: Aktywna zdolność
 
@@ -271,6 +272,8 @@ xat.ability.hard_head.tooltip1=§3$headshotchance:§6 szansy na zignorowanie tra
 # ENHANCED VISUALS
 xat.ability.clear_vision.name=Czysty wzrok
 xat.ability.clear_vision.tooltip1=$gui:Usuwa efekt rozmycia
+xat.ability.clear_splash.name=Czysta woda
+xat.ability.clear_splash.tooltip1=$gui:Usuwa efekt rozmycia pod wodą
 xat.ability.ender_eyes.name=Oczy Endu
 xat.ability.ender_eyes.tooltip1=$gui:Usuwa efekt zakłóceń Endermana
 
@@ -1003,6 +1006,8 @@ xat.config.abilities.reduce_kinetic=Zmniejsz kinetykę
 xat.config.abilities.reduce_kinetic.tooltip=
 xat.config.abilities.weightless=Nieważkość
 xat.config.abilities.weightless.tooltip=
+xat.config.abilities.dodging.keybind_movement=Klawisz uniku + ruch
+xat.config.abilities.dodging.keybind_movement.tooltip=Użyj klawisza uniku razem z klawiszem ruchu zamiast dwukrotnego naciśnięcia klawisza ruchu, aby wykonać unik
 xat.config.abilities.dodging=Uniki
 xat.config.abilities.dodging.tooltip=
 xat.config.abilities.dodging.stuns=Unikanie ogłuszenia

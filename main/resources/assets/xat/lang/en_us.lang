@@ -39,6 +39,7 @@ key.xat.aux_key.desc=Aux Key
 key.xat.trinket_gui.desc=Trinkets GUI
 
 key.xat.trinket_arcing_attack.desc=Arcing Orb: Attack
+key.xat.trinket_arcing_dodge.desc=Arcing Orb: Dodge
 key.xat.trinket_ender_crown.desc=Ender Crown: Active
 key.xat.race_ability.desc=Race: Active
 
@@ -271,6 +272,8 @@ xat.ability.hard_head.tooltip1=§3$headshotchance:§6 Chance to ignore headshot
 # ENHANCED VISUALS
 xat.ability.clear_vision.name=Clear Eyes
 xat.ability.clear_vision.tooltip1=$gui:Removes the blur effect
+xat.ability.clear_splash.name=Clear Waters
+xat.ability.clear_splash.tooltip1=$gui:Removes the water blur effect
 xat.ability.ender_eyes.name=Ender Eyes
 xat.ability.ender_eyes.tooltip1=$gui:Removes the Enderman Static Effect
 
@@ -1050,6 +1053,8 @@ xat.config.abilities.reduce_kinetic=Reduce Kinetic
 xat.config.abilities.reduce_kinetic.tooltip=
 xat.config.abilities.weightless=Weightlessness
 xat.config.abilities.weightless.tooltip=
+xat.config.abilities.dodging.keybind_movement=Dodge Keybind + Movement
+xat.config.abilities.dodging.keybind_movement.tooltip=Use the Dodge key plus a movement key instead of double-tapping movement to Dodge
 xat.config.abilities.dodging=Dodging
 xat.config.abilities.dodging.tooltip=
 xat.config.abilities.dodging.stuns=Dodging Stuns

@@ -14,4 +14,5 @@ public class AbilityDragonBreath extends AbilityBreathBase {
     public AbilityDragonBreath(ConfigAbilityBreath config) {
         super(TrinketsRegistryNames.ModAbilities.BREATH_DRAGON, config);
     }
+
 }

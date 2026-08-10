@@ -261,7 +261,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
     public KeybindHandler getKeybindHandler() {
         if (this.keybindHandler == null) {
-            this.keybindHandler = new KeybindHandler();
+            this.keybindHandler = new KeybindHandler(this);
         }
         return this.keybindHandler;
     }

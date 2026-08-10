@@ -7,8 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
@@ -24,6 +26,7 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
     protected final ConfigAbilityNightVision CONFIG;
 
     protected boolean toggled;
+    protected boolean selfAdded;
     protected int mode;
 
     public AbilityNightVision() {
@@ -35,6 +38,7 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
         this.toggled = true;
+        this.selfAdded = false;
         this.mode = -1;
     }
 
@@ -51,45 +55,52 @@ public class AbilityNightVision extends Ability implements ITickableAbility, ITo
         boolean blindness = entity.isPotionActive(MobEffects.BLINDNESS);
         boolean isClient = entity.getEntityWorld().isRemote;
 
+        if (!isClient && !potActive) {
+            this.selfAdded = false;
+        }
         if (this.isAbilityToggled() && !blindness) {
             if (!isClient) {
-                if (this.CONFIG.COST <= 0F) {
-                    if ((!potActive || (entity.ticksExisted % (20 * 10)) == 0)) {
-                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
-                    }
+                final float cost;
+                if ((this.CONFIG != TrinketsConfig.SERVER.ITEMS.GLOW_RING.ABILITIES.NIGHT_VISION) && TrinketHelper.AccessoryCheck(entity, ModItems.trinkets.TrinketGlowRing)) {
+                    cost = Math.min(this.CONFIG.COST, TrinketsConfig.SERVER.ITEMS.GLOW_RING.ABILITIES.NIGHT_VISION.COST);
                 } else {
-                    if (!potActive) {
-                        if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(this.CONFIG.COST))) {
-                            entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
-                        } else {
-                            this.toggleAbility(false);
-                        }
+                    cost = this.CONFIG.COST;
+                }
+                if (cost <= 0F) {
+                    if (!potActive || (this.selfAdded && (entity.ticksExisted % (20 * 10)) == 0)) {
+                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
+                        this.selfAdded = true;
+                    }
+                } else if (!potActive) {
+                    if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(cost))) {
+                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
+                        this.selfAdded = true;
                     } else {
-                        if ((entity.ticksExisted % 20) == 0) {
-                            if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(this.CONFIG.COST))) {
-                                entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
-                            } else {
-                                this.toggleAbility(false);
-                            }
-                        }
+                        this.toggleAbility(false);
+                    }
+                } else if (this.selfAdded && (entity.ticksExisted % 20) == 0) {
+                    if (Capabilities.getMagicStats(entity, false, (magic, rtn) -> magic.spendMana(cost))) {
+                        entity.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 800, 0, false, false));
+                    } else {
+                        this.toggleAbility(false);
                     }
                 }
             }
             if (isClient && entity.isPotionActive(MobEffects.NIGHT_VISION)) {
                 entity.getActivePotionEffect(MobEffects.NIGHT_VISION).setPotionDurationMax(true);
             }
-        } else {
-            if (potActive) {
-                entity.removePotionEffect(MobEffects.NIGHT_VISION);
-            }
+        } else if (potActive && this.selfAdded) {
+            entity.removePotionEffect(MobEffects.NIGHT_VISION);
+            this.selfAdded = false;
         }
     }
 
     @Override
     public void onAbilityRemoved(@Nonnull EntityLivingBase entity) {
-        if (entity.isPotionActive(MobEffects.NIGHT_VISION)) {
+        if (this.selfAdded && entity.isPotionActive(MobEffects.NIGHT_VISION)) {
             entity.removePotionEffect(MobEffects.NIGHT_VISION);
         }
+        this.selfAdded = false;
     }
 
     @Override

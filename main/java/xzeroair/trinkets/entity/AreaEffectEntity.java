@@ -63,6 +63,7 @@ public class AreaEffectEntity extends Entity {
     private static final DataParameter<Float> VERTICAL_RADIUS = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> IGNORE_RADIUS = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> RENDER_CIRCLE = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> PARTICLE = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> PARTICLE_PARAM_1 = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> PARTICLE_PARAM_2 = EntityDataManager.createKey(AreaEffectEntity.class, DataSerializers.VARINT);
@@ -78,6 +79,7 @@ public class AreaEffectEntity extends Entity {
     private int reapplicationDelay;
     private int pulseInterval;
     private boolean colorSet;
+    private boolean breathImpact;
     private boolean affectedByGravity;
     private double gravityPerTick;
     private LiquidBehavior waterBehavior;
@@ -134,6 +136,7 @@ public class AreaEffectEntity extends Entity {
         this.getDataManager().register(RADIUS, 0.5F);
         this.getDataManager().register(VERTICAL_RADIUS, 1.5F);
         this.getDataManager().register(IGNORE_RADIUS, Boolean.FALSE);
+        this.getDataManager().register(RENDER_CIRCLE, Boolean.TRUE);
         this.getDataManager().register(PARTICLE, EnumParticleTypes.SPELL_MOB.getParticleID());
         this.getDataManager().register(PARTICLE_PARAM_1, 0);
         this.getDataManager().register(PARTICLE_PARAM_2, 0);
@@ -340,8 +343,26 @@ public class AreaEffectEntity extends Entity {
         return this.getDataManager().get(IGNORE_RADIUS);
     }
 
+    public AreaEffectEntity setRenderCircle(boolean renderCircle) {
+        this.getDataManager().set(RENDER_CIRCLE, renderCircle);
+        return this;
+    }
+
+    public boolean shouldRenderCircle() {
+        return this.getDataManager().get(RENDER_CIRCLE);
+    }
+
     public int getDuration() {
         return this.duration;
+    }
+
+    public AreaEffectEntity setBreathImpact(boolean breathImpact) {
+        this.breathImpact = breathImpact;
+        return this;
+    }
+
+    public boolean isBreathImpact() {
+        return this.breathImpact;
     }
 
     public void setDuration(int durationIn) {
@@ -657,6 +678,12 @@ public class AreaEffectEntity extends Entity {
             return;
         }
 
+        for (AreaEffectAction action : this.actions) {
+            if (action.handlesOwnBlockProcessing()) {
+                action.processBlocks(this, radius);
+            }
+        }
+
         AxisAlignedBB box = this.getAreaBoundingBox(radius);
         int minX = MathHelper.floor(box.minX);
         int minY = MathHelper.floor(box.minY);
@@ -684,7 +711,7 @@ public class AreaEffectEntity extends Entity {
         boolean affected = false;
 
         for (AreaEffectAction action : this.actions) {
-            if (action.canAffectBlock(this, pos)) {
+            if (!action.handlesOwnBlockProcessing() && action.canAffectBlock(this, pos)) {
                 action.affectBlock(this, pos);
                 affected = true;
             }
@@ -752,6 +779,10 @@ public class AreaEffectEntity extends Entity {
         return this.owner;
     }
 
+    public boolean isOwnedBy(@Nullable UUID ownerId) {
+        return ownerId != null && ownerId.equals(this.ownerUniqueId);
+    }
+
     private LiquidBehavior readLiquidBehavior(NBTTagCompound compound, String key) {
         if (!compound.hasKey(key, 8)) {
             return LiquidBehavior.STAY;
@@ -781,7 +812,9 @@ public class AreaEffectEntity extends Entity {
         this.radiusOnUse = compound.getFloat("RadiusOnUse");
         this.radiusPerTick = compound.getFloat("RadiusPerTick");
         this.affectedByGravity = compound.getBoolean("AffectedByGravity");
+        this.breathImpact = compound.getBoolean("BreathImpact");
         this.gravityPerTick = compound.hasKey("GravityPerTick") ? compound.getDouble("GravityPerTick") : 0.03D;
+        this.setRenderCircle(!compound.hasKey("RenderCircle") || compound.getBoolean("RenderCircle"));
         this.waterBehavior = this.readLiquidBehavior(compound, WATER_BEHAVIOR_TAG);
         this.lavaBehavior = this.readLiquidBehavior(compound, LAVA_BEHAVIOR_TAG);
         this.setRadius(compound.getFloat("Radius"));
@@ -854,7 +887,9 @@ public class AreaEffectEntity extends Entity {
         compound.setFloat("Radius", this.getRadius());
         compound.setFloat("VerticalRadius", this.getVerticalRadius());
         compound.setBoolean("AffectedByGravity", this.affectedByGravity);
+        compound.setBoolean("BreathImpact", this.breathImpact);
         compound.setDouble("GravityPerTick", this.gravityPerTick);
+        compound.setBoolean("RenderCircle", this.shouldRenderCircle());
         compound.setString(WATER_BEHAVIOR_TAG, this.waterBehavior.name());
         compound.setString(LAVA_BEHAVIOR_TAG, this.lavaBehavior.name());
         EnumParticleTypes particle = this.getParticle();
@@ -935,7 +970,13 @@ public class AreaEffectEntity extends Entity {
                 this.addAction(new GrowBlockAreaAction(actionTag.getInteger("MaxBlocksPerPulse")));
                 break;
             case ACTION_PLACE_FIRE:
-                this.addAction(new PlaceFireAreaAction());
+                PlaceFireAreaAction fireAction = new PlaceFireAreaAction(
+                        actionTag.hasKey("InitialMaxBlocks") ? actionTag.getInteger("InitialMaxBlocks") : 6,
+                        actionTag.hasKey("DelayedAttemptInterval") ? actionTag.getInteger("DelayedAttemptInterval") : 20,
+                        actionTag.hasKey("DelayedAttemptChance") ? actionTag.getFloat("DelayedAttemptChance") : 0.5F
+                );
+                fireAction.readState(actionTag);
+                this.addAction(fireAction);
                 break;
             case ACTION_PLACE_SNOW:
                 this.addAction(new PlaceSnowAreaAction());
@@ -969,7 +1010,9 @@ public class AreaEffectEntity extends Entity {
             actionTag.setString(ACTION_TYPE, ACTION_GROW_BLOCK);
             actionTag.setInteger("MaxBlocksPerPulse", growAction.maxBlocksPerPulse);
         } else if (action instanceof PlaceFireAreaAction) {
+            PlaceFireAreaAction fireAction = (PlaceFireAreaAction) action;
             actionTag.setString(ACTION_TYPE, ACTION_PLACE_FIRE);
+            fireAction.writeState(actionTag);
         } else if (action instanceof PlaceSnowAreaAction) {
             actionTag.setString(ACTION_TYPE, ACTION_PLACE_SNOW);
         } else if (action instanceof FreezeLiquidAreaAction) {
@@ -1011,6 +1054,13 @@ public class AreaEffectEntity extends Entity {
         }
 
         default void affectBlock(AreaEffectEntity area, BlockPos pos) {
+        }
+
+        default boolean handlesOwnBlockProcessing() {
+            return false;
+        }
+
+        default void processBlocks(AreaEffectEntity area, float radius) {
         }
     }
 
@@ -1165,8 +1215,69 @@ public class AreaEffectEntity extends Entity {
     }
 
     public static class PlaceFireAreaAction implements AreaEffectAction {
+        private static final int RANDOM_PLACEMENT_TRIES = 24;
+        private final int initialMaxBlocks;
+        private final int delayedAttemptInterval;
+        private final float delayedAttemptChance;
+        private int initialFiresPlaced;
+        private int initialPulseTick = -1;
+        private int nextDelayedAttemptTick = -1;
+        private int lastPulseTick = -1;
+        private boolean initialPlacementFinished;
+        private boolean delayedAttemptSucceeded;
+        private boolean placedThisPulse;
+
+        public PlaceFireAreaAction() {
+            this(6, 20, 0.5F);
+        }
+
+        public PlaceFireAreaAction(int initialMaxBlocks, int delayedAttemptInterval, float delayedAttemptChance) {
+            this.initialMaxBlocks = Math.max(0, initialMaxBlocks);
+            this.delayedAttemptInterval = Math.max(1, delayedAttemptInterval);
+            this.delayedAttemptChance = MathHelper.clamp(delayedAttemptChance, 0.0F, 1.0F);
+        }
+
         @Override
-        public boolean canAffectBlock(AreaEffectEntity area, BlockPos pos) {
+        public boolean handlesOwnBlockProcessing() {
+            return true;
+        }
+
+        @Override
+        public void processBlocks(AreaEffectEntity area, float radius) {
+            this.preparePulse(area);
+            if (this.initialPulseTick == area.ticksExisted) {
+                while (!this.initialPlacementFinished && this.initialFiresPlaced < this.initialMaxBlocks) {
+                    if (area.world.rand.nextFloat() >= this.getInitialPlacementChance()) {
+                        this.initialPlacementFinished = true;
+                        return;
+                    }
+                    if (!this.tryPlaceRandomFire(area, radius)) {
+                        return;
+                    }
+                }
+            } else if (!this.delayedAttemptSucceeded || this.placedThisPulse) {
+                return;
+            } else {
+                this.tryPlaceRandomFire(area, radius);
+            }
+        }
+
+        private boolean tryPlaceRandomFire(AreaEffectEntity area, float radius) {
+            final int verticalRange = MathHelper.ceil(area.getVerticalRadius());
+            for (int attempt = 0; attempt < RANDOM_PLACEMENT_TRIES; attempt++) {
+                final double offsetX = (area.world.rand.nextDouble() - area.world.rand.nextDouble()) * radius;
+                final double offsetZ = (area.world.rand.nextDouble() - area.world.rand.nextDouble()) * radius;
+                final int y = MathHelper.floor(area.posY) + area.world.rand.nextInt((verticalRange * 2) + 1) - verticalRange;
+                final BlockPos pos = new BlockPos(area.posX + offsetX, y, area.posZ + offsetZ);
+                if (this.canPlaceFire(area, pos)) {
+                    this.placeFire(area, pos);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean canPlaceFire(AreaEffectEntity area, BlockPos pos) {
             if (!area.world.getGameRules().getBoolean(Reference.MINECRAFT_GAMERULE_MOBGRIEFING)
                     || !area.canOwnerModifyBlock(pos, EnumFacing.UP)) {
                 return false;
@@ -1177,10 +1288,60 @@ public class AreaEffectEntity extends Entity {
                     && Blocks.FIRE.canPlaceBlockAt(area.world, pos);
         }
 
-        @Override
-        public void affectBlock(AreaEffectEntity area, BlockPos pos) {
+        private void placeFire(AreaEffectEntity area, BlockPos pos) {
             area.world.setBlockState(pos, Blocks.FIRE.getDefaultState());
             area.world.neighborChanged(pos, Blocks.FIRE, pos);
+            if (this.initialPulseTick == area.ticksExisted) {
+                this.initialFiresPlaced++;
+            }
+            this.placedThisPulse = true;
+        }
+
+        private void preparePulse(AreaEffectEntity area) {
+            if (this.lastPulseTick == area.ticksExisted) {
+                return;
+            }
+
+            this.lastPulseTick = area.ticksExisted;
+            this.placedThisPulse = false;
+            this.delayedAttemptSucceeded = false;
+            if (this.initialPulseTick < 0) {
+                this.initialPulseTick = area.ticksExisted;
+                this.nextDelayedAttemptTick = area.ticksExisted + this.delayedAttemptInterval;
+                return;
+            }
+
+            if (area.ticksExisted >= this.nextDelayedAttemptTick) {
+                this.delayedAttemptSucceeded = area.world.rand.nextFloat() < this.delayedAttemptChance;
+                this.nextDelayedAttemptTick = area.ticksExisted + this.delayedAttemptInterval;
+            }
+        }
+
+        private float getInitialPlacementChance() {
+            return Math.max(0.2F, 1.0F - (0.2F * Math.max(0, this.initialFiresPlaced - 1)));
+        }
+
+        private void readState(NBTTagCompound tag) {
+            if (!tag.hasKey("InitialPulseTick")) {
+                this.initialPulseTick = 0;
+                this.nextDelayedAttemptTick = 0;
+                return;
+            }
+
+            this.initialFiresPlaced = tag.getInteger("InitialFiresPlaced");
+            this.initialPulseTick = tag.getInteger("InitialPulseTick");
+            this.nextDelayedAttemptTick = tag.getInteger("NextDelayedAttemptTick");
+            this.initialPlacementFinished = tag.getBoolean("InitialPlacementFinished");
+        }
+
+        private void writeState(NBTTagCompound tag) {
+            tag.setInteger("InitialMaxBlocks", this.initialMaxBlocks);
+            tag.setInteger("DelayedAttemptInterval", this.delayedAttemptInterval);
+            tag.setFloat("DelayedAttemptChance", this.delayedAttemptChance);
+            tag.setInteger("InitialFiresPlaced", this.initialFiresPlaced);
+            tag.setInteger("InitialPulseTick", this.initialPulseTick);
+            tag.setInteger("NextDelayedAttemptTick", this.nextDelayedAttemptTick);
+            tag.setBoolean("InitialPlacementFinished", this.initialPlacementFinished);
         }
     }
 
