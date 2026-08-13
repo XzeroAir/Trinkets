@@ -77,8 +77,8 @@ public class TrinketEventHandler {
                         if (!empty) {
                             Capabilities.getTrinketProperties(stack, properties -> properties.itemEquipped(player));
                         }
-                        final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
-                        NetworkHandler.sendToClients((WorldServer) world, player.getPosition(), packet);
+//                        final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
+//                        NetworkHandler.sendToClients((WorldServer) world, player.getPosition(), packet);
                     }
                     if (!empty && (stack.getItem() instanceof IAccessoryInterface)) {
                         final IAccessoryInterface item = (IAccessoryInterface) stack.getItem();
@@ -120,8 +120,12 @@ public class TrinketEventHandler {
                         final ItemStack stack = handler.getStackInSlot(i);
                         final boolean empty = stack.isEmpty();
                         if (!client && (world instanceof WorldServer)) {
-                            final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
-                            NetworkHandler.sendTo(packet, player);
+                            if (empty) {
+                                final SyncItemDataPacket packet = new SyncItemDataPacket(player, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, false);
+                                NetworkHandler.sendTo(packet, player);
+                            } else {
+                                Capabilities.getTrinketProperties(stack, properties -> properties.sendInformationToPlayer(player));
+                            }
                         }
                     }
                 });
@@ -156,8 +160,12 @@ public class TrinketEventHandler {
                     for (int i = 0; i < handler.getSlots(); i++) {
                         final ItemStack stack = handler.getStackInSlot(i);
                         final boolean empty = stack.isEmpty();
-                        final SyncItemDataPacket packet = new SyncItemDataPacket(targetPlayer, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, !empty);
-                        NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+                        if (empty) {
+                            final SyncItemDataPacket packet = new SyncItemDataPacket(targetPlayer, stack, stack.getTagCompound(), i, ItemHandlerType.TRINKETS, true, false);
+                            NetworkHandler.sendTo(packet, (EntityPlayerMP) player);
+                        } else {
+                            Capabilities.getTrinketProperties(stack, properties -> properties.sendInformationToPlayer(targetPlayer, player));
+                        }
                     }
                 });
             }

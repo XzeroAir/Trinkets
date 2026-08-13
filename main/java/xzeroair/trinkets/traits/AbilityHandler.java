@@ -40,6 +40,10 @@ public class AbilityHandler {
         this.parentProperties = properties;
     }
 
+    public EntityProperties getParentProperties() {
+        return this.parentProperties;
+    }
+
     // Exposes the active ability map for event handlers and UI code.
     public Map<String, AbilityHolder> getActiveAbilities() {
         return this.active;
@@ -102,14 +106,14 @@ public class AbilityHandler {
         }
         AbilityHolder value = this.active.get(key);
         if (value == null) {
-            AbilityHolder holder = new AbilityHolder(source, info, ability);
+            AbilityHolder holder = new AbilityHolder(this, source, info, ability);
             holder.getAbility().setFirstUpdate(true);
             this.active.put(key, holder);
             return null;
         } else {
             if (!value.sameAbilityOrigin(source, info, ability)) {
                 value.getAbility().onAbilityRemoved(entity);
-                AbilityHolder holder = new AbilityHolder(source, info, ability);
+                AbilityHolder holder = new AbilityHolder(this, source, info, ability);
                 holder.getAbility().setFirstUpdate(true);
                 this.active.put(key, holder);
                 return value.getAbility();
@@ -151,7 +155,7 @@ public class AbilityHandler {
             info = new SlotInformation(ItemHandlerType.OTHER);
         }
         if (!this.active.containsKey(key)) {
-            AbilityHolder holder = new AbilityHolder(source, info, ability);
+            AbilityHolder holder = new AbilityHolder(this, source, info, ability);
             holder.getAbility().setFirstUpdate(true);
             this.active.put(key, holder);
             return null;
@@ -369,13 +373,8 @@ public class AbilityHandler {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
     // Transfers active ability ownership from another handler during capability copy operations.
     public void copyFrom(AbilityHandler source, boolean wasDeath, boolean keepInv) {
-
-        if (wasDeath) {
-
-        } else {
-        }
-        this.active = new TreeMap<>(source.active);
-        this.hasChanged = true;
+        // Active runtime ability instances are rebuilt from their owning race/item/potion sources.
+        // Do not copy them across entity ownership boundaries.
     }
 
 
@@ -655,15 +654,22 @@ public class AbilityHandler {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Call Methods~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
     public static class AbilityHolder {
+        protected AbilityHandler handler;
         protected String source;
         protected SlotInformation info;
         protected IAbilityInterface ability;
 
         // Captures the source metadata for a single active ability owner.
-        public AbilityHolder(String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
+        public AbilityHolder(AbilityHandler handler, String source, SlotInformation info, @Nonnull IAbilityInterface ability) {
+            this.handler = handler;
             this.source = source;
             this.info = info;
             this.ability = ability.cacheAbilityHolder(this);
+        }
+
+        // Returns the ability handler that owns this holder.
+        public final AbilityHandler getHandler() {
+            return this.handler;
         }
 
         // Returns the source id that originally registered this ability.

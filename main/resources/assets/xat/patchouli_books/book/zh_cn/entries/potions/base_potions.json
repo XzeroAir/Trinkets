@@ -1,0 +1,23 @@
+{
+    "name": "基础药水",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "category": "potions",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:sparkling'}",
+            "text": "闪闪发光药水是第一种炼金基础药水。$(br2)饮用它可以恢复最大法力值的 25%。"
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glittering'}",
+            "text": "闪闪发光药水是一种改进的炼金基础药水。$(br2)饮用它可以恢复最大法力值的 50%。"
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glowing'}",
+            "text": "发光药水是最有效的炼金基础药水。$(br2)饮用它可以恢复 100% 的最大法力值。"
+        }
+    ]
+}

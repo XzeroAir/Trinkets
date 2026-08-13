@@ -14,6 +14,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -28,11 +29,20 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 public class AlphaWolf extends EntityWolf {
 
+    private static final String STORED_WOLF_TAG = "xat.wolf.stored";
+    private static final int RETALIATION_COOLDOWN_TICKS = 40;
+    private static final double RETALIATION_RANGE_SQUARED = 25.0D;
+    private static final float RETALIATION_DAMAGE = 9.0F;
+
     private NBTTagCompound storedWolf;
+    private int retaliationCooldown;
 
     public AlphaWolf(World world) {
         super(world);
@@ -44,6 +54,7 @@ public class AlphaWolf extends EntityWolf {
     @Override
     protected void initEntityAI() {
         this.tasks.taskEntries.clear();
+        this.targetTasks.taskEntries.clear();
     }
 
     @Override
@@ -76,6 +87,9 @@ public class AlphaWolf extends EntityWolf {
         if (!this.isEntityAlive() || this.world.isRemote) {
             return;
         }
+        if (this.retaliationCooldown > 0) {
+            this.retaliationCooldown--;
+        }
         if (!this.getPassengers().isEmpty()) {
             final Entity rider = this.getControllingPassenger();
             if (rider instanceof EntityLivingBase) {
@@ -89,17 +103,11 @@ public class AlphaWolf extends EntityWolf {
                 if (!this.isPotionActive(MobEffects.REGENERATION)) {
                     this.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 1, false, false));
                 }
-                if (driver.isPotionActive(MobEffects.WATER_BREATHING)) {
-                    this.addPotionEffect(driver.getActivePotionEffect(MobEffects.WATER_BREATHING));
-                }
                 if (driver.isPotionActive(MobEffects.FIRE_RESISTANCE)) {
                     this.addPotionEffect(driver.getActivePotionEffect(MobEffects.FIRE_RESISTANCE));
                 }
                 if (driver.isPotionActive(MobEffects.INVISIBILITY)) {
                     this.addPotionEffect(driver.getActivePotionEffect(MobEffects.INVISIBILITY));
-                }
-                if (this.isInWater() && (this.getAir() < driver.getAir())) {
-                    this.setAir(driver.getAir());
                 }
             }
         }
@@ -113,13 +121,12 @@ public class AlphaWolf extends EntityWolf {
     public void setDead() {
         if (!this.world.isRemote) {
             try {
-                final NBTTagCompound old = this.getPreviousWolf();
-                if (old != null) {
-                    final Entity oldWolf = EntityList.createEntityFromNBT(old, this.world);
+                if (this.hasStoredWolf()) {
+                    final Entity oldWolf = EntityList.createEntityFromNBT(this.storedWolf, this.world);
                     if (oldWolf != null) {
                         oldWolf.setLocationAndAngles(this.posX, this.posY + 1.1F, this.posZ, this.rotationYaw, 0F);
                         if (this.world.spawnEntity(oldWolf)) {
-                            this.storeOldWolf(new NBTTagCompound());
+                            this.storedWolf = null;
                         }
                     }
                 }
@@ -263,15 +270,27 @@ public class AlphaWolf extends EntityWolf {
         }
     }
 
-    //TODO make this work without a target under the crosshair
-    // Maybe Make this a ground dash instead of a jumping dash
     public void MountedAttack(EntityPlayer player, double maxDist) {
-        final Vec3d pos1 =
-                //				new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);//player.getPositionEyes(1F);//
-                this.getPositionEyes(1F);
-        //		pos1 = pos1.add(pos1.x * 2D, pos1.y * 2D, pos1.z * 2D);
+        final List<Entity> targets = new ArrayList<>();
+        final RayTraceHelper.Beam beam = new RayTraceHelper.Beam(this.world, this, this.getPositionEyes(1F), player.getLookVec(), maxDist, true);
+        RayTraceHelper.rayTraceEntity(beam, target -> {
+            if ((target instanceof EntityLivingBase) && (target != player) && this.shouldAttackEntity((EntityLivingBase) target, player)) {
+                targets.add(target);
+            }
+            return true;
+        });
+
+        targets.sort(Comparator.comparingDouble(target -> target.getPositionVector().subtract(beam.getStart()).dotProduct(beam.getLookVec())));
+
+        boolean hitTarget = false;
+        final float baseDamage = (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+        for (int index = 0; index < targets.size(); index++) {
+            final float damageMultiplier = index == 0 ? 1.0F : index == 1 ? 0.5F : 0.2F;
+            hitTarget = this.attackEntityAsMob(targets.get(index), player, baseDamage * damageMultiplier) || hitTarget;
+        }
+
         final Vec3d lookVec = player.getLookVec();
-        final Vec3d targetLoc = pos1.add(lookVec.x * maxDist, lookVec.y * maxDist, lookVec.z * maxDist);
+        final Vec3d targetLoc = this.getPositionEyes(1F).add(lookVec.x * maxDist, lookVec.y * maxDist, lookVec.z * maxDist);
         final double d0 = targetLoc.x - this.posX;
         final double d1 = targetLoc.z - this.posZ;
         final float f = MathHelper.sqrt((d0 * d0) + (d1 * d1));
@@ -285,17 +304,10 @@ public class AlphaWolf extends EntityWolf {
             this.motionX += f1;//((d0 / f) * 0.5D * 0.800000011920929D) + (motionX * 0.20000000298023224D);
             this.motionZ += f2;//((d1 / f) * 0.5D * 0.800000011920929D) + (motionZ * 0.20000000298023224D);
         }
-        this.motionY = 0.42;
+        if (hitTarget) {
+            this.motionY = 0.42D;
+        }
         this.swingArm(EnumHand.MAIN_HAND);
-
-        final RayTraceHelper.Beam beam = new RayTraceHelper.Beam(player.world, player, maxDist, 1D, true);
-        RayTraceHelper.rayTraceEntity(beam, target -> {
-            if ((target instanceof EntityLivingBase) && (target != this)) {
-                this.attackEntityAsMob(target);
-                return true;
-            }
-            return false;
-        });
 
     }
 
@@ -308,19 +320,61 @@ public class AlphaWolf extends EntityWolf {
      */
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        final Entity entity = source.getTrueSource();
-        return (!this.isBeingRidden() || (entity == null) || !this.isRidingOrBeingRiddenBy(entity)) && super.attackEntityFrom(source, amount);
+        final Entity attacker = source.getTrueSource();
+        final boolean damaged = (!this.isBeingRidden() || (attacker == null) || !this.isRidingOrBeingRiddenBy(attacker)) && super.attackEntityFrom(source, amount);
+        if (damaged && !this.world.isRemote) {
+            this.retaliate(attacker);
+        }
+        return damaged;
+    }
+
+    private void retaliate(Entity attacker) {
+        if ((this.retaliationCooldown > 0) || !(attacker instanceof EntityLivingBase)) {
+            return;
+        }
+        final EntityLivingBase target = (EntityLivingBase) attacker;
+        final EntityLivingBase owner = this.getOwner();
+        if ((owner == null) || !this.shouldAttackEntity(target, owner) || !this.canEntityBeSeen(target) || (this.getDistanceSq(target) > RETALIATION_RANGE_SQUARED)) {
+            return;
+        }
+
+        this.retaliationCooldown = RETALIATION_COOLDOWN_TICKS;
+        this.lungeTowards(target, 1.0D, 0.32D);
+        this.attackEntityAsMob(target, RETALIATION_DAMAGE);
+    }
+
+    private void lungeTowards(Entity target, double strength, double upwardMotion) {
+        final double deltaX = target.posX - this.posX;
+        final double deltaZ = target.posZ - this.posZ;
+        final float distance = MathHelper.sqrt((deltaX * deltaX) + (deltaZ * deltaZ));
+        if (distance >= 1.0E-4D) {
+            this.motionX += (deltaX / distance) * strength;
+            this.motionZ += (deltaZ / distance) * strength;
+        }
+        if (this.onGround) {
+            this.motionY = upwardMotion;
+        }
     }
 
     @Override
     public boolean attackEntityAsMob(@Nonnull Entity entityIn) {
-        // TODO Maybe rework how attacking works?
         return super.attackEntityAsMob(entityIn);
-        //		final boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), ((int) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
-        //		if (flag) {
-        //			this.applyEnchantments(this, entityIn);
-        //		}
-        //		return flag;
+    }
+
+    protected boolean attackEntityAsMob(@Nonnull Entity entityIn, float damage) {
+        final boolean hit = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), damage);
+        if (hit) {
+            this.applyEnchantments(this, entityIn);
+        }
+        return hit;
+    }
+
+    protected boolean attackEntityAsMob(@Nonnull Entity entityIn, @Nonnull EntityLivingBase indirectAttacker, float damage) {
+        final boolean hit = entityIn.attackEntityFrom(new EntityDamageSourceIndirect("mob", this, indirectAttacker), damage);
+        if (hit) {
+            this.applyEnchantments(this, entityIn);
+        }
+        return hit;
     }
 
     /*
@@ -337,6 +391,11 @@ public class AlphaWolf extends EntityWolf {
     @Override
     protected float getJumpUpwardsMotion() {
         return (float) this.getEntityAttribute(JumpAttribute.Jump).getAttributeValue();
+    }
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
     }
 
     @Override
@@ -398,31 +457,22 @@ public class AlphaWolf extends EntityWolf {
         this.storedWolf = tag;
     }
 
-    public NBTTagCompound getPreviousWolf() {
-        if (this.storedWolf == null) {
-            this.storedWolf = new NBTTagCompound();
-        }
-        return this.storedWolf;
+    public boolean hasStoredWolf() {
+        return (this.storedWolf != null) && this.storedWolf.hasKey("id");
     }
 
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
     @Override
     public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setTag("xat.wolf.stored", this.storedWolf);
+        if (this.hasStoredWolf()) {
+            compound.setTag(STORED_WOLF_TAG, this.storedWolf);
+        }
         compound.setBoolean("xat:summoned", true);
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
     @Override
     public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        if (compound.hasKey("xat.wolf.stored")) {
-            this.storedWolf = (NBTTagCompound) compound.getTag("xat.wolf.stored");
-        }
+        this.storedWolf = compound.hasKey(STORED_WOLF_TAG, 10) ? compound.getCompoundTag(STORED_WOLF_TAG) : null;
     }
 }

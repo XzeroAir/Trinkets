@@ -2,15 +2,15 @@
     "name": "Introduction to Mana",
     "icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
     "category": "mana",
+    "sortnum": 0,
     "pages": [
         {
             "type": "text",
-            "text": "Mana is a feature introduced in version 0.31 which exists to balance out stronger trinkets and race abilities. These trinkets and races can consume from your mana supply, however given time your mana supply will regenerate. You start with 100 mana, however this can be increased or decreased with certain items or by playing as certain races."
+            "text": "Mana is the energy that powers certain trinkets and racial abilities.$(br2)It refills over time, so use powerful effects with care."
         },
-		{
-			"type": "crafting",
-			"text": "For those that need a quick boost in mana, mana candies have you covered. These restore 50 mana each (by default).",
-			"recipe": "xat:mana_candy"
-		}
+        {
+            "type": "text",
+            "text": "Mana answers to intent. With knowledge and practice, it can be shaped into powerful effects.$(br2)Use $(l:mana/mana_candy)Mana Candy$(/l) to recover mana, or read $(l:mana/altering_maximum_mana)Altering Maximum Mana$(/l) to learn how to increase your reserves."
+        }
     ]
 }

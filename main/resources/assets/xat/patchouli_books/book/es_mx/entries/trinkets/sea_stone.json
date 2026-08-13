@@ -1,0 +1,17 @@
+{
+    "name": "Piedra del Mar",
+    "icon": "xat:sea_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Piedra del Mar te permite respirar y extraer minas libremente bajo el agua.$(br2)También te permite nadar en tres dimensiones controladas: usa el movimiento, salta y sigilosamente para navegar en el agua."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:sea_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 70
+}

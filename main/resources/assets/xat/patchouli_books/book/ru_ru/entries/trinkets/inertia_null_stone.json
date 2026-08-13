@@ -1,0 +1,17 @@
+{
+    "name": "Камень нейтрализации инерции",
+    "icon": "xat:inertia_null_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Камень Инерции Нуль предотвращает урон от падения и отбрасывание.$(br2)Он также используется для создания Камня Великой Инерции."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:inertia_null_stone",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 40
+}

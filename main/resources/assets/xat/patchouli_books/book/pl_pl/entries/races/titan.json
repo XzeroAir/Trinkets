@@ -1,0 +1,29 @@
+{
+    "name": "Tytan",
+    "icon": "xat:textures/potions/titan.png",
+    "category": "races",
+    "sortnum": 30,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Tytani spotykają się ze światem ciężkimi krokami i cięższymi rękami.$(br2)Ich Duże Dłonie i Mocne zdolności nadają się do życia w brutalnej sile."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titans_spirit",
+            "text": "Ten przepis trwale przekształci Cię w Tytana."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titan_ring",
+            "text": "Noś Pierścień Tytana, aby wziąć udział w tym wyścigu, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:golden_apple",
+            "result": "minecraft:potion{Potion:'xat:titan'}"
+        }
+    ]
+}

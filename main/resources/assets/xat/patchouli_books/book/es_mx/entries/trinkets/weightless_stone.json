@@ -1,0 +1,17 @@
+{
+    "name": "Piedra de Gravedad Negativa",
+    "icon": "xat:weightless_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Piedra de Gravedad Negativa te permite flotar mientras estás equipada.$(br2)Gira para elevarte; escabullirse y balancearse para descender."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:weightless_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 30
+}

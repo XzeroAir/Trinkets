@@ -1,0 +1,17 @@
+{
+    "name": "Piedra de Veneno",
+    "icon": "xat:poison_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Piedra Venenosa te protege del veneno.$(br2)Tus ataques pueden envenenar a los enemigos, y los objetivos envenenados reciben golpes más fuertes de tu parte."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:poison_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 80
+}

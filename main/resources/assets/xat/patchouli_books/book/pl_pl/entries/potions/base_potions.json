@@ -1,0 +1,23 @@
+{
+    "name": "Podstawowe mikstury",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "category": "potions",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:sparkling'}",
+            "text": "Mikstura Sparklingu to pierwsza podstawowa mikstura alchemii.$(br2)Wypicie jej przywraca 25% twojej maksymalnej many."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glittering'}",
+            "text": "Mikstura Błyszcząca to ulepszona mikstura bazowa alchemii.$(br2)Wypicie jej przywraca 50% maksymalnej many."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glowing'}",
+            "text": "Mikstura Świecąca to najsilniejsza podstawowa mikstura alchemiczna.$(br2)Wypicie jej przywraca 100% maksymalnej many."
+        }
+    ]
+}

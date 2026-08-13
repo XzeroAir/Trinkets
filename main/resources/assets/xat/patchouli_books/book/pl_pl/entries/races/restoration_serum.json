@@ -1,0 +1,13 @@
+{
+    "name": "Serum Przywrócenia",
+    "icon": "xat:restoration_serum",
+    "category": "races",
+    "pages": [
+        {
+            "type": "crafting",
+            "recipe": "xat:restoration_serum",
+            "text": "Wypij serum regenerujące, aby powrócić do pierwotnej formy."
+        }
+    ],
+    "sortnum": 100
+}

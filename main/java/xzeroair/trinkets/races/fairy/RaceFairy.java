@@ -18,6 +18,8 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.traits.abilities.AbilityClimbing;
 import xzeroair.trinkets.traits.abilities.AbilityCreativeFlight;
+import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
+import xzeroair.trinkets.traits.abilities.AbilityHealCloud;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
 import xzeroair.trinkets.util.helpers.EntityHelper;
@@ -42,8 +44,9 @@ public class RaceFairy extends EntityRacePropertiesHandler {
     @Override
     public void startTransformation() {
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
+        this.addAbility(new AbilityElytraFlight(this.CONFIG.ABILITIES.ELYTRA_FLIGHT));
         this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
-//        this.addAbility(new AbilityHealCloud());
+        this.addAbility(new AbilityHealCloud(this.CONFIG.ABILITIES.RESTORATION_FIELD));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }
 

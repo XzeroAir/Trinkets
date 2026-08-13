@@ -1,6 +1,6 @@
 {
-	"name": "Mana",
-	"description": "Mana is the substance used in certain stronger trinket and race effects. This category is entirely dedicated on how it works.",
-	"icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
-	"sortnum": 4
+    "name": "Mana",
+    "description": "Mana powers certain trinkets and racial abilities. Learn how it returns, how to restore it, and how to increase its limits.",
+    "icon": "xat:mana_candy",
+    "sortnum": 5
 }

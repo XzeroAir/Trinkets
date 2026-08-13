@@ -1,0 +1,17 @@
+{
+    "name": "Kryształ Many",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 3,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Zjedz Kryształ Many, aby trwale podnieść maksymalną ilość many."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_crystal",
+            "text": "Tworzenie kryształu many"
+        }
+    ]
+}

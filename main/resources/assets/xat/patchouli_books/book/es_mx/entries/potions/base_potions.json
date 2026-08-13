@@ -1,0 +1,23 @@
+{
+    "name": "Pociones básicas",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "category": "potions",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:sparkling'}",
+            "text": "Poción de chispas es la primera poción base de alquimia.$(br2)Beberla restaura el 25% de tu maná máximo."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glittering'}",
+            "text": "Poción de brillo es una poción base de alquimia mejorada.$(br2)Beberla restaura el 50% de tu maná máximo."
+        },
+        {
+            "type": "spotlight",
+            "item": "minecraft:potion{Potion:'xat:glowing'}",
+            "text": "Poción de resplandor es la poción base de alquimia más potente.$(br2)Beberla restaura el 100% de tu maná máximo."
+        }
+    ]
+}

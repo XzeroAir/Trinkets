@@ -43,6 +43,7 @@ import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
+import xzeroair.trinkets.util.helpers.EntityHelper;
 import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 
@@ -134,6 +135,13 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             this.onPlayerUpdate(world, (EntityPlayer) this.getEntity());
         } else {
             return;
+        }
+
+        if (!isClient && !this.isNormalSize() && !this.getEntity().onGround) {
+            final boolean groundProbe = this.isGrounded();
+            if (groundProbe) {
+                this.getEntity().onGround = true;
+            }
         }
 
         if (isClient && TrinketsConfig.CLIENT.debug.showMovementSpeed) {
@@ -253,7 +261,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
     public KeybindHandler getKeybindHandler() {
         if (this.keybindHandler == null) {
-            this.keybindHandler = new KeybindHandler();
+            this.keybindHandler = new KeybindHandler(this);
         }
         return this.keybindHandler;
     }
@@ -367,7 +375,31 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
         return distanceTraveled;
     }
+
+    public double getHorizontalSpeed() {
+        final EntityLivingBase entity = this.getEntity();
+        final double x = entity.posX - entity.prevPosX;
+        final double z = entity.posZ - entity.prevPosZ;
+        return Math.sqrt((x * x) + (z * z));
+    }
     // Speed Checks END
+
+    public boolean isGrounded() {
+        final EntityLivingBase entity = this.getEntity();
+        if (this.isNormalSize()) {
+            return entity.onGround;
+        }
+        if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.ARTEMIS_LIB) {
+            return EntityHelper.isGrounded(entity);
+        }
+        if (entity.isChild()) {
+            return EntityHelper.isGrounded(entity);
+        }
+        if (this.getRaceHandler().isTransforming() || this.getRaceHandler().isTransformed()) {
+            return EntityHelper.isGrounded(entity, this.getRaceHandler().getAdjustedBoundingBox());
+        }
+        return EntityHelper.isGrounded(entity);
+    }
 
     /**
      * Send Player information on Login

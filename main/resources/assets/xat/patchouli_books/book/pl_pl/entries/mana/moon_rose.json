@@ -1,0 +1,17 @@
+{
+    "name": "Księżycowa Róża",
+    "icon": "xat:moon_rose",
+    "category": "mana",
+    "sortnum": 4,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Umieść Księżycową Różę na trawie, ziemi lub polu uprawnym.$(br2)Zakradnij się w pobliżu niej, aby zaczerpnąć z jej esencji i stopniowo zwiększać maksymalną ilość many.$(br2)Daj każdej roślinie miejsce do pracy."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:moon_rose",
+            "text": "Tworzenie księżycowej róży"
+        }
+    ]
+}

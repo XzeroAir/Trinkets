@@ -358,6 +358,19 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_CREATIVE_FLIGHT_NAME = "Creative Flight";
     public static final String CONFIG_ABILITIES_CREATIVE_FLIGHT_COMMENT = "";
 
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.ELYTRA_FLIGHT;
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_NAME = "Elytra Flight";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_COMMENT = "Allows Elytra-style gliding without wearing an Elytra";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".lift_enabled";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED_NAME = "Enable Lift";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED_COMMENT = "Allows pressing jump while gliding for a burst of altitude at the cost of Mana. Disable to mimic vanilla Elytra gliding.";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".lift_cost";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST_NAME = "Lift Mana Cost";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST_COMMENT = "Mana cost per lift pulse";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_STRENGTH = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".lift_strength";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_STRENGTH_NAME = "Lift Strength";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_STRENGTH_COMMENT = "Upward velocity added by each lift pulse during Elytra-style gliding";
+
     public static final String CONFIG_ABILITIES_GREEDY_EYES = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.GREEDY_EYES;
     public static final String CONFIG_ABILITIES_GREEDY_EYES_NAME = "Greedy Eyes";
     public static final String CONFIG_ABILITIES_GREEDY_EYES_COMMENT = "";
@@ -380,6 +393,43 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_CLIMBING_BLOCKS = CONFIG_ABILITIES_CLIMBING + ".blocks";
     public static final String CONFIG_ABILITIES_CLIMBING_BLOCKS_NAME = "Climbable Blocks";
     public static final String CONFIG_ABILITIES_CLIMBING_BLOCKS_COMMENT = "List of Blocks that are able to be climbed";
+
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.RESTORATION_FIELD;
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_NAME = "Mending Bloom";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COMMENT = "Casts Mending Bloom at the targeted location";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS = CONFIG_ABILITIES_RESTORATION_FIELD + ".radius";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS_NAME = "Radius";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS_COMMENT = "Horizontal radius of the restoration field in blocks";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS = CONFIG_ABILITIES_RESTORATION_FIELD + ".vertical_radius";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS_NAME = "Vertical Radius";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS_COMMENT = "Vertical radius above and below the restoration field center";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME = CONFIG_ABILITIES_RESTORATION_FIELD + ".wait_time";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME_NAME = "Wait Time";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME_COMMENT = "Delay in ticks before the restoration field starts pulsing";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL = CONFIG_ABILITIES_RESTORATION_FIELD + ".pulse_interval";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL_NAME = "Pulse Interval";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL_COMMENT = "How often the restoration field checks entities and blocks, in ticks";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY = CONFIG_ABILITIES_RESTORATION_FIELD + ".reapplication_delay";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY_NAME = "Reapplication Delay";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY_COMMENT = "Minimum ticks before the same entity, item, or block can be affected again";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT = CONFIG_ABILITIES_RESTORATION_FIELD + ".repair_amount";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT_NAME = "Repair Amount";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT_COMMENT = "Durability repaired from dropped damaged item entities when affected by a pulse. Set to 0 to disable repair";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS = CONFIG_ABILITIES_RESTORATION_FIELD + ".growth_attempts";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS_NAME = "Growth Attempts Per Pulse";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS_COMMENT = "Maximum nearby blocks the field may grow each pulse. Set to 0 to disable growth";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE = CONFIG_ABILITIES_RESTORATION_FIELD + ".cast_range";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE_NAME = "Cast Range";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE_COMMENT = "Maximum targeted cast range in blocks. If no direct hit is found at the range limit, the field tries to snap down to nearby ground instead of floating in midair";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_second";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND_NAME = "Mana Cost Per Second";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND_COMMENT = "Mana cost for each second the field remains active";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_potion_effect";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT_NAME = "Mana Cost Per Potion Effect";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT_COMMENT = "Additional mana cost for each configured potion effect applied by the field";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_effect_level";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL_NAME = "Mana Cost Per Effect Level";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL_COMMENT = "Additional mana cost per potion amplifier step above level 1";
 
     public static final String CONFIG_ABILITIES_WELL_RESTED = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.WELL_RESTED;
     public static final String CONFIG_ABILITIES_WELL_RESTED_NAME = "Well Rested";
@@ -493,6 +543,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_DODGE = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.DODGING;
     public static final String CONFIG_ABILITIES_DODGE_NAME = "Dodging";
     public static final String CONFIG_ABILITIES_DODGE_COMMENT = "";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT = CONFIG_ABILITIES_DODGE + ".keybind_movement";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_NAME = "Keybind + Movement";
+    public static final String CONFIG_ABILITIES_DODGE_KEYBIND_MOVEMENT_COMMENT = "Use the configured Dodge key plus a movement key instead of double-tapping movement to Dodge";
     public static final String CONFIG_ABILITIES_DODGE_STUN = CONFIG_ABILITIES_DODGE + ".stuns";
     public static final String CONFIG_ABILITIES_DODGE_STUN_NAME = "Dodge Stuns";
     public static final String CONFIG_ABILITIES_DODGE_STUN_COMMENT = "Should triggering a dodge stun nearby entities";
@@ -519,6 +572,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_BREATH_ICE = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_ICE;
     public static final String CONFIG_ABILITIES_BREATH_ICE_NAME = "Ice Breath";
     public static final String CONFIG_ABILITIES_BREATH_ICE_COMMENT = "";
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_DRAGON;
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON_NAME = "Dragon Breath";
+    public static final String CONFIG_ABILITIES_BREATH_DRAGON_COMMENT = "";
 
     public static final String CONFIG_ABILITIES_IMMUNITY_FIRE = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_FIRE;
     public static final String CONFIG_ABILITIES_IMMUNITY_FIRE_NAME = "Fire Immunity";
@@ -816,6 +872,15 @@ public class ConstantsConfigLang {
     public static final String CONFIG_MAGIC_HUD_TEXTURE = CONFIG_MAGIC_HUD + ".texture";
     public static final String CONFIG_MAGIC_HUD_TEXTURE_NAME = "Mana Bar Texture";
     public static final String CONFIG_MAGIC_HUD_TEXTURE_COMMENT = "Alternate Textures for the Mana Bar";
+    public static final String CONFIG_MAGIC_HUD_POSITION_MODE = CONFIG_MAGIC_HUD + ".position.mode";
+    public static final String CONFIG_MAGIC_HUD_POSITION_MODE_NAME = "Use Pixel Position";
+    public static final String CONFIG_MAGIC_HUD_POSITION_MODE_COMMENT = "Use fixed pixel X/Y coordinates instead of percentage-based screen position";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_X = CONFIG_MAGIC_HUD + ".position.x";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_X_NAME = "X Position (Pixels)";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_X_COMMENT = "Absolute X position in scaled-screen pixels";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y = CONFIG_MAGIC_HUD + ".position.y";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_NAME = "Y Position (Pixels)";
+    public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_COMMENT = "Absolute Y position in scaled-screen pixels";
     public static final String CONFIG_MAGIC_COST = CONFIG_MAGIC + ".cost";
     public static final String CONFIG_MAGIC_COST_NAME = "Mana Cost";
     public static final String CONFIG_MAGIC_COST_COMMENT = "";
@@ -1038,6 +1103,14 @@ public class ConstantsConfigLang {
     public static final String CONFIG_POTIONS_SURVIVAL_WATER = CONFIG_POTIONS + ".water";
     public static final String CONFIG_POTIONS_SURVIVAL_WATER_NAME = "Potions give water";
     public static final String CONFIG_POTIONS_SURVIVAL_WATER_COMMENT = "Should Potions give Water if a survival mod is installed.";
+
+    public static final String CONFIG_POTIONS_RESISTANCE = CONFIG_POTIONS + ".resistance";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE = CONFIG_POTIONS_RESISTANCE + ".ice";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE_NAME = "Ice Resistance Potion";
+    public static final String CONFIG_POTIONS_RESISTANCE_ICE_COMMENT = "";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING = CONFIG_POTIONS_RESISTANCE + ".lightning";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING_NAME = "Lightning Resistance Potion";
+    public static final String CONFIG_POTIONS_RESISTANCE_LIGHTNING_COMMENT = "";
 
     public static final String CONFIG_POTIONS_RACE = CONFIG_POTIONS + ".race";
     public static final String CONFIG_POTIONS_RACE_DRAGON = CONFIG_POTIONS_RACE + "." + TrinketsRegistryNames.ModRaces.DRAGON;

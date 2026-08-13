@@ -1,0 +1,29 @@
+{
+    "name": "Дракон",
+    "icon": "xat:textures/potions/dragon.png",
+    "category": "races",
+    "sortnum": 70,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Драконы поднимаются в небо с помощью полета и острого ночного видения.$(br2)Огненные, Ледяные и Молниеносные драконы получают собственное дыхание и стихийные дары."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_food",
+            "text": "Этот рецепт навсегда превратит вас в Дракона."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_ring",
+            "text": "Носите Кольцо Дракона, чтобы принять участие в этой гонке, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:dragon_breath",
+            "result": "minecraft:potion{Potion:'xat:dragon'}"
+        }
+    ]
+}

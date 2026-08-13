@@ -1,0 +1,17 @@
+{
+    "name": "Tarcza Honoru",
+    "icon": "xat:damage_shield",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Tarcza Honoru zapewnia Odporność i łagodzi obrażenia od eksplozji.$(br2)Po wystarczającej liczbie silnych trafień jej ochrona może odwrócić atak."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:shield_of_honor",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 100
+}

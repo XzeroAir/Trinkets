@@ -1,6 +1,7 @@
 package xzeroair.trinkets.items.trinkets;
 
 import com.google.common.collect.Multimap;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -104,8 +105,9 @@ public class TrinketEnderTiara extends AccessoryBase {
         double helmetOffsetY = hasHelmet ? 0.07 : 0;
         double helmetOffsetZ = hasHelmet ? -0.04 : 0;
         GlStateManager.translate(0, sneakOffset, 0);
-        if (MoBendsCompat.isModEnabled()) {
-            renderer.getMainModel().bipedHead.postRender(scale);
+        ModelBase playerModel = renderer.getMainModel();
+        if (playerModel instanceof ModelBiped) {
+            ((ModelBiped) playerModel).bipedHead.postRender(scale);
         }
         GlStateManager.rotate(180F, 0F, 0F, 1F);
         GlStateManager.translate(-8F * scale, 1.8F * scale, -4.8F * scale);

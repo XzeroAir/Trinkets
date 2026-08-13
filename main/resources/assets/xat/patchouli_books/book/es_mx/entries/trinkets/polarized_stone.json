@@ -1,0 +1,17 @@
+{
+    "name": "Piedra Polarizada",
+    "icon": "xat:polarized_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La piedra polarizada tiene habilidades de imán y repelente.$(br2)El imán atrae hacia ti los objetos cercanos; Repeler gasta maná para alejar proyectiles y amenazas cercanas.$(br2)Funciona cuando está equipado, en tu barra de acceso rápido o con tu mano izquierda."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:polarized_stone",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 60
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Race Information",
+    "icon": "xat:textures/gui/patchouli_textures/blue_orb.png",
+    "category": "gettingstarted",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Blue Orb in your inventory opens Race Information.$(br2)Use it to inspect and customize how your racial traits appear."
+        },
+        {
+            "type": "text",
+            "text": "Toggle Show Trait to hide or show your racial features.$(br2)Choose a trait style or variant, adjust trait colors, and flip the preview to inspect your character."
+        },
+        {
+            "type": "text",
+            "text": "Select the Race Information button to view your race attributes and active abilities.$(br2)Choose an ability to read its description and source. Active abilities can come from your race, trinkets, and other sources.$(br2)The Mana Bar button opens its layout options."
+        }
+    ]
+}

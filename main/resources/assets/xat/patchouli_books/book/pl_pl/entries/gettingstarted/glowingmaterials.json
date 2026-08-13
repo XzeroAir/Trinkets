@@ -1,0 +1,36 @@
+{
+    "name": "Materiały rzemieślnicze",
+    "icon": "xat:glowing_gem",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Świecący proszek, świecące sztabki i świecące klejnoty to stabilne, nasycone maną materiały rzemieślnicze, używane w Trinkets.$(br2)Z każdego z nich emanuje cicha magiczna energia.$(br2)Trzymaj ich przepisy w pobliżu: wiele późniejszych przedmiotów powstaje z tych materiałów."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_powder",
+            "text": "Tworzenie świecącego proszku"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_ingot",
+            "text": "Tworzenie świecącej sztabki"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glowing_gem",
+            "text": "Tworzenie świecącego klejnotu"
+        },
+        {
+            "type": "text",
+            "text": "Proszek iskrowy to potężny, niestabilny materiał rzemieślniczy używany w przedmiotach takich jak Arcing Orb.$(br2)Jego mana pęka z gwałtowną energią.$(br2)Wytwórz go z Mana Reagent, gdy będziesz gotowy z nim pracować."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:spark_powder",
+            "text": "Wytwarzanie proszku iskrowego"
+        }
+    ],
+    "sortnum": 3
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Фаэлис",
+    "icon": "xat:textures/potions/faelis.png",
+    "category": "races",
+    "sortnum": 40,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Faelis — быстрые охотники, предпочитающие возвышенности.$(br2)Ночное видение и скалолазание позволяют им двигаться после захода солнца."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_food",
+            "text": "Этот рецепт навсегда превратит вас в Faelis."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_ring",
+            "text": "Наденьте кольцо Faelis и сразитесь с этой расой, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "xat:faelis_claw",
+            "result": "minecraft:potion{Potion:'xat:faelis'}"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Taurus",
+    "icon": "xat:textures/potions/taurus.png",
+    "category": "races",
+    "sortnum": 80,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Taurus to rogaci, mocni wędrowcy zbudowani tak, aby utrzymać się na ziemi.$(br2)Ich umiejętność Stampede zamienia szarżę w odpowiednie wejście."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_tea",
+            "text": "Ten przepis na stałe przemienia Cię w Taurus."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_ring",
+            "text": "Noś pierścień Taurus, aby wziąć udział w tym wyścigu, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:milk_bucket",
+            "result": "minecraft:potion{Potion:'xat:taurus'}"
+        }
+    ]
+}

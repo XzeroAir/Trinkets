@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilitySkilledSwimmer;
-import xzeroair.trinkets.traits.abilities.compat.enhancedvisuals.AbilityEnhancedVisualsBlur;
+import xzeroair.trinkets.traits.abilities.compat.enhancedvisuals.AbilityEnhancedVisualsSplash;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstAbsorption;
 import xzeroair.trinkets.traits.abilities.elements.water.AbilityWaterAffinity;
 import xzeroair.trinkets.traits.abilities.elements.water.AbilityWaterImmunity;
@@ -50,7 +50,7 @@ public class TrinketSeaStone extends AccessoryBase {
             abilities.add(new AbilityThirstAbsorption(this.CONFIG.ABILITIES.EXTERNAL.WATER_ABSORPTION));
         }
         if (EnhancedVisualsCompat.isModActive()) {
-            abilities.add(new AbilityEnhancedVisualsBlur(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
+            abilities.add(new AbilityEnhancedVisualsSplash(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
         }
     }
 

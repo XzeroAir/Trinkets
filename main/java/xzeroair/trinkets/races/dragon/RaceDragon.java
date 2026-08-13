@@ -21,6 +21,8 @@ import xzeroair.trinkets.races.dragon.config.ConfigIceDragon;
 import xzeroair.trinkets.races.dragon.config.ConfigLightningDragon;
 import xzeroair.trinkets.races.dragon.config.DragonConfig;
 import xzeroair.trinkets.traits.abilities.AbilityCreativeFlight;
+import xzeroair.trinkets.traits.abilities.AbilityDragonBreath;
+import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
 import xzeroair.trinkets.traits.abilities.AbilityGreedyEyes;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
 import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireBreath;
@@ -72,6 +74,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     public void startTransformation() {
         // Night Vision
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
+        this.addAbility(new AbilityElytraFlight(this.CONFIG.ABILITIES.ELYTRA_FLIGHT));
         this.addAbility(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
 
         Element element = this.getRaceCache().getPrimaryElement();
@@ -84,6 +87,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
             this.addLightningAbilities(element);
         } else {
             this.addAbility(new AbilityFireImmunity(this.CONFIG.ABILITIES.FIRE_IMMUNITY));
+            this.addAbility(new AbilityDragonBreath(this.CONFIG.ABILITIES.DRAGON_BREATH));
         }
 
         // Other Abilities

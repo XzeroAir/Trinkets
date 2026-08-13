@@ -1,0 +1,17 @@
+{
+    "name": "Corona de Reina ender",
+    "icon": "xat:ender_tiara",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Usa la Corona de la Reina de Ender y los Endermen te tratarán como a su reina.$(br2)Pueden seguirte y defenderte, mientras que la corona puede llamar a un Enderman en tu ayuda cuando estés herido."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:ender_tiara",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 110
+}

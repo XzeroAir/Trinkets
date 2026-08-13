@@ -1,0 +1,17 @@
+{
+    "name": "Кольцо зачарованных глаз",
+    "icon": "xat:glow_ring",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Кольцо зачарованных глаз дает ночное зрение.$(br2)Оно также является компонентом Глаза Дракона."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glow_ring",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 10
+}

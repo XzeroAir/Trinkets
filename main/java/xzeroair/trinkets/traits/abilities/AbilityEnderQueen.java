@@ -30,6 +30,7 @@ import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.Vip.VipStatus;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
+import xzeroair.trinkets.entity.ai.EnderQueensKnightAI;
 import xzeroair.trinkets.init.ModItems;
 import xzeroair.trinkets.init.TrinketsDamageSource;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
@@ -127,16 +128,12 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     @Override
     public void onAbilityAdded(EntityLivingBase entity) {
         super.onAbilityAdded(entity);
-        if (true) {
-            ItemStack stack = this.getAbilityHolder().getInfo().getStackFromHandler(entity);
-            Capabilities.getTrinketProperties(stack, prop -> {
-                if (this.isAbilityToggled() != prop.mainAbility()) {
-                    this.toggleAbility(prop.mainAbility());
-                    this.sendMessageToPlayer(entity);
-                    this.setChanged(false);
-                }
-            });
-        }
+        final ItemStack stack = this.getAbilityHolder().getInfo().getStackFromHandler(entity);
+        Capabilities.getTrinketProperties(stack, prop -> {
+            this.toggleAbility(prop.mainAbility());
+            this.sendMessageToPlayer(entity);
+            this.setChanged(false);
+        });
     }
 
     @Override
@@ -179,7 +176,8 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                     final double y = attacked.getPosition().getY();
                     final double z = attacked.getPosition().getZ();
                     knight.setPosition(x, y, z);
-                    knight.getEntityData().setBoolean("xat:summoned", true);
+                    knight.getEntityData().setBoolean(EnderQueensKnightAI.SUMMONED_TAG, true);
+                    knight.getEntityData().setString(EnderQueensKnightAI.QUEEN_UUID_TAG, attacked.getCachedUniqueIdString());
                     knight.setCanPickUpLoot(false);
                     attacked.getEntityWorld().spawnEntity(knight);
                     knight.setAttackTarget(attacker);
@@ -193,7 +191,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
     }
 
     private boolean blockDamage(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-        final int chanceNum = this.CONFIG.SPAWN_CHANCE;
+        final int chanceNum = this.CONFIG.IGNORE_CHANCE;
         if (chanceNum > 0) {
             final int chance = this.random.nextInt(chanceNum);
             if ((chance == 0)) {
@@ -207,10 +205,8 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                         }
                     }
                 }
-                if (this.CONFIG.IGNORE_CHANCE > 0) {
-                    StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, false);
-                    return true;
-                }
+                StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, false);
+                return true;
             }
         }
         return cancel;
@@ -225,7 +221,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                     final boolean isBoss = TrinketHelper.isEntityBoss(source.getTrueSource());
                     final MagicStats magic = Capabilities.getMagicStats(attacked);
                     if (!isBoss && !attacked.isActiveItemStackBlocking()) {
-                        if ((magic != null) && (magic.getMana() >= (magic.getMaxMana() * this.HURT_COST))) {
+                        if ((magic != null) && (magic.canSpendMana(magic.getMaxMana() * this.HURT_COST))) {
                             for (int i = 0; i < 32; ++i) {
                                 if (this.teleportRandomly(attacked, (magic.getMaxMana() * this.HURT_COST))) {
                                     return true;
@@ -453,7 +449,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
         if (!Aux) {
             return Capabilities.getMagicStats(entity, this.CONFIG.TELEPORT_CHANCE > 0, (magic, allow) -> {
                 boolean isRemote = magic.getEntity().world.isRemote;
-                if (!isRemote && allow && (magic.getMana() >= (magic.getMaxMana() * this.ACTIVE_COST))) {
+                if (!isRemote && allow && (magic.canSpendMana(magic.getMaxMana() * this.ACTIVE_COST))) {
                     for (int i = 0; i < 32; ++i) {
                         if (this.teleportRandomly(magic.getEntity(), magic.getMaxMana() * this.ACTIVE_COST)) {
                             return true;
@@ -467,10 +463,10 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
             return Capabilities.getMagicStats(entity, this.CONFIG.ENDER_CHEST, (magic, allow) -> {
                 boolean isRemote = magic.getEntity().world.isRemote;
                 if (!isRemote && allow && magic.spendMana(magic.getMaxMana())) {
-                    this.openEnderChest(magic.getObject());
+                    this.openEnderChest(magic.getEntity());
                     return true;
                 }
-                return false;
+                return isRemote;
             });
         }
     }

@@ -1,0 +1,17 @@
+{
+    "name": "Spolaryzowany Kamień",
+    "icon": "xat:polarized_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Spolaryzowany Kamień ma zdolności Magnesowania i Odpychania.$(br2)Magnes przyciąga pobliskie przedmioty; Odparcie zużywa manę, aby odepchnąć pociski i pobliskie zagrożenia.$(br2)Działa, gdy jest wyposażony, na pasku skrótów lub w drugiej ręce."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:polarized_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 60
+}

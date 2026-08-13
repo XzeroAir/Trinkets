@@ -1,0 +1,17 @@
+{
+    "name": "Oso de peluche",
+    "icon": "xat:teddy_bear",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Mantén un osito de peluche en tu inventario cuando duermas para despertarte con bonificaciones de Bien Descansado.$(br2)Haz clic derecho en una superficie con él para colocarlo como un pequeño compañero."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:teddy_bear",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 130
+}

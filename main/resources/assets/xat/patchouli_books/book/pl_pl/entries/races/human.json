@@ -1,0 +1,19 @@
+{
+    "name": "Człowiek",
+    "icon": "xat:textures/potions/human.png",
+    "category": "races",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Człowiek to znana forma.$(br2)Wybierz go jako swoją pierwotną rasę lub wróć do niej z Serum Regenerującym."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:apple",
+            "result": "minecraft:potion{Potion:'xat:human'}"
+        }
+    ]
+}

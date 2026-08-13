@@ -1,0 +1,19 @@
+{
+    "name": "Человек",
+    "icon": "xat:textures/potions/human.png",
+    "category": "races",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Человек — знакомая форма.$(br2)Выберите его в качестве своей исходной расы или вернитесь к нему с Восстанавливающей сывороткой."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:apple",
+            "result": "minecraft:potion{Potion:'xat:human'}"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Wróżka",
+    "icon": "xat:textures/potions/fairy.png",
+    "category": "races",
+    "sortnum": 20,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Wróżki to małe podróżniczki po otwartej przestrzeni i ukrytych miejscach.$(br2)Umieją latać, wspinać się i wzywać Mending Bloom."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_dew",
+            "text": "Ten przepis na stałe przemieni Cię w Wróżkę."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_ring",
+            "text": "Załóż Pierścień Wróżki, aby wziąć udział w tym wyścigu, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:ghast_tear",
+            "result": "minecraft:potion{Potion:'xat:fairy'}"
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "name": "Внешние ссылки",
+    "icon": "minecraft:filled_map",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Нужна помощь или вы хотите сообщить о проблеме?$(br2)$(l:https://discord.gg/es2AEVs)Trinkets Сервер Discord$(/l)$(br)$(l:https://github.com/XzeroAir/Trinkets/issues)Проблемы GitHub$(/l)$(br2)Укажите свою версию Minecraft, Версия Trinkets и любые соответствующие сведения о модпаке при сообщении об ошибке."
+        }
+    ],
+    "sortnum": 6
+}

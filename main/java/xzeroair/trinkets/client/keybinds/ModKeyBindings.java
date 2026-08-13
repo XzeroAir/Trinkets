@@ -18,6 +18,7 @@ public class ModKeyBindings {
     public static KeyBinding AUX_KEY = new KeyBinding("key." + Reference.MODID + ".aux_key.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_LCONTROL, "key." + Reference.MODID + ".category");
 
     public static KeyBinding ARCING_ORB_ABILITY = new KeyBinding("key." + Reference.MODID + ".trinket_arcing_attack.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_R, "key." + Reference.MODID + ".category");
+    public static KeyBinding ARCING_ORB_DODGE = new KeyBinding("key." + Reference.MODID + ".trinket_arcing_dodge.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_NONE, "key." + Reference.MODID + ".category");
     public static KeyBinding ENDER_CROWN = new KeyBinding("key." + Reference.MODID + ".trinket_ender_crown.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_R, "key." + Reference.MODID + ".category");
 
     public static KeyBinding RACE_ABILITY = new KeyBinding("key." + Reference.MODID + ".race_ability.desc", KeyConflictContext.IN_GAME, Keyboard.KEY_R, "key." + Reference.MODID + ".category");
@@ -28,6 +29,7 @@ public class ModKeyBindings {
         ClientRegistry.registerKeyBinding(DRAGONS_EYE_ABILITY);
         ClientRegistry.registerKeyBinding(POLARIZED_STONE_ABILITY);
         ClientRegistry.registerKeyBinding(ARCING_ORB_ABILITY);
+        ClientRegistry.registerKeyBinding(ARCING_ORB_DODGE);
         ClientRegistry.registerKeyBinding(ENDER_CROWN);
         ClientRegistry.registerKeyBinding(AUX_KEY);
         ClientRegistry.registerKeyBinding(RACE_ABILITY);

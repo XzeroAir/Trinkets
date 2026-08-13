@@ -1,0 +1,6 @@
+{
+    "name": "药水",
+    "description": "学习炼金术中使用的基础药水，然后酿造防御危险的元素攻击的保护剂。",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "sortnum": 4
+}

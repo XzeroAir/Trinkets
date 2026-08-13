@@ -1,0 +1,29 @@
+{
+    "name": "Titán",
+    "icon": "xat:textures/potions/titan.png",
+    "category": "races",
+    "sortnum": 30,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los titanes se enfrentan al mundo con pasos y manos más pesados.$(br2)Sus manos grandes y sus habilidades pesadas se adaptan a una vida de fuerza bruta."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titans_spirit",
+            "text": "Esta receta te transforma permanentemente en un Titán."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:titan_ring",
+            "text": "Usa el Titan Ring para afrontar esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:golden_apple",
+            "result": "minecraft:potion{Potion:'xat:titan'}"
+        }
+    ]
+}

@@ -2,20 +2,15 @@ package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.network.AbilityCacheSyncPacket;
-import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
@@ -35,7 +30,7 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     //    private float entityHeight;
 //    private BlockPos entityPos, bodyPos, headPos, headSpacePos, frontBodyPos, frontHeadPos;
 //    private IBlockState body, head, headSpace, frontBody, frontHead;
-    protected boolean useWhitelist, canClimb = false;
+    protected boolean useWhitelist = false;
     protected TreeMap<Integer, ConfigObject> climbBlocks = new TreeMap<>();
 
     protected ConfigAbilityClimbing CONFIG;
@@ -48,7 +43,6 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         super(TrinketsRegistryNames.ModAbilities.CLIMBING);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
-        this.canClimb = config.ENABLED;
         this.useWhitelist = config.USE_WHITELIST;
         if (config.ENABLED) {
             this.initClimbBlocks();
@@ -65,14 +59,14 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     public void onAbilityAdded(EntityLivingBase entity) {
         super.onAbilityAdded(entity);
         if (this.isFirstUpdate()) {
-            this.sendCacheToPlayer(entity, this.generateTag());
+            this.setChanged(true);
         }
     }
 
     @Override
     public void tickAbility(EntityLivingBase entity) {
         final boolean flag = this.isCreativePlayer(entity);
-        if (!flag && !entity.onGround && entity.collidedHorizontally) {
+        if (!flag && !this.getAbilityHolder().getHandler().getParentProperties().isGrounded() && entity.collidedHorizontally) {
             if (this.canClimb(entity)) {
                 if (!entity.isSneaking()) {
                     entity.motionY = 0.1f;
@@ -90,9 +84,6 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
     }
 
     protected boolean canClimb(EntityLivingBase entity) {
-        if (!this.canClimb) {
-            return false;
-        }
         final World world = entity.getEntityWorld();
         BlockPos entityPos = new BlockPos(entity.getPositionVector());
         BlockPos bodyPos = entityPos;
@@ -117,34 +108,21 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
         return !whitelist && !headClear;
     }
 
-    protected void sendCacheToPlayer(@Nonnull Entity entity, NBTTagCompound tag) {
-        World world = entity.getEntityWorld();
-        if (world instanceof WorldServer && entity instanceof EntityPlayerMP && tag != null && !tag.isEmpty()) {
-            NetworkHandler.sendTo(new AbilityCacheSyncPacket(((EntityPlayerMP) entity), tag), (EntityPlayerMP) entity);
-        }
-    }
-
-    protected NBTTagCompound generateTag() {
+    @Override
+    public NBTTagCompound sendAbilityData() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("Ability", this.getRegistryName().toString());
-        tag.setBoolean("canClimb", this.canClimb);
         tag.setBoolean("useWhitelist", this.useWhitelist);
-        if (this.canClimb) {
-            this.initClimbBlocks();
-            NBTTagCompound blocks = new NBTTagCompound();
-            if (this.climbBlocks != null && !this.climbBlocks.isEmpty()) {
-                int index = 0;
-                for (Map.Entry<Integer, ConfigObject> e : this.climbBlocks.entrySet()) {
-                    NBTTagCompound blockTag = new NBTTagCompound();
-                    blockTag.setString("Target", e.getValue().getOriginalEntry());
-                    blocks.setTag(index + "", blockTag);
-                    index++;
-                }
-            }
-            if (!blocks.isEmpty()) {
-                tag.setTag("Blocks", blocks);
+        NBTTagCompound blocks = new NBTTagCompound();
+        if (this.climbBlocks != null && !this.climbBlocks.isEmpty()) {
+            int index = 0;
+            for (Map.Entry<Integer, ConfigObject> e : this.climbBlocks.entrySet()) {
+                NBTTagCompound blockTag = new NBTTagCompound();
+                blockTag.setString("Target", e.getValue().getOriginalEntry());
+                blocks.setTag(index + "", blockTag);
+                index++;
             }
         }
+        tag.setTag("Blocks", blocks);
         return tag;
     }
 
@@ -154,9 +132,6 @@ public class AbilityClimbing extends Ability implements ITickableAbility {
             this.climbBlocks.clear();
         }
         if (tag != null && !tag.isEmpty()) {
-            NBTHelper.hasBoolean(tag, "canClimb", (bool) -> {
-                this.canClimb = bool;
-            });
             NBTHelper.hasBoolean(tag, "useWhitelist", (bool) -> {
                 this.useWhitelist = bool;
             });

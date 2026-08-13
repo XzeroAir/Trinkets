@@ -1,0 +1,20 @@
+{
+    "name": "Race Information",
+    "icon": "xat:textures/gui/patchouli_textures/blue_orb.png",
+    "category": "gettingstarted",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "库存中的蓝色球体会打开Race Information。$(br2)用它来检查和自定义你的种族特征的显示方式。"
+        },
+        {
+            "type": "text",
+            "text": "切换Show Trait隐藏或显示你的种族特征。$(br2)选择特征样式或变体，调整特征颜色，然后翻转预览以检查你的角色。"
+        },
+        {
+            "type": "text",
+            "text": "选择Race Information按钮查看你的种族属性和主动能力。$(br2)选择一个能力来阅读其描述和来源。主动能力可以来自您的种族、饰品和其他来源。$(br2)Mana Bar按钮可打开其布局选项。"
+        }
+    ]
+}

@@ -8,13 +8,17 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
@@ -64,6 +68,9 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
     }
 
     private void trample(EntityLivingBase entity) {
+        if (entity.world.isRemote) {
+            return;
+        }
         if (this.CONFIG.TRAMPLE && !entity.isSneaking()) {
             final AxisAlignedBB aabb = entity.getEntityBoundingBox().grow(1, 0, 1);
             final int i = MathHelper.floor(aabb.minX);
@@ -74,20 +81,37 @@ public class AbilityHeavy extends Ability implements ITickableAbility {
                 for (int i2 = i1; i2 < j1; ++i2) {
                     final BlockPos pos = new BlockPos(k1, entity.getPosition().getY() - 1, i2);
                     final IBlockState block = entity.world.getBlockState(pos);
-                    if (block.getBlock() == Blocks.FARMLAND) {
+                    if ((block.getBlock() == Blocks.FARMLAND) && this.canModifyTerrain(entity, pos)) {
                         entity.world.setBlockState(pos, Blocks.DIRT.getDefaultState());
                     }
-                    final IBlockState block2 = entity.world.getBlockState(pos.add(0, 1, 0));
+                    final BlockPos plantPos = pos.add(0, 1, 0);
+                    final IBlockState block2 = entity.world.getBlockState(plantPos);
                     if ((block2.getBlock() instanceof BlockBush) || (block2.getBlock() instanceof BlockDeadBush)) {
-                        if (block2.getBlock() instanceof BlockDoublePlant) {
-                            entity.world.destroyBlock(pos.add(0, 2, 0), true);
-                        } else {
-                            entity.world.destroyBlock(pos.add(0, 1, 0), true);
+                        final BlockPos breakPos = (block2.getBlock() instanceof BlockDoublePlant) ? pos.add(0, 2, 0) : plantPos;
+                        if (this.canModifyTerrain(entity, breakPos)) {
+                            entity.world.destroyBlock(breakPos, true);
                         }
                     }
                 }
             }
         }
+    }
+
+    private boolean canModifyTerrain(EntityLivingBase entity, BlockPos pos) {
+        if (!(entity instanceof EntityPlayer)) {
+            return true;
+        }
+
+        final EntityPlayer player = (EntityPlayer) entity;
+        if (!player.canPlayerEdit(pos, EnumFacing.UP, ItemStack.EMPTY)) {
+            return false;
+        }
+
+        if (!entity.world.isRemote && (player instanceof EntityPlayerMP)) {
+            return ForgeHooks.onBlockBreakEvent(entity.world, ((EntityPlayerMP) player).interactionManager.getGameType(), (EntityPlayerMP) player, pos) != -1;
+        }
+
+        return true;
     }
 
 }

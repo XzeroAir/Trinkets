@@ -54,7 +54,7 @@ public class AbilityFrostWalker extends Ability implements ITickableAbility, IAt
                 if (!Objects.equal(prev, entity.getPosition())) {
                     int lvl = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FROST_WALKER, entity);
 //                EnchantmentFrostWalker.freezeNearby(entity, world, entity.getPosition(), lvl + 1);
-                    if (entity.onGround) {
+                    if (this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
                         BlockHelperUtil.freezeWater(world, entity.posX, entity.posY, entity.posZ, lvl + 1, 1.0D);
                         BlockHelperUtil.freezeLava(world, entity.posX, entity.posY, entity.posZ, lvl + 1, 1.0D);
                     }

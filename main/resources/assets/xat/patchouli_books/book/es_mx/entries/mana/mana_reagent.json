@@ -1,0 +1,17 @@
+{
+    "name": "Reactivo de maná",
+    "icon": "xat:mana_reagent",
+    "category": "mana",
+    "sortnum": 5,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Comer reactivo de maná reduce permanentemente el maná máximo.$(br2)También se usa en recetas avanzadas, incluidos Spark Powder y Restoration Serum."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_reagent",
+            "text": "Elaborar un reactivo de maná"
+        }
+    ]
+}

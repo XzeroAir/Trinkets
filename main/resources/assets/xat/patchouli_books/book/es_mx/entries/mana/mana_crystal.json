@@ -1,0 +1,17 @@
+{
+    "name": "Cristal de maná",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 3,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Come un cristal de maná para aumentar permanentemente tu maná máximo."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_crystal",
+            "text": "Elaborar un cristal de maná"
+        }
+    ]
+}

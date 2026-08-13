@@ -1,0 +1,20 @@
+{
+    "name": "Race Information",
+    "icon": "xat:textures/gui/patchouli_textures/blue_orb.png",
+    "category": "gettingstarted",
+    "sortnum": 2,
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Orbe Azul en tu inventario se abre Race Information.$(br2)Úsalo para inspeccionar y personalizar cómo aparecen tus rasgos raciales."
+        },
+        {
+            "type": "text",
+            "text": "Alterna Show Trait para ocultar o mostrar tus rasgos raciales.$(br2)Elige un estilo o variante de rasgo, ajusta los colores de los rasgos y gira la vista previa para inspeccionar a tu personaje."
+        },
+        {
+            "type": "text",
+            "text": "Selecciona el botón Race Information para ver los atributos de tu raza y tus habilidades activas.$(br2)Elige una habilidad para leer su descripción y fuente. Las habilidades activas pueden provenir de tu raza, baratijas y otras fuentes.$(br2)El botón Mana Bar abre sus opciones de diseño."
+        }
+    ]
+}

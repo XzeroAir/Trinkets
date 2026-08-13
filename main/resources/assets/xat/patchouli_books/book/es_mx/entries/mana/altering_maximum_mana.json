@@ -1,0 +1,12 @@
+{
+    "name": "Alterando el maná máximo",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 1,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Tu raza y ciertos elementos pueden alterar tu maná máximo.$(br2)Come $(l:mana/mana_crystal)Cristales de maná$(/l) para un aumento permanente, o recurre a la esencia de las $(l:mana/moon_rose)Rosas lunares$(/l) cercanas con el tiempo."
+        }
+    ]
+}

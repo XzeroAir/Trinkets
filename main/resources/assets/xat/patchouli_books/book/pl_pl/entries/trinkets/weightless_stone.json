@@ -1,0 +1,17 @@
+{
+    "name": "Kamień Nieważkości",
+    "icon": "xat:weightless_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Kamień Ujemnej Grawitacji pozwala ci unosić się w powietrzu, gdy jest wyposażony.$(br2)Rozbujaj się, aby wznieść się; skradać się i kołysać, aby zejść na dół."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:weightless_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 30
+}

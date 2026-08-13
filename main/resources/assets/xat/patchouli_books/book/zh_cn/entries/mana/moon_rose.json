@@ -1,0 +1,17 @@
+{
+    "name": "月玫瑰",
+    "icon": "xat:moon_rose",
+    "category": "mana",
+    "sortnum": 4,
+    "pages": [
+        {
+            "type": "text",
+            "text": "将月亮玫瑰放在草地、泥土或农田上。$(br2)潜行靠近它，汲取其精华并逐渐提高你的最大法力。$(br2)给每个植物足够的工作空间。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:moon_rose",
+            "text": "制作月亮玫瑰"
+        }
+    ]
+}

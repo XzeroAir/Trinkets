@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -26,6 +27,7 @@ import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.IncreasedReachPacket;
 import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityColdImmunity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityHeatImmunity;
 import xzeroair.trinkets.traits.abilities.compat.survival.AbilityParasitesImmunity;
@@ -33,12 +35,12 @@ import xzeroair.trinkets.traits.abilities.compat.survival.AbilityThirstImmunity;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
-import xzeroair.trinkets.util.handlers.SizeHandler;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
 import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
@@ -53,6 +55,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDescriptionInterface {
+
+    protected static final float MIN_PLAYER_WIDTH = 0.3F;
+    protected static final float MIN_WIDTH = 0.252F;
+    protected static final float MIN_HEIGHT = 0.45F;
+    protected static final float MAX_SIZE = 5.4F;
+    protected static final float SIZE_PRECISION = 1000.0F;
 
     protected boolean firstUpdate;
     protected boolean firstTransformUpdate;
@@ -298,7 +306,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     public void onTick() {
         this.updateSize();
         if (this.isTransforming() || this.isTransformed()) {
-            SizeHandler.setSizeForEntity(this.entity, this.getHeight(), this.getWidth());
+            this.applyAdjustedSize();
             this.modifyEyeHeight();
         }
         if (this.isTransforming()) {
@@ -465,7 +473,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
                 eyeHeight = 0.2F;
             } else if (player.isSneaking()) {
                 eyeHeight -= eyeHeight / 20F;
-            } else if (player.isElytraFlying()) {
+            } else if (this.isElytraPosture()) {
                 eyeHeight *= 0.2F;
             }
             if (player.isRiding()) {
@@ -508,6 +516,76 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
 
     public float getWidth() {
         return (float) (this.getProperties().getDefaultWidth() * (this.getProperties().getWidthValue() * 0.01));//(float) StringUtils.getAccurateDouble(TLWidth, properties.getDefaultWidth());
+    }
+
+    public float getAdjustedHeight() {
+        final float height = this.getHeight();
+        if (this.entity.isPlayerSleeping()) {
+            return this.clampHeight(0.2F);
+        }
+        if (this.entity.isSneaking()) {
+            final boolean flying = (this.entity instanceof EntityPlayer) && ((EntityPlayer) this.entity).capabilities.isFlying;
+            return this.clampHeight(!flying ? height * 0.92F : height);
+        }
+        if (this.isElytraPosture()) {
+            return this.clampHeight(height * 0.2F);
+        }
+        return this.clampHeight(height);
+    }
+
+    public float getAdjustedWidth() {
+        if (this.entity.isPlayerSleeping()) {
+            return this.clampWidth(0.2F);
+        }
+        return this.clampWidth(this.getWidth());
+    }
+
+    protected boolean isElytraPosture() {
+        if (this.entity.isElytraFlying()) {
+            return true;
+        }
+        final IAbilityInterface ability = this.getProperties().getAbilityHandler().getAbility(TrinketsRegistryNames.MODID + ":" + TrinketsRegistryNames.ModAbilities.ELYTRA_FLIGHT);
+        return ability instanceof AbilityElytraFlight && ((AbilityElytraFlight) ability).isGliding();
+    }
+
+    public AxisAlignedBB getAdjustedBoundingBox() {
+        final float width = this.getAdjustedWidth();
+        final float height = this.getAdjustedHeight();
+        final double halfWidth = width / 2.0D;
+        return new AxisAlignedBB(this.entity.posX - halfWidth, this.entity.posY, this.entity.posZ - halfWidth, this.entity.posX + halfWidth, this.entity.posY + height, this.entity.posZ + halfWidth);
+    }
+
+    protected void applyAdjustedSize() {
+        if (Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.ARTEMIS_LIB) {
+            return;
+        }
+        if (this.entity.isChild()) {
+            return;
+        }
+        final float width = this.getAdjustedWidth();
+        final float height = this.getAdjustedHeight();
+        if ((width != this.entity.width) || (height != this.entity.height)) {
+//            try {
+//                TrinketReflectionHelper.ENTITY_SETSIZE.invoke(this.entity, width, height);
+//            } catch (Exception ignored) {
+//            }
+            this.entity.width = width;
+            this.entity.height = height;
+        }
+        this.entity.setEntityBoundingBox(this.getAdjustedBoundingBox());
+    }
+
+    protected float clampWidth(float width) {
+        final float minWidth = this.entity instanceof EntityPlayer ? MIN_PLAYER_WIDTH : MIN_WIDTH;
+        return MathHelper.clamp(roundSize(width), minWidth, MAX_SIZE);
+    }
+
+    protected float clampHeight(float height) {
+        return MathHelper.clamp(roundSize(height), MIN_HEIGHT, MAX_SIZE);
+    }
+
+    protected static float roundSize(float value) {
+        return Math.round(value * SIZE_PRECISION) / SIZE_PRECISION;
     }
 
     @Nullable

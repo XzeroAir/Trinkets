@@ -1,0 +1,17 @@
+{
+    "name": "Mana Reagent",
+    "icon": "xat:mana_reagent",
+    "category": "mana",
+    "sortnum": 5,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Eating Mana Reagent permanently lowers maximum mana.$(br2)It is also used in advanced recipes, including Spark Powder and Restoration Serum."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_reagent",
+            "text": "Crafting a Mana Reagent"
+        }
+    ]
+}

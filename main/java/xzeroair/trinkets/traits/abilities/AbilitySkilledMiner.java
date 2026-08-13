@@ -7,7 +7,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -25,6 +24,10 @@ import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilitySkilledMiner extends Ability implements IMiningAbility {
 
+    private static final String PICKAXE_TOOL_CLASS = "pickaxe";
+    private static final float STATIC_MINING_TARGET_MULTIPLIER = 5F;
+    private static final float STATIC_MINING_MAX_SAFE_MULTIPLIER = 20F;
+
     protected final ConfigAbilitySkilledMiner CONFIG;
 
     public AbilitySkilledMiner() {
@@ -40,107 +43,205 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
     @Override
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
-        final TranslationHelper.OptionEntry key1 = new TranslationHelper.OptionEntry("fortune", this.CONFIG.fortune, "");
-        return helper.formatAddVariables(key, renderID, key1);
+        final boolean naturalFortune = this.CONFIG.fortune;
+        final TranslationHelper.OptionEntry fortuneEntry = new TranslationHelper.OptionEntry("fortune", naturalFortune, "");
+        return helper.formatAddVariables(key, renderID, fortuneEntry);
     }
 
     @Override
     public float breakingBlock(EntityLivingBase entity, IBlockState state, BlockPos pos, float originalSpeed, float newSpeed) {
-        if (this.CONFIG.static_mining) {
-            final ItemStack heldItemStack = entity.getHeldItemMainhand();
-            final Item heldItem = heldItemStack.getItem();
-            final int toolLevel = heldItem.getHarvestLevel(heldItemStack, "pickaxe", null, state);
-            final int level = state.getBlock().getHarvestLevel(state);
-            final float hardness = state.getBlockHardness(entity.world, pos);
-            if (!heldItem.getToolClasses(heldItemStack).isEmpty() && heldItem.getToolClasses(heldItemStack).contains("pickaxe")) {
-                if ((toolLevel >= (level)) || (toolLevel == (level - 1))) {
-                    newSpeed = hardness * 5F;
-                }
-            }
+        final boolean staticMining = this.CONFIG.static_mining;
+        if (!staticMining) {
+            return newSpeed;
         }
-        return newSpeed;
+
+        final ItemStack heldItemStack = entity.getHeldItemMainhand();
+        if (!this.canUsePickaxeOn(heldItemStack, state, 1)) {
+            return newSpeed;
+        }
+
+        final float hardness = state.getBlockHardness(entity.world, pos);
+        if (hardness <= 0F) {
+            return newSpeed;
+        }
+
+        final float targetSpeed = hardness * STATIC_MINING_TARGET_MULTIPLIER;
+        final float maxSafeSpeed = hardness * STATIC_MINING_MAX_SAFE_MULTIPLIER;
+        return Math.min(Math.max(newSpeed, targetSpeed), maxSafeSpeed);
     }
 
     @Override
     public int brokeBlock(EntityLivingBase entity, World world, IBlockState state, BlockPos pos, int expToDrop) {
-        final boolean isClient = world.isRemote;
         final ItemStack heldItemStack = entity.getHeldItemMainhand();
         final Block block = state.getBlock();
-        if (block == null) {
-            // Fix edge case?
-            return 0;
-        }
-        if (!heldItemStack.isEmpty() && !block.getHarvestTool(state).contentEquals("pickaxe")) {
+        final String harvestTool = block.getHarvestTool(state);
+        if (!heldItemStack.isEmpty() && !PICKAXE_TOOL_CLASS.equals(harvestTool)) {
             return expToDrop;
         }
+
         final ItemStack toolUsed = heldItemStack.copy();
+        if (!this.isPickaxe(toolUsed)) {
+            return expToDrop;
+        }
 
         final int fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, heldItemStack);
         final boolean silkTouching = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, toolUsed) > 0;
-        try {
-            if (this.CONFIG.fortune && !silkTouching) {
-                final Enchantment fortune = Enchantments.FORTUNE;
-                final int fortuneMaxLevel = fortune.getMaxLevel();
-                if (fortuneLevel > 0) {
-                    if (this.CONFIG.fortune_mix) {
-                        NBTTagList nbttaglist = toolUsed.getEnchantmentTagList();
+        this.applyNaturalFortune(toolUsed, state, fortuneLevel, silkTouching);
 
-                        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-                            Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
-                            if (enchantment == fortune) {
-                                nbttagcompound.setShort("lvl", (short) ((byte) fortuneLevel + fortuneMaxLevel));
-                            }
-                        }
-                    }
-                } else {
-                    toolUsed.addEnchantment(fortune, fortuneMaxLevel);
+        final int droppedExp = this.getAdditionalMiningXp(world, state, silkTouching);
+        final boolean reducedRequirement = this.CONFIG.skilled_miner;
+        if (reducedRequirement && (entity instanceof EntityPlayer) && BlockHelperUtil.canBreakBlock(toolUsed, world, (EntityPlayer) entity, pos, pos, 1)) {
+            BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false, 1, xp -> {
+                if (xp < -1) {
+                    return droppedExp;
                 }
-            }
-        } catch (Exception e) {
+                return xp + droppedExp;
+            });
+            return 0;
         }
-        final Item toolItem = toolUsed.getItem();
-        if (!toolItem.getToolClasses(toolUsed).isEmpty() && toolItem.getToolClasses(toolUsed).contains("pickaxe")) {
-            int tempExp = 0;
-            if (!silkTouching && !isClient) {
-                if (this.CONFIG.BLOCKS.bonus_exp) {
-                    for (String s : this.CONFIG.BLOCKS.xPBlocks) {
-                        ConfigObject object = new ConfigObject(s);
-                        if (object.doesBlockMatchEntry(state)) {
-                            final int bonusExp = this.CONFIG.BLOCKS.bonus_exp_max;
-                            final int min = this.CONFIG.BLOCKS.bonus_exp_min;
-                            final int rXP = bonusExp < 1 ? min : this.random.nextInt(bonusExp);
-                            tempExp += Math.max(min, rXP);
-                            break;
-                        }
-                    }
-                }
-                if (this.CONFIG.BLOCKS.minXpBlocks) {
-                    if (tempExp < 1) {
-                        for (String s : this.CONFIG.BLOCKS.MinBlocks) {
-                            ConfigObject object = new ConfigObject(s);
-                            if (object.doesBlockMatchEntry(state)) {
-                                tempExp = 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            final int droppedExp = tempExp;
-            if (this.CONFIG.skilled_miner && (entity instanceof EntityPlayer)) {
-                if (BlockHelperUtil.canBreakBlock(toolUsed, world, (EntityPlayer) entity, pos, pos, 1)) {
-                    BlockHelperUtil.breakBlock((EntityPlayer) entity, toolUsed, world, state, pos, pos, false, 1, xp -> {
-                        if (xp < -1) {
-                            return droppedExp;
-                        }
-                        return xp + droppedExp;
-                    });
-                    return 0;
-                }
-            }
-            return expToDrop + droppedExp;
+        return expToDrop + droppedExp;
+    }
+
+    /*
+     * Future Natural Fortune HarvestDropsEvent path.
+     * This was compiled successfully, but is intentionally disabled until the drop/config structure is ready.
+     * @Override
+     * public float blockDrops(EntityLivingBase entity, World world, IBlockState state, BlockPos pos, java.util.List<ItemStack> drops, float dropChance, boolean silkTouching, int fortuneLevel) {
+     *     if (world.isRemote || !this.canApplyNaturalFortune(state, silkTouching) || !(entity instanceof EntityPlayer)) {
+     *         return dropChance;
+     *     }
+     *
+     *     final ItemStack heldItemStack = entity.getHeldItemMainhand();
+     *     if (!this.isPickaxe(heldItemStack)) {
+     *         return dropChance;
+     *     }
+     *
+     *     final int naturalFortuneLevel = this.getNaturalFortuneLevel(fortuneLevel);
+     *     if (naturalFortuneLevel <= fortuneLevel) {
+     *         return dropChance;
+     *     }
+     *
+     *     final net.minecraft.util.NonNullList<ItemStack> normalDrops = net.minecraft.util.NonNullList.create();
+     *     final net.minecraft.util.NonNullList<ItemStack> naturalFortuneDrops = net.minecraft.util.NonNullList.create();
+     *     state.getBlock().getDrops(normalDrops, world, pos, state, fortuneLevel);
+     *     state.getBlock().getDrops(naturalFortuneDrops, world, pos, state, naturalFortuneLevel);
+     *     this.addAdditionalFortuneDrops(drops, normalDrops, naturalFortuneDrops);
+     *     return dropChance;
+     * }
+     */
+
+    private void applyNaturalFortune(ItemStack toolUsed, IBlockState state, int fortuneLevel, boolean silkTouching) {
+        if (!this.canApplyNaturalFortune(state, silkTouching)) {
+            return;
         }
-        return expToDrop;
+
+        final Enchantment fortune = Enchantments.FORTUNE;
+        final int naturalFortuneLevel = this.getNaturalFortuneLevel(fortuneLevel);
+        if (fortuneLevel > 0) {
+            if (naturalFortuneLevel > fortuneLevel) {
+                NBTTagList enchantments = toolUsed.getEnchantmentTagList();
+                for (int i = 0; i < enchantments.tagCount(); ++i) {
+                    NBTTagCompound enchantmentTag = enchantments.getCompoundTagAt(i);
+                    Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
+                    if (enchantment == fortune) {
+                        enchantmentTag.setShort("lvl", (short) naturalFortuneLevel);
+                    }
+                }
+            }
+        } else {
+            toolUsed.addEnchantment(fortune, naturalFortuneLevel);
+        }
+    }
+
+    private boolean canApplyNaturalFortune(IBlockState state, boolean silkTouching) {
+        return this.CONFIG.fortune && !silkTouching && this.blockMatchesAny(state, this.CONFIG.BLOCKS.Blocks);
+    }
+
+    private int getNaturalFortuneLevel(int fortuneLevel) {
+        final int naturalFortuneLevel = Enchantments.FORTUNE.getMaxLevel();
+        if (fortuneLevel <= 0) {
+            return naturalFortuneLevel;
+        }
+        if (!this.CONFIG.fortune_mix) {
+            return fortuneLevel;
+        }
+        return fortuneLevel + naturalFortuneLevel;
+    }
+
+    private int getAdditionalMiningXp(World world, IBlockState state, boolean silkTouching) {
+        if (world.isRemote || silkTouching) {
+            return 0;
+        }
+
+        int droppedExp = 0;
+        if (this.CONFIG.BLOCKS.bonus_exp && this.blockMatchesAny(state, this.CONFIG.BLOCKS.xPBlocks)) {
+            droppedExp += this.rollMiningXp();
+        }
+        if (this.CONFIG.BLOCKS.minXpBlocks && droppedExp < 1 && this.blockMatchesAny(state, this.CONFIG.BLOCKS.MinBlocks)) {
+            droppedExp = 1;
+        }
+        return droppedExp;
+    }
+
+    private boolean canUsePickaxeOn(ItemStack stack, IBlockState state, int bonusToolLevel) {
+        if (!this.isPickaxe(stack)) {
+            return false;
+        }
+
+        final int toolLevel = stack.getItem().getHarvestLevel(stack, PICKAXE_TOOL_CLASS, null, state) + bonusToolLevel;
+        final int blockHarvestLevel = state.getBlock().getHarvestLevel(state);
+        return toolLevel >= blockHarvestLevel;
+    }
+
+    private boolean isPickaxe(ItemStack stack) {
+        return !stack.isEmpty() && stack.getItem().getToolClasses(stack).contains(PICKAXE_TOOL_CLASS);
+    }
+
+    private boolean blockMatchesAny(IBlockState state, String[] entries) {
+        for (String entry : entries) {
+            ConfigObject object = new ConfigObject(entry);
+            if (object.doesBlockMatchEntry(state)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * Future Natural Fortune drop-diff helpers.
+     * This was compiled successfully, but is intentionally disabled until the drop/config structure is ready.
+     * private void addAdditionalFortuneDrops(java.util.List<ItemStack> drops, java.util.List<ItemStack> normalDrops, java.util.List<ItemStack> naturalFortuneDrops) {
+     *     for (ItemStack naturalFortuneDrop : naturalFortuneDrops) {
+     *         final int normalCount = this.countMatchingDrops(normalDrops, naturalFortuneDrop);
+     *         final int existingCount = this.countMatchingDrops(drops, naturalFortuneDrop);
+     *         final int additionalCount = naturalFortuneDrop.getCount() - Math.max(normalCount, existingCount);
+     *         if (additionalCount > 0) {
+     *             ItemStack additionalDrop = naturalFortuneDrop.copy();
+     *             additionalDrop.setCount(additionalCount);
+     *             drops.add(additionalDrop);
+     *         }
+     *     }
+     * }
+     *
+     * private int countMatchingDrops(java.util.List<ItemStack> drops, ItemStack target) {
+     *     int count = 0;
+     *     for (ItemStack drop : drops) {
+     *         if (this.areSameDrop(drop, target)) {
+     *             count += drop.getCount();
+     *         }
+     *     }
+     *     return count;
+     * }
+     *
+     * private boolean areSameDrop(ItemStack first, ItemStack second) {
+     *     return ItemStack.areItemsEqual(first, second) && ItemStack.areItemStackTagsEqual(first, second);
+     * }
+     */
+
+    private int rollMiningXp() {
+        final int miningXpChanceBound = this.CONFIG.BLOCKS.bonus_exp_max;
+        final int miningXpMinimum = this.CONFIG.BLOCKS.bonus_exp_min;
+        final int rolledXp = miningXpChanceBound < 1 ? miningXpMinimum : this.random.nextInt(miningXpChanceBound);
+        return Math.max(miningXpMinimum, rolledXp);
     }
 }

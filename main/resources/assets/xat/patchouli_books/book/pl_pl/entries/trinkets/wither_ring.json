@@ -1,0 +1,17 @@
+{
+    "name": "Pierścień Witheru",
+    "icon": "xat:wither_ring",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Wither Ring chroni cię przed Witherem i innymi mrocznymi obrażeniami.$(br2)Twoje ataki mogą zadać Wither, a ranienie zwiędłych wrogów przywraca część twojego zdrowia."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:wither_ring",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 90
+}

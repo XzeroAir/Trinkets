@@ -24,7 +24,6 @@
 hs_err_pid*
 replay_pid*
 .classpath
-.gitattributes
 .project
 /.gradle/
 /build/
@@ -34,4 +33,4 @@ replay_pid*
 /.idea
 /run
 /runServer
-/New folder/
+/libs/

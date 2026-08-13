@@ -74,7 +74,7 @@ public class VipStatus extends CapabilityEntityPlayerBase<VipStatus, EntityPlaye
     @Override
     public void onJoinWorld() {
         final World world = this.getPlayer().getEntityWorld();
-        if (!world.isRemote) {
+        if ((world != null) && !world.isRemote) {
             this.sendInformationToPlayer(this.getPlayer());
         }
     }
@@ -108,22 +108,25 @@ public class VipStatus extends CapabilityEntityPlayerBase<VipStatus, EntityPlaye
 
     public void sendInformationToPlayer() {
         final World world = this.getPlayer().getEntityWorld();
-        if (!world.isRemote) {
+        if ((world != null) && !world.isRemote) {
             this.sendInformationToPlayer(this.getPlayer(), this.saveToNBT(new NBTTagCompound()));
         }
     }
 
     public void sendInformationToPlayer(EntityPlayer receiver) {
         final World world = this.getPlayer().getEntityWorld();
-        if (!world.isRemote) {
+        if ((world != null) && !world.isRemote) {
             this.sendInformationToPlayer(receiver, this.saveToNBT(new NBTTagCompound()));
         }
     }
 
     public void sendInformationToPlayer(EntityPlayer receiver, NBTTagCompound tag) {
         final World world = this.getPlayer().getEntityWorld();
-        if (!world.isRemote && (receiver instanceof EntityPlayerMP)) {
-            NetworkHandler.sendTo(new VipStatusPacket(this.getPlayer(), tag), (EntityPlayerMP) receiver);
+        if ((world != null) && !world.isRemote && (receiver instanceof EntityPlayerMP)) {
+            final EntityPlayerMP playerMP = (EntityPlayerMP) receiver;
+            if (playerMP.connection != null) {
+                NetworkHandler.sendTo(new VipStatusPacket(this.getPlayer(), tag), playerMP);
+            }
         }
     }
 

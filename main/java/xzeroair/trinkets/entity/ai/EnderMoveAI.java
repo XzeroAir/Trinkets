@@ -1,10 +1,8 @@
 package xzeroair.trinkets.entity.ai;
 
-import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAIFollow;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -23,161 +21,185 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
-public class EnderMoveAI extends EntityAIFollow {
+public class EnderMoveAI extends EntityAIBase {
+    private static final int MAX_ACTIVE_FOLLOWERS = 3;
+    private static final int DYNAMIC_QUEEN_SEARCH_INTERVAL = 20;
+    private static final int TELEPORT_COOLDOWN_TICKS = 40;
+    private static final double DYNAMIC_QUEEN_RANGE_SQUARED = 256.0D;
+    private static final double FOLLOW_START_DISTANCE_SQUARED = 64.0D;
+    private static final double FOLLOW_STOP_DISTANCE_SQUARED = 36.0D;
+    private static final double TELEPORT_DISTANCE_SQUARED = 576.0D;
 
-    private final String FOLLOWER_TAG = "isFollower";
-    private final String QUEEN_TAG = "QUEEN_UUID";
-
-    private final Predicate<EntityLiving> followPredicate;
-    private final double speedModifier;
-    private final EntityLiving KNIGHT;
+    private final EntityEnderman KNIGHT;
     private final PathNavigate navigation;
-    private final float stopDistance;
-    private final float areaSize;
+    @Nullable
     private EntityPlayer QUEEN;
     private int timeToRecalcPath;
+    private int teleportCooldown;
+    private int nextQueenSearchTick;
     private float oldWaterCost;
 
     public EnderMoveAI(final EntityEnderman entity) {
-        super(entity, 1, 6F, 16);
         this.KNIGHT = entity;
-        this.followPredicate = (@Nullable EntityLiving following) -> (following != null) && (this.KNIGHT.getClass() != following.getClass());
-        this.speedModifier = 1;
         this.navigation = this.KNIGHT.getNavigator();
-        this.stopDistance = 6;
-        this.areaSize = 16;
         this.setMutexBits(3);
 
-        if (!(this.KNIGHT.getNavigator() instanceof PathNavigateGround) && !(this.KNIGHT.getNavigator() instanceof PathNavigateFlying)) {
-            throw new IllegalArgumentException("Unsupported mob type for FollowMobGoal");
+        if (!(this.navigation instanceof PathNavigateGround) && !(this.navigation instanceof PathNavigateFlying)) {
+            throw new IllegalArgumentException("Unsupported mob type for Ender Queen following");
         }
     }
 
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
     @Override
     public boolean shouldExecute() {
         if (!TrinketsConfig.SERVER.ITEMS.ENDER_CROWN.ABILITIES.ENDER_QUEEN.ENDERMAN_FOLLOW) {
             return false;
         }
-        World world = this.KNIGHT.getEntityWorld();
+        final World world = this.KNIGHT.getEntityWorld();
         if (!world.isBlockLoaded(this.KNIGHT.getPosition()) || !this.KNIGHT.addedToChunk) {
             return false;
         }
-        NBTTagCompound tag = this.KNIGHT.getEntityData();
-        if (tag.hasKey(this.FOLLOWER_TAG)) {
-            final AxisAlignedBB bBox = this.KNIGHT.getEntityBoundingBox();
-//            if (tag.getBoolean(FOLLOWER_TAG)) {
-//                if (QUEEN != null && world.playerEntities.contains(QUEEN)) {
-//                    final boolean ability = TrinketHelper.entityHasAbility(QUEEN, ConstantsRegistryIds.ModAbilities.ENDER_QUEEN);
-//                    if (ability) {
-//                        if (KNIGHT.dimension == QUEEN.dimension && world.isBlockLoaded(QUEEN.getPosition())) {
-//                            if (KNIGHT.getDistanceSq(QUEEN.getPosition()) > 16) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-            final List<EntityLivingBase> list = this.KNIGHT.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, bBox.grow(16, 4, 16));
-            if (!list.isEmpty()) {
-                for (final EntityLivingBase entityliving : list) {
-                    if (entityliving instanceof EntityPlayer) {
-                        final boolean ability = TrinketHelper.entityHasAbility(entityliving, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN);
-                        if (!entityliving.isInvisible() && (ability)) {
-                            this.QUEEN = (EntityPlayer) entityliving;
-                            int count = 0;
-                            final List<EntityEnderman> allies = this.KNIGHT.getEntityWorld().getEntitiesWithinAABB(EntityEnderman.class, entityliving.getEntityBoundingBox().grow(8, 4, 8));
-                            for (final EntityEnderman ally : allies) {
-                                count++;
-                            }
-                            if ((count < 4)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+
+        this.QUEEN = this.findQueen(world);
+        return (this.QUEEN != null) && (this.KNIGHT.getDistanceSq(this.QUEEN) > FOLLOW_START_DISTANCE_SQUARED) && (this.getActiveFollowerCount(this.QUEEN) < MAX_ACTIVE_FOLLOWERS);
     }
 
     @Override
     public boolean shouldContinueExecuting() {
-        int count = 0;
-        if (this.QUEEN != null) {
-            final List<EntityEnderman> allies = this.KNIGHT.getEntityWorld().getEntitiesWithinAABB(EntityEnderman.class, this.QUEEN.getEntityBoundingBox().grow(6, 4, 6));
-            for (final EntityEnderman ally : allies) {
-                count++;
-            }
+        if ((this.QUEEN == null) || !this.isQueenActive(this.QUEEN) || !this.KNIGHT.getEntityData().getBoolean(EnderQueensKnightAI.FOLLOWING_TAG)) {
+            return false;
         }
-        return this.navigation.noPath() || ((this.QUEEN != null) && (count < 4) && !this.navigation.noPath() && ((this.KNIGHT.getDistanceSq(this.QUEEN) > (this.stopDistance * this.stopDistance))));
+        if (!this.KNIGHT.getEntityData().hasKey(EnderQueensKnightAI.QUEEN_UUID_TAG) && (this.KNIGHT.getDistanceSq(this.QUEEN) > DYNAMIC_QUEEN_RANGE_SQUARED)) {
+            return false;
+        }
+        return this.KNIGHT.getDistanceSq(this.QUEEN) > FOLLOW_STOP_DISTANCE_SQUARED;
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     @Override
     public void startExecuting() {
         this.timeToRecalcPath = 0;
+        this.teleportCooldown = 0;
         this.oldWaterCost = this.KNIGHT.getPathPriority(PathNodeType.WATER);
         this.KNIGHT.setPathPriority(PathNodeType.WATER, 0.0F);
+        this.KNIGHT.getEntityData().setBoolean(EnderQueensKnightAI.FOLLOWING_TAG, true);
     }
 
-    /**
-     * Reset the task's internal state. Called when this task is interrupted by
-     * another one
-     */
     @Override
     public void resetTask() {
         this.QUEEN = null;
         this.navigation.clearPath();
         this.KNIGHT.setPathPriority(PathNodeType.WATER, this.oldWaterCost);
+        this.KNIGHT.getEntityData().removeTag(EnderQueensKnightAI.FOLLOWING_TAG);
     }
 
-    /**
-     * Keep ticking a continuous task that has already been started
-     */
     @Override
     public void updateTask() {
-        if ((this.QUEEN != null) && !this.KNIGHT.getLeashed()) {
-            this.KNIGHT.getLookHelper().setLookPositionWithEntity(this.QUEEN, 10.0F, this.KNIGHT.getVerticalFaceSpeed());
+        if ((this.QUEEN == null) || this.KNIGHT.getLeashed()) {
+            return;
+        }
+        this.KNIGHT.getLookHelper().setLookPositionWithEntity(this.QUEEN, 10.0F, this.KNIGHT.getVerticalFaceSpeed());
 
-            if (--this.timeToRecalcPath <= 0) {
-                this.timeToRecalcPath = 10;
-                final double d0 = this.KNIGHT.posX - this.QUEEN.posX;
-                final double d1 = this.KNIGHT.posY - this.QUEEN.posY;
-                final double d2 = this.KNIGHT.posZ - this.QUEEN.posZ;
-                final double d3 = (d0 * d0) + (d1 * d1) + (d2 * d2);
+        final double distance = this.KNIGHT.getDistanceSq(this.QUEEN);
+        if (this.teleportCooldown > 0) {
+            this.teleportCooldown--;
+        }
+        if ((distance > TELEPORT_DISTANCE_SQUARED) && (this.teleportCooldown <= 0)) {
+            this.teleportCooldown = TELEPORT_COOLDOWN_TICKS;
+            if (this.teleportToEntity(this.QUEEN)) {
+                return;
+            }
+        }
 
-                if (d3 > (this.stopDistance * this.stopDistance)) {
-                    this.navigation.tryMoveToEntityLiving(this.QUEEN, this.speedModifier);
-                } else {
-                    this.navigation.clearPath();
-
-                    if (d3 <= this.stopDistance) {
-                        final double d4 = this.QUEEN.posX - this.KNIGHT.posX;
-                        final double d5 = this.QUEEN.posZ - this.KNIGHT.posZ;
-                        this.navigation.tryMoveToXYZ(this.KNIGHT.posX - d4, this.KNIGHT.posY, this.KNIGHT.posZ - d5, this.speedModifier);
-                    }
-                }
+        if (--this.timeToRecalcPath <= 0) {
+            this.timeToRecalcPath = 10;
+            if (distance > FOLLOW_STOP_DISTANCE_SQUARED) {
+                this.navigation.tryMoveToEntityLiving(this.QUEEN, 1.0D);
+            } else {
+                this.navigation.clearPath();
             }
         }
     }
 
-    /**
-     * Teleport the KNIGHT to another entity
-     */
-    protected boolean teleportToEntity(Entity p_70816_1_) {
-        Vec3d vec3d = new Vec3d(this.KNIGHT.posX - p_70816_1_.posX, ((this.KNIGHT.getEntityBoundingBox().minY + (this.KNIGHT.height / 2.0F)) - p_70816_1_.posY) + p_70816_1_.getEyeHeight(), this.KNIGHT.posZ - p_70816_1_.posZ);
-        vec3d = vec3d.normalize();
-        final double d0 = 16.0D;
-        final double d1 = (this.KNIGHT.posX + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.x * d0);
-        final double d2 = (this.KNIGHT.posY + (Reference.random.nextInt(16) - 8)) - (vec3d.y * 16.0D);
-        final double d3 = (this.KNIGHT.posZ + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (vec3d.z * d0);
-        return this.teleportTo(d1, d2, d3);
+    private int getActiveFollowerCount(EntityPlayer queen) {
+        final AxisAlignedBB bounds = queen.getEntityBoundingBox().grow(16.0D, 4.0D, 16.0D);
+        final List<EntityEnderman> endermen = this.KNIGHT.world.getEntitiesWithinAABB(EntityEnderman.class, bounds);
+        int count = 0;
+        for (final EntityEnderman enderman : endermen) {
+            if ((enderman != this.KNIGHT) && enderman.getEntityData().getBoolean(EnderQueensKnightAI.FOLLOWING_TAG)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Nullable
+    private EntityPlayer findQueen(World world) {
+        final NBTTagCompound tag = this.KNIGHT.getEntityData();
+        if (tag.hasKey(EnderQueensKnightAI.QUEEN_UUID_TAG)) {
+            return this.findSummoner(world, tag);
+        }
+
+        if (this.isDynamicQueen(this.QUEEN)) {
+            return this.QUEEN;
+        }
+        if (this.KNIGHT.ticksExisted < this.nextQueenSearchTick) {
+            return null;
+        }
+        this.nextQueenSearchTick = this.KNIGHT.ticksExisted + DYNAMIC_QUEEN_SEARCH_INTERVAL + Math.floorMod(this.KNIGHT.getEntityId(), DYNAMIC_QUEEN_SEARCH_INTERVAL);
+
+        final AxisAlignedBB bounds = this.KNIGHT.getEntityBoundingBox().grow(16.0D, 4.0D, 16.0D);
+        final List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, bounds);
+        EntityPlayer closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (final EntityPlayer player : players) {
+            if (this.isDynamicQueen(player)) {
+                final double distance = this.KNIGHT.getDistanceSq(player);
+                if (distance < closestDistance) {
+                    closest = player;
+                    closestDistance = distance;
+                }
+            }
+        }
+        return closest;
+    }
+
+    @Nullable
+    private EntityPlayer findSummoner(World world, NBTTagCompound tag) {
+        if (!tag.hasKey(EnderQueensKnightAI.QUEEN_UUID_TAG)) {
+            return null;
+        }
+        try {
+            final UUID uuid = UUID.fromString(tag.getString(EnderQueensKnightAI.QUEEN_UUID_TAG));
+            EntityPlayer player = world.getPlayerEntityByUUID(uuid);
+            if (world.getMinecraftServer() != null) {
+                player = world.getMinecraftServer().getPlayerList().getPlayerByUUID(uuid);
+            }
+            if ((player != null) && !TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN)) {
+                this.KNIGHT.setDead();
+                return null;
+            }
+            return ((player != null) && (player.world == world) && this.isQueenActive(player)) ? player : null;
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private boolean isDynamicQueen(@Nullable EntityPlayer player) {
+        return this.isQueenActive(player) && (this.KNIGHT.getDistanceSq(player) <= DYNAMIC_QUEEN_RANGE_SQUARED);
+    }
+
+    private boolean isQueenActive(@Nullable EntityPlayer player) {
+        return (player != null) && player.isEntityAlive() && TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.ENDER_QUEEN);
+    }
+
+    protected boolean teleportToEntity(Entity target) {
+        Vec3d direction = new Vec3d(this.KNIGHT.posX - target.posX, ((this.KNIGHT.getEntityBoundingBox().minY + (this.KNIGHT.height / 2.0F)) - target.posY) + target.getEyeHeight(), this.KNIGHT.posZ - target.posZ).normalize();
+        final double distance = 16.0D;
+        final double x = (this.KNIGHT.posX + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (direction.x * distance);
+        final double y = (this.KNIGHT.posY + (Reference.random.nextInt(16) - 8)) - (direction.y * distance);
+        final double z = (this.KNIGHT.posZ + ((Reference.random.nextDouble() - 0.5D) * 8.0D)) - (direction.z * distance);
+        return this.teleportTo(x, y, z);
     }
 
     private boolean teleportTo(double x, double y, double z) {
@@ -185,13 +207,13 @@ public class EnderMoveAI extends EntityAIFollow {
         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
             return false;
         }
-        final boolean flag = this.KNIGHT.attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+        final boolean teleported = this.KNIGHT.attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 
-        if (flag) {
+        if (teleported) {
             this.KNIGHT.world.playSound(null, this.KNIGHT.prevPosX, this.KNIGHT.prevPosY, this.KNIGHT.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, this.KNIGHT.getSoundCategory(), 1.0F, 1.0F);
             this.KNIGHT.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
         }
 
-        return flag;
+        return teleported;
     }
 }

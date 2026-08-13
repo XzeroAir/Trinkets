@@ -2,6 +2,8 @@ package xzeroair.trinkets.races.dragon.config;
 
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityBreath;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
@@ -44,6 +46,16 @@ public class DragonConfig {
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_CREATIVE_FLIGHT)
         public ConfigAbilityFlight FLIGHT = new ConfigAbilityFlight(true, 5F);
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ELYTRA_FLIGHT)
+        public ConfigAbilityElytraFlight ELYTRA_FLIGHT = new ConfigAbilityElytraFlight(true, true, 0F, 10F, 0.42D);
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_DRAGON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_DRAGON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_DRAGON)
+        public ConfigAbilityBreath DRAGON_BREATH = new ConfigAbilityBreath();
 
     }
 
@@ -120,7 +132,7 @@ public class DragonConfig {
             "Name:generic.maxHealth, Amount:0.25, Operation:1",
             "Name:generic.attackDamage, Amount:0.5, Operation:1",
             "Name:generic.armorToughness, Amount:0.5, Operation:1",
-            "Name:xat.flyspeed, Amount:-0.6, Operation:2"
+            "Name:xat.flyspeed, Amount:-0.4, Operation:2"
             //@formatter:on
     };
 

@@ -1,0 +1,29 @@
+{
+    "name": "Эльф",
+    "icon": "xat:textures/potions/elf.png",
+    "category": "races",
+    "sortnum": 60,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Эльфы — терпеливые лучники и лесные странники.$(br2)Их «Заряженный выстрел из лука» превращает полностью натянутый лук в заряд, питаемый маной."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_sap",
+            "text": "Этот рецепт навсегда превратит вас в эльфа."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_ring",
+            "text": "Наденьте Эльфийское Кольцо, чтобы сразиться с этой расой, пока оно экипировано."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Рецепт приготовления по умолчанию",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:leaves",
+            "result": "minecraft:potion{Potion:'xat:elf'}"
+        }
+    ]
+}

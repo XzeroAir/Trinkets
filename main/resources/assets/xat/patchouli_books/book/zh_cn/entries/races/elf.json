@@ -1,24 +1,29 @@
 {
     "name": "精灵",
-    "icon": "xat:elf_ring",
+    "icon": "xat:textures/potions/elf.png",
     "category": "races",
+    "sortnum": 60,
     "pages": [
         {
             "type": "text",
-            "text": "精灵是远距离战斗的专家，可以用弓造成更多伤害。他们亲近森林，在森林生态群系中获得速度加成。因为没有弱点，如果你想要体验没有负面特点的独特种族，推荐你变形成精灵。"
+            "text": "精灵是耐心的弓箭手和森林流浪者。$(br2)他们的蓄力弓箭可以将完全拉开的弓变成充满法力的爆炸。"
         },
-		{
-            "type": "text",
-            "text": "$(l)默认属性调整：$()$(br)100%体型$(br)$(2)+10%$()攻击速度$(br)$(2)+10%$()移动速度$(br)$(l)在森林中：$()$(br)$(2)+50%$()攻击速度$(br)$(2)+50%$()移动速度$(br)"
-        },
-		{
-            "type": "text",
-            "text": "$(l)能力：充能设计$()$(br)潜行时拉弓将激活一次更加强力的射击，消耗20点魔力造成更高的伤害。"
-        },
-		{
+        {
             "type": "crafting",
-			"recipe": "xat:elf_sap",
-			"recipe2": "xat:elf_ring"
+            "recipe": "xat:elf_sap",
+            "text": "这个食谱可以让你永久变成精灵。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_ring",
+            "text": "佩戴精灵戒指，在装备好精灵戒指后参加这场比赛。"
+        },
+        {
+            "type": "default_brewing",
+            "title": "默认冲泡配方",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:leaves",
+            "result": "minecraft:potion{Potion:'xat:elf'}"
         }
     ]
 }

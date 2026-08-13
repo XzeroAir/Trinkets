@@ -1,0 +1,17 @@
+{
+    "name": "Anillo de Ojos Encantados",
+    "icon": "xat:glow_ring",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Anillo de los Ojos Encantados otorga visión nocturna.$(br2)También es un componente del Ojo del Dragón."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glow_ring",
+            "text": "Elaboración"
+        }
+    ],
+    "sortnum": 10
+}

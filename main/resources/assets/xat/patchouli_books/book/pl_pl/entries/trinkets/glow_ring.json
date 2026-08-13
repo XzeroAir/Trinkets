@@ -1,0 +1,17 @@
+{
+    "name": "Pierścień Zaklętych Oczu",
+    "icon": "xat:glow_ring",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Pierścień Zaczarowanych Oczu zapewnia widzenie w nocy.$(br2)Jest także składnikiem Oka Smoka."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:glow_ring",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 10
+}

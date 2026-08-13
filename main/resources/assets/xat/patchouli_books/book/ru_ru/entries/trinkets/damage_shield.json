@@ -1,0 +1,17 @@
+{
+    "name": "Щит чести",
+    "icon": "xat:damage_shield",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Щит Чести повышает сопротивление и смягчает урон от взрыва.$(br2)После достаточно сильных ударов его защита может отразить атаку."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:shield_of_honor",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 100
+}

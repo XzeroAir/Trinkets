@@ -1,0 +1,29 @@
+{
+    "name": "Taurus",
+    "icon": "xat:textures/potions/taurus.png",
+    "category": "races",
+    "sortnum": 80,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Taurus are horned, sturdy wanderers built to hold their ground.$(br2)Their Stampede ability turns a charge into a proper entrance."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_tea",
+            "text": "This recipe permanently transforms you into a Taurus."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:taurus_ring",
+            "text": "Wear the Taurus Ring to take on this race while it is equipped."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Default Brewing Recipe",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:milk_bucket",
+            "result": "minecraft:potion{Potion:'xat:taurus'}"
+        }
+    ]
+}

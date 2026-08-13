@@ -1,0 +1,74 @@
+{
+    "components": [
+        {
+            "type": "header",
+            "text": "#tytuł",
+            "x": -1
+        },
+        {
+            "type": "separator",
+            "y": 12
+        },
+        {
+            "type": "text",
+            "text": "Mikstura bazowa",
+            "x": 0,
+            "y": 27,
+            "max_width": 46
+        },
+        {
+            "type": "text",
+            "text": "Katalizator",
+            "x": 49,
+            "y": 27,
+            "max_width": 34
+        },
+        {
+            "type": "text",
+            "text": "Wynik",
+            "x": 86,
+            "y": 27,
+            "max_width": 30
+        },
+        {
+            "type": "item",
+            "item": "#base",
+            "x": 10,
+            "y": 42,
+            "framed": true
+        },
+        {
+            "type": "text",
+            "text": "+",
+            "x": 35,
+            "y": 47
+        },
+        {
+            "type": "item",
+            "item": "#catalyst",
+            "x": 51,
+            "y": 42,
+            "framed": true
+        },
+        {
+            "type": "text",
+            "text": "->",
+            "x": 76,
+            "y": 47
+        },
+        {
+            "type": "item",
+            "item": "#result",
+            "x": 93,
+            "y": 42,
+            "framed": true
+        },
+        {
+            "type": "text",
+            "text": "Zaparz to w stojaku do zaparzania.",
+            "x": 6,
+            "y": 76,
+            "max_width": 104
+        }
+    ]
+}

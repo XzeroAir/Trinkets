@@ -27,17 +27,17 @@ import java.util.UUID;
 public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBase> {
 
     private final String TAG_KEY = Reference.MODID + ":magic";
-    private final EntityManaConfig manaConfig = TrinketsConfig.SERVER.MAGIC;
+    protected final EntityManaConfig manaConfig = TrinketsConfig.SERVER.MAGIC;
 
     private float mana = 100f;
     private double bonusMana = 0;
-    private boolean sync = false;
+    protected boolean sync = false;
 
-    private double manaUpdateTickRate = 0;
-    private double manaRegenTimeout = 0;
+    protected double manaUpdateTickRate = 0;
+    protected double manaRegenTimeout = 0;
     private float lastSyncedManaCost = Float.NaN;
 
-    private final UpdatingAttribute MANA_BONUS;
+    protected final UpdatingAttribute MANA_BONUS;
 
     public MagicStats(EntityLivingBase e) {
         super(e);
@@ -57,7 +57,7 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
         }
     }
 
-    public boolean onRegenCooldown() {
+    protected boolean onRegenCooldown() {
         boolean manaEnabled = TrinketsConfig.SERVER.MAGIC.mana_enabled;
         if (!manaEnabled || (this.manaRegenTimeout <= 0)) {
             this.manaRegenTimeout = 0;
@@ -140,26 +140,29 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
         this.setMana(this.mana + mana);
     }
 
-    public boolean spendMana(float cost) {
-        boolean isCreative = (this.getEntity() instanceof EntityPlayer) && ((EntityPlayer) this.getEntity()).isCreative();
-        boolean manaEnabled = TrinketsConfig.SERVER.MAGIC.mana_enabled;
 
-        if (!manaEnabled || isCreative) {
-            return true;
-        }
-        if (!Float.isFinite(cost) || cost < 0F) {
+    public boolean canSpendMana(float cost) {
+        if (!Float.isFinite(cost)) {
             return false;
         }
-        if (cost == 0F) {
+        if (!TrinketsConfig.SERVER.MAGIC.mana_enabled || this.isCreativePlayer() || (cost <= 0F)) {
             return true;
-        } else if (cost <= this.getMana()) {
+        }
+        return cost <= this.getMana();
+    }
+
+    public boolean spendMana(float cost) {
+        if (!this.canSpendMana(cost)) {
+            if (TrinketsConfig.SERVER.MAGIC.mana_enabled && !this.isCreativePlayer() && Float.isFinite(cost) && (cost > 0F)) {
+                StringUtils.sendStatusMessageToPlayer(this.getEntity(), "No MP", true);
+            }
+            return false;
+        }
+        if (TrinketsConfig.SERVER.MAGIC.mana_enabled && !this.isCreativePlayer() && (cost > 0F)) {
             this.setMana(this.mana - cost);
             this.setManaRegenTimeout();
-            return true;
-        } else {
-            StringUtils.sendStatusMessageToPlayer(this.getEntity(), "No MP", true);
         }
-        return false;
+        return true;
     }
 
     public float getMaxMana() {
@@ -198,6 +201,10 @@ public class MagicStats extends CapabilityEntityBase<MagicStats, EntityLivingBas
         double cooldownMulti = attribute != null ? attribute.getAttributeValue() : 1D;
         this.setManaRegenTimeout((int) (this.manaConfig.mana_regen_timeout * cooldownMulti));
         //		this.setManaRegenTimeout(manaConfig.mana_regen_timeout);
+    }
+
+    public double getManaRegenTimeout() {
+        return this.manaRegenTimeout;
     }
 
     public void setManaRegenTimeout(int timeout) {

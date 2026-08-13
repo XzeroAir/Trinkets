@@ -59,6 +59,9 @@ public class TrinketContainerHandler extends ItemStackHandler implements ITrinke
         if (!TrinketsConfig.getClientStore().TRINKET_CONTAINER_ENABLED) {
             return false;
         }
+        if (player == null) {
+            return false;
+        }
         if ((stack == null) || stack.isEmpty() || !((stack.getItem() instanceof IAccessoryInterface))) {
             return false;
         }

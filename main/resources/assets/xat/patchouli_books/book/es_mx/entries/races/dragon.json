@@ -1,0 +1,29 @@
+{
+    "name": "Dragón",
+    "icon": "xat:textures/potions/dragon.png",
+    "category": "races",
+    "sortnum": 70,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los dragones surcan el cielo con vuelo y visión nocturna nítida.$(br2)Los dragones de fuego, hielo y relámpagos obtienen cada uno su propio aliento y dones elementales."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_food",
+            "text": "Esta receta te transforma permanentemente en un Dragón."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dragon_ring",
+            "text": "Usa el Anillo del Dragón para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:dragon_breath",
+            "result": "minecraft:potion{Potion:'xat:dragon'}"
+        }
+    ]
+}

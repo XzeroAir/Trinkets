@@ -111,7 +111,7 @@ public class AbilitySkilledSwimmer extends Ability implements ITickableAbility, 
             if (depthStrider > 3.0D) {
                 depthStrider = 3.0D;
             }
-            if (!entity.onGround) {
+            if (!this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
                 depthStrider *= 0.5D;
             } else {
                 if (entity.isActiveItemStackBlocking()) {

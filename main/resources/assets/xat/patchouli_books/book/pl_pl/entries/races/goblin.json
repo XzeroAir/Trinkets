@@ -1,0 +1,29 @@
+{
+    "name": "Goblin",
+    "icon": "xat:textures/potions/goblin.png",
+    "category": "races",
+    "sortnum": 50,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Gobliny to zwinne wspinacze z talentem do przetrwania w zwarciu.$(br2)Ich umiejętność Wilczej Jazdy pozwala oswojonemu wilkowi stać się przerażającym towarzyszem."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_soup",
+            "text": "Ten przepis trwale przemienia Cię w Goblina."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:goblin_ring",
+            "text": "Noś Pierścień Goblina, aby wziąć udział w tym wyścigu, gdy jest on wyposażony."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Domyślny przepis na parzenie",
+            "base": "minecraft:potion{Potion:'xat:sparkling'}",
+            "catalyst": "minecraft:leather",
+            "result": "minecraft:potion{Potion:'xat:goblin'}"
+        }
+    ]
+}

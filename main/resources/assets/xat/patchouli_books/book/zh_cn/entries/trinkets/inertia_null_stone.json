@@ -1,16 +1,17 @@
 {
-    "name": "零惯性之石",
+    "name": "惯性归零之石",
     "icon": "xat:inertia_null_stone",
     "category": "trinkets",
     "pages": [
         {
             "type": "text",
-            "text": "零惯性之石使它的装备者获得摔落伤害和击退免疫。它被用于制作巨惯性之石。"
+            "text": "惯性石无效可以阻止坠落伤害和击退。$(br2)它也可用于制作更大惯性石。"
         },
-		{
+        {
             "type": "crafting",
-            "text": "$(o)Me: Mom, can we have Cobalt Shield?$(br2)Mom: We have Cobalt Shield at home.$(br2)Cobalt Shield at home:",
-			"recipe": "xat:inertia_null_stone"
+            "recipe": "xat:inertia_null_stone",
+            "text": "制作"
         }
-    ]
+    ],
+    "sortnum": 40
 }

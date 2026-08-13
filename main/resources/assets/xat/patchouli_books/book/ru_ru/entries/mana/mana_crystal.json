@@ -1,0 +1,17 @@
+{
+    "name": "Кристалл маны",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 3,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Съешьте кристалл маны, чтобы навсегда повысить максимальный запас маны."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_crystal",
+            "text": "Создание кристалла маны"
+        }
+    ]
+}

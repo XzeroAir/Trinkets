@@ -1,0 +1,17 @@
+{
+    "name": "Ядовитый камень",
+    "icon": "xat:poison_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Ядовитый камень защищает вас от яда.$(br2)Ваши атаки могут отравлять врагов, а отравленные цели получают от вас более сильные удары."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:poison_stone",
+            "text": "Крафт"
+        }
+    ],
+    "sortnum": 80
+}

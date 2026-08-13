@@ -1,0 +1,29 @@
+{
+    "name": "Hada",
+    "icon": "xat:textures/potions/fairy.png",
+    "category": "races",
+    "sortnum": 20,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Las hadas son pequeños viajeros del aire libre y de lugares escondidos.$(br2)Pueden volar, trepar e invocar a Mending Bloom."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_dew",
+            "text": "Esta receta te transforma permanentemente en un Hada."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:fairy_ring",
+            "text": "Usa el anillo de hadas para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glowing'}",
+            "catalyst": "minecraft:ghast_tear",
+            "result": "minecraft:potion{Potion:'xat:fairy'}"
+        }
+    ]
+}

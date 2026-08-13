@@ -11,6 +11,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.OreDictionaryCompat;
 import xzeroair.trinkets.util.helpers.ColorHelper;
@@ -78,7 +79,7 @@ public class ConfigHelper {
         boolean isAttribute = false;
         if (!arg1.isEmpty()) {
             if (arg1.matches(attributeRegex)) {
-                attribute = arg1;
+                attribute = normalizeAttributeName(arg1);
                 if (!arg2.isEmpty() && arg2.matches(amountRegex)) {
                     try {
                         amount = Double.parseDouble(arg2.replace("+", ""));
@@ -104,6 +105,24 @@ public class ConfigHelper {
         return isAttribute && !attribute.isEmpty() && (amount != 0.0) ? new ConfigHelper.AttributeEntry(attribute, amount, op, saved) : NULL_ENTRY;
     }
 
+    private static String normalizeAttributeName(String attribute) {
+        if (attribute == null) {
+            return "";
+        }
+        switch (attribute) {
+            case "magic.regen.cooldown":
+                return Reference.MODID + ".entityMagic.regen.cooldown";
+            case "magic.regen":
+                return Reference.MODID + ".entityMagic.regen";
+            case "magic.maxMana":
+                return Reference.MODID + ".entityMagic.maxMana";
+            case "magic.affinity":
+                return Reference.MODID + ".entityMagic.affinity";
+            default:
+                return attribute;
+        }
+    }
+
     private static <T> T continueCommand(String string, Function<String, T> func) {
         return func.apply(string);
     }
@@ -115,6 +134,7 @@ public class ConfigHelper {
     public static class TrinketConfigStorage {
 
         public static TreeMap<String, MPRecoveryItem> MagicRecoveryItems = new TreeMap();
+        public static TreeMap<String, MPRecoveryItem> WildcardMagicRecoveryItems = new TreeMap();
         public static LinkedHashMap<String, ConfigEquipmentObject> ArmorWeightValues = new LinkedHashMap();
         public static LinkedHashMap<String, ConfigEquipmentObject> BareHandedItems = new LinkedHashMap();
         public static LinkedHashMap<String, ConfigEquipmentObject> BowWeights = new LinkedHashMap();
@@ -241,16 +261,50 @@ public class ConfigHelper {
         }
 
         public static void initRecoveryItems() {
-            if (!MagicRecoveryItems.isEmpty()) {
-                MagicRecoveryItems.clear();
-            }
+            MagicRecoveryItems.clear();
+            WildcardMagicRecoveryItems.clear();
             final String[] recovery = TrinketsConfig.SERVER.MAGIC.recovery;
             for (String entry : recovery) {
                 final MPRecoveryItem recoveryItem = new MPRecoveryItem(entry);
-                if (!recoveryItem.isEmpty()) {
-                    MagicRecoveryItems.put(recoveryItem.getObjectRegistryName(), recoveryItem);
+                if (recoveryItem.isEmpty()) {
+                    continue;
+                }
+                final TreeMap<String, MPRecoveryItem> recoveryItems;
+                if (recoveryItem.hasWildcardIdentifier()) {
+                    if (recoveryItem.isGlobalWildcardIdentifier() || (recoveryItem.getMeta() != OreDictionaryCompat.wildcard)) {
+                        Trinkets.LOGGER.error("Invalid Mana recovery wildcard entry: " + recoveryItem.getOriginalEntry());
+                        continue;
+                    }
+                    recoveryItems = WildcardMagicRecoveryItems;
+                } else {
+                    recoveryItems = MagicRecoveryItems;
+                }
+                final String key = recoveryItem.getObjectRegistryName() + ";" + recoveryItem.getMeta();
+                final MPRecoveryItem replacedItem = recoveryItems.put(key, recoveryItem);
+                if (replacedItem != null) {
+                    Trinkets.LOGGER.warn("Duplicate Mana recovery rule for {}. Replacing {} with {}.", key, replacedItem.getOriginalEntry(), recoveryItem.getOriginalEntry());
                 }
             }
+        }
+
+        public static MPRecoveryItem getRecoveryItem(ItemStack stack) {
+            if ((stack == null) || stack.isEmpty()) {
+                return null;
+            }
+            final String itemID = stack.getItem().getRegistryName().toString();
+            MPRecoveryItem recoveryItem = MagicRecoveryItems.get(itemID + ";" + stack.getMetadata());
+            if (recoveryItem == null) {
+                recoveryItem = MagicRecoveryItems.get(itemID + ";" + OreDictionaryCompat.wildcard);
+            }
+            if (recoveryItem != null) {
+                return recoveryItem;
+            }
+            for (MPRecoveryItem wildcardItem : WildcardMagicRecoveryItems.values()) {
+                if (wildcardItem.doesItemMatchEntry(stack)) {
+                    return wildcardItem;
+                }
+            }
+            return null;
         }
 
     }
@@ -361,6 +415,8 @@ public class ConfigHelper {
 
     public static class MPRecoveryItem extends ConfigObject {
 
+        private static final float MANA_AMOUNT_STEP = 0.05F;
+
         protected float amount;
         protected boolean multiplied;
 
@@ -377,7 +433,14 @@ public class ConfigHelper {
                 }
                 Amount = Amount.replace("%", "");
                 try {
-                    this.amount = Float.parseFloat(Amount);
+                    final float configuredAmount = Float.parseFloat(Amount);
+                    if (Float.isFinite(configuredAmount)) {
+                        final float normalizedMagnitude = Math.round(Math.abs(configuredAmount) / MANA_AMOUNT_STEP) * MANA_AMOUNT_STEP;
+                        this.amount = configuredAmount < 0F ? -normalizedMagnitude : normalizedMagnitude;
+                    } else {
+                        Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
+                        this.amount = 0;
+                    }
                 } catch (Exception e) {
                     Trinkets.LOGGER.error("Invalid format for entry: " + this.getOriginalEntry());
                     e.printStackTrace();
@@ -739,6 +802,14 @@ public class ConfigHelper {
 
         public final int getMeta() {
             return this.meta;
+        }
+
+        public final boolean hasWildcardIdentifier() {
+            return this.getModID().contains("*") || this.getObjectID().contains("*");
+        }
+
+        public final boolean isGlobalWildcardIdentifier() {
+            return this.getModID().equals("*") && this.getObjectID().equals("*");
         }
 
         public final EntryType getObjectType() {

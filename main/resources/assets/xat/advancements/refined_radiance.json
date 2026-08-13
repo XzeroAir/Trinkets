@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "xat:glowing_ingot"
+    },
+    "title": {
+      "translate": "advancement.xat.refined_radiance"
+    },
+    "description": {
+      "translate": "advancement.xat.refined_radiance.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "glowing_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "xat:glowing_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "glowing_ingot"
+    ]
+  ]
+}

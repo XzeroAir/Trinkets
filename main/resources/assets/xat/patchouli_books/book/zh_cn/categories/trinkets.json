@@ -1,6 +1,6 @@
 {
-	"name": "饰品",
-	"description": "模组的核心。本节专门介绍可能改变游戏玩法的可穿戴物品。",
-	"icon": "xat:textures/items/glow_ring.png",
-	"sortnum": 2
+    "name": "Trinkets",
+    "description": "发现能为持有者带来一点额外力量的工具、石头、戒指和装饰品。",
+    "icon": "xat:glow_ring",
+    "sortnum": 3
 }

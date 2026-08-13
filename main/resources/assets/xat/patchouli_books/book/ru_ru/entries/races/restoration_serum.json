@@ -1,0 +1,13 @@
+{
+    "name": "Сыворотка восстановления",
+    "icon": "xat:restoration_serum",
+    "category": "races",
+    "pages": [
+        {
+            "type": "crafting",
+            "recipe": "xat:restoration_serum",
+            "text": "Выпейте восстанавливающую сыворотку, чтобы вернуться в первоначальную форму."
+        }
+    ],
+    "sortnum": 100
+}

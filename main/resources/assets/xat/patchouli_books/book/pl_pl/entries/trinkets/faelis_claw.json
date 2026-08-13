@@ -1,0 +1,17 @@
+{
+    "name": "Szpon Faelis",
+    "icon": "xat:faelis_claw",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Faelis Pazury sprawiają, że twoje ataki wręcz pobierają krew.$(br2)Krwawienie trwa dłużej, gdy jest dzierżone przez Faelis."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:faelis_claw",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 140
+}

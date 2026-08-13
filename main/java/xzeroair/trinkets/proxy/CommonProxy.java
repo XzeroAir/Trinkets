@@ -66,6 +66,7 @@ public class CommonProxy implements IGuiHandler {
         MinecraftForge.EVENT_BUS.register(new MovementHandler());
 
         MinecraftForge.EVENT_BUS.register(new BlockBreakEvents());
+        MinecraftForge.EVENT_BUS.register(new GuideAdvancementHandler());
 
         if (Trinkets.MOD_COMPAT.Baubles && !TrinketsConfig.SERVER.GUI.TRINKETS_CONTAINER_ALLOW_BAUBLES) {
             MinecraftForge.EVENT_BUS.register(new BaubleEventHandler());

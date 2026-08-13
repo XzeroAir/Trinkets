@@ -11,7 +11,6 @@ import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
-import xzeroair.trinkets.util.handlers.SizeHandler;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
 
 public class EmptyHandler extends EntityRacePropertiesHandler {
@@ -53,7 +52,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
     public void onTick() {
         if (this.getEntity() instanceof EntityPlayer) {
             if (this.isTransforming()) {
-                SizeHandler.setSizeForEntity(this.getEntity(), this.getHeight(), this.getWidth());
+                this.applyAdjustedSize();
                 this.updateSize();
                 this.addNewAttributes();
                 this.modifyEyeHeight();

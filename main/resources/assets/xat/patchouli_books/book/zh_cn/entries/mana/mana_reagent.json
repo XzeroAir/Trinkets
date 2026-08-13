@@ -1,0 +1,17 @@
+{
+    "name": "法力试剂",
+    "icon": "xat:mana_reagent",
+    "category": "mana",
+    "sortnum": 5,
+    "pages": [
+        {
+            "type": "text",
+            "text": "吃法力试剂会永久降低最大法力。$(br2)它也用于高级配方，包括火花粉和恢复精华液。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_reagent",
+            "text": "制作法力试剂"
+        }
+    ]
+}

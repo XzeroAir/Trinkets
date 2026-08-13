@@ -1,0 +1,29 @@
+{
+    "name": "Elfo",
+    "icon": "xat:textures/potions/elf.png",
+    "category": "races",
+    "sortnum": 60,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los elfos son arqueros pacientes y vagabundos del bosque.$(br2)Su disparo de arco cargado convierte un arco completamente tensado en una explosión alimentada por maná."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_sap",
+            "text": "Esta receta te transforma permanentemente en un elfo."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:elf_ring",
+            "text": "Usa el Anillo de Elfo para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:leaves",
+            "result": "minecraft:potion{Potion:'xat:elf'}"
+        }
+    ]
+}

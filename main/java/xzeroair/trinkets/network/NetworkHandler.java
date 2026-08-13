@@ -10,7 +10,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import xzeroair.trinkets.network.configsync.PacketConfigSync;
 import xzeroair.trinkets.network.keybinds.KeybindPacket;
-import xzeroair.trinkets.network.keybinds.MovementKeyPacket;
 import xzeroair.trinkets.network.mana.SyncManaCostToHudPacket;
 import xzeroair.trinkets.network.mana.SyncManaStatsPacket;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
@@ -42,8 +41,7 @@ public class NetworkHandler extends BasicNetworkWrapper {
         this.registerPacketClient(SyncManaCostToHudPacket.class);
 
         // KEY BINDS
-        this.registerPacketServer(KeybindPacket.class);
-        this.registerPacketServer(MovementKeyPacket.class);
+        this.registerPacket(KeybindPacket.class);
 
         this.registerPacketServer(IncreasedReachPacket.class);
 

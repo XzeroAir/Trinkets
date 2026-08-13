@@ -5,7 +5,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.IToggleAbility;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 
@@ -31,25 +30,26 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void SplashEvent(team.creative.enhancedvisuals.api.event.SplashEvent event) {
-
+        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+            if (hasEnabledAbility(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_SPLASH)) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     @SubscribeEvent
     public void VisualExplosionEvent(team.creative.enhancedvisuals.api.event.VisualExplosionEvent event) {
         if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
-            if (Capabilities.getEntityProperties(mc.player, false, (prop, rtn) -> {
-                IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR);
-                if (ability != null) {
-                    if (ability instanceof IToggleAbility) {
-                        return ((IToggleAbility) ability).isAbilityToggled();
-                    }
-                    return true;
-                } else {
-                    return rtn;
-                }
-            })) {
+            if (hasEnabledAbility(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR)) {
                 event.setCanceled(true);
             }
         }
+    }
+
+    private boolean hasEnabledAbility(String abilityName) {
+        return Capabilities.getEntityProperties(mc.player, false, (prop, rtn) -> {
+            IAbilityInterface ability = prop.getAbilityHandler().getAbility(Reference.MODID + ":" + abilityName);
+            return ability != null && ability.isAbilityEnabled();
+        });
     }
 }

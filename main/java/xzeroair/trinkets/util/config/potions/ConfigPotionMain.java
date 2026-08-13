@@ -16,6 +16,16 @@ public class ConfigPotionMain {
     @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_SURVIVAL_WATER)
     public boolean THIRST = true;
 
+    @Config.Name(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_ICE_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_ICE_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_ICE)
+    public PotionConfig ICE_RESISTANCE = new PotionConfig("minecraft:snow", 3600);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_LIGHTNING_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_LIGHTNING_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_RESISTANCE_LIGHTNING)
+    public PotionConfig LIGHTNING_RESISTANCE = new PotionConfig("xat:spark_powder", 3600);
+
     @Config.Name(ConstantsConfigLang.CONFIG_POTIONS_RACE_HUMAN_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_POTIONS_RACE_HUMAN_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_POTIONS_RACE_HUMAN)

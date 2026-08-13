@@ -300,6 +300,15 @@ public class RayTraceHelper {
             this.calculate();
         }
 
+        public Beam(World world, EntityLivingBase source, Vec3d start, Vec3d lookVec, double maxDist, boolean canBreak) {
+            this.world = world;
+            this.player = source;
+            this.maxDist = maxDist;
+            this.accuracy = 0.0D;
+            this.canBreak = canBreak;
+            this.calculate(start, lookVec);
+        }
+
         private void calculate() {
             final float prevYaw = this.player.rotationYaw;
             final float prevPitch = this.player.rotationPitch;
@@ -326,6 +335,21 @@ public class RayTraceHelper {
                     //							}
                     //						}
                     //					}
+                    this.dist = result.hitVec.distanceTo(this.start);
+                    this.end = this.start.add(this.lookVec.x * this.dist, this.lookVec.y * this.dist, this.lookVec.z * this.dist);
+                }
+            }
+        }
+
+        private void calculate(Vec3d start, Vec3d lookVec) {
+            this.start = start;
+            this.lookVec = lookVec.normalize();
+            this.end = this.start.add(this.lookVec.x * this.maxDist, this.lookVec.y * this.maxDist, this.lookVec.z * this.maxDist);
+            final RayTraceResult result = this.world.rayTraceBlocks(this.start, this.end);
+            this.dist = this.maxDist;
+            if ((result != null) && (result.typeOfHit == Type.BLOCK)) {
+                final BlockPos pos = result.getBlockPos();
+                if (this.world.getBlockState(pos).getCollisionBoundingBox(this.world, pos) != Block.NULL_AABB) {
                     this.dist = result.hitVec.distanceTo(this.start);
                     this.end = this.start.add(this.lookVec.x * this.dist, this.lookVec.y * this.dist, this.lookVec.z * this.dist);
                 }

@@ -1,0 +1,13 @@
+{
+    "name": "Suero de restauración",
+    "icon": "xat:restoration_serum",
+    "category": "races",
+    "pages": [
+        {
+            "type": "crafting",
+            "recipe": "xat:restoration_serum",
+            "text": "Beba un suero de restauración para volver a su forma original."
+        }
+    ],
+    "sortnum": 100
+}

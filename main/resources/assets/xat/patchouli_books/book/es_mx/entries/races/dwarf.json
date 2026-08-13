@@ -1,0 +1,29 @@
+{
+    "name": "Enano",
+    "icon": "xat:textures/potions/dwarf.png",
+    "category": "races",
+    "sortnum": 10,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los enanos se sienten como en casa debajo de la piedra.$(br2)Su habilidad Minero experto les ayuda a abrirse camino a través de las profundidades."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_stout",
+            "text": "Esta receta te transforma permanentemente en un enano."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:dwarf_ring",
+            "text": "Usa el Anillo Enano para participar en esta carrera mientras esté equipado."
+        },
+        {
+            "type": "default_brewing",
+            "title": "Receta de elaboración de cerveza predeterminada",
+            "base": "minecraft:potion{Potion:'xat:glittering'}",
+            "catalyst": "minecraft:iron_block",
+            "result": "minecraft:potion{Potion:'xat:dwarf'}"
+        }
+    ]
+}

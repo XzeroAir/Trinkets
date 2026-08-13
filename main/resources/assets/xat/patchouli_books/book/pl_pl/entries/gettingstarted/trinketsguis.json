@@ -1,0 +1,12 @@
+{
+    "name": "Trinkets Container",
+    "icon": "xat:textures/gui/patchouli_textures/trinkets_container_button.png",
+    "category": "gettingstarted",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Otwórz swój ekwipunek i użyj Trinkets button w lewym górnym obszarze, aby odsłonić Trinkets Container.$(br2)Umieść bibelot w odpowiednim miejscu, aby go wyposażyć."
+        }
+    ],
+    "sortnum": 1
+}

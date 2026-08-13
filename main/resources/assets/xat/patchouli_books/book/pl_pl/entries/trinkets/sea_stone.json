@@ -1,0 +1,17 @@
+{
+    "name": "Kamień Morza",
+    "icon": "xat:sea_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Kamień Morza pozwala ci swobodnie oddychać i kopać pod wodą.$(br2)Umożliwia także kontrolowane trójwymiarowe pływanie: korzystaj z ruchu, skacz i zakradaj się, aby sterować wodą."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:sea_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 70
+}

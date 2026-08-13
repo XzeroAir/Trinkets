@@ -1,0 +1,17 @@
+{
+    "name": "Moon Rose",
+    "icon": "xat:moon_rose",
+    "category": "mana",
+    "sortnum": 4,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Place a Moon Rose on grass, dirt, or farmland.$(br2)Sneak near it to draw on its essence and gradually raise your maximum mana.$(br2)Give each plant room to work."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:moon_rose",
+            "text": "Crafting a Moon Rose"
+        }
+    ]
+}

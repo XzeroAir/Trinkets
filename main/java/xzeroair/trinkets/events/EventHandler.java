@@ -29,6 +29,7 @@ import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.traits.abilities.interfaces.IInteractionAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IItemUseAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.IPotionAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -144,16 +145,12 @@ public class EventHandler extends EventBaseHandler {
             final EntityPlayer player = (EntityPlayer) entity;
             final boolean client = player.world.isRemote;
             Capabilities.getEntityProperties(player, prop -> {
-                if (!prop.isNormalSize()) {
-                    if ((event.getSound() == SoundEvents.BLOCK_STONE_STEP) || (event.getSound() == SoundEvents.BLOCK_GRASS_STEP) || (event.getSound() == SoundEvents.BLOCK_CLOTH_STEP) || (event.getSound() == SoundEvents.BLOCK_WOOD_STEP) || (event.getSound() == SoundEvents.BLOCK_GRAVEL_STEP) || (event.getSound() == SoundEvents.BLOCK_SNOW_STEP) || (event.getSound() == SoundEvents.BLOCK_GLASS_STEP) || (event.getSound() == SoundEvents.BLOCK_METAL_STEP) || (event.getSound() == SoundEvents.BLOCK_ANVIL_STEP) || (event.getSound() == SoundEvents.BLOCK_LADDER_STEP) || (event.getSound() == SoundEvents.BLOCK_SLIME_STEP)) {
-                        if (!client) {
-                            if (!event.getEntity().isSprinting()) {
-                                event.setVolume(0.0F);
-                            } else {
-                                event.setVolume(0.1F);
-                            }
-                        }
-                    }
+                final boolean stepSound = (event.getSound() == SoundEvents.BLOCK_STONE_STEP) || (event.getSound() == SoundEvents.BLOCK_GRASS_STEP) || (event.getSound() == SoundEvents.BLOCK_CLOTH_STEP) || (event.getSound() == SoundEvents.BLOCK_WOOD_STEP) || (event.getSound() == SoundEvents.BLOCK_GRAVEL_STEP) || (event.getSound() == SoundEvents.BLOCK_SNOW_STEP) || (event.getSound() == SoundEvents.BLOCK_GLASS_STEP) || (event.getSound() == SoundEvents.BLOCK_METAL_STEP) || (event.getSound() == SoundEvents.BLOCK_ANVIL_STEP) || (event.getSound() == SoundEvents.BLOCK_LADDER_STEP) || (event.getSound() == SoundEvents.BLOCK_SLIME_STEP);
+                if (client || prop.isNormalSize() || !stepSound) {
+                    return;
+                }
+                if (prop.isGrounded() && prop.getHorizontalSpeed() <= 1.0E-5D) {
+                    event.setVolume(0.0F);
                 }
             });
         }
@@ -307,19 +304,20 @@ public class EventHandler extends EventBaseHandler {
 
     @SubscribeEvent
     public void playerRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        //		Capabilities.getEntityProperties(event.getEntityLiving(), prop -> {
-        //			for (final IAbilityInterface ability : prop.getAbilityHandler().getAbilitiesList()) {
-        //				try {
-        //					final IAbilityHandler handler = prop.getAbilityHandler().getAbilityInstance(ability);
-        //					if ((handler != null) && (handler instanceof IInteractionAbility)) {
-        //						((IInteractionAbility) handler).rightClickWithItem(event.getEntityLiving(), event.getWorld(), event.getItemStack(), event.getHand(), event.getFace(), event.getPos());
-        //					}
-        //				} catch (final Exception e) {
-        //					Trinkets.log.error("Trinkets had an Error with Potion Ability:" + ability.getRegistryID());
-        //					e.printStackTrace();
-        //				}
-        //			}
-        //		});
+        final EntityLivingBase entity = event.getEntityLiving();
+        Capabilities.getEntityProperties(entity, prop -> {
+            for (Entry<String, AbilityHolder> entry : prop.getAbilityHandler().getActiveAbilities().entrySet()) {
+                try {
+                    final IAbilityInterface ability = entry.getValue().getAbility();
+                    if (ability instanceof IInteractionAbility) {
+                        ((IInteractionAbility) ability).rightClickWithItem(entity, event.getWorld(), event.getItemStack(), event.getHand(), event.getFace(), event.getPos());
+                    }
+                } catch (final Exception e) {
+                    Trinkets.LOGGER.error("Trinkets had an Error with Interaction Ability:{}", entry.getKey());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @SubscribeEvent
@@ -497,41 +495,24 @@ public class EventHandler extends EventBaseHandler {
                 e.printStackTrace();
             }
         });
-        if (TrinketsConfig.SERVER.MAGIC.mana_enabled) {
-            try {
-                Map<String, MPRecoveryItem> MagicRecoveryItems = ConfigHelper.TrinketConfigStorage.MagicRecoveryItems;
-                float amount = 0;
-                boolean multiplied = false;
-                for (MPRecoveryItem entry : MagicRecoveryItems.values()) {
-                    if (entry.doesItemMatchEntry(stack)) {
-                        amount = entry.getAmount();
-                        multiplied = entry.isMultiplied();
-                        break;
-                    }
-                }
-                final float finalAmount = amount;
-                final boolean finalMultiplied = multiplied;
-                if ((finalAmount > 0) || (finalAmount < 0)) {
-                    Capabilities.getMagicStats(entity, magic -> {
-                        if (finalAmount > 0) {
-                            if (finalMultiplied) {
-                                magic.addMana(magic.getMaxMana() * (finalAmount * 0.01F));
-                            } else {
-                                magic.addMana(finalAmount);
-                            }
-                        } else {
-                            if (finalMultiplied) {
-                                magic.spendMana(magic.getMaxMana() * (finalAmount * 0.01F));
-                            } else {
-                                magic.spendMana(finalAmount);
-                            }
-                        }
-                    });
-                }
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+        this.applyRecoveryItem(entity, stack, duration);
+    }
+
+    private void applyRecoveryItem(Entity entity, ItemStack stack, int duration) {
+        if (entity.world.isRemote || !TrinketsConfig.SERVER.MAGIC.mana_enabled) {
+            return;
         }
+        Capabilities.getMagicStats(entity, magic -> {
+            final MPRecoveryItem recoveryItem = ConfigHelper.TrinketConfigStorage.getRecoveryItem(stack);
+            if ((recoveryItem != null) && (recoveryItem.getAmount() != 0F)) {
+                final float manaAdjustment = recoveryItem.isMultiplied()
+                        ? magic.getMaxMana() * (recoveryItem.getAmount() * 0.01F)
+                        : recoveryItem.getAmount();
+                if (manaAdjustment != 0F) {
+                    magic.addMana(manaAdjustment);
+                }
+            }
+        });
     }
 
     //	@SubscribeEvent // Server only?

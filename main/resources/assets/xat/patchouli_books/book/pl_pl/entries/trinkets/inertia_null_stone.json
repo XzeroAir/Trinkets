@@ -1,0 +1,17 @@
+{
+    "name": "Kamień Zerowej Inercji",
+    "icon": "xat:inertia_null_stone",
+    "category": "trinkets",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Kamień Bezwładności Null zatrzymuje obrażenia od upadku i odrzut.$(br2)Jest również używany do wytworzenia Kamienia Większej Bezwładności."
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:inertia_null_stone",
+            "text": "Rzemiosło"
+        }
+    ],
+    "sortnum": 40
+}

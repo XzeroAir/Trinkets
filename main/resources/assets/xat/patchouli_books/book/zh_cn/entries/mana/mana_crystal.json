@@ -1,0 +1,17 @@
+{
+    "name": "法力水晶",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 3,
+    "pages": [
+        {
+            "type": "text",
+            "text": "吃法力水晶可以永久提高你的最大法力值。"
+        },
+        {
+            "type": "crafting",
+            "recipe": "xat:mana_crystal",
+            "text": "制作法力水晶"
+        }
+    ]
+}

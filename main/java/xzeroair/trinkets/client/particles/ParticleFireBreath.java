@@ -55,7 +55,7 @@ public class ParticleFireBreath extends ParticleFlame {
             final int width = 16;
             final int height = 16;
             final float tileWidth = 1F / 256;
-            final float tileHeight = 1F / 256;
+            final float tileHeight = 1F / 32;
             final int x = i < 16 ? i * 16 : (i + 1) * 16;
             final int y = i < 16 ? 16 : 0;
 

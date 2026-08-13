@@ -1,0 +1,12 @@
+{
+    "name": "Altering Maximum Mana",
+    "icon": "xat:mana_crystal",
+    "category": "mana",
+    "sortnum": 1,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Your race and certain items can alter your maximum mana.$(br2)Eat $(l:mana/mana_crystal)Mana Crystals$(/l) for a permanent increase, or draw on the essence of nearby $(l:mana/moon_rose)Moon Roses$(/l) over time."
+        }
+    ]
+}

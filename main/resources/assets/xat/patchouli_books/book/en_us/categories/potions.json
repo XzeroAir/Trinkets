@@ -1,0 +1,6 @@
+{
+    "name": "Potions",
+    "description": "Learn the base potions used in alchemy, then brew protection against dangerous elemental attacks.",
+    "icon": "minecraft:potion{Potion:'xat:glowing'}",
+    "sortnum": 4
+}

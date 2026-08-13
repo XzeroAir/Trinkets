@@ -73,7 +73,7 @@ public class AbilityCreativeFlight extends Ability implements ITickableAbility, 
     public float breakingBlock(EntityLivingBase entity, IBlockState state, BlockPos pos, float originalSpeed, float newSpeed) {
         if (!entity.isInsideOfMaterial(Material.WATER)) {
             float speed = originalSpeed;
-            if (!entity.onGround) {
+            if (!this.getAbilityHolder().getHandler().getParentProperties().isGrounded()) {
                 speed *= 5F;
             }
             if (newSpeed < speed) {

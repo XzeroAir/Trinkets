@@ -1,0 +1,16 @@
+{
+    "name": "Wprowadzenie do Many",
+    "icon": "xat:textures/gui/patchouli_textures/mana_icon.png",
+    "category": "mana",
+    "sortnum": 0,
+    "pages": [
+        {
+            "type": "text",
+            "text": "Mana to energia, która zasila niektóre bibeloty i zdolności rasowe.$(br2)Uzupełnia się z czasem, więc używaj potężnych efektów ostrożnie."
+        },
+        {
+            "type": "text",
+            "text": "Mana odpowiada intencji. Dzięki wiedzy i praktyce można ją przekształcić w potężne efekty.$(br2)Użyj $(l:mana/mana_candy)Cukierków Many$(/l), aby odzyskać manę, lub przeczytaj $(l:mana/altering_maximum_mana)Zmienianie maksymalnej many$(/l), aby dowiedzieć się, jak zwiększyć swoje rezerwy."
+        }
+    ]
+}

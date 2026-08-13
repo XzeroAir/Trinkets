@@ -3,8 +3,6 @@ package xzeroair.trinkets.events;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -45,9 +43,6 @@ public class MovementHandler extends EventBaseHandler {
             }
             double jumpHeight = jump.getAttributeValue();
 
-            if (entity.isPotionActive(MobEffects.JUMP_BOOST)) {
-                jumpHeight -= entity.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1;
-            }
             double jumpVelocity = 0.42D * jumpHeight;
             entity.motionY += (jumpVelocity - 0.42D);
 
@@ -97,9 +92,6 @@ public class MovementHandler extends EventBaseHandler {
         final IAttributeInstance jump = entity.getAttributeMap().getAttributeInstance(JumpAttribute.Jump);
         if ((jump != null) && !jump.getModifiers().isEmpty()) {
             double jumpHeight = jump.getAttributeValue();
-            PotionEffect potioneffect = entity.getActivePotionEffect(MobEffects.JUMP_BOOST);
-            float jumpboost = potioneffect == null ? 0.0F : (float) (potioneffect.getAmplifier() + 1);
-            jumpHeight -= jumpboost;
             jumpHeight = StringUtils.getAccurateDouble(jumpHeight);
 
             if (jumpHeight > 0.0D) {

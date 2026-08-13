@@ -1,6 +1,6 @@
 {
-	"name": "Trinkets",
-	"description": "The core of the mod. This section is dedicated to the wearable items which have the potential to alter gameplay.",
-	"icon": "xat:textures/items/glow_ring.png",
-	"sortnum": 2
+    "name": "Trinkets",
+    "description": "Discover the tools, stones, rings, and ornaments that lend a little extra power to their bearer.",
+    "icon": "xat:glow_ring",
+    "sortnum": 3
 }

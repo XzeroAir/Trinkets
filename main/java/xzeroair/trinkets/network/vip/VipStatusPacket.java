@@ -38,7 +38,13 @@ public class VipStatusPacket extends ThreadSafePacket {
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
+        if ((clientPlayer == null) || (this.tag == null)) {
+            return;
+        }
         final World world = clientPlayer.getEntityWorld();
+        if (world == null) {
+            return;
+        }
         final Entity entity = world.getEntityByID(this.entityID);
         Capabilities.getVipStatus(entity, vip -> {
             vip.loadFromNBT(this.tag);

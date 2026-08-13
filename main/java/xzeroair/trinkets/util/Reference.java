@@ -7,7 +7,7 @@ public class Reference {
 
     public static final String MODID = "xat";
     public static final String NAME = "Trinkets and Baubles";
-    public static final String VERSION = "0.33.2";
+    public static final String VERSION = "0.33.3";
     public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,);after:baubles";
     public static final String acceptedMinecraftVersions = "";
     public static final String RESOURCE_PREFIX = MODID + ":";
@@ -17,7 +17,11 @@ public class Reference {
     public static final String GUIFACTORY = "xzeroair.trinkets.client.gui.TrinketsGuiFactory";
     public static final String FINGERPRINT = "@FINGERPRINT@";
 
-    public static final String VIP_LIST = "https://raw.githubusercontent.com/XzeroAir/AuxFiles/master/VipsV2.json";
+    /**
+     * V3 is the only VIP document read by current builds. V2 remains a compatibility
+     * output for older releases and must not be repurposed.
+     */
+    public static final String VIP_LIST = "https://raw.githubusercontent.com/XzeroAir/AuxFiles/master/VipsV3.json";
 
     public static final String filePath = "/trinkets/";
     public static final String configPath = filePath + "Trinkets_And_Baubles";
