@@ -59,7 +59,7 @@ public class RaceFaelis extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
         this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);

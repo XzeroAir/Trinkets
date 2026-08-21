@@ -20,7 +20,7 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
     }
 
     @Override

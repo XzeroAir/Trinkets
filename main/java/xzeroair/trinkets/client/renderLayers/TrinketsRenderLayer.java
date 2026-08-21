@@ -37,6 +37,9 @@ public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F, 1F);
             prop.getClientInfo().updateInfo(player, partialTicks);
+            if (TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_SHADOWS && this.renderer instanceof IRenderShadowSize) {
+                ((IRenderShadowSize) this.renderer).trinkets_setShadowSize(0.5F * (player.width / prop.getDefaultWidth()));
+            }
             prop.getRaceHandler().getRaceRenderer().doRenderLayer(player, this.renderer, prop.isFake(), this.isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
             GlStateManager.color(1F, 1F, 1F, 1F);
             GlStateManager.popMatrix();

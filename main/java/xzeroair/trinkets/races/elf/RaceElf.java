@@ -56,7 +56,7 @@ public class RaceElf extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilitySkilledArcher(this.CONFIG.ABILITIES.SKILLED_ARCHER));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }

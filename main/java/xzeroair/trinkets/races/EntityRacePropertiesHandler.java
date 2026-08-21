@@ -314,8 +314,12 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     }
 
     public void onTick() {
-        this.updateSize();
-        this.applyCurrentSize();
+        if (!TrinketsConfig.EXPERIMENTAL_MIXINS.VANILLA_PLAYER_SIZE_UPDATES) {
+            this.updateSize();
+            this.applyCurrentSize();
+        } else {
+            this.modifyEyeHeight();
+        }
         if (this.isTransforming()) {
             this.addNewAttributes();
             this.whileTranforming();

@@ -48,7 +48,7 @@ public class TrinketDamageShield extends AccessoryBase {
         if (FirstAidCompat.isModEnabled()) {
             abilities.add(new AbilityHardHead(this.CONFIG.ABILITIES.EXTERNAL.HARD_HEAD));
         }
-        if (EnhancedVisualsCompat.isModActive()) {
+        if (EnhancedVisualsCompat.isModEnabled()) {
             abilities.add(new AbilityEnhancedVisualsBlur(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
         }
     }

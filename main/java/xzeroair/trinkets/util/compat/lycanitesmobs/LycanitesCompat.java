@@ -44,7 +44,7 @@ public class LycanitesCompat {
     public static final TextComponentTranslation SMOULDERING = new TextComponentTranslation(LANG_DAMAGE_SMOULDERING);
     public static final TextComponentTranslation INSTABILITY = new TextComponentTranslation(LANG_DAMAGE_INSTABILITY);
 
-    public static boolean isModActive() {
+    public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.LycanitesMobs && TrinketsConfig.compat.LYCANITES_MOBS;
     }
 
@@ -132,7 +132,7 @@ public class LycanitesCompat {
     }
 
     public static void applyEffect(EntityLivingBase entity, String name, int duration, int amplifier) {
-        if (isModActive()) {
+        if (isModEnabled()) {
             try {
                 Potion effect = Potion.getPotionFromResourceLocation(MODID + ":" + name);
                 if ((effect != null) && !entity.isPotionActive(effect)) {
@@ -145,7 +145,7 @@ public class LycanitesCompat {
     }
 
     public static void removeEffect(EntityLivingBase entity, String name) {
-        if (isModActive()) {
+        if (isModEnabled()) {
             try {
                 Potion effect = Potion.getPotionFromResourceLocation(MODID + ":" + name);
                 if ((effect != null) && entity.isPotionActive(effect)) {
@@ -158,42 +158,42 @@ public class LycanitesCompat {
     }
 
     public static Potion getPotionByName(String name) {
-        if (isModActive()) {
+        if (isModEnabled()) {
             return PotionHelper.getModPotion(MODID, name);
         }
         return null;
     }
 
     public static boolean isWeight(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, weight);
+        return isModEnabled() && PotionHelper.isPotionEffect(effect, MODID, weight);
     }
 
     public static boolean isWeightLazy(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, weight);
+        return isModEnabled() && PotionHelper.isPotionEffectLazy(effect, MODID, weight);
     }
 
     public static boolean isSmouldering(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, smouldering);
+        return isModEnabled() && PotionHelper.isPotionEffect(effect, MODID, smouldering);
     }
 
     public static boolean isSmoulderingLazy(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, smouldering);
+        return isModEnabled() && PotionHelper.isPotionEffectLazy(effect, MODID, smouldering);
     }
 
     public static boolean isParalysis(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, paralysis);
+        return isModEnabled() && PotionHelper.isPotionEffect(effect, MODID, paralysis);
     }
 
     public static boolean isParalysisLazy(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, paralysis);
+        return isModEnabled() && PotionHelper.isPotionEffectLazy(effect, MODID, paralysis);
     }
 
     public static boolean isOozeDamage(DamageSource source) {
-        return isModActive() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_OOZE);
+        return isModEnabled() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_OOZE);
     }
 
     public static boolean isColdFireDamage(DamageSource source) {
-        return isModActive() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_COLD_FIRE);
+        return isModEnabled() && source != null && source.damageType.contentEquals(DAMAGE_TYPE_COLD_FIRE);
     }
 
     public static void convertManaToSpirit(EntityLivingBase entity) {

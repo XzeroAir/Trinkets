@@ -4,12 +4,16 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.RayTraceHelper;
 
 public class IncreasedReachPacket extends ThreadSafePacket {
 
@@ -68,14 +72,25 @@ public class IncreasedReachPacket extends ThreadSafePacket {
         final EntityPlayer player = server.player;
         final World world = player.getEntityWorld();
         final Entity interacted = world.getEntityByID(this.targetEntityID);
-        if (interacted != null) {
-            if (this.hand == 1) {
-                //				final EnumActionResult action = interacted.applyPlayerInteraction(player, new Vec3d(x, y, z), EnumHand.MAIN_HAND);
-                if (!interacted.processInitialInteract(player, EnumHand.OFF_HAND)) {
-                }
-            } else {
-                player.attackTargetEntityWithCurrentItem(interacted);
-            }
+        if (!this.isValidReachTarget(player, interacted)) {
+            return;
         }
+        if (this.hand == 1) {
+            interacted.processInitialInteract(player, EnumHand.OFF_HAND);
+        } else {
+            player.attackTargetEntityWithCurrentItem(interacted);
+        }
+    }
+
+    private boolean isValidReachTarget(EntityPlayer player, Entity target) {
+        if ((target == null) || (target == player)) {
+            return false;
+        }
+        final IAttributeInstance reach = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE);
+        if ((reach == null) || (reach.getAttributeValue() <= 5.0D)) {
+            return false;
+        }
+        final RayTraceResult result = RayTraceHelper.rayTrace(player, reach.getAttributeValue() * 0.8D);
+        return (result != null) && (result.typeOfHit == Type.ENTITY) && (result.entityHit == target);
     }
 }

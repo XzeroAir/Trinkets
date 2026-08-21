@@ -34,6 +34,22 @@ public class ConstantsConfigLang {
     public static final String CONFIG_SERVER_SETTINGS_NAME = "Server Settings";
     public static final String CONFIG_SERVER_SETTINGS_COMMENT = "";
 
+    public static final String CONFIG_EXPERIMENTAL_MIXINS = CONFIG + ".experimental_mixins";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_NAME = "Experimental Mixins";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_COMMENT = "Optional Mixin-based behavior changes. All options require a game restart.";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES = CONFIG_EXPERIMENTAL_MIXINS + ".vanilla_player_size_updates";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES_NAME = "Vanilla Player Size Updates";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES_COMMENT = "Let vanilla update player dimensions using Trinkets' race-adjusted width and height, including collision and bounding boxes. Requires restart.";
+
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_SHADOWS = CONFIG_EXPERIMENTAL_MIXINS + ".race_scaled_player_shadows";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_SHADOWS_NAME = "Race-Scaled Player Shadows";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_SHADOWS_COMMENT = "Scale player shadows to the current race-adjusted width. Requires restart.";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_CUSTOM_GLIDE_BODY_POSE = CONFIG_EXPERIMENTAL_MIXINS + ".custom_glide_body_pose";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_CUSTOM_GLIDE_BODY_POSE_NAME = "Custom Glide Body Pose";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_CUSTOM_GLIDE_BODY_POSE_COMMENT = "Use vanilla's Elytra body pose while Trinkets custom gliding. Requires restart.";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_FREEZE_LIMBS_WHILE_GLIDING = CONFIG_EXPERIMENTAL_MIXINS + ".freeze_limbs_while_gliding";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_FREEZE_LIMBS_WHILE_GLIDING_NAME = "Freeze Limbs While Gliding";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_FREEZE_LIMBS_WHILE_GLIDING_COMMENT = "Stop arm and leg walking animations while Trinkets custom gliding. Requires Custom Glide Body Pose. Requires restart.";
 
     public static final String REGISTRY = CONFIG + ".registry";
     public static final String REGISTRY_ENABLED = REGISTRY + ".enabled";

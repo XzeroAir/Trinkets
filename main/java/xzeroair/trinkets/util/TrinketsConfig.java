@@ -8,7 +8,7 @@ import net.minecraftforge.common.config.Configuration;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.config.ClientConfig;
 import xzeroair.trinkets.util.config.ClientConfigStore;
-
+import xzeroair.trinkets.util.config.ExperimentalMixinConfig;
 import xzeroair.trinkets.util.config.ServerConfig;
 import xzeroair.trinkets.util.config.compat.CompatibilityConfigs;
 import xzeroair.trinkets.util.helpers.NBTHelper;
@@ -31,6 +31,10 @@ public class TrinketsConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_SERVER_SETTINGS)
     public static ServerConfig SERVER = new ServerConfig();
 
+    @Config.Name(ConstantsConfigLang.CONFIG_EXPERIMENTAL_MIXINS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_EXPERIMENTAL_MIXINS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_EXPERIMENTAL_MIXINS)
+    public static ExperimentalMixinConfig EXPERIMENTAL_MIXINS = new ExperimentalMixinConfig();
 
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_COMMENT)

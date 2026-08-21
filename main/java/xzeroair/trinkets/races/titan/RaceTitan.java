@@ -42,7 +42,7 @@ public class RaceTitan extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilityLargeHands(this.CONFIG.ABILITIES.LARGE_HANDS));
         this.addAbility(new AbilityHeavy(this.CONFIG.ABILITIES.HEAVY));
     }

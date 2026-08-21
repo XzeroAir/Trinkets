@@ -5,8 +5,8 @@
     "1.12-recommended": "0.17",
     "1.12.1-latest": "0.17",
     "1.12.1-recommended": "0.17",
-    "1.12.2-latest": "0.33.4",
-    "1.12.2-recommended": "0.33.4"
+    "1.12.2-latest": "0.34",
+    "1.12.2-recommended": "0.34"
   },
   "1.12.2": {
     "0.17": "Added support for 1.12 and 1.12.1",
@@ -26,7 +26,7 @@
     "0.33.1": "Hotfix for SpartanWeaponry and minor improvements",
     "0.33.2": "Hotfix for permanent abilities. some other bug fixes, cleanup and tweaks",
     "0.33.3": "Added new Fairy racial ability, custom Elytra flight, compatibility and ability fixes.",
-    "0.33.4": "Fixed a Netty crash, added bugfixes and optimizations."
+    "0.34": "Added Mixins."
   },
   "1.12.1": {
     "0.17": "Added support for 1.12 and 1.12.1"

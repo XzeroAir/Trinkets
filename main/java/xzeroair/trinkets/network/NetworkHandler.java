@@ -31,7 +31,9 @@ public class NetworkHandler extends BasicNetworkWrapper {
      */
     public void init() {
         // PLAYER RACE
-        this.registerPacket(SyncRaceDataPacket.class);
+        this.registerPacketClient(SyncRaceDataPacket.class);
+        this.registerPacketServer(SelectRacePacket.class);
+        this.registerPacketServer(UpdateRaceProfilePacket.class);
 
         // ITEM DATA
         this.registerPacketClient(SyncItemDataPacket.class);
@@ -46,7 +48,7 @@ public class NetworkHandler extends BasicNetworkWrapper {
         this.registerPacketServer(IncreasedReachPacket.class);
 
         // PARTICLES
-        this.registerPacket(EffectsRenderPacket.class);
+        this.registerPacketClient(EffectsRenderPacket.class);
 
         // MISC
         this.registerPacketClient(VipStatusPacket.class);

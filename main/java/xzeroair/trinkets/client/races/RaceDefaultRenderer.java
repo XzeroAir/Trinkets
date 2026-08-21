@@ -10,15 +10,25 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.entity.AlphaWolf;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
+import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
+import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.TrinketsRegistryNames;
+import xzeroair.trinkets.util.compat.mobends.MoBendsCompat;
 
 public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H extends EntityRacePropertiesHandler> implements IRenderRaceHandler<T> {
 
     protected EntityLivingBase entity;
     protected int tick, lastTick = 0;
     protected H handler;
+    private float previousLimbSwingAmount;
+    private float limbSwingAmount;
+    private boolean limbSwingAmountModified;
 
     public RaceDefaultRenderer(EntityLivingBase entity, H raceHandler) {
         this.entity = entity;
@@ -37,6 +47,16 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
         final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if ((screen != null) && !((screen instanceof GuiChat) || screen instanceof GuiIngameMenu || (screen instanceof ITrinketGuiInterface))) {
             return;
+        }
+        boolean customGlide = false;
+        final IAbilityInterface ability = this.getHandler().getAbility(TrinketsRegistryNames.MODID + ":" + TrinketsRegistryNames.ModAbilities.ELYTRA_FLIGHT);
+        if (ability instanceof AbilityElytraFlight && ((AbilityElytraFlight) ability).isGliding()) {
+            customGlide = true;
+            this.previousLimbSwingAmount = entity.prevLimbSwingAmount;
+            this.limbSwingAmount = entity.limbSwingAmount;
+            this.limbSwingAmountModified = true;
+            entity.prevLimbSwingAmount = 0F;
+            entity.limbSwingAmount = 0F;
         }
         if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
             final double hScale = this.getHandler().getProperties().getHeightValue() * 0.01D;
@@ -65,6 +85,9 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
             }
             GlStateManager.translate(xLoc, yLoc, zLoc);
         }
+        if (customGlide) {
+            this.applyCustomGlidePose(entity, partialTick);
+        }
     }
 
     /*
@@ -72,6 +95,50 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
      */
     @Override
     public void doRenderPlayerPost(EntityPlayer entity, double x, double y, double z, RenderPlayer renderer, float partialTick) {
+        if (this.limbSwingAmountModified) {
+            entity.prevLimbSwingAmount = this.previousLimbSwingAmount;
+            entity.limbSwingAmount = this.limbSwingAmount;
+            this.limbSwingAmountModified = false;
+        }
+    }
+
+    private void applyCustomGlidePose(EntityPlayer entity, float partialTick) {
+        final float bodyYaw = this.getRenderBodyYaw(entity, partialTick);
+        final float vanillaRotation = 180F - bodyYaw;
+        final float glideTicks = Math.max(entity.getTicksElytraFlying(), 10) + partialTick;
+        final float glideProgress = MathHelper.clamp((glideTicks * glideTicks) / 100F, 0F, 1F);
+
+        GlStateManager.rotate(vanillaRotation, 0F, 1F, 0F);
+        GlStateManager.rotate(glideProgress * (-90F - entity.rotationPitch), 1F, 0F, 0F);
+
+        final Vec3d look = entity.getLook(partialTick);
+        final double horizontalSpeedSquared = (entity.motionX * entity.motionX) + (entity.motionZ * entity.motionZ);
+        final double horizontalLookSquared = (look.x * look.x) + (look.z * look.z);
+        if (horizontalSpeedSquared > 0D && horizontalLookSquared > 0D) {
+            final double facingMotion = ((entity.motionX * look.x) + (entity.motionZ * look.z)) / (Math.sqrt(horizontalSpeedSquared) * Math.sqrt(horizontalLookSquared));
+            final double strafeMotion = (entity.motionX * look.z) - (entity.motionZ * look.x);
+            GlStateManager.rotate((float) (Math.signum(strafeMotion) * Math.acos(facingMotion) * (180D / Math.PI)), 0F, 1F, 0F);
+        }
+        GlStateManager.rotate(-vanillaRotation, 0F, 1F, 0F);
+    }
+
+    private float getRenderBodyYaw(EntityPlayer entity, float partialTick) {
+        float bodyYaw = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTick);
+        final float headYaw = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTick);
+        if (entity.isRiding() && entity.getRidingEntity() instanceof EntityLivingBase) {
+            final EntityLivingBase mount = (EntityLivingBase) entity.getRidingEntity();
+            bodyYaw = this.interpolateRotation(mount.prevRenderYawOffset, mount.renderYawOffset, partialTick);
+            float headOffset = MathHelper.clamp(MathHelper.wrapDegrees(headYaw - bodyYaw), -85F, 85F);
+            bodyYaw = headYaw - headOffset;
+            if (headOffset * headOffset > 2500F) {
+                bodyYaw += headOffset * 0.2F;
+            }
+        }
+        return bodyYaw;
+    }
+
+    private float interpolateRotation(float previous, float current, float partialTick) {
+        return previous + (partialTick * MathHelper.wrapDegrees(current - previous));
     }
 
     /*

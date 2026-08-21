@@ -619,6 +619,17 @@ xat.config.server.tooltip=Server Configuration
 xat.config.server.settings=Server Settings
 xat.config.server.settings.tooltip=Settings for the Server
 
+xat.config.experimental_mixins=Experimental Mixins
+xat.config.experimental_mixins.tooltip=Optional Mixin-based behavior changes. All options require a game restart.
+xat.config.experimental_mixins.vanilla_player_size_updates=Vanilla Player Size Updates
+xat.config.experimental_mixins.vanilla_player_size_updates.tooltip=Let vanilla update player dimensions using Trinkets' race-adjusted width and height, including collision and bounding boxes. Requires restart.
+
+xat.config.experimental_mixins.race_scaled_player_shadows=Race-Scaled Player Shadows
+xat.config.experimental_mixins.race_scaled_player_shadows.tooltip=Scale player shadows to the current race-adjusted width. Requires restart.
+xat.config.experimental_mixins.custom_glide_body_pose=Custom Glide Body Pose
+xat.config.experimental_mixins.custom_glide_body_pose.tooltip=Use vanilla's Elytra body pose while Trinkets custom gliding. Requires restart.
+xat.config.experimental_mixins.freeze_limbs_while_gliding=Freeze Limbs While Gliding
+xat.config.experimental_mixins.freeze_limbs_while_gliding.tooltip=Stop arm and leg walking animations while Trinkets custom gliding. Requires Custom Glide Body Pose. Requires restart.
 
 xat.config.compat.ido_swimming=Ido Swimming Compatibility
 xat.config.compat.ido_swimming.tooltip=Let Ido control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Ido.

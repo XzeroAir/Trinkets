@@ -9,7 +9,7 @@ import xzeroair.trinkets.util.helpers.PotionHelper;
 
 public class IceAndFireCompat {
 
-    public static boolean isModActive() {
+    public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.IceAndFire && TrinketsConfig.getClientStore().MOD_COMPAT_ICE_AND_FIRE;
     }
 
@@ -26,26 +26,26 @@ public class IceAndFireCompat {
 
 
     public static Potion getPotionByName(String name) {
-        if (isModActive()) {
+        if (isModEnabled()) {
             return PotionHelper.getModPotion(MODID, name);
         }
         return null;
     }
 
     public static boolean isParalysis(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffect(effect, MODID, PARALYSIS);
+        return isModEnabled() && PotionHelper.isPotionEffect(effect, MODID, PARALYSIS);
     }
 
     public static boolean isParalysisLazy(final PotionEffect effect) {
-        return isModActive() && PotionHelper.isPotionEffectLazy(effect, MODID, PARALYSIS);
+        return isModEnabled() && PotionHelper.isPotionEffectLazy(effect, MODID, PARALYSIS);
     }
 
     public static boolean isDragonLightningDamage(DamageSource source) {
-        return isModActive() && source != null && source.damageType.contentEquals(DRAGON_BREATH_DAMAGE_TYPE_LIGHTNING);
+        return isModEnabled() && source != null && source.damageType.contentEquals(DRAGON_BREATH_DAMAGE_TYPE_LIGHTNING);
     }
 
     public static boolean isDragonIceDamage(DamageSource source) {
-        return isModActive() && source != null && source.damageType.contentEquals(DRAGON_BREATH_DAMAGE_TYPE_ICE);
+        return isModEnabled() && source != null && source.damageType.contentEquals(DRAGON_BREATH_DAMAGE_TYPE_ICE);
     }
 
 }

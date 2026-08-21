@@ -15,9 +15,9 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceResult.Type;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.events.ScreenOverlayEvents;
@@ -140,11 +140,10 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
 
                     }
                 }
-                if (Trinkets.proxy.getSide() == Side.CLIENT) {
-                    NetworkHandler.sendToServer(new EffectsRenderPacket(entity, start.x, start.y, start.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 1, 0.9F, 3F));
-                    NetworkHandler.sendToServer(new EffectsRenderPacket(entity, hitLoc.x, hitLoc.y, hitLoc.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 2, 0.9F, 3F));
-                }
                 if (!entity.getEntityWorld().isRemote) {
+                    final WorldServer world = (WorldServer) entity.getEntityWorld();
+                    NetworkHandler.sendToClients(world, entity.getPosition(), new EffectsRenderPacket(entity, start.x, start.y, start.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 1, 0.9F, 3F));
+                    NetworkHandler.sendToClients(world, new BlockPos(hitLoc), new EffectsRenderPacket(entity, hitLoc.x, hitLoc.y, hitLoc.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 2, 0.9F, 3F));
                     boolean pvpEnabled = false;
                     try {
                         if (entity instanceof EntityPlayerMP) {

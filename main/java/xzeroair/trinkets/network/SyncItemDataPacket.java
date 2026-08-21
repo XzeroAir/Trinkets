@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation.ItemHandlerType;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -79,108 +78,84 @@ public class SyncItemDataPacket extends ThreadSafePacket {
         }
     }
 
-    private void handlePacket(EntityLivingBase entity, Side side) {
-        try {
-            final ItemHandlerType typeHandler = ItemHandlerType.byID(this.handler);
-            if (typeHandler.equals(ItemHandlerType.TRINKETS)) {
-                try {
-                    this.handleTrinkets(entity, side);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (typeHandler.equals(ItemHandlerType.BAUBLES)) {
-                try {
-                    this.handleBaubles(entity, side);
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                if (entity instanceof EntityPlayer) {
-                    this.handlePlayerInventory((EntityPlayer) entity, side);
-                }
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
+    private void handlePacket(EntityLivingBase entity) {
+        final ItemHandlerType typeHandler = ItemHandlerType.byID(this.handler);
+        if (typeHandler.equals(ItemHandlerType.TRINKETS)) {
+            this.handleTrinkets(entity);
+        } else if (typeHandler.equals(ItemHandlerType.BAUBLES)) {
+            this.handleBaubles(entity);
+        } else if (entity instanceof EntityPlayer) {
+            this.handlePlayerInventory((EntityPlayer) entity);
         }
     }
 
-    private void handlePlayerInventory(final EntityPlayer player, final Side side) {
-        if (this.slot >= 0) {
-            ItemStack stack = player.inventory.getStackInSlot(this.slot);
-            if (!stack.isEmpty()) {
-                Capabilities.getTrinketProperties(stack, properties -> {
-                    if (side.isClient()) {
-                        properties.loadFromNBT(this.tag);
-                    } else {
-                        properties.sendInformationToTracking(player);
-                    }
-                });
-            }
+    private void handlePlayerInventory(final EntityPlayer player) {
+        if ((this.slot < 0) || (this.slot >= player.inventory.getSizeInventory())) {
+            return;
+        }
+        final ItemStack stack = player.inventory.getStackInSlot(this.slot);
+        if (!stack.isEmpty()) {
+            Capabilities.getTrinketProperties(stack, properties -> properties.loadFromNBT(this.tag));
         }
     }
 
-    private void handleTrinkets(final EntityLivingBase entity, final Side side) {
+    private void handleTrinkets(final EntityLivingBase entity) {
         TrinketHelper.getTrinketHandler(entity, trinkets -> {
-            if (this.equipped) {
-                if (this.syncStacks) {
-                    if ((this.item != null) && !this.item.isEmpty()) {
-                        trinkets.setStackInSlot(this.slot, this.item);
-                    }
-                }
-                final ItemStack stack = trinkets.getStackInSlot(this.slot);
-                Capabilities.getTrinketProperties(stack, properties -> {
-                    if (side.isClient()) {
-                        properties.itemEquipped(entity);
-                        properties.loadFromNBT(this.tag);
-                    } else {
-                        properties.scheduleResync();
-                    }
-                });
-            } else {
-                if (this.syncStacks) {
-                    trinkets.setStackInSlot(this.slot, ItemStack.EMPTY);
-                }
+            if ((this.slot < 0) || (this.slot >= trinkets.getSlots())) {
+                return;
             }
+            if (this.equipped && this.syncStacks && (this.item != null) && !this.item.isEmpty()) {
+                trinkets.setStackInSlot(this.slot, this.item);
+            } else if (!this.equipped && this.syncStacks) {
+                trinkets.setStackInSlot(this.slot, ItemStack.EMPTY);
+                return;
+            }
+            final ItemStack stack = trinkets.getStackInSlot(this.slot);
+            Capabilities.getTrinketProperties(stack, properties -> {
+                if (this.equipped) {
+                    properties.itemEquipped(entity);
+                    properties.loadFromNBT(this.tag);
+                }
+            });
         });
     }
 
-    private void handleBaubles(final EntityLivingBase entity, final Side side) {
+    private void handleBaubles(final EntityLivingBase entity) {
         BaublesHelper.getBaublesHandler(entity, baubles -> {
-            if (this.equipped) {
-                if (this.syncStacks) {
-                    if ((this.item != null) && !this.item.isEmpty()) {
-                        baubles.setStackInSlot(this.slot, this.item);
-                    }
-                }
-                final ItemStack stack = baubles.getStackInSlot(this.slot);
-                Capabilities.getTrinketProperties(stack, properties -> {
-                    if (side.isClient()) {
-                        properties.itemEquipped(entity);
-                        properties.loadFromNBT(this.tag);
-                    } else {
-                        properties.scheduleResync();
-                    }
-                });
-            } else {
-                if (this.syncStacks) {
-                    baubles.setStackInSlot(this.slot, ItemStack.EMPTY);
-                }
+            if ((this.slot < 0) || (this.slot >= baubles.getSlots())) {
+                return;
             }
+            if (this.equipped && this.syncStacks && (this.item != null) && !this.item.isEmpty()) {
+                baubles.setStackInSlot(this.slot, this.item);
+            } else if (!this.equipped && this.syncStacks) {
+                baubles.setStackInSlot(this.slot, ItemStack.EMPTY);
+                return;
+            }
+            final ItemStack stack = baubles.getStackInSlot(this.slot);
+            Capabilities.getTrinketProperties(stack, properties -> {
+                if (this.equipped) {
+                    properties.itemEquipped(entity);
+                    properties.loadFromNBT(this.tag);
+                }
+            });
         });
     }
 
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
+        if (clientPlayer == null) {
+            return;
+        }
         final World world = clientPlayer.getEntityWorld();
         final Entity entity = world.getEntityByID(this.entityID);
-        if ((entity instanceof EntityLivingBase)) {
-            this.handlePacket((EntityLivingBase) entity, Side.CLIENT);
+        if (entity instanceof EntityLivingBase) {
+            this.handlePacket((EntityLivingBase) entity);
         }
     }
 
     @Override
     public void handleServerSafe(@Nonnull NetHandlerPlayServer server) {
-        this.handlePacket(server.player, Side.SERVER);
+        // Server to Client sync packet; this handler is unreachable by registration.
     }
 }

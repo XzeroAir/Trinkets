@@ -139,7 +139,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             return;
         }
 
-        if (!isClient && !this.isNormalSize() && !this.getEntity().onGround) {
+        if (!isClient && !this.isNormalSize() && !this.getEntity().onGround && !TrinketsConfig.EXPERIMENTAL_MIXINS.VANILLA_PLAYER_SIZE_UPDATES) {
             final boolean groundProbe = this.isGrounded();
             if (groundProbe) {
                 this.getEntity().onGround = true;
@@ -407,6 +407,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
         if ((Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.ARTEMIS_LIB)
                 || this.isChild()
+                || TrinketsConfig.EXPERIMENTAL_MIXINS.VANILLA_PLAYER_SIZE_UPDATES
                 || (!handler.isTransforming() && !handler.isTransformed())) {
             return EntityHelper.isGrounded(entity);
         }

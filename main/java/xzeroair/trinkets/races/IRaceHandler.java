@@ -20,6 +20,13 @@ import xzeroair.trinkets.client.races.IRenderRaceHandler;
 
 public interface IRaceHandler {
 
+    /**
+     * Registers abilities when a handler is reconstructed from persisted race data.
+     * This hook must only define abilities; it must not perform one-time transformation effects.
+     */
+    default void registerRaceAbilities() {
+    }
+
     default void startTransformation() {
     }
 

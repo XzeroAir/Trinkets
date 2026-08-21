@@ -20,6 +20,7 @@ import xzeroair.trinkets.network.AbilityCacheSyncPacket;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -194,9 +195,20 @@ public class AbilityHandler {
         return null;
     }
 
-    // Drops abilities that were already marked for removal before the main update pass runs.
+    // Drops abilities already marked for removal and runs start-of-tick ability work.
     public void onUpdatePre(EntityLivingBase entity) {
         this.active.values().removeIf(cache -> cache.getAbility().shouldRemove());
+        for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
+            final IAbilityInterface ability = entry.getValue().getAbility();
+            if (ability instanceof ITickableAbility) {
+                try {
+                    ((ITickableAbility) ability).tickAbilityPre(entity);
+                } catch (final Exception e) {
+                    Trinkets.LOGGER.error("Error with ability:{}", entry.getKey());
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     // Runs first-update initialization, ticking, sync, and removal checks for active abilities.
@@ -385,17 +397,17 @@ public class AbilityHandler {
         }
 
         NBTTagCompound playerCap = this.parentProperties.getTag().getCompoundTag(capKey);
-        if (!playerCap.hasKey(ability)) {
+        if (!NBTHelper.hasTagCompound(playerCap, ability)) {
             return false;
         }
 
         NBTTagCompound abilityTag = playerCap.getCompoundTag(ability);
-        if (!abilityTag.hasKey(DISABLED_SOURCES)) {
+        if (!NBTHelper.hasTagCompound(abilityTag, DISABLED_SOURCES)) {
             return false;
         }
 
         NBTTagCompound disabledSources = abilityTag.getCompoundTag(DISABLED_SOURCES);
-        return disabledSources.hasKey(source) && disabledSources.getBoolean(source);
+        return NBTHelper.hasBoolean(disabledSources, source);
     }
 
     // Marks a specific ability source as disabled in persistent capability data.
@@ -558,12 +570,12 @@ public class AbilityHandler {
             return;
         }
         NBTTagCompound rootTag = this.parentProperties.getTag();
-        if (!rootTag.hasKey(capKey)) {
+        if (!NBTHelper.hasTagCompound(rootTag, capKey)) {
             rootTag.setTag(capKey, new NBTTagCompound());
         }
         final String abilityName = ability.getRegistryName().toString();
         NBTTagCompound abilitiesTag = rootTag.getCompoundTag(capKey);
-        if (!abilitiesTag.hasKey(abilityName)) {
+        if (!NBTHelper.hasTagCompound(abilitiesTag, abilityName)) {
             return;
         }
         final String source = ability.getAbilityHolder().getSourceID();
@@ -581,7 +593,7 @@ public class AbilityHandler {
     // Loads a single ability's saved storage from a keyed NBT payload.
     public void loadAbilityFromNBT(@Nonnull IAbilityInterface ability, @Nonnull NBTTagCompound compound) {
         String key = ability.getRegistryName().toString();
-        if (compound.hasKey(key)) {
+        if (NBTHelper.hasTagCompound(compound, key)) {
             ability.loadStorage(compound.getCompoundTag(key));
         }
     }
@@ -617,14 +629,14 @@ public class AbilityHandler {
 
     // Loads saved storage for any active abilities present in the supplied compound.
     public void loadAbilitiesFromNBT(@Nonnull NBTTagCompound compound) {
-        if (compound.hasKey(capKey)) {
+        if (NBTHelper.hasTagCompound(compound, capKey)) {
             final NBTTagCompound tag = compound.getCompoundTag(capKey);
             for (Entry<String, AbilityHolder> entry : this.active.entrySet()) {
                 String key = entry.getKey();
-                if (tag.hasKey(key)) {
+                if (NBTHelper.hasTagCompound(tag, key)) {
                     AbilityHolder value = entry.getValue();
                     try {
-                        this.loadAbilityFromNBT(value.getAbility(), tag.getCompoundTag(key));
+                        this.loadAbilityFromNBT(value.getAbility(), tag);
                     } catch (final Exception e) {
                         Trinkets.LOGGER.error("Error when loading ability:{}", key);
                         e.printStackTrace();

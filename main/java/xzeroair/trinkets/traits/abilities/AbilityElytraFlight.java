@@ -5,8 +5,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -37,11 +39,11 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     protected static final String FIREWORK_BOOST_TICKS_TAG = "FIREWORK_BOOST_TICKS";
     protected static final int VANILLA_FLIGHT_EXIT_DELAY = 7;
 
-    protected ConfigAbilityElytraFlight CONFIG;
     protected float COST, LIFT_COST;
     protected double LIFT_STRENGTH;
-    protected boolean GLIDING, LIFT_ENABLED, LIFT_REQUESTED, VANILLA_FLIGHT_ACTIVE;
+    protected boolean GLIDING, LIFT_ENABLED, COLLISION_DAMAGE, LIFT_REQUESTED, VANILLA_FLIGHT_ACTIVE;
     protected int VANILLA_FLIGHT_EXIT_TICKS, FIREWORK_BOOST_TICKS;
+    protected double GLIDE_HORIZONTAL_SPEED;
 
     public AbilityElytraFlight() {
         this(TrinketsConfig.SERVER.ABILITIES.ELYTRA_FLIGHT);
@@ -49,45 +51,12 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
 
     public AbilityElytraFlight(ConfigAbilityElytraFlight config) {
         super(TrinketsRegistryNames.ModAbilities.ELYTRA_FLIGHT);
-        this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
-        this.setFlightCost(config.COST);
-        this.setLiftEnabled(config.LIFT_ENABLED);
-        this.setLiftCost(config.LIFT_COST);
-        this.setLiftStrength(config.LIFT_STRENGTH);
-        this.GLIDING = false;
-        this.LIFT_REQUESTED = false;
-        this.VANILLA_FLIGHT_ACTIVE = false;
-        this.VANILLA_FLIGHT_EXIT_TICKS = 0;
-    }
-
-    public AbilityElytraFlight setFlightCost(float cost) {
-        if (this.COST != cost) {
-            this.COST = cost;
-        }
-        return this;
-    }
-
-
-    public AbilityElytraFlight setLiftCost(float cost) {
-        if (this.LIFT_COST != cost) {
-            this.LIFT_COST = cost;
-        }
-        return this;
-    }
-
-    public AbilityElytraFlight setLiftEnabled(boolean enabled) {
-        if (this.LIFT_ENABLED != enabled) {
-            this.LIFT_ENABLED = enabled;
-        }
-        return this;
-    }
-
-    public AbilityElytraFlight setLiftStrength(double strength) {
-        if (this.LIFT_STRENGTH != strength) {
-            this.LIFT_STRENGTH = strength;
-        }
-        return this;
+        this.COST = config.COST;
+        this.LIFT_ENABLED = config.LIFT_ENABLED;
+        this.COLLISION_DAMAGE = config.COLLISION_DAMAGE;
+        this.LIFT_COST = config.LIFT_COST;
+        this.LIFT_STRENGTH = config.LIFT_STRENGTH;
     }
 
     public boolean isGliding() {
@@ -102,23 +71,39 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     }
 
     @Override
-    public void tickAbility(EntityLivingBase entity) {
-        if (entity instanceof EntityPlayer) {
-            this.tickFlight((EntityPlayer) entity);
+    public void tickAbilityPre(EntityLivingBase entity) {
+        if (this.GLIDING) {
+            if (entity.motionY > -0.5D) {
+                entity.fallDistance = 1F;
+            }
+            if (this.COLLISION_DAMAGE && !entity.world.isRemote) {
+                this.GLIDE_HORIZONTAL_SPEED = Math.sqrt((entity.motionX * entity.motionX) + (entity.motionZ * entity.motionZ));
+            }
         }
     }
 
     @Override
+    public boolean onMovement(Entity entity, int primaryState, boolean primaryDown, boolean auxiliaryDown, int left, int right, int forward, int back, int jump, int sneak, @Nullable NBTTagCompound payload) {
+        // Glide owns only Jump presses; every other movement state needs no server packet.
+        return (jump == 0) && this.jump(entity, jump, primaryState, primaryDown, auxiliaryDown, payload);
+    }
+
+    @Override
     public boolean jump(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        if (entity instanceof EntityPlayer) {
-            final EntityPlayer player = (EntityPlayer) entity;
+        if (entity instanceof EntityLivingBase) {
+            final EntityLivingBase living = (EntityLivingBase) entity;
             if (state == 0) {
                 if (this.GLIDING) {
-                    if (!player.world.isRemote) {
+                    if (!living.world.isRemote) {
                         this.LIFT_REQUESTED = true;
                     }
-                } else if (!this.VANILLA_FLIGHT_ACTIVE && this.VANILLA_FLIGHT_EXIT_TICKS == 0) {
-                    this.tryStartFlight(player);
+                } else if (!this.VANILLA_FLIGHT_ACTIVE
+                        && this.VANILLA_FLIGHT_EXIT_TICKS == 0
+                        && this.canStartFlying(living)) {
+                    final MagicStats magic = Capabilities.getMagicStats(living);
+                    if (this.COST <= 0 || (magic != null && magic.canSpendMana(this.COST))) {
+                        this.startFlight(living);
+                    }
                 }
             }
         }
@@ -127,69 +112,57 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
 
     @Override
     public void rightClickWithItem(EntityLivingBase entity, World world, ItemStack stack, EnumHand hand, EnumFacing face, BlockPos pos) {
-        if (!(entity instanceof EntityPlayer) || world.isRemote || !this.GLIDING || stack.getItem() != Items.FIREWORKS) {
+        if (world.isRemote || !this.GLIDING || stack.getItem() != Items.FIREWORKS) {
             return;
         }
-        final EntityPlayer player = (EntityPlayer) entity;
-        if (this.isUsingVanillaFlight(player)) {
+        if (this.isUsingVanillaFlight(entity)) {
             return;
         }
-        this.FIREWORK_BOOST_TICKS = Math.max(this.FIREWORK_BOOST_TICKS, fireworkLifetime(stack, player));
+        final NBTTagCompound fireworks = stack.hasTagCompound() ? stack.getTagCompound().getCompoundTag("Fireworks") : null;
+        final int flight = fireworks == null ? 0 : fireworks.getByte("Flight");
+        this.FIREWORK_BOOST_TICKS = Math.max(this.FIREWORK_BOOST_TICKS, 10 * (1 + flight) + entity.getRNG().nextInt(6) + entity.getRNG().nextInt(7));
         this.setChanged(true);
-        world.spawnEntity(new EntityFireworkRocket(world, stack.copy(), player));
-        if (!player.capabilities.isCreativeMode) {
+        world.spawnEntity(new EntityFireworkRocket(world, stack.copy(), entity));
+        if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
             stack.shrink(1);
         }
     }
 
-    protected void applyFireworkBoost(EntityPlayer player) {
+    protected void applyFireworkBoost(EntityLivingBase entity) {
         if (this.FIREWORK_BOOST_TICKS <= 0) {
             return;
         }
         this.FIREWORK_BOOST_TICKS--;
-        final Vec3d look = player.getLookVec();
-        player.motionX += look.x * 0.1D + (look.x * 1.5D - player.motionX) * 0.5D;
-        player.motionY += look.y * 0.1D + (look.y * 1.5D - player.motionY) * 0.5D;
-        player.motionZ += look.z * 0.1D + (look.z * 1.5D - player.motionZ) * 0.5D;
-        player.velocityChanged = true;
+        final Vec3d look = entity.getLookVec();
+        entity.motionX += look.x * 0.1D + (look.x * 1.5D - entity.motionX) * 0.5D;
+        entity.motionY += look.y * 0.1D + (look.y * 1.5D - entity.motionY) * 0.5D;
+        entity.motionZ += look.z * 0.1D + (look.z * 1.5D - entity.motionZ) * 0.5D;
+        entity.velocityChanged = true;
     }
 
-    protected int fireworkLifetime(ItemStack stack, EntityPlayer player) {
-        final NBTTagCompound fireworks = stack.hasTagCompound() ? stack.getTagCompound().getCompoundTag("Fireworks") : null;
-        final int flight = fireworks == null ? 0 : fireworks.getByte("Flight");
-        return 10 * (1 + flight) + player.getRNG().nextInt(6) + player.getRNG().nextInt(7);
-    }
 
-    @Override
-    public float fallDistance(EntityLivingBase entity, float distance) {
-        if (this.GLIDING) {
-            return 0F;
-        }
-        return distance;
-    }
-
-    @Override
-    public boolean fall(EntityLivingBase entity, float distance, float multiplier, boolean cancel) {
-        return cancel || this.GLIDING;
-    }
 
     @Override
     public void onAbilityRemoved(EntityLivingBase entity) {
-        if (entity instanceof EntityPlayer) {
-            this.stopFlight((EntityPlayer) entity);
-        }
+        this.stopFlight(entity);
         this.LIFT_REQUESTED = false;
         this.VANILLA_FLIGHT_ACTIVE = false;
         this.VANILLA_FLIGHT_EXIT_TICKS = 0;
         this.tickHandler.removeCounter("elytra_flight_cost");
     }
 
-    protected void tickFlight(EntityPlayer player) {
-        if (this.isUsingVanillaFlight(player)) {
+    @Override
+    public void tickAbility(EntityLivingBase entity) {
+        if (this.GLIDING && entity.isPotionActive(MobEffects.LEVITATION)) {
+            this.stopFlight(entity);
+            this.LIFT_REQUESTED = false;
+            return;
+        }
+        if (this.isUsingVanillaFlight(entity)) {
             this.VANILLA_FLIGHT_ACTIVE = true;
             this.VANILLA_FLIGHT_EXIT_TICKS = 0;
             this.LIFT_REQUESTED = false;
-            this.stopFlight(player);
+            this.stopFlight(entity);
             return;
         }
         if (this.VANILLA_FLIGHT_ACTIVE) {
@@ -201,128 +174,113 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
         if (!this.GLIDING) {
             return;
         }
-        if (!this.canKeepFlying(player) || !this.spendFlightCost(player)) {
-            this.stopFlight(player);
-            this.LIFT_REQUESTED = false;
-            return;
-        }
-        this.applyElytraMotion(player);
-        this.applyFireworkBoost(player);
-        if (this.LIFT_REQUESTED) {
-            this.LIFT_REQUESTED = false;
-            final boolean liftApplied = this.LIFT_ENABLED && this.spendLiftCost(player);
-            if (liftApplied) {
-                player.motionY += this.LIFT_STRENGTH;
-                player.velocityChanged = true;
+        if (this.COLLISION_DAMAGE && !entity.world.isRemote && entity.collidedHorizontally) {
+            final double horizontalSpeed = Math.sqrt((entity.motionX * entity.motionX) + (entity.motionZ * entity.motionZ));
+            final float crashDamage = (float) ((this.GLIDE_HORIZONTAL_SPEED - horizontalSpeed) * 10.0D - 3.0D);
+            if (crashDamage > 0F) {
+                entity.attackEntityFrom(DamageSource.FLY_INTO_WALL, crashDamage);
             }
         }
-        player.fallDistance = 0F;
-    }
-
-    protected void tryStartFlight(EntityPlayer player) {
-        if (!this.canStartFlying(player) || !this.hasManaForFlight(player)) {
+        if (!this.canKeepFlying(entity)) {
+            this.stopFlight(entity);
+            this.LIFT_REQUESTED = false;
             return;
         }
-        this.startFlight(player);
+        if (!entity.world.isRemote && this.COST > 0) {
+            final MagicStats magic = Capabilities.getMagicStats(entity);
+            final Counter counter = this.tickHandler.getCounter("elytra_flight_cost", 20, true, true, true, true);
+            if (magic == null || (counter != null && counter.Tick() && !magic.spendMana(this.COST))) {
+                this.stopFlight(entity);
+                this.LIFT_REQUESTED = false;
+                return;
+            }
+        }
+        this.applyElytraMotion(entity);
+        this.applyFireworkBoost(entity);
+        if (this.LIFT_REQUESTED) {
+            this.LIFT_REQUESTED = false;
+            this.applyLift(entity);
+        }
     }
 
-    protected void startFlight(EntityPlayer player) {
+    protected void applyLift(EntityLivingBase entity) {
+        if (this.LIFT_ENABLED) {
+            final MagicStats magic = Capabilities.getMagicStats(entity);
+            if (this.LIFT_COST <= 0 || (magic != null && magic.spendMana(this.LIFT_COST))) {
+                entity.motionY += this.LIFT_STRENGTH;
+                entity.fallDistance = 0F;
+                entity.velocityChanged = true;
+            }
+        }
+    }
+
+
+    protected void startFlight(EntityLivingBase entity) {
         if (!this.GLIDING) {
             this.GLIDING = true;
             this.setChanged(true);
         }
-        player.fallDistance = 0F;
+        entity.fallDistance = 0F;
     }
 
-    protected void stopFlight(EntityPlayer player) {
+    protected void stopFlight(EntityLivingBase entity) {
         if (this.GLIDING) {
             this.GLIDING = false;
+            this.GLIDE_HORIZONTAL_SPEED = 0D;
             this.setChanged(true);
         }
     }
 
-    protected boolean canStartFlying(EntityPlayer player) {
-        return !this.isUsingVanillaFlight(player) && this.canKeepFlying(player) && !this.GLIDING && (player.motionY < 0D);
+    protected boolean canStartFlying(EntityLivingBase entity) {
+        return !entity.isPotionActive(MobEffects.LEVITATION)
+                && !this.isUsingVanillaFlight(entity)
+                && this.canKeepFlying(entity)
+                && !this.GLIDING
+                && (entity.motionY < 0D);
     }
 
-    protected boolean canKeepFlying(EntityPlayer player) {
-        return !player.onGround && !player.isRiding() && !player.isInWater() && !player.isInLava();
+    protected boolean canKeepFlying(EntityLivingBase entity) {
+        return !entity.onGround && !entity.isRiding() && !entity.isInWater() && !entity.isInLava();
     }
 
-    protected boolean isUsingVanillaFlight(EntityPlayer player) {
-        return player.capabilities.isFlying || player.isElytraFlying();
+    protected boolean isUsingVanillaFlight(EntityLivingBase entity) {
+        return entity.isElytraFlying() || this.isCreativeFlying(entity);
     }
-
-
-    protected boolean hasManaForFlight(EntityPlayer player) {
-        if (this.COST <= 0) {
-            return true;
-        }
-        final MagicStats magic = Capabilities.getMagicStats(player);
-        return (magic != null) && magic.canSpendMana(this.COST);
-    }
-
-    protected boolean spendFlightCost(EntityPlayer player) {
-        if (this.COST <= 0 || player.world.isRemote || player.isRiding()) {
-            return true;
-        }
-        final MagicStats magic = Capabilities.getMagicStats(player);
-        if (magic == null) {
-            return false;
-        }
-        final Counter counter = this.tickHandler.getCounter("elytra_flight_cost", 20, true, true, true, true);
-        return (counter == null) || !counter.Tick() || magic.spendMana(this.COST);
-    }
-
-    protected boolean spendLiftCost(EntityPlayer player) {
-        if (this.LIFT_COST <= 0 || player.world.isRemote) {
-            return true;
-        }
-        final MagicStats magic = Capabilities.getMagicStats(player);
-        if (magic == null) {
-            return false;
-        }
-        return magic.spendMana(this.LIFT_COST);
-    }
-
-    protected void applyElytraMotion(EntityPlayer player) {
-        this.restoreNormalAirMotion(player);
-        final Vec3d look = player.getLookVec();
-        final float pitch = player.rotationPitch * 0.017453292F;
-        final double horizontalSpeed = Math.sqrt((player.motionX * player.motionX) + (player.motionZ * player.motionZ));
+    protected void applyElytraMotion(EntityLivingBase entity) {
+        entity.motionX /= 0.91D;
+        entity.motionY = (entity.motionY / 0.98D) + 0.08D;
+        entity.motionZ /= 0.91D;
+        final Vec3d look = entity.getLookVec();
+        final float pitch = entity.rotationPitch * 0.017453292F;
+        final double horizontalSpeed = Math.sqrt((entity.motionX * entity.motionX) + (entity.motionZ * entity.motionZ));
         final double lookHorizontal = Math.sqrt((look.x * look.x) + (look.z * look.z));
         final double lookLength = look.length();
         final float pitchCos = MathHelper.cos(pitch);
         final float lift = (float) ((double) pitchCos * (double) pitchCos * Math.min(1.0D, lookLength / 0.4D));
 
-        player.motionY += -0.08D + (lift * 0.06D);
-        if ((player.motionY < 0.0D) && (lookHorizontal > 0.0D)) {
-            final double glidePull = player.motionY * -0.1D * lift;
-            player.motionY += glidePull;
-            player.motionX += (look.x * glidePull) / lookHorizontal;
-            player.motionZ += (look.z * glidePull) / lookHorizontal;
+        entity.motionY += -0.08D + (lift * 0.06D);
+        if ((entity.motionY < 0.0D) && (lookHorizontal > 0.0D)) {
+            final double glidePull = entity.motionY * -0.1D * lift;
+            entity.motionY += glidePull;
+            entity.motionX += (look.x * glidePull) / lookHorizontal;
+            entity.motionZ += (look.z * glidePull) / lookHorizontal;
         }
         if ((pitch < 0.0F) && (lookHorizontal > 0.0D)) {
             final double climbPull = horizontalSpeed * (double) (-MathHelper.sin(pitch)) * 0.04D;
-            player.motionY += climbPull * 3.2D;
-            player.motionX -= (look.x * climbPull) / lookHorizontal;
-            player.motionZ -= (look.z * climbPull) / lookHorizontal;
+            entity.motionY += climbPull * 3.2D;
+            entity.motionX -= (look.x * climbPull) / lookHorizontal;
+            entity.motionZ -= (look.z * climbPull) / lookHorizontal;
         }
         if (lookHorizontal > 0.0D) {
-            player.motionX += (((look.x / lookHorizontal) * horizontalSpeed) - player.motionX) * 0.1D;
-            player.motionZ += (((look.z / lookHorizontal) * horizontalSpeed) - player.motionZ) * 0.1D;
+            entity.motionX += (((look.x / lookHorizontal) * horizontalSpeed) - entity.motionX) * 0.1D;
+            entity.motionZ += (((look.z / lookHorizontal) * horizontalSpeed) - entity.motionZ) * 0.1D;
         }
-        player.motionX *= 0.99D;
-        player.motionY *= 0.98D;
-        player.motionZ *= 0.99D;
-        player.velocityChanged = true;
+        entity.motionX *= 0.99D;
+        entity.motionY *= 0.98D;
+        entity.motionZ *= 0.99D;
+        entity.velocityChanged = true;
     }
 
-    protected void restoreNormalAirMotion(EntityPlayer player) {
-        player.motionX /= 0.91D;
-        player.motionY = (player.motionY / 0.98D) + 0.08D;
-        player.motionZ /= 0.91D;
-    }
 
     @Override
     public void loadStorage(NBTTagCompound compound) {

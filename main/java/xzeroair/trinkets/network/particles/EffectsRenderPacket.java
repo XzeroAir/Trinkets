@@ -5,13 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import xzeroair.trinkets.Trinkets;
-import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.ThreadSafePacket;
 
 public class EffectsRenderPacket extends ThreadSafePacket {
@@ -95,13 +91,6 @@ public class EffectsRenderPacket extends ThreadSafePacket {
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
-        final EntityPlayerMP serverPlayer = server.player;
-        WorldServer world = serverPlayer.getServerWorld();
-        try {
-            Entity entity = serverPlayer;
-            NetworkHandler.sendToClients(world, new BlockPos(this.x, this.y, this.z), new EffectsRenderPacket(entity, this.x, this.y, this.z, this.x2, this.y2, this.z2, this.color, this.effectID, this.alpha, this.intensity));
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        // Server to Client particle packet; this handler is unreachable by registration.
     }
 }

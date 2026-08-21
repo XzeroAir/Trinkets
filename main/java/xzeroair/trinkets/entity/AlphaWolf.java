@@ -26,9 +26,11 @@ import xzeroair.trinkets.attributes.JumpAttribute;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,6 +39,7 @@ import java.util.UUID;
 public class AlphaWolf extends EntityWolf {
 
     private static final String STORED_WOLF_TAG = "xat.wolf.stored";
+    private static final String STORED_WOLF_ARMOR_TAG = "ArmorItem";
     private static final int RETALIATION_COOLDOWN_TICKS = 40;
     private static final double RETALIATION_RANGE_SQUARED = 25.0D;
     private static final float RETALIATION_DAMAGE = 9.0F;
@@ -459,6 +462,25 @@ public class AlphaWolf extends EntityWolf {
 
     public boolean hasStoredWolf() {
         return (this.storedWolf != null) && this.storedWolf.hasKey("id");
+    }
+
+    /**
+     * Gets the original wolf's Wolf Armor and Storage armor item, when present.
+     *
+     * <p>The returned compound is a serialized {@link net.minecraft.item.ItemStack}.
+     * Its normal values are {@code id}, {@code Count}, and {@code Damage}, with an
+     * optional {@code tag} compound for item-specific data such as dye or enchantments.
+     * A {@code null} result means this Alpha Wolf has no stored original wolf, the
+     * source wolf had no armor, or its saved armor data was not a compound.</p>
+     *
+     * @return a defensive copy of the serialized armor item, or {@code null} when absent
+     */
+    @Nullable
+    public NBTTagCompound getStoredWolfArmorTag() {
+        if (!NBTHelper.hasTagCompound(this.storedWolf, STORED_WOLF_ARMOR_TAG)) {
+            return null;
+        }
+        return NBTHelper.getTag(this.storedWolf, STORED_WOLF_ARMOR_TAG).copy();
     }
 
     @Override

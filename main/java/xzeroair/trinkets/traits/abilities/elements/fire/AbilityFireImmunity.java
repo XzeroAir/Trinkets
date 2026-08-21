@@ -31,7 +31,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IA
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
         this.DURATION = config.DURATION;
-        if (FireResistTiersCompat.isModActive() && config.COMPAT.TIERS.amplifier > 0) {
+        if (FireResistTiersCompat.isModEnabled() && config.COMPAT.TIERS.amplifier > 0) {
             this.AMPLIFIER = config.COMPAT.TIERS.amplifier;
         } else {
             this.AMPLIFIER = 0;
@@ -78,7 +78,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IA
 
     @Override
     public boolean attacked(EntityLivingBase attacked, DamageSource source, float dmg, boolean cancel) {
-        if (FireResistTiersCompat.isModActive()) {
+        if (FireResistTiersCompat.isModEnabled()) {
             return cancel;
         }
         if (source.isFireDamage() || DamageTypeConfigParser.isFireDamage(source.getDamageType())) {
@@ -89,7 +89,7 @@ public class AbilityFireImmunity extends Ability implements ITickableAbility, IA
 
     @Override
     public float damaged(EntityLivingBase attacked, DamageSource source, float dmg) {
-        if (FireResistTiersCompat.isModActive()) {
+        if (FireResistTiersCompat.isModEnabled()) {
             return dmg;
         }
         if (source.isFireDamage() || DamageTypeConfigParser.isFireDamage(source.getDamageType())) {

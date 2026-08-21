@@ -14,13 +14,13 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class ElenaiDodgeCompat extends EventBaseHandler {
 
-    public static boolean isModActive() {
+    public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.compat.ELENAI_DODGE;
     }
 
     @SubscribeEvent
     public void DodgeEvent(ServerDodgeEvent event) {
-        if (!isModActive()) {
+        if (!isModEnabled()) {
             return;
         }
         if (event.getCooldown() > 0) {

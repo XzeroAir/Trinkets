@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "xzeroair.trinkets.mixin",
+  "plugin": "xzeroair.trinkets.mixin.XatMixinConfigPlugin",
+  "refmap": "mixins.xat.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "client": [
+    "PlayerShadowMixin"
+  ],
+  "mixins": [
+    "EntityPlayerMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 5,
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

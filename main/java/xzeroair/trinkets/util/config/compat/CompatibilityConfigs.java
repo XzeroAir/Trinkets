@@ -19,6 +19,8 @@ public class CompatibilityConfigs {
         this.MO_BENDS = Trinkets.MOD_COMPAT.MoBends;
         this.ICE_AND_FIRE = Trinkets.MOD_COMPAT.IceAndFire;
         this.FIRST_AID = Trinkets.MOD_COMPAT.FirstAid;
+        this.IDO_SWIMMING = Trinkets.MOD_COMPAT.Ido;
+        this.TROPICRAFT_SWIMMING = Trinkets.MOD_COMPAT.Tropicraft;
 
     }
 
@@ -81,4 +83,14 @@ public class CompatibilityConfigs {
     @Config.Comment(ConstantsConfigLang.CONFIG_MO_BENDS_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_MO_BENDS)
     public boolean MO_BENDS;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_IDO_SWIMMING_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_IDO_SWIMMING_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_IDO_SWIMMING)
+    public boolean IDO_SWIMMING;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_TROPICRAFT_SWIMMING_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_TROPICRAFT_SWIMMING_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_TROPICRAFT_SWIMMING)
+    public boolean TROPICRAFT_SWIMMING;
 }

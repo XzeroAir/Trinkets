@@ -21,7 +21,7 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void EndermenEvent(team.creative.enhancedvisuals.api.event.SelectEndermanEvent event) {
-        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+        if (EnhancedVisualsCompat.isModEnabled() && (mc.player != null) && !event.isCanceled()) {
             if (TrinketHelper.entityHasAbility(mc.player, Reference.MODID + ":" + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_STATIC)) {
                 event.setCanceled(true);
             }
@@ -30,7 +30,7 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void SplashEvent(team.creative.enhancedvisuals.api.event.SplashEvent event) {
-        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+        if (EnhancedVisualsCompat.isModEnabled() && (mc.player != null) && !event.isCanceled()) {
             if (hasEnabledAbility(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_SPLASH)) {
                 event.setCanceled(true);
             }
@@ -39,7 +39,7 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void VisualExplosionEvent(team.creative.enhancedvisuals.api.event.VisualExplosionEvent event) {
-        if (EnhancedVisualsCompat.isModActive() && (mc.player != null) && !event.isCanceled()) {
+        if (EnhancedVisualsCompat.isModEnabled() && (mc.player != null) && !event.isCanceled()) {
             if (hasEnabledAbility(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR)) {
                 event.setCanceled(true);
             }
