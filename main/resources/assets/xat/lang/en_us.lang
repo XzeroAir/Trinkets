@@ -619,6 +619,12 @@ xat.config.server.tooltip=Server Configuration
 xat.config.server.settings=Server Settings
 xat.config.server.settings.tooltip=Settings for the Server
 
+
+xat.config.compat.ido_swimming=Ido Swimming Compatibility
+xat.config.compat.ido_swimming.tooltip=Let Ido control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Ido.
+xat.config.compat.tropicraft_swimming=Tropicraft Swimming Compatibility
+xat.config.compat.tropicraft_swimming.tooltip=Let Tropicraft control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Tropicraft.
+
 xat.config.registry=Registry
 xat.config.registry.tooltip=Registry Configuration
 xat.config.registry.enabled=Enabled

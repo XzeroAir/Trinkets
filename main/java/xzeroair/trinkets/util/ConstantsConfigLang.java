@@ -34,6 +34,7 @@ public class ConstantsConfigLang {
     public static final String CONFIG_SERVER_SETTINGS_NAME = "Server Settings";
     public static final String CONFIG_SERVER_SETTINGS_COMMENT = "";
 
+
     public static final String REGISTRY = CONFIG + ".registry";
     public static final String REGISTRY_ENABLED = REGISTRY + ".enabled";
     public static final String REGISTRY_ENABLED_NAME = "Enabled";
@@ -364,6 +365,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".lift_enabled";
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED_NAME = "Enable Lift";
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_ENABLED_COMMENT = "Allows pressing jump while gliding for a burst of altitude at the cost of Mana. Disable to mimic vanilla Elytra gliding.";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_COLLISION_DAMAGE = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".collision_damage";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_COLLISION_DAMAGE_NAME = "Enable Collision Damage";
+    public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_COLLISION_DAMAGE_COMMENT = "Applies vanilla-style wall collision damage while custom Elytra flight is active. Disable when another mod handles collision damage.";
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST = CONFIG_ABILITIES_ELYTRA_FLIGHT + ".lift_cost";
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST_NAME = "Lift Mana Cost";
     public static final String CONFIG_ABILITIES_ELYTRA_FLIGHT_LIFT_COST_COMMENT = "Mana cost per lift pulse";
@@ -399,37 +403,37 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COMMENT = "Casts Mending Bloom at the targeted location";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS = CONFIG_ABILITIES_RESTORATION_FIELD + ".radius";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS_NAME = "Radius";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS_COMMENT = "Horizontal radius of the restoration field in blocks";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_RADIUS_COMMENT = "Horizontal radius of Mending Bloom in blocks";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS = CONFIG_ABILITIES_RESTORATION_FIELD + ".vertical_radius";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS_NAME = "Vertical Radius";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS_COMMENT = "Vertical radius above and below the restoration field center";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_VERTICAL_RADIUS_COMMENT = "Vertical radius above and below the Mending Bloom center";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME = CONFIG_ABILITIES_RESTORATION_FIELD + ".wait_time";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME_NAME = "Wait Time";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME_COMMENT = "Delay in ticks before the restoration field starts pulsing";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_WAIT_TIME_COMMENT = "Delay in ticks before Mending Bloom starts pulsing";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL = CONFIG_ABILITIES_RESTORATION_FIELD + ".pulse_interval";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL_NAME = "Pulse Interval";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL_COMMENT = "How often the restoration field checks entities and blocks, in ticks";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_PULSE_INTERVAL_COMMENT = "How often Mending Bloom checks entities and blocks, in ticks";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY = CONFIG_ABILITIES_RESTORATION_FIELD + ".reapplication_delay";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY_NAME = "Reapplication Delay";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY_COMMENT = "Minimum ticks before the same entity, item, or block can be affected again";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REAPPLICATION_DELAY_COMMENT = "Minimum ticks before Mending Bloom can affect the same entity, item, or block again";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT = CONFIG_ABILITIES_RESTORATION_FIELD + ".repair_amount";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT_NAME = "Repair Amount";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT_COMMENT = "Durability repaired from dropped damaged item entities when affected by a pulse. Set to 0 to disable repair";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_REPAIR_AMOUNT_COMMENT = "Durability repaired from dropped damaged item entities when affected by a Mending Bloom pulse. Set to 0 to disable repair";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS = CONFIG_ABILITIES_RESTORATION_FIELD + ".growth_attempts";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS_NAME = "Growth Attempts Per Pulse";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS_COMMENT = "Maximum nearby blocks the field may grow each pulse. Set to 0 to disable growth";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_GROWTH_ATTEMPTS_COMMENT = "Maximum nearby blocks Mending Bloom may grow each pulse. Set to 0 to disable growth";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE = CONFIG_ABILITIES_RESTORATION_FIELD + ".cast_range";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE_NAME = "Cast Range";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE_COMMENT = "Maximum targeted cast range in blocks. If no direct hit is found at the range limit, the field tries to snap down to nearby ground instead of floating in midair";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_CAST_RANGE_COMMENT = "Maximum targeted cast range in blocks. If no direct hit is found at the range limit, Mending Bloom tries to snap down to nearby ground instead of floating in midair";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_second";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND_NAME = "Mana Cost Per Second";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND_COMMENT = "Mana cost for each second the field remains active";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_SECOND_COMMENT = "Mana cost for each second Mending Bloom remains active";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_potion_effect";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT_NAME = "Mana Cost Per Potion Effect";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT_COMMENT = "Additional mana cost for each configured potion effect applied by the field";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_POTION_EFFECT_COMMENT = "Additional mana cost for each configured potion effect applied by Mending Bloom";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL = CONFIG_ABILITIES_RESTORATION_FIELD + ".cost_per_effect_level";
     public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL_NAME = "Mana Cost Per Effect Level";
-    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL_COMMENT = "Additional mana cost per potion amplifier step above level 1";
+    public static final String CONFIG_ABILITIES_RESTORATION_FIELD_COST_PER_EFFECT_LEVEL_COMMENT = "Additional mana cost per potion amplifier step above level 1 applied by Mending Bloom";
 
     public static final String CONFIG_ABILITIES_WELL_RESTED = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.WELL_RESTED;
     public static final String CONFIG_ABILITIES_WELL_RESTED_NAME = "Well Rested";
@@ -741,7 +745,6 @@ public class ConstantsConfigLang {
     public static final String CONFIG_RACES_SIZE = CONFIG_RACES + ".size";
     public static final String CONFIG_RACES_SIZE_NAME = "Size";
     public static final String CONFIG_RACES_SIZE_COMMENT = "";
-
     public static final String CONFIG_RACES_MOUNT_CONTROL = CONFIG_RACES + ".mount";
     public static final String CONFIG_RACES_MOUNT_CONTROL_NAME = "Mount Entities";
     public static final String CONFIG_RACES_MOUNT_CONTROL_COMMENT = "Is this race able to mount other entities. Horses, Boats, etc.";
@@ -1190,6 +1193,12 @@ public class ConstantsConfigLang {
     public static final String CONFIG_MO_BENDS = CONFIG + ".mobends";
     public static final String CONFIG_MO_BENDS_NAME = "Mo Bends";
     public static final String CONFIG_MO_BENDS_COMMENT = "";
+    public static final String CONFIG_IDO_SWIMMING = CONFIG_COMPAT + ".ido_swimming";
+    public static final String CONFIG_IDO_SWIMMING_NAME = "Ido Swimming Compatibility";
+    public static final String CONFIG_IDO_SWIMMING_COMMENT = "Let Ido control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Ido.";
+    public static final String CONFIG_TROPICRAFT_SWIMMING = CONFIG_COMPAT + ".tropicraft_swimming";
+    public static final String CONFIG_TROPICRAFT_SWIMMING_NAME = "Tropicraft Swimming Compatibility";
+    public static final String CONFIG_TROPICRAFT_SWIMMING_COMMENT = "Let Tropicraft control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Tropicraft.";
     /**
      * xat.config.debug
      */

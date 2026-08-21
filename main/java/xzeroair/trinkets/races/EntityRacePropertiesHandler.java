@@ -37,6 +37,7 @@ import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.compat.SurvivalCompat;
+import xzeroair.trinkets.util.compat.SwimmingSizeCompat;
 import xzeroair.trinkets.util.compat.artemislib.SizeAttribute;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
@@ -260,10 +261,18 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         return this.activeAbilities;
     }
 
+    private void registerActiveRaceAbilities() {
+        if (!this.getActiveAbilities().isEmpty()) {
+            for (IAbilityInterface ability : this.activeAbilities.values()) {
+                this.getProperties().getAbilityHandler().registerRaceAbility(this.entity, this.getRace().getRegistryName().toString(), ability);
+            }
+        }
+    }
+
     /**
-     * Use {@link #startTransformation()} instead
+     * Initializes the internal race state after race data has loaded or a transformation has started.
      */
-    public void onTransform() {
+    public void initializeState() {
         this.firstTransformUpdate = true;
         this.healthBeforeTransformation = this.entity.getHealth();
         this.maxHealthBeforeTransformation = this.entity.getMaxHealth();
@@ -275,12 +284,13 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
             this.activeAbilities.clear();
         }
         this.rebuildAttributeCache();
+        this.registerRaceAbilities();
+        this.registerActiveRaceAbilities();
+    }
+
+    public void onTransform() {
         this.startTransformation();
-        if (!this.getActiveAbilities().isEmpty()) {
-            for (IAbilityInterface ability : this.activeAbilities.values()) {
-                this.getProperties().getAbilityHandler().registerRaceAbility(this.entity, this.getRace().getRegistryName().toString(), ability);
-            }
-        }
+        this.initializeState();
     }
 
     /**
@@ -305,10 +315,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
 
     public void onTick() {
         this.updateSize();
-        if (this.isTransforming() || this.isTransformed()) {
-            this.applyAdjustedSize();
-            this.modifyEyeHeight();
-        }
+        this.applyCurrentSize();
         if (this.isTransforming()) {
             this.addNewAttributes();
             this.whileTranforming();
@@ -337,6 +344,13 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
             this.cooldown--;
         } else {
             this.cooldown = 0;
+        }
+    }
+
+    public void applyCurrentSize() {
+        if ((this.isTransforming() || this.isTransformed()) && !this.isSwimming()) {
+            this.applyAdjustedSize();
+            this.modifyEyeHeight();
         }
     }
 
@@ -406,7 +420,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         return this.isTransformed() ? 1.0D : this.transformationProgress;
     }
 
-    protected void updateSize() {
+    public void updateSize() {
         final int targetHeight = this.getTargetHeight();
         final int targetWidth = this.getTargetWidth();
         final int height = this.getProperties().getHeightValue();
@@ -449,9 +463,10 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         return Math.min(rtn, 1D);
     }
 
-    /**
-     * Jank McJank Eyeheight Handling.
-     */
+    public boolean isSwimming() {
+        return SwimmingSizeCompat.isSwimming(this.entity);
+    }
+
     protected void modifyEyeHeight() {
         if (!(this.entity instanceof EntityPlayer)) {
             return;
@@ -468,7 +483,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
         if ((this.isTransforming() || this.isTransformed()) && this.getProperties().getHeightValue() != 100) {
             // 165 when sneaking
             // 162 eyeheight, sneaking is -0.8
-            float eyeHeight = Math.round(this.getHeight() * 0.85F * 1000F) / 1000F;
+            float eyeHeight = Math.round(this.getAdjustedHeight() * 0.85F * 1000F) / 1000F;
             if (player.isPlayerSleeping()) {
                 eyeHeight = 0.2F;
             } else if (player.isSneaking()) {
@@ -519,10 +534,10 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     }
 
     public float getAdjustedHeight() {
-        final float height = this.getHeight();
         if (this.entity.isPlayerSleeping()) {
             return this.clampHeight(0.2F);
         }
+        final float height = this.getHeight();
         if (this.entity.isSneaking()) {
             final boolean flying = (this.entity instanceof EntityPlayer) && ((EntityPlayer) this.entity).capabilities.isFlying;
             return this.clampHeight(!flying ? height * 0.92F : height);
@@ -627,14 +642,7 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     @Override
     public NBTTagCompound savedNBTData(@Nonnull NBTTagCompound compound) {
         final String key = this.getRace().isNone() ? EntityRaces.human.getRegistryName().toString() : this.getRace().getRegistryName().toString();
-        final NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("ShowTrait", this.showTraits);
-        tag.setInteger("ColorOption", this.colorOption);
-        tag.setInteger("ColorPrimary", this.traitPrimaryColor);
-        tag.setInteger("ColorSecondary", this.traitSecondaryColor);
-        tag.setInteger("AuxColor", this.traitAuxColor);
-        tag.setInteger("TraitVariant", this.traitVariant);
-        tag.setInteger("TraitAuxVariant", this.traitAuxVariant);
+        final NBTTagCompound tag = this.saveProfileData(new NBTTagCompound());
         tag.setDouble("TransformationProgress", this.transformationProgress);
         compound.setTag(key, tag);
         return compound;
@@ -643,31 +651,55 @@ public abstract class EntityRacePropertiesHandler implements IRaceHandler, IDesc
     @Override
     public void loadNBTData(@Nonnull NBTTagCompound compound) {
         final String key = this.getRace().isNone() ? EntityRaces.human.getRegistryName().toString() : this.getRace().getRegistryName().toString();
-        if (compound.hasKey(key)) {
+        if (NBTHelper.hasTagCompound(compound, key)) {
             final NBTTagCompound tag = compound.getCompoundTag(key);
-            NBTHelper.hasBoolean(tag, "ShowTrait", (bool) -> {
-                this.showTraits = bool;
-            });
-            NBTHelper.hasInteger(tag, "ColorOption", (option) -> {
-                this.colorOption = option;
-            });
-            NBTHelper.hasInteger(tag, "ColorPrimary", (color) -> {
-                this.traitPrimaryColor = color;
-            });
-            NBTHelper.hasInteger(tag, "ColorSecondary", (color) -> {
-                this.traitSecondaryColor = color;
-            });
-            NBTHelper.hasInteger(tag, "AuxColor", (color) -> {
-                this.traitAuxColor = color;
-            });
-            NBTHelper.hasInteger(tag, "TraitVariant", (variant) -> {
-                this.traitVariant = variant;
-            });
-            NBTHelper.hasInteger(tag, "TraitAuxVariant", (variant) -> {
-                this.traitAuxVariant = variant;
-            });
-            NBTHelper.hasInteger(tag, "TransformationProgress", (prog) -> this.transformationProgress = prog);
+            this.loadProfileData(tag);
+            NBTHelper.hasDouble(tag, "TransformationProgress", (progress) -> this.transformationProgress = progress);
         }
+    }
+
+    public NBTTagCompound saveProfileData(@Nonnull NBTTagCompound tag) {
+        tag.setBoolean("ShowTrait", this.showTraits);
+        tag.setInteger("ColorOption", this.colorOption);
+        tag.setInteger("ColorPrimary", this.traitPrimaryColor);
+        tag.setInteger("ColorSecondary", this.traitSecondaryColor);
+        tag.setInteger("AuxColor", this.traitAuxColor);
+        tag.setInteger("TraitVariant", this.traitVariant);
+        tag.setInteger("TraitAuxVariant", this.traitAuxVariant);
+        tag.setInteger("Gender", this.gender);
+        return tag;
+    }
+
+    public boolean loadProfileData(@Nonnull NBTTagCompound tag) {
+        final int primaryVariants = this.getRace().getRaceInformation().getPrimaryTraitMaxVariants();
+        final int auxiliaryVariants = this.getRace().getRaceInformation().getSecondaryTraitMaxVariants();
+        final int colorOption = NBTHelper.getInteger(tag, "ColorOption", this.colorOption);
+        final int primaryVariant = NBTHelper.getInteger(tag, "TraitVariant", this.traitVariant);
+        final int auxiliaryVariant = NBTHelper.getInteger(tag, "TraitAuxVariant", this.traitAuxVariant);
+        final int gender = NBTHelper.getInteger(tag, "Gender", this.gender);
+        if ((colorOption < 0) || (colorOption > 2)
+                || !this.isValidVariant(primaryVariant, primaryVariants)
+                || !this.isValidVariant(auxiliaryVariant, auxiliaryVariants)
+                || !this.isValidGender(gender)) {
+            return false;
+        }
+        NBTHelper.hasBoolean(tag, "ShowTrait", value -> this.showTraits = value);
+        NBTHelper.hasInteger(tag, "ColorOption", value -> this.colorOption = value);
+        NBTHelper.hasInteger(tag, "ColorPrimary", value -> this.traitPrimaryColor = value);
+        NBTHelper.hasInteger(tag, "ColorSecondary", value -> this.traitSecondaryColor = value);
+        NBTHelper.hasInteger(tag, "AuxColor", value -> this.traitAuxColor = value);
+        NBTHelper.hasInteger(tag, "TraitVariant", value -> this.traitVariant = value);
+        NBTHelper.hasInteger(tag, "TraitAuxVariant", value -> this.traitAuxVariant = value);
+        NBTHelper.hasInteger(tag, "Gender", this::setGender);
+        return true;
+    }
+
+    protected boolean isValidVariant(int variant, int variants) {
+        return (variant >= 0) && ((variants > 0) ? (variant < variants) : (variant == 0));
+    }
+
+    protected boolean isValidGender(int gender) {
+        return gender == 0;
     }
 
     public boolean showTraits() {
