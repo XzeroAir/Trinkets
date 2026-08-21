@@ -49,7 +49,7 @@ public class TrinketSeaStone extends AccessoryBase {
         if (SurvivalCompat.isSurvivalModsActive()) {
             abilities.add(new AbilityThirstAbsorption(this.CONFIG.ABILITIES.EXTERNAL.WATER_ABSORPTION));
         }
-        if (EnhancedVisualsCompat.isModActive()) {
+        if (EnhancedVisualsCompat.isModEnabled()) {
             abilities.add(new AbilityEnhancedVisualsSplash(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_VISION));
         }
     }

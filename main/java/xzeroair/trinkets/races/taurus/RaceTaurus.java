@@ -39,7 +39,7 @@ public class RaceTaurus extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilityStampede(this.CONFIG.ABILITIES.STAMPEDE));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }

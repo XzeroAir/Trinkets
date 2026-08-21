@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -31,6 +30,8 @@ import xzeroair.trinkets.client.ConstantsTextureResourceLocation;
 import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.enums.EnumRenderLocation;
 import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.SelectRacePacket;
 import xzeroair.trinkets.races.EntityRace;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.Reference;
@@ -237,25 +238,15 @@ public class GuiRaceSelectionScreen extends GuiScreen implements ITrinketGuiInte
         super.actionPerformed(button);
         if (button.id == this.CONFIRM) {
             if (this.selectedRace != null) {
-                RaceCache race = new RaceCache(this.selectedRace, this.selectedPrimaryElement == null ? Elements.NEUTRAL : this.selectedPrimaryElement);
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setTag("OriginalRace", race.saveToNBT(new NBTTagCompound()));
-                this.properties.setOriginalRaceCache(race);
-                this.properties.sendInformationToServer(tag);
+                NetworkHandler.sendToServer(new SelectRacePacket(this.selectedRace, this.selectedPrimaryElement));
                 this.mc.player.closeScreen();
             }
-        } else {
-            RaceCache blank = new RaceCache();
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setTag("OriginalRace", blank.saveToNBT(new NBTTagCompound()));
-            this.properties.setOriginalRaceCache(blank);
-            this.properties.sendInformationToServer(tag);
-            if (button.id == this.BACK) {
-                this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);
-            }
-            if (button.id == this.EXIT) {
-                this.mc.player.closeScreen();
-            }
+        }
+        if (button.id == this.BACK) {
+            this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);
+        }
+        if (button.id == this.EXIT) {
+            this.mc.player.closeScreen();
         }
     }
 

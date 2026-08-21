@@ -21,50 +21,54 @@ public interface IMovementAbility extends IKeyBindInterface {
     }
 
     /**
-     * Receives one coherent movement-input snapshot. Override this for compound movement gestures;
-     * the default preserves the individual directional callbacks for ordinary abilities.
-     * On the client, false omits this movement snapshot from the packet; it never cancels key handling.
+     * Receives one coherent movement-input snapshot. Every changed movement callback runs so an
+     * ability can observe combined input; the snapshot is omitted only if any callback cancels it.
+     * Override this only for a compound gesture that intentionally owns dispatch, such as Dodge.
      */
     public default boolean onMovement(Entity entity, int primaryState, boolean primaryDown, boolean auxiliaryDown, int left, int right, int forward, int back, int jump, int sneak, @Nullable NBTTagCompound payload) {
+        boolean accepted = true;
         if ((left >= 0) && !this.left(entity, left, primaryState, primaryDown, auxiliaryDown, payload)) {
-            return false;
+            accepted = false;
         }
         if ((right >= 0) && !this.right(entity, right, primaryState, primaryDown, auxiliaryDown, payload)) {
-            return false;
+            accepted = false;
         }
         if ((forward >= 0) && !this.forward(entity, forward, primaryState, primaryDown, auxiliaryDown, payload)) {
-            return false;
+            accepted = false;
         }
         if ((back >= 0) && !this.back(entity, back, primaryState, primaryDown, auxiliaryDown, payload)) {
-            return false;
+            accepted = false;
         }
         if ((jump >= 0) && !this.jump(entity, jump, primaryState, primaryDown, auxiliaryDown, payload)) {
-            return false;
+            accepted = false;
         }
-        return (sneak < 0) || this.sneak(entity, sneak, primaryState, primaryDown, auxiliaryDown, payload);
+        if ((sneak >= 0) && !this.sneak(entity, sneak, primaryState, primaryDown, auxiliaryDown, payload)) {
+            accepted = false;
+        }
+        return accepted;
     }
 
     public default boolean left(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 
     public default boolean right(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 
     public default boolean forward(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 
     public default boolean back(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 
     public default boolean jump(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 
     public default boolean sneak(Entity entity, int state, int primaryState, boolean primaryDown, boolean auxiliaryDown, @Nullable NBTTagCompound payload) {
-        return false;
+        return true;
     }
 }

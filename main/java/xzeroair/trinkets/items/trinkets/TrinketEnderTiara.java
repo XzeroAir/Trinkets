@@ -28,7 +28,6 @@ import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsCompat;
-import xzeroair.trinkets.util.compat.mobends.MoBendsCompat;
 import xzeroair.trinkets.util.config.ClientConfig.ClientConfigItems.ClientConfigEnderCrown;
 import xzeroair.trinkets.util.config.trinkets.ConfigEnderCrown;
 
@@ -49,7 +48,7 @@ public class TrinketEnderTiara extends AccessoryBase {
     public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
         abilities.add(new AbilityEnderQueen(this.CONFIG.ABILITIES.ENDER_QUEEN));
         this.addSurvivalAbilities(stack, entity, abilities, this.getPrimaryElement(stack), this.CONFIG.COMPAT.SURVIVAL);
-        if (EnhancedVisualsCompat.isModActive()) {
+        if (EnhancedVisualsCompat.isModEnabled()) {
             abilities.add(new AbilityEnhancedVisualsStatic(this.CONFIG.ABILITIES.EXTERNAL.ENDER_EYES));
         }
     }

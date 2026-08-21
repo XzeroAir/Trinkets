@@ -7,7 +7,7 @@ public class EnhancedVisualsCompat {
 
     private static final String MOD_LANG_NAME = "Enhanced Visuals";
 
-    public static boolean isModActive() {
+    public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.EnhancedVisuals && TrinketsConfig.getClientStore().MOD_COMPAT_ENHANCED_VISUALS;
     }
 

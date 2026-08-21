@@ -39,7 +39,7 @@ public class RaceDwarf extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilitySkilledMiner(this.CONFIG.ABILITIES.SKILLED_MINER));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }

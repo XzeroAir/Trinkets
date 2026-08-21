@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Configuration;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.config.ClientConfig;
 import xzeroair.trinkets.util.config.ClientConfigStore;
+
 import xzeroair.trinkets.util.config.ServerConfig;
 import xzeroair.trinkets.util.config.compat.CompatibilityConfigs;
 import xzeroair.trinkets.util.helpers.NBTHelper;
@@ -29,6 +30,7 @@ public class TrinketsConfig {
     @Config.Comment(ConstantsConfigLang.CONFIG_SERVER_SETTINGS_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_SERVER_SETTINGS)
     public static ServerConfig SERVER = new ServerConfig();
+
 
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_SETTINGS_COMMENT)
@@ -62,6 +64,8 @@ public class TrinketsConfig {
             races.setString(index++ + "", race);
         }
         tag.setTag("RACE_BLACKLIST", races);
+        tag.setBoolean("COMPAT_IDO_SWIMMING", TrinketsConfig.compat.IDO_SWIMMING);
+        tag.setBoolean("COMPAT_TROPICRAFT_SWIMMING", TrinketsConfig.compat.TROPICRAFT_SWIMMING);
 
         // Most of these are probably not needed.
         if (Trinkets.MOD_COMPAT.ToughAsNails) {
@@ -97,6 +101,8 @@ public class TrinketsConfig {
                 }
                 ClientConfigStore.INSTANCE.RACE_SELECTION_BLACKLIST = list.toArray(new String[0]);
             });
+            NBTHelper.hasBoolean(tag, "COMPAT_IDO_SWIMMING", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_IDO_SWIMMING = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_TROPICRAFT_SWIMMING", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_TROPICRAFT_SWIMMING = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_SD", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_ELENAI1", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool);

@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Config;
@@ -19,6 +18,8 @@ import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.client.gui.helpers.ColorSlider;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
+import xzeroair.trinkets.network.NetworkHandler;
+import xzeroair.trinkets.network.UpdateRaceProfilePacket;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.ConstantsTextTranslations;
@@ -248,7 +249,7 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        this.properties.getProperties().sendInformationToServer(this.properties.savedNBTData(new NBTTagCompound()));
+        NetworkHandler.sendToServer(new UpdateRaceProfilePacket(this.properties));
     }
 
     /**

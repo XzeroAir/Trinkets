@@ -83,7 +83,7 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
                     TrinketRaceBase raceItem = (TrinketRaceBase) accessory;
                     EntityRacePropertiesHandler s = raceItem.getRace().getRaceHandler(null, Capabilities.getEntityProperties(entity), new RaceCache(raceItem.getRace(), raceItem.getPrimaryElement(this.getItemStack())));
                     Collection<IAbilityInterface> Abilities = s.getRaceAbilities().values();
-                    s.startTransformation();
+                    s.registerRaceAbilities();
                     int i = 0;
                     for (IAbilityInterface ability : Abilities) {
                         this.itemAbilities.put(i, ability);

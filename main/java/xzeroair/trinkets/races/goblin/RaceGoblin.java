@@ -42,7 +42,7 @@ public class RaceGoblin extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));
         this.addAbility(new AbilityWolfMount(this.CONFIG.ABILITIES.WOLF_RIDER));
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);

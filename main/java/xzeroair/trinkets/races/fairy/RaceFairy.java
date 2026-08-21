@@ -42,7 +42,7 @@ public class RaceFairy extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
         this.addAbility(new AbilityElytraFlight(this.CONFIG.ABILITIES.ELYTRA_FLIGHT));
         this.addAbility(new AbilityClimbing(this.CONFIG.ABILITIES.CLIMBING));

@@ -4,6 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
     id 'org.spongepowered.mixin' version "${mixin_gradle_version}"
     id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'com.gradleup.shadow' version "${shadow_gradle_version}"
 }
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
@@ -67,6 +68,7 @@ minecraft {
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
             jvmArg "-Dmixin.hotSwap=true"
             jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
             workingDirectory 'run'
             ideaModule "${project.name}.main"
             taskName 'Client'
@@ -77,6 +79,9 @@ minecraft {
             }
         }
         server {
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
             workingDirectory 'runServer'
             ideaModule "${project.name}.main"
             taskName 'Server'
@@ -102,14 +107,17 @@ dependencies {
 //    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     //Mixin
     implementation "org.spongepowered:mixin:${mixin_version}"
+    shadow "org.spongepowered:mixin:${mixin_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-    implementation "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
-    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+//    implementation "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+//    shadow "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+//    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
     implementation fileTree(dir: 'libs', include: '*.jar')
     //FermiumBooter
     //implementation fg.deobf("curse.maven:fermiumbooter-${fermiumbooter_version}")
 
     implementation fg.deobf("curse.maven:jei-${jei_version}")
+    runtimeOnly fg.deobf("curse.maven:patchouli-306770:3162874")
 
     //FlatDir Mods
 //    implementation fg.deobf("libs:SRParasites:${srparasites_version}") //Third party distro disabled
@@ -132,13 +140,14 @@ dependencies {
 //    implementation fg.deobf("curse.maven:carry-on-274259:3271178")
     implementation fg.deobf("curse.maven:carry-on-274259:4507139")
 //    implementation fg.deobf("curse.maven:iceandfire-rlcraft-${infrlcraft_version}")
-//    implementation fg.deobf("curse.maven:wolf-armor-and-storage-253689:3648545")
+//    compileOnly fg.deobf("curse.maven:wolf-armor-and-storage-253689:3633267")
 
     implementation fg.deobf("curse.maven:artemislib-313590:2741812")
     implementation fg.deobf("curse.maven:tough-as-nails-246391:2710969")
     implementation fg.deobf("curse.maven:elenai-dodge-373104:3575333")
     implementation fg.deobf("curse.maven:enhancedvisuals-255389:3507523")
     implementation fg.deobf("curse.maven:simpledifficulty-360779:3613814")
+//    implementation fg.deobf("curse.maven:distinct-damage-descriptions-403617:7743830")
 
     //CurseMaven Libs
     implementation fg.deobf("curse.maven:silentlib-${silentlib_version}")
@@ -146,6 +155,32 @@ dependencies {
     implementation fg.deobf("curse.maven:llibrary-${llibrary_version}")
 
 }
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    mergeServiceFiles()
+
+    exclude 'org/spongepowered/asm/launch/MixinLaunchPlugin*'
+    exclude 'org/spongepowered/asm/launch/MixinTransformationService*'
+    exclude 'org/spongepowered/asm/launch/platform/container/ContainerHandleModLauncherEx*'
+
+    archiveClassifier.set('1.12.2')
+
+    manifest {
+        attributes([
+                'FMLCorePlugin'              : mixin_loader_class,
+                'FMLCorePluginContainsFMLMod': 'true',
+                'ForceLoadAsMod'             : 'true'
+//                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
+        ])
+    }
+}
+
+reobf {
+    shadowJar {}
+}
+
+build.dependsOn(shadowJar)
 
 jar {
     manifest {
@@ -161,12 +196,14 @@ jar {
                 'Timestamp'                  : System.currentTimeMillis(),
                 'Built-On-Java'              : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                 'Built-On-Minecraft'         : minecraft_version,
-//                'FMLCorePlugin': mixin_loader_class,
+                'FMLCorePlugin'              : mixin_loader_class,
                 'FMLCorePluginContainsFMLMod': 'true',
                 'ForceLoadAsMod'             : 'true', //Comment out in dev environment, uncomment for building
 //                'TweakClass'                 : 'org.spongepowered.asm.launch.MixinTweaker'
         ])
     }
+
+    archiveClassifier.set('1.12.2-THIN')
 }
 
 processResources {

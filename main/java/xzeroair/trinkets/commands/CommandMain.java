@@ -246,6 +246,7 @@ public class CommandMain extends CommandBase {
                                 break;
                             case "gui":
                                 if (target instanceof EntityPlayerMP) {
+                                    capability.authorizeRaceSelection();
                                     NetworkHandler.sendTo(new OpenTrinketGui(Reference.GUI_RACE_SELECTION), (EntityPlayerMP) target);
                                 }
                                 break;

@@ -25,6 +25,8 @@ public class ModCompat {
     public boolean MoBends = false;
     public boolean LycanitesMobs = false;
     public boolean DefiledLands = false;
+    public boolean Ido = false;
+    public boolean Tropicraft = false;
 
     // Unnecessary fixes on my end.
     public boolean InventoryHUD = false;
@@ -46,6 +48,8 @@ public class ModCompat {
         this.MoBends = Loader.isModLoaded("mobends");
         this.LycanitesMobs = Loader.isModLoaded("lycanitesmobs");
         this.DefiledLands = Loader.isModLoaded("defiledlands");
+        this.Ido = Loader.isModLoaded("ido");
+        this.Tropicraft = Loader.isModLoaded("tropicraft");
 
         this.InventoryHUD = Loader.isModLoaded("inventoryhud");
 

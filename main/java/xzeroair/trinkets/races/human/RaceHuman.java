@@ -38,7 +38,7 @@ public class RaceHuman extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         this.addSurvivalAbilities(this.CONFIG.COMPAT.SURVIVAL);
     }
 

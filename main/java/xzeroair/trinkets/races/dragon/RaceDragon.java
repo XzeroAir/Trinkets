@@ -71,7 +71,7 @@ public class RaceDragon extends EntityRacePropertiesHandler {
     }
 
     @Override
-    public void startTransformation() {
+    public void registerRaceAbilities() {
         // Night Vision
         this.addAbility(new AbilityCreativeFlight(this.CONFIG.ABILITIES.FLIGHT));
         this.addAbility(new AbilityElytraFlight(this.CONFIG.ABILITIES.ELYTRA_FLIGHT));

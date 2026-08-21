@@ -24,6 +24,8 @@ public class ClientConfigStore {
     public boolean MOD_COMPAT_TOUGHASNAILS = TrinketsConfig.compat.TOUGH_AS_NAILS;
     public boolean MOD_COMPAT_SIMPLEDIFFICULTY = TrinketsConfig.compat.SIMPLE_DIFFICULTY;
     public boolean MOD_COMPAT_ICE_AND_FIRE = TrinketsConfig.compat.ICE_AND_FIRE;
+    public boolean MOD_COMPAT_IDO_SWIMMING = TrinketsConfig.compat.IDO_SWIMMING;
+    public boolean MOD_COMPAT_TROPICRAFT_SWIMMING = TrinketsConfig.compat.TROPICRAFT_SWIMMING;
 
     /**
      * MISC

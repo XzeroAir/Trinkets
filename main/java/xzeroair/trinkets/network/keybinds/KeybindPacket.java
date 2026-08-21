@@ -3,10 +3,12 @@ package xzeroair.trinkets.network.keybinds;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
@@ -44,9 +46,10 @@ public class KeybindPacket extends ThreadSafePacket {
         this.input.setBoolean(AUX_DOWN_TAG, auxiliaryDown);
     }
 
-    public KeybindPacket(String ability, String handlerKey) {
+    public KeybindPacket(String ability, String handlerKey, EntityLivingBase entity) {
         this.ability = ability == null ? "" : ability;
         this.input = new NBTTagCompound();
+        this.entityID = entity.getEntityId();
         this.input.setString(HANDLER_KEY_TAG, handlerKey == null ? "" : handlerKey);
         this.input.setBoolean(FORCE_RELEASE_TAG, true);
     }
@@ -69,12 +72,14 @@ public class KeybindPacket extends ThreadSafePacket {
     @Override
     public void toBytes(ByteBuf buffer) {
         ByteBufUtils.writeUTF8String(buffer, this.ability);
+        buffer.writeInt(this.entityID);
         ByteBufUtils.writeTag(buffer, this.input);
     }
 
     @Override
     public void fromBytes(ByteBuf buffer) {
         this.ability = ByteBufUtils.readUTF8String(buffer);
+        this.entityID = buffer.readInt();
         this.input = ByteBufUtils.readTag(buffer);
     }
 
@@ -83,9 +88,14 @@ public class KeybindPacket extends ThreadSafePacket {
         if ((this.input == null) || !this.input.getBoolean(FORCE_RELEASE_TAG) || !this.input.hasKey(HANDLER_KEY_TAG, 8)) {
             return;
         }
-        final EntityLivingBase player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            Capabilities.getEntityProperties(player, prop -> prop.getKeybindHandler().getKeyHandler(this.input.getString(HANDLER_KEY_TAG)).forceRelease());
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null) {
+            return;
+        }
+        final World world = mc.player.getEntityWorld();
+        final Entity entity = world.getEntityByID(this.entityID);
+        if (entity instanceof EntityLivingBase) {
+            Capabilities.getEntityProperties(entity, prop -> prop.getKeybindHandler().getKeyHandler(this.input.getString(HANDLER_KEY_TAG)).forceRelease());
         }
     }
 
@@ -169,7 +179,7 @@ public class KeybindPacket extends ThreadSafePacket {
 
     protected void handlePrimaryInput(IKeyBindInterface ability, EntityLivingBase entity, KeyHandler keyHandler, int state, boolean auxiliaryDown, NetHandlerPlayServer server) {
         if (!keyHandler.loadState(state, handler -> ability.onKeyState(entity, handler, auxiliaryDown))) {
-            NetworkHandler.sendTo(new KeybindPacket(this.ability, this.input.getString(HANDLER_KEY_TAG)), (EntityPlayerMP) server.player);
+            NetworkHandler.sendTo(new KeybindPacket(this.ability, this.input.getString(HANDLER_KEY_TAG), entity), (EntityPlayerMP) server.player);
         }
     }
 
