@@ -5,7 +5,15 @@ public class ConstantsLang {
     public static final ConstantsLang INSTANCE = new ConstantsLang();
 
     public final static String DAMAGE_TYPE = Reference.MODID + ".damagetype";
+    public final static String DAMAGE_TYPE_AIR = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.AIR;
+    public final static String DAMAGE_TYPE_DARK = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.DARK;
+    public final static String DAMAGE_TYPE_EARTH = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.EARTH;
+    public final static String DAMAGE_TYPE_FIRE = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.FIRE;
+    public final static String DAMAGE_TYPE_ICE = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.ICE;
+    public final static String DAMAGE_TYPE_LIGHT = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.LIGHT;
+    public final static String DAMAGE_TYPE_LIGHTNING = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.LIGHTNING;
     public final static String DAMAGE_TYPE_POISON = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.POISON;
+    public final static String DAMAGE_TYPE_VOID = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.VOID;
     public final static String DAMAGE_TYPE_WATER = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.WATER;
     public final static String DAMAGE_TYPE_BLEED = DAMAGE_TYPE + "." + TrinketsRegistryNames.ModDamageTypes.BLEED;
 

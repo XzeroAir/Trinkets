@@ -5,7 +5,8 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
+import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.DamageTypeConfigParser;
 
 public interface IAttackAbility extends IAbilityInterface {
 
@@ -97,7 +98,7 @@ public interface IAttackAbility extends IAbilityInterface {
 	}
 
 	default boolean isIndirectDamage(DamageSource source) {
-		return (source instanceof EntityDamageSourceIndirect) || source.isExplosion() || source.isMagicDamage() || source.isProjectile();
+		return DamageTypeConfigParser.parseDamageTypeConfig(source, TrinketsConfig.SERVER.DAMAGE.INDIRECT_DAMAGE_TYPES);
 	}
 
 }

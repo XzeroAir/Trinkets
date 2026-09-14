@@ -26,6 +26,8 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class PlayerCameraSetupEvents {
 
+    public static final PlayerCameraSetupEvents instance = new PlayerCameraSetupEvents();
+
     private static Minecraft mc = Minecraft.getMinecraft();
 
     private CameraTranslation getVanillaTranslation(EntityRenderer renderer, double partialTicks) {
@@ -176,14 +178,14 @@ public class PlayerCameraSetupEvents {
             final EntityPlayer player = (EntityPlayer) entity;
             Capabilities.getEntityProperties(player, prop -> {
                 final EntityRacePropertiesHandler handler = prop.getRaceHandler();
-                if (!prop.isNormalSize() || handler.isTransforming()) {
-                    final float defaultHeight = prop.getDefaultHeight();
-                    final float height = handler.getHeight();
-                    final int perspective = mc.gameSettings.thirdPersonView;
+                final int perspective = mc.gameSettings.thirdPersonView;
+                if (perspective == 0) {
+                    GlStateManager.translate(0.0F, handler.getClientEyeHeightOffset((float) event.getRenderPartialTicks()), 0.0F);
+                } else if ((!prop.isNormalSize() || handler.isTransforming())) {
                     if (perspective > 0) {
                         final CameraTranslation vanilla = this.getVanillaTranslation(event.getRenderer(), event.getRenderPartialTicks());
                         GlStateManager.translate(0.0F, 0.0F, vanilla.getZ());
-                        final CameraTranslation offset = this.updatedOffset(event.getRenderer(), (height / defaultHeight), event.getRenderPartialTicks());
+                        final CameraTranslation offset = this.updatedOffset(event.getRenderer(), handler.getThirdPersonCameraScale(), event.getRenderPartialTicks());
                         GlStateManager.translate(0.0F, 0.0, offset.getZ());
                     }
                 }
@@ -199,7 +201,7 @@ public class PlayerCameraSetupEvents {
     public void renderFogDensityEvent(FogDensity event) {
         final EntityPlayer player = Minecraft.getMinecraft().player;
         if (player.isInWater()) {
-            boolean hasAffinity = TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.AFFINITY_WATER);
+            final boolean hasAffinity = TrinketHelper.entityHasAbility(player, TrinketsRegistryNames.ModAbilities.AFFINITY_WATER);
             if (hasAffinity) {
                 if (event.isCancelable() && !event.isCanceled()) {
                     event.setCanceled(true);

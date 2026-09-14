@@ -53,7 +53,10 @@ public class ConfigIceDragon {
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isIce"};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {
+            "onHurt:*;isIce",
+            "onHurt:*;isFire;1.50"
+    };
 
     @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ATTRIBUTES_COMMENT)

@@ -22,7 +22,12 @@ import java.util.List;
 public class ParticleLightningOrb extends Particle {
 
     List<Vec3d> points = new ArrayList<>();
-    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F).addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.COLOR_4UB).addElement(DefaultVertexFormats.TEX_2S).addElement(DefaultVertexFormats.NORMAL_3B).addElement(DefaultVertexFormats.PADDING_1B);
+    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F)
+                                                                          .addElement(DefaultVertexFormats.TEX_2F)
+                                                                          .addElement(DefaultVertexFormats.COLOR_4UB)
+                                                                          .addElement(DefaultVertexFormats.TEX_2S)
+                                                                          .addElement(DefaultVertexFormats.NORMAL_3B)
+                                                                          .addElement(DefaultVertexFormats.PADDING_1B);
     protected double prevPosX2;
     protected double prevPosY2;
     protected double prevPosZ2;
@@ -154,16 +159,32 @@ public class ParticleLightningOrb extends Particle {
             Minecraft.getMinecraft().getTextureManager().bindTexture(ConstantsTextureResourceLocation.PARTICLE_GREED);
             final float f = (i % 16) / 16.0F;
             final float f1 = f + 0.0625f;
-            final float f2 = i / 16 / 16.0F;
-            final float f3 = f2 + 0.0625f;
+            final float f2 = 0;//i / 16 / 16.0F;
+            final float f3 = 1;//f2 + 0.0625f;
             //float f4 effects size/scale
             final float f4 = 0.5f;//2.0F * this.size;
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 
-            buffer.pos(x - (rotationX * f4) - (rotationXY * f4), y - (rotationZ * f4), z - (rotationYZ * f4) - (rotationXZ * f4)).tex(f1, f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lmv, lmv2).endVertex();
-            buffer.pos((x - (rotationX * f4)) + (rotationXY * f4), y + (rotationZ * f4), (z - (rotationYZ * f4)) + (rotationXZ * f4)).tex(f1, f2).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lmv, lmv2).endVertex();
-            buffer.pos(x + (rotationX * f4) + (rotationXY * f4), y + (rotationZ * f4), z + (rotationYZ * f4) + (rotationXZ * f4)).tex(f, f2).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lmv, lmv2).endVertex();
-            buffer.pos((x + (rotationX * f4)) - (rotationXY * f4), y - (rotationZ * f4), (z + (rotationYZ * f4)) - (rotationXZ * f4)).tex(f, f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lmv, lmv2).endVertex();
+            buffer.pos(x - (rotationX * f4) - (rotationXY * f4), y - (rotationZ * f4), z - (rotationYZ * f4) - (rotationXZ * f4))
+                  .tex(f1, f3)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(lmv, lmv2)
+                  .endVertex();
+            buffer.pos((x - (rotationX * f4)) + (rotationXY * f4), y + (rotationZ * f4), (z - (rotationYZ * f4)) + (rotationXZ * f4))
+                  .tex(f1, f2)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(lmv, lmv2)
+                  .endVertex();
+            buffer.pos(x + (rotationX * f4) + (rotationXY * f4), y + (rotationZ * f4), z + (rotationYZ * f4) + (rotationXZ * f4))
+                  .tex(f, f2)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(lmv, lmv2)
+                  .endVertex();
+            buffer.pos((x + (rotationX * f4)) - (rotationXY * f4), y - (rotationZ * f4), (z + (rotationYZ * f4)) - (rotationXZ * f4))
+                  .tex(f, f3)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(lmv, lmv2)
+                  .endVertex();
             Tessellator.getInstance().draw();
             GlStateManager.enableLighting();
             GlStateManager.disableBlend();

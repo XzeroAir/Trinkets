@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
  */
 public class GuideAdvancementHandler {
 
+    public static final GuideAdvancementHandler instance = new GuideAdvancementHandler();
+
     private static final String PATCHOULI = "patchouli";
     private static final ResourceLocation REFINED_RADIANCE = new ResourceLocation("xat", "refined_radiance");
     private static final ResourceLocation PATCHOULI_GUIDE = new ResourceLocation("xat", "patchouli_guide");

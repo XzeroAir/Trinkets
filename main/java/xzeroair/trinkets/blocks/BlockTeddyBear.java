@@ -126,9 +126,14 @@ public class BlockTeddyBear extends BlockHorizontal implements IsModelLoaded {
 
     @Override
     public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack) {
-        super.harvestBlock(world, player, pos, state, te, stack);
-        //		world.removeTileEntity(pos);
-        world.setBlockToAir(pos);
+        this.harvesters.set(player);
+        try {
+            super.harvestBlock(world, player, pos, state, te, stack);
+            //		world.removeTileEntity(pos);
+            world.setBlockToAir(pos);
+        } finally {
+            this.harvesters.remove();
+        }
     }
 
     @Override

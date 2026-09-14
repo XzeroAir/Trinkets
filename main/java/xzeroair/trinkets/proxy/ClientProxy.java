@@ -67,10 +67,10 @@ public class ClientProxy extends CommonProxy {
         render.addLayer(new TrinketsRenderLayer(true, render));
         super.init(e);
         MinecraftForge.EVENT_BUS.register(ScreenOverlayEvents.instance);
-        MinecraftForge.EVENT_BUS.register(new GuiScreenEvents());
-        MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
-        MinecraftForge.EVENT_BUS.register(new RenderEntitiesEvent());
-        MinecraftForge.EVENT_BUS.register(new PlayerCameraSetupEvents());
+        MinecraftForge.EVENT_BUS.register(GuiScreenEvents.instance);
+        MinecraftForge.EVENT_BUS.register(EventHandlerClient.instance);
+        MinecraftForge.EVENT_BUS.register(RenderEntitiesEvent.instance);
+        MinecraftForge.EVENT_BUS.register(PlayerCameraSetupEvents.instance);
 
         if (Trinkets.MOD_COMPAT.EnhancedVisuals) {
             MinecraftForge.EVENT_BUS.register(EnhancedVisualsRenderEvent.instance);
@@ -86,31 +86,44 @@ public class ClientProxy extends CommonProxy {
     public void renderEffect(int effectID, World world, double x, double y, double z, double x2, double y2, double z2, int color, float alpha, float intensity) {
         Particle effect = null;
         final Minecraft mc = Minecraft.getMinecraft();
-        if (effectID == 1) {
+        if (effectID == Reference.EFFECT_LIGHTNING) {
             effect = new ParticleLightning(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
             mc.player.world.playSound(x, y, z, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 0.2F, 0.6F, true);
-        } else if (effectID == 2) {
+        } else if (effectID == Reference.EFFECT_LIGHTNING_ORB) {
             effect = new ParticleLightningOrb(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
             mc.player.world.playSound(x, y, z, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 0.2F, 0.6F, true);
-        } else if (effectID == 3) {
+        } else if (effectID == Reference.EFFECT_SWEEP_ATTACK) {
             world.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, x, y, z, 0, 0, 0);
             //			effect = EnumParticleTypes.SWEEP_ATTACK;
-        } else if (effectID == 4) {
+        } else if (effectID == Reference.EFFECT_FIRE_BREATH) {
             effect = new ParticleFireBreath(world, x, y, z, 0.0D, 0.0D, 0.0D, color, alpha);//, color, alpha);
 //            effect.setParticleTextureIndex((int) alpha);
             //			world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
-        } else if (effectID == 5) {
+        } else if (effectID == Reference.EFFECT_EXPLOSION) {
             world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, x, y, z, 0, 0, 0);
             mc.player.world.playSound(x, y, z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F)) * 0.7F, true);
-        } else if (effectID == 6) {
+        } else if (effectID == Reference.EFFECT_GREED) {
             final double X = Reference.random.nextDouble() + x;
             final double Y = Reference.random.nextDouble() + y;
             final double Z = Reference.random.nextDouble() + z;
             effect = new ParticleGreed(world, new Vec3d(X, Y, Z), color, 1F, false);
-        } else if (effectID == 7) {
+        } else if (effectID == Reference.EFFECT_LIGHTNING_ORB_SILENT) {
             effect = new ParticleLightningOrb(world, x, y, z, x2, y2, z2, color, alpha, false, intensity);
-        } else if (effectID == 8) {
+        } else if (effectID == Reference.EFFECT_SHIELD_AURA) {
             effect = new ShieldAuraEffect(world, new Vec3d(x, y, z), color, alpha, false);
+        } else if (effectID == Reference.EFFECT_LIGHT_CHARGE) {
+            final int particleCount = Math.max(18, Math.round(intensity));
+            for (int i = 0; i < particleCount; i++) {
+                final double angle = world.rand.nextDouble() * Math.PI * 2.0D;
+                final double radius = 0.45D + (world.rand.nextDouble() * 0.4D);
+                final double height = (world.rand.nextDouble() - 0.5D) * 0.75D;
+                final double startX = x + (Math.cos(angle) * radius);
+                final double startY = y + height;
+                final double startZ = z + (Math.sin(angle) * radius);
+                mc.effectRenderer.addEffect(new ParticleLightCharge(world, startX, startY, startZ, x, y, z, color));
+            }
+        } else if (effectID == Reference.EFFECT_LINGERING_SNOW) {
+            effect = new ParticleColoredSnow(world, x, y, z, x2, y2, z2, color, alpha, Math.round(intensity));
         }
         if (effect != null) {
             mc.effectRenderer.addEffect(effect);

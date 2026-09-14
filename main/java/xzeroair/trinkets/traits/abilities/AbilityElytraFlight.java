@@ -27,6 +27,7 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
 import xzeroair.trinkets.util.handlers.Counter;
+import xzeroair.trinkets.util.helpers.NBTHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import javax.annotation.Nullable;
@@ -38,6 +39,7 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     protected static final String LIFT_STRENGTH_TAG = "LIFT_STRENGTH";
     protected static final String FIREWORK_BOOST_TICKS_TAG = "FIREWORK_BOOST_TICKS";
     protected static final int VANILLA_FLIGHT_EXIT_DELAY = 7;
+    protected static final float MINIMUM_FLIGHT_FALL_DISTANCE = 1.5F;
 
     protected float COST, LIFT_COST;
     protected double LIFT_STRENGTH;
@@ -97,7 +99,8 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
                     if (!living.world.isRemote) {
                         this.LIFT_REQUESTED = true;
                     }
-                } else if (!this.VANILLA_FLIGHT_ACTIVE
+                } else if (!living.world.isRemote
+                        && !this.VANILLA_FLIGHT_ACTIVE
                         && this.VANILLA_FLIGHT_EXIT_TICKS == 0
                         && this.canStartFlying(living)) {
                     final MagicStats magic = Capabilities.getMagicStats(living);
@@ -207,7 +210,9 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
         if (this.LIFT_ENABLED) {
             final MagicStats magic = Capabilities.getMagicStats(entity);
             if (this.LIFT_COST <= 0 || (magic != null && magic.spendMana(this.LIFT_COST))) {
-                entity.motionY += this.LIFT_STRENGTH;
+                if (entity.motionY < this.LIFT_STRENGTH) {
+                    entity.motionY = Math.min(entity.motionY + this.LIFT_STRENGTH, this.LIFT_STRENGTH);
+                }
                 entity.fallDistance = 0F;
                 entity.velocityChanged = true;
             }
@@ -236,11 +241,13 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
                 && !this.isUsingVanillaFlight(entity)
                 && this.canKeepFlying(entity)
                 && !this.GLIDING
-                && (entity.motionY < 0D);
+                && (entity.motionY < 0D)
+                && (entity.fallDistance > MINIMUM_FLIGHT_FALL_DISTANCE);
     }
 
     protected boolean canKeepFlying(EntityLivingBase entity) {
-        return !entity.onGround && !entity.isRiding() && !entity.isInWater() && !entity.isInLava();
+        final boolean grounded = Capabilities.getEntityProperties(entity, entity.onGround, (properties, fallback) -> properties.isGrounded());
+        return !grounded && !entity.isRiding() && !entity.isInWater() && !entity.isInLava();
     }
 
     protected boolean isUsingVanillaFlight(EntityLivingBase entity) {
@@ -285,24 +292,17 @@ public class AbilityElytraFlight extends Ability implements ITickableAbility, IM
     @Override
     public void loadStorage(NBTTagCompound compound) {
         super.loadStorage(compound);
-        if (compound.hasKey(COST_TAG)) {
-            this.COST = compound.getFloat(COST_TAG);
-        }
-        if (compound.hasKey(LIFT_COST_TAG)) {
-            this.LIFT_COST = compound.getFloat(LIFT_COST_TAG);
-        }
-        if (compound.hasKey(LIFT_STRENGTH_TAG)) {
-            this.LIFT_STRENGTH = compound.getDouble(LIFT_STRENGTH_TAG);
-        }
-        if (compound.hasKey(GLIDING_TAG)) {
-            this.GLIDING = compound.getBoolean(GLIDING_TAG);
-        }
+        NBTHelper.hasFloat(compound, COST_TAG, value -> this.COST = value);
+        NBTHelper.hasFloat(compound, LIFT_COST_TAG, value -> this.LIFT_COST = value);
+        NBTHelper.hasDouble(compound, LIFT_STRENGTH_TAG, value -> this.LIFT_STRENGTH = value);
+        NBTHelper.hasBoolean(compound, GLIDING_TAG, value -> this.GLIDING = value);
     }
 
     @Override
     public void loadDataCache(NBTTagCompound tag) {
-        if (tag != null && tag.hasKey(FIREWORK_BOOST_TICKS_TAG)) {
-            this.FIREWORK_BOOST_TICKS = Math.max(0, tag.getInteger(FIREWORK_BOOST_TICKS_TAG));
+        if (tag != null) {
+            this.loadStorage(tag);
+            NBTHelper.hasInteger(tag, FIREWORK_BOOST_TICKS_TAG, value -> this.FIREWORK_BOOST_TICKS = Math.max(0, value));
         }
     }
 

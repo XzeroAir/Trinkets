@@ -16,6 +16,8 @@ import java.util.Map.Entry;
 
 public class BlockBreakEvents extends EventBaseHandler {
 
+    public static final BlockBreakEvents instance = new BlockBreakEvents();
+
     /**
      * Only Fires with an Empty Hand Apparently actually, it fires only if using an
      * empty hand, or the tool level is less then 0, Which Basically makes this very

@@ -1,48 +1,41 @@
 package xzeroair.trinkets.traits.abilities.elements.lightning;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.client.events.ScreenOverlayEvents;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.particles.EffectsRenderPacket;
+import xzeroair.trinkets.entity.EntityRangedAttack;
+import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityLightningBolt;
 import xzeroair.trinkets.util.handlers.Counter;
-import xzeroair.trinkets.util.helpers.RayTraceHelper;
 import xzeroair.trinkets.util.helpers.StringUtils;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
 
-    protected static final String MINECRAFT_LIGHTNING = DamageSource.LIGHTNING_BOLT.damageType;
+    private static final String CHARGE_COUNTER = "heldCounter";
+    private static final float MIN_CHARGE_FRACTION = 0.10F;
+    private static final float BOLT_SPEED = 5.0F;
+    private static final int BOLT_LIFETIME_TICKS = 3;
+    private static final int LIGHTNING_COLOR = 2515356;
     protected final ConfigAbilityLightningBolt CONFIG;
 
-    protected Predicate<Entity> Targets = Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith());
     protected float COST, DAMAGE;
     protected int CHARGE_TIME;
 
@@ -71,41 +64,37 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
     }
 
     protected boolean prepareBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
-        final float cfgCost = this.COST;
-        final double pct = Math.min(MathHelper.pct(magic.getMana(), 0, cfgCost), 1D);
-        final int length = Math.min((int) (this.CHARGE_TIME * pct), this.CHARGE_TIME);
-        final Counter counter = this.tickHandler.getCounter("heldCounter", length, false, true, false, true, false);
-        counter.resetTick();
-        counter.setLength(length);
-        if (pct < 0.10D) {
+        if (!magic.canSpendMana(this.COST * MIN_CHARGE_FRACTION)) {
             return false;
         }
+        final Counter counter = this.tickHandler.getCounter(CHARGE_COUNTER, this.CHARGE_TIME, false, true, false, true, false);
+        counter.resetTick();
+        counter.setLength(this.CHARGE_TIME);
         return def;
     }
 
     protected boolean chargeBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
-        final float cfgCost = this.COST;
-        final float maxMP = magic.getMaxMana();
-        final float mp = magic.getMana();
-        if (mp <= 1F) {
-            return true;
+        final Counter counter = this.tickHandler.getCounter(CHARGE_COUNTER);
+        if (counter == null || !magic.canSpendMana(1F)) {
+            this.reset(entity);
+            return false;
         }
-        final Counter counter = this.tickHandler.getCounter("heldCounter");
         final int tick = counter.getTick();
-        final float multi = (float) MathHelper.pct(tick, 0, counter.getLength());
-        final float realCost = (float) (cfgCost * (MathHelper.pct(tick, 0, this.CHARGE_TIME)));//(float) StringUtils.getAccurateDouble((Math.min(cfgCost, mp)) * multi);
+        final float charge = this.getCharge(tick);
+        final float realCost = this.getManaCost(tick);
         if (!counter.Tick()) {
             if ((entity instanceof EntityPlayer) && entity.world.isRemote && entity.ticksExisted % 2 == 0) {
-                entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.PLAYERS, 0.2F, (float) StringUtils.getAccurateDouble((Math.min(0.4F + (0.6F * multi), 1F))));
+                entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.PLAYERS, 0.2F, (float) StringUtils.getAccurateDouble(Math.min(0.4F + (0.6F * charge), 1F)));
                 ScreenOverlayEvents.instance.SyncCost(realCost);
-            }
-            if (realCost == mp) {
-                return false;
             }
         } else {
             if ((entity instanceof EntityPlayer) && entity.world.isRemote) {
                 entity.world.playSound((EntityPlayer) entity, entity.getPosition(), SoundEvents.BLOCK_END_GATEWAY_SPAWN, SoundCategory.PLAYERS, 0.3F, 0.3F);
-                ScreenOverlayEvents.instance.SyncCost(realCost);
+            }
+            if (!entity.world.isRemote) {
+                this.castBolt(entity, magic, false, aux);
+            } else {
+                this.reset(entity);
             }
             return false;
         }
@@ -113,62 +102,36 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
     }
 
     protected boolean castBolt(EntityLivingBase entity, @Nonnull MagicStats magic, boolean def, boolean aux) {
-        final float cfgCost = this.COST;
-        final float cfgDmg = this.DAMAGE;
-        final float maxMP = magic.getMaxMana();
-        final float mp = magic.getMana();
-        final Counter counter = this.tickHandler.getCounter("heldCounter");
+        if (entity.world.isRemote) {
+            this.reset(entity);
+            return true;
+        }
+        final Counter counter = this.tickHandler.getCounter(CHARGE_COUNTER);
+        if (counter == null) {
+            return false;
+        }
         final int tick = counter.getTick();
-        final float multi = (float) MathHelper.pct(tick, 0, this.CHARGE_TIME);
-        final float realCost = (float) StringUtils.getAccurateDouble(cfgCost * multi);
-        if (tick > (counter.getLength() * 0.1)) {
-            final float finalDamage = cfgDmg * multi;
+        final float charge = this.getCharge(tick);
+        final float realCost = this.getManaCost(tick);
+        if (charge >= MIN_CHARGE_FRACTION) {
+            final float finalDamage = this.DAMAGE * charge;
             if (magic.spendMana(realCost)) {
-                final double maxDist = 15D;
                 final Vec3d start = entity.getPositionEyes(1F);
                 final Vec3d lookVec = entity.getLookVec();
-                final Vec3d end = start.add(lookVec.x * maxDist, lookVec.y * maxDist, lookVec.z * maxDist);
-                final RayTraceResult result = RayTraceHelper.rayTrace(entity, maxDist);
-                Vec3d hitLoc = end;
-                if (result != null) {
-                    if (result.typeOfHit == Type.ENTITY) {
-                        final Entity hit = result.entityHit;
-                        hitLoc = result.hitVec.add(0, hit.height * 0.5F, 0);
-                    } else if (result.typeOfHit == Type.BLOCK) {
-                        hitLoc = result.hitVec;
-                    } else {
-
-                    }
-                }
-                if (!entity.getEntityWorld().isRemote) {
-                    final WorldServer world = (WorldServer) entity.getEntityWorld();
-                    NetworkHandler.sendToClients(world, entity.getPosition(), new EffectsRenderPacket(entity, start.x, start.y, start.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 1, 0.9F, 3F));
-                    NetworkHandler.sendToClients(world, new BlockPos(hitLoc), new EffectsRenderPacket(entity, hitLoc.x, hitLoc.y, hitLoc.z, hitLoc.x, hitLoc.y, hitLoc.z, 2515356, 2, 0.9F, 3F));
-                    boolean pvpEnabled = false;
-                    try {
-                        if (entity instanceof EntityPlayerMP) {
-                            pvpEnabled = entity.getServer().isPVPEnabled();
-                        }
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                    }
-                    final AxisAlignedBB bb1 = new AxisAlignedBB(new BlockPos(hitLoc)).grow(1);
-
-                    final List<Entity> splash = entity.world.getEntitiesInAABBexcluding(entity, bb1, this.Targets);
-                    for (final Entity e : splash) {
-                        if ((e instanceof EntityPlayer) && !pvpEnabled) {
-
-                        } else {
-                            if ((multi > 0.33F) && (e instanceof EntityCreeper)) {
-                                final EntityCreeper creep = (EntityCreeper) e;
-                                final EntityLightningBolt bolt = new EntityLightningBolt(entity.getEntityWorld(), creep.posX, creep.posY, creep.posZ, true);
-                                creep.onStruckByLightning(bolt);
-                                creep.extinguish();
-                            }
-                            e.attackEntityFrom(new EntityDamageSource(MINECRAFT_LIGHTNING, entity), finalDamage);
-                        }
-                    }
-                }
+                final EntityRangedAttack bolt = new EntityRangedAttack(entity.world, entity, LIGHTNING_COLOR).setColor(LIGHTNING_COLOR)
+                                                                                                              .setElement(Elements.LIGHTNING)
+                                                                                                              .setVisualType(EntityRangedAttack.VISUAL_LIGHTNING_BOLT)
+                                                                                                              .setVisualOrigin(start)
+                                                                                                              .setDamage(finalDamage)
+                                                                                                              .setChargeCreepers(charge > 0.33F)
+                                                                                                              .setImpactTemplate(EntityRangedAttack.ImpactTemplate.LIGHTNING_BOLT)
+                                                                                                              .setRenderImpactAreaCircle(false)
+                                                                                                              .setPhysicsTemplate(new EntityRangedAttack.PhysicsTemplate().setGravity(0.0F)
+                                                                                                                                                                          .setDrag(Material.AIR, 1.0F)
+                                                                                                                                                                          .setLifetimeTicks(BOLT_LIFETIME_TICKS));
+                bolt.setPosition(start.x, start.y, start.z);
+                bolt.shoot(lookVec.x, lookVec.y, lookVec.z, BOLT_SPEED, 0.0F);
+                entity.world.spawnEntity(bolt);
                 this.reset(entity);
                 return true;
             }
@@ -178,7 +141,7 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
     }
 
     protected void reset(Entity entity) {
-        final Counter counter = this.tickHandler.getCounter("heldCounter");
+        final Counter counter = this.tickHandler.getCounter(CHARGE_COUNTER);
         if (counter != null) {
             counter.resetTick();
             counter.setLength(this.CHARGE_TIME);
@@ -186,6 +149,14 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
         if (entity.world.isRemote) {
             ScreenOverlayEvents.instance.SyncCost(0);
         }
+    }
+
+    private float getCharge(int chargeTicks) {
+        return (float) Math.min(MathHelper.pct(chargeTicks, 0, this.CHARGE_TIME), 1.0D);
+    }
+
+    private float getManaCost(int chargeTicks) {
+        return (float) StringUtils.getAccurateDouble(this.COST * this.getCharge(chargeTicks));
     }
 
     @Override
@@ -206,6 +177,10 @@ public class AbilityLightningBolt extends Ability implements IKeyBindInterface {
 
     @Override
     public boolean onKeyRelease(Entity entity, boolean Aux) {
+        if (entity.world.isRemote) {
+            this.reset(entity);
+            return true;
+        }
         return Capabilities.getMagicStats(entity, true, (magic, ret) -> this.castBolt((EntityLivingBase) entity, magic, ret, Aux));
     }
 }

@@ -16,6 +16,7 @@ xat.onequip=While equipped:
 xat.tooltip.attackspeed=Attack Speed
 xat.tooltip.attackdamage=Attack Damage
 xat.tooltip.health=Health
+xat.tooltip.magic=Magic
 xat.tooltip.armor=Armor
 xat.tooltip.toughness=Armor Toughness
 xat.tooltip.knockbackresist=Knockback Resistance
@@ -52,6 +53,29 @@ gui.xat.race.trait.alt=Hide Other
 gui.xat.race.trait.alt.variant=Type
 gui.xat.race.stats=Info
 gui.xat.race.flip=Flip
+gui.xat.race.gender=Gender
+gui.xat.race.gender.normal=Normal
+gui.xat.race.gender.male=Male
+gui.xat.race.gender.female=Female
+gui.xat.race.selection.overview=Overview
+gui.xat.race.selection.stats=Stats
+gui.xat.race.selection.no_abilities=No abilities are available for this selection.
+gui.xat.race.selection.natural_flight=Natural Flight
+gui.xat.race.selection.yes=Yes
+gui.xat.race.selection.requires=Requires
+gui.xat.profile.element=Element
+gui.xat.profile.skills=Skills
+gui.xat.profile.skills.unavailable=Race skills will appear here.
+gui.xat.profile.lore=Lore
+gui.xat.profile.lore.unavailable=Race lore will appear here.
+gui.xat.profile.stats.empty=No properties are configured for this element.
+gui.xat.profile.stats.damage.reduced=%s: %s%% less damage
+gui.xat.profile.stats.damage.increased=%s: %s%% more damage
+gui.xat.profile.stats.damage.all=All damage
+
+##################################### HUD ####################################
+
+hud.xat.bonded_hud.health=Health: %s / %s
 
 ##################################### Entities ####################################
 
@@ -100,9 +124,13 @@ xat.ability.breath_ice.name=§bIce Breath
 xat.ability.breath_ice.tooltip1=$gui:§6Grants Ice Breath
 xat.ability.breath_ice.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breathe Ice §3$fbcost: MP
 
-xat.ability.breath_lightning.name=§cLightning Breath
-xat.ability.breath_lightning.tooltip1=$gui:§6Grants Lightning Breath
-xat.ability.breath_lightning.tooltip2=§6Press §r<§e*breathkb:§r>§6 to Breathe Lightning §3$fbcost: MP
+xat.ability.breath_lightning.name=§dLightning Breath
+xat.ability.breath_lightning.tooltip1=$gui:§6Grants a §dLightning §6Breath
+xat.ability.breath_lightning.tooltip2=§6Press §r<§e*breathkb:§r>§6 to breathe §dLightning §3$fbcost: MP
+
+xat.ability.breath_light.name=§eLight Breath
+xat.ability.breath_light.tooltip1=$gui:§6Grants a charged §eLight §6Breath
+xat.ability.breath_light.tooltip2=§6Hold §r<§e*breathkb:§r>§6 to charge a piercing beam of §elight§6 that ignites struck targets
 
 xat.ability.breath_dragon.name=§6Dragon Breath
 xat.ability.breath_dragon.tooltip1=$gui:§6Grants Dragon Breath
@@ -118,8 +146,9 @@ xat.ability.immunity_ice.name=§bIce §6Immunity
 xat.ability.immunity_ice.tooltip1=§2Grants §b$potion:
 xat.ability.immunity_ice.tooltip2=$gui:§6Cannot be Harmed by most Ice based attacks
 
-xat.ability.immunity_lightning.name=§cLightning §6Immunity
+xat.ability.immunity_lightning.name=§dLightning §6Immunity
 xat.ability.immunity_lightning.tooltip1=§2Grants §d$potion:
+xat.ability.immunity_lightning.tooltip2=$gui:§6Cannot be harmed by most §dLightning§6-based attacks
 
 xat.ability.immunity_dark.name=§8Dark §6Immunity
 xat.ability.immunity_dark.tooltip1=$heal:§6Heal from §8$wither:
@@ -132,6 +161,18 @@ xat.ability.immunity_poison.tooltip1=§6Resistant to §2Poison§6 damage
 
 xat.ability.immunity_water.name=§9Water §6Immunity
 xat.ability.immunity_water.tooltip1=§6Resistant to §9Water§6 damage
+
+xat.ability.immunity_air.name=§fAir §6Immunity
+xat.ability.immunity_air.tooltip1=§6Cannot be harmed by most §fAir§6-based attacks
+
+xat.ability.immunity_earth.name=§2Earth §6Immunity
+xat.ability.immunity_earth.tooltip1=§6Cannot be harmed by most §2Earth§6-based attacks
+
+xat.ability.immunity_light.name=§eLight §6Immunity
+xat.ability.immunity_light.tooltip1=§6Cannot be harmed by most §eLight§6-based attacks
+
+xat.ability.immunity_void.name=§5Void §6Immunity
+xat.ability.immunity_void.tooltip1=§6Cannot be harmed by most §5Void§6-based attacks
 
 xat.ability.affinity_dark.name=§8Dark §6Affinity
 xat.ability.affinity_dark.tooltip2=§6Has a §3$wither_chance: §6chance to §8$wither:§6 the target for §3$wither_duration:§6 seconds
@@ -161,8 +202,8 @@ xat.ability.nullify_kinetic.tooltip2=§3$fdpercent:§6 Resistance to kinetic dam
 xat.ability.frost_walker.name=§bFrost Walker
 xat.ability.frost_walker.tooltip1=§6Grants §bFrost Walker
 
-xat.ability.lightning_bolt.name=§3Lightning Affinity
-xat.ability.lightning_bolt.tooltip1=§6Can Shoot Lightning at the Cost of MP
+xat.ability.lightning_bolt.name=§dLightning Affinity
+xat.ability.lightning_bolt.tooltip1=§6Can shoot §dLightning §6at the cost of MP
 xat.ability.lightning_bolt.tooltip2=§6Hold §r<§e*arckb:§r>§6 to cast a bolt attack §3$boltcost: MP
 xat.ability.lightning_bolt.tooltip3=§3$boltdamage:§6 damage based on MP spent
 
@@ -230,6 +271,15 @@ xat.ability.weightless.tooltip2=<§eLeft Click§r> to go §2up
 xat.ability.weightless.tooltip3=<§eSneak§r> + <§eLeft Click§r> to go §2down
 #xat.ability.weightless.tooltip4=§aGrants Levitation while held
 
+xat.ability.summon_slime.name=§aSummon Slime
+xat.ability.summon_slime.tooltip1=§6Press §r<§e*racekb:§r>§6 to summon a Slime companion
+xat.ability.summon_slime.tooltip2=§cCosts §f$healthcost:% §cof your maximum health
+xat.ability.summon_slime.tooltip3=§6Press §r<§e*auxkb:§r>§6 + §e*racekb:§r>§6 to dismiss your Slime companions
+xat.ability.summon_slime.tooltip4=§6Can retain §3$summonlimit: §6Slime companions
+xat.ability.summon_slime.tooltip5=§6Summoned Slimes: §3$activesummons: §6active, §3$freesummons: §6slots free
+xat.ability.summon_slime.tooltip6=§6Slimes gain §3$healthperkill: §6health per kill, up to §3$maximumhealth:
+xat.ability.summon_slime.tooltip7=§6When Fed, restores §3$foodhealing: §6health
+
 xat.ability.safe_guard.name=§6Safe Guard
 xat.ability.safe_guard.tooltip1=§6Gains the $soheffect: Potion Effect
 xat.ability.safe_guard.tooltip2=@explosionresist:
@@ -245,11 +295,24 @@ xat.ability.stampede.name=§6Stampede
 xat.ability.stampede.tooltip1=§6Hold §r<§e*rkey:§r>§6 to perform a charging dash
 xat.ability.stampede.tooltip2=§6Entities in your path will take damage
 
-xat.ability.wolf_rider.name=Wolf Rider
+xat.ability.wolf_rider.name=§6Wolf Rider
+xat.ability.wolf_rider.tooltip1=§6Press §r<§e*racekb:§r>§6 while targeting your tamed adult Wolf to ride it
+xat.ability.wolf_rider.tooltip2=$gui:§6Press §r<§e*racekb:§r>§6 while riding to command your Wolf to attack
+xat.ability.bouncy.name=§aBouncy
+xat.ability.bouncy.tooltip1=§6Bounce after hard landings instead of taking fall damage
+xat.ability.bouncy.tooltip2=$gui:§6Sneak while landing to stop bouncing
 xat.ability.skilled_rider.name=Skilled Rider
 
 xat.ability.blessing_of_life.name=§6Blessing of Life
 xat.ability.blessing_of_life.tooltip1=$gui:§6You have a chance to block a lethal blow and heal to full health
+
+xat.ability.linked_vitality.name=Linked Vitality
+xat.ability.linked_vitality.tooltip1=$damageanydistance:§6Shares §3$damageshare:§6 of incoming damage with your bound partner
+xat.ability.linked_vitality.tooltip2=$damagenearby:§6Shares §3$damageshare:§6 of incoming damage with your nearby bound partner
+xat.ability.linked_vitality.tooltip3=$balancehealth:§6Balances health with your bound partner
+xat.ability.linked_vitality.tooltip4=§6Earn +§3$partnerxp:§6 Exp while near your bound partner
+xat.ability.linked_vitality.direct_share=§dShared vitality with §f%s
+xat.ability.linked_vitality.direct_received=§dShared vitality received from §f%s
 
 ##################################### External Mod Abilities ####################################
 # SURVIVAL MODS
@@ -276,6 +339,8 @@ xat.ability.clear_splash.name=Clear Waters
 xat.ability.clear_splash.tooltip1=$gui:Removes the water blur effect
 xat.ability.ender_eyes.name=Ender Eyes
 xat.ability.ender_eyes.tooltip1=$gui:Removes the Enderman Static Effect
+xat.ability.gritless_vision.name=Gritless Vision
+xat.ability.gritless_vision.tooltip1=$gui:Removes Enhanced Visuals on-screen fire and smoke effects
 
 ##################################### Elements ####################################
 
@@ -307,6 +372,8 @@ xat.race.faelis.name=Faelis
 xat.race.faelis.tooltip1=You're a Faelis of the $element: Element.
 xat.race.goblin.name=Goblin
 xat.race.goblin.tooltip1=You're a Goblin of the $element: Element.
+xat.race.slime.name=Slime
+xat.race.slime.tooltip1=You're a Slime of the $element: Element.
 xat.race.dragon.name=Dragon
 xat.race.dragon.tooltip1=You're a Dragon of the $element: Element.
 xat.race.taurus.name=Taurus
@@ -314,6 +381,20 @@ xat.race.taurus.tooltip1=You're a Taurian of the $element: Element.
 
 ##################################### Damage Types ####################################
 
+xat.damagetype.damage_air=air
+xat.damagetype.damage_air.attack=%1$s was swept away by %2$s's air
+xat.damagetype.damage_dark=darkness
+xat.damagetype.damage_dark.attack=%1$s was consumed by %2$s's darkness
+xat.damagetype.damage_earth=earth
+xat.damagetype.damage_earth.attack=%1$s was crushed by %2$s's earth
+xat.damagetype.damage_fire=fire
+xat.damagetype.damage_fire.attack=%1$s was burned by %2$s's fire
+xat.damagetype.damage_ice=ice
+xat.damagetype.damage_ice.attack=%1$s froze beneath %2$s's ice
+xat.damagetype.damage_light=light
+xat.damagetype.damage_light.attack=%1$s was burned by %2$s's searing light
+xat.damagetype.damage_lightning=lightning
+xat.damagetype.damage_lightning.attack=%1$s was struck by %2$s's lightning
 xat.damagetype.damage_water=water
 xat.damagetype.damage_water.attack=%1$s died to %2$s
 xat.damagetype.damage_water.attack.crown=%1$s died to %2$s while wearing an Ender Queen's Crown
@@ -321,6 +402,9 @@ xat.damagetype.damage_poison=poison
 xat.damagetype.damage_poison.attack=%1$s died to %2$s
 xat.damagetype.damage_bleed=bleed
 xat.damagetype.damage_bleed.attack=%1$s died to %2$s
+xat.damagetype.damage_void=void
+xat.damagetype.damage_void.attack=%1$s vanished into %2$s's void
+death.attack.linked_vitality=%1$s shared vitality with a partner
 
 ##################################### Attributes ####################################
 
@@ -366,6 +450,8 @@ item.faelis_claw.name=Faelis Claw
 item.glow_ring.name=§6Ring of Enchanted Eyes
 item.greater_inertia_stone.name=Stone of Greater Inertia
 item.inertia_null_stone.name=Stone of Inertia Null
+item.linking_locket.name=Linking Locket
+item.linking_locket.tooltip.partner=Bound Partner: %s
 item.poison_stone.name=Poison Stone
 item.polarized_stone.name=Polarized Stone
 item.sea_stone.name=Stone of the Sea
@@ -621,8 +707,8 @@ xat.config.server.settings.tooltip=Settings for the Server
 
 xat.config.experimental_mixins=Experimental Mixins
 xat.config.experimental_mixins.tooltip=Optional Mixin-based behavior changes. All options require a game restart.
-xat.config.experimental_mixins.vanilla_player_size_updates=Vanilla Player Size Updates
-xat.config.experimental_mixins.vanilla_player_size_updates.tooltip=Let vanilla update player dimensions using Trinkets' race-adjusted width and height, including collision and bounding boxes. Requires restart.
+xat.config.experimental_mixins.race_scaled_player_dimensions=Race-Scaled Player Dimensions
+xat.config.experimental_mixins.race_scaled_player_dimensions.tooltip=Apply race-adjusted player dimensions through the Player Size Mixin, including collision and bounding boxes. Requires restart.
 
 xat.config.experimental_mixins.race_scaled_player_shadows=Race-Scaled Player Shadows
 xat.config.experimental_mixins.race_scaled_player_shadows.tooltip=Scale player shadows to the current race-adjusted width. Requires restart.
@@ -632,14 +718,19 @@ xat.config.experimental_mixins.freeze_limbs_while_gliding=Freeze Limbs While Gli
 xat.config.experimental_mixins.freeze_limbs_while_gliding.tooltip=Stop arm and leg walking animations while Trinkets custom gliding. Requires Custom Glide Body Pose. Requires restart.
 
 xat.config.compat.ido_swimming=Ido Swimming Compatibility
-xat.config.compat.ido_swimming.tooltip=Let Ido control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Ido.
+xat.config.compat.ido_swimming.tooltip=Let Ido control player swimming and temporary swimming dimensions.
 xat.config.compat.tropicraft_swimming=Tropicraft Swimming Compatibility
-xat.config.compat.tropicraft_swimming.tooltip=Let Tropicraft control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Tropicraft.
+xat.config.compat.tropicraft_swimming.tooltip=Let Tropicraft control player swimming and temporary swimming dimensions.
+xat.config.compat.aqua_acrobatics=Aqua Acrobatics Compatibility
+xat.config.compat.aqua_acrobatics.tooltip=Let Aqua Acrobatics control player movement and temporary player dimensions.
 
 xat.config.registry=Registry
 xat.config.registry.tooltip=Registry Configuration
 xat.config.registry.enabled=Enabled
 xat.config.registry.enabled.tooltip=Should this be enabled and added to the registry
+
+xat.config.damage_properties=Damage Properties
+xat.config.damage_properties.indirect=Indirect Damage
 
 xat.config.whitelist=Whitelist
 xat.config.whitelist.tooltip=A Configuration Whitelist
@@ -784,8 +875,8 @@ xat.config.compat.defiledlands.tooltip=Enable compatibility with Defiled Lands
 xat.config.external=External Mods
 xat.config.external.tooltip=Configuration for things related to external mods
 
-xat.config.damagetypes=Damage Types
-xat.config.damagetypes.tooltip=Damage Type Configuration
+xat.config.damagetypes=Damage Modifiers
+xat.config.damagetypes.tooltip=Ordered rules that modify incoming damage. A multiplier below 1 reduces damage; a multiplier above 1 increases it.
 xat.config.effects=Effects
 xat.config.effects.tooltip=Configuration for Positive Effects
 xat.config.resistances=Resistances
@@ -1009,12 +1100,34 @@ xat.config.abilities.elytra_flight.lift_cost.tooltip=Mana cost per lift pulse
 xat.config.abilities.elytra_flight.lift_strength=Lift Strength
 xat.config.abilities.elytra_flight.lift_strength.tooltip=Upward velocity added by each lift pulse during Elytra-style gliding
 
+xat.config.abilities.linked_vitality=Linked Vitality
+xat.config.abilities.linked_vitality.tooltip=Configure how bound partners share damage, health, and nearby experience.
+xat.config.abilities.linked_vitality.damage_share=Partner Damage Share
+xat.config.abilities.linked_vitality.balance_health=Balance Health
+xat.config.abilities.linked_vitality.protect_partner=Protect Linked Partner
+xat.config.abilities.linked_vitality.experience_bonus=Nearby Experience Bonus
+xat.config.abilities.linked_vitality.direct_damage=Direct Partner Damage
+xat.config.abilities.linked_vitality.require_nearby_partner=Require Nearby Partner
+xat.config.abilities.linked_vitality.partner_damage_multiplier=Partner Damage Multiplier
+xat.config.abilities.linked_vitality.share_healing=Share Healing
+xat.config.abilities.linked_vitality.heal_share=Partner Healing Share
+xat.config.abilities.linked_vitality.direct_heal=Direct Partner Healing
+xat.config.abilities.bouncy.fall_damage_multiplier=Bounce Fall Damage Multiplier
+
 xat.config.abilities.immunity_fire=Fire Immunity
 xat.config.abilities.immunity_fire.tooltip=
 xat.config.abilities.immunity_ice=Ice Immunity
 xat.config.abilities.immunity_ice.tooltip=
 xat.config.abilities.immunity_lightning=Lightning Immunity
 xat.config.abilities.immunity_lightning.tooltip=
+xat.config.abilities.immunity_air=Air Immunity
+xat.config.abilities.immunity_air.tooltip=
+xat.config.abilities.immunity_earth=Earth Immunity
+xat.config.abilities.immunity_earth.tooltip=
+xat.config.abilities.immunity_light=Light Immunity
+xat.config.abilities.immunity_light.tooltip=
+xat.config.abilities.immunity_void=Void Immunity
+xat.config.abilities.immunity_void.tooltip=
 
 xat.config.abilities.frost_walker=Frost Walker
 xat.config.abilities.frost_walker.tooltip=
@@ -1027,6 +1140,8 @@ xat.config.abilities.breath.breath_ice=Ice Breath
 xat.config.abilities.breath.breath_ice.tooltip=
 xat.config.abilities.breath.breath_lightning=Lightning Breath
 xat.config.abilities.breath.breath_lightning.tooltip=
+xat.config.abilities.breath.breath_light=Light Breath
+xat.config.abilities.breath.breath_light.tooltip=
 xat.config.abilities.breath.breath_dragon=Dragon Breath
 xat.config.abilities.breath.breath_dragon.tooltip=
 xat.config.abilities.breath.terrain=Terrain Effects
@@ -1163,8 +1278,12 @@ xat.config.races.menu=Race Selection Menu
 xat.config.races.menu.tooltip=Configuration for the Race Selection Menu If Enabled
 xat.config.races.menu.blacklist=Selection Blacklist
 xat.config.races.menu.blacklist.tooltip=Races that will not be available for selection
+xat.config.races.default_human=Default Human
+xat.config.races.default_human.tooltip=Sets Human as the original race for new players. Requires restart.
 xat.config.races.size=Race Size
 xat.config.races.size.tooltip=Size Configuration for Races
+xat.config.races.slime.size.health=Scale Size With Health
+xat.config.races.slime.size.health.tooltip=Scale the Slime's configured size from 25% at 10% health or lower to 100% at full health.
 
 xat.config.races.mount=Mount Entities
 xat.config.races.mount.tooltip=Is this race able to mount other entities. Horses, Boats, etc.
@@ -1172,6 +1291,12 @@ xat.config.races.mount.boat=Control Boats
 xat.config.races.mount.boat.tooltip=Is this race able to control boats. Note this will make it impossible to mount a boat without another entity as the driver
 xat.config.races.mount.blacklist=Mount Blacklist
 xat.config.races.mount.blacklist.tooltip=If the race can mount entities, which ones are excluded
+xat.config.races.equipment.weight=Equipment Weight
+xat.config.races.equipment.weight.tooltip=Configure movement and jump penalties from weighted equipment for this race.
+xat.config.races.equipment.weight.enabled=Enabled
+xat.config.races.equipment.weight.enabled.tooltip=Should this race receive movement and jump penalties from configured equipment weight.
+xat.config.races.equipment.weight.list=Weighted Equipment
+xat.config.races.equipment.weight.list.tooltip=List of equipment entries and their weight values.
 
 xat.config.races.dragon=Dragon
 xat.config.races.dragon.tooltip=
@@ -1214,6 +1339,9 @@ xat.config.races.goblin.creeper.friendly=Friendly Creepers
 xat.config.races.goblin.creeper.friendly.tooltip=Should Creepers Ignore you as a Goblin
 xat.config.races.goblin.creeper.explode=Creepers Instantly Explode
 xat.config.races.goblin.creeper.explode.tooltip=Should Creepers Explode instantly when hit as a Goblin
+
+xat.config.races.slime=Slime
+xat.config.races.slime.tooltip=
 
 xat.config.races.human=Human
 xat.config.races.human.tooltip=
@@ -1269,6 +1397,8 @@ xat.config.items.damage_shield=Shield of Honor
 xat.config.items.damage_shield.tooltip=
 xat.config.items.teddy_bear=Teddy Bear
 xat.config.items.teddy_bear.tooltip=
+xat.config.items.linking_locket=Linking Locket
+xat.config.items.linking_locket.tooltip=
 xat.config.items.weightless_stone=Stone of Weightlessness
 xat.config.items.weightless_stone.tooltip=
 xat.config.items.wither_ring=Wither Ring
@@ -1376,6 +1506,8 @@ xat.config.misc.sme.underwaterstrider=Underwater Strider Stacks
 xat.config.misc.sme.underwaterstrider.tooltip=Does Underwater Strider from Rin's So Many Enchantments Stack with Swim Speed Attributes?
 xat.config.misc.movement=Prevent Movement while transforming
 xat.config.misc.movement.tooltip=If enabled, the player will be unable to move when transforming from one race to another
+xat.config.misc.swimming=Swimming
+xat.config.misc.swimming.tooltip=Enable Trinkets sprint-swimming, including the swimming pose, size, buoyancy, and movement. Disable when another mod owns swimming.
 xat.config.misc.interaction.fix=Reach Interaction Fix
 xat.config.misc.interaction.fix.tooltip=Vanilla MC doesn't handle interaction with increased reach properly, this fixes it
 xat.config.misc.vip=VIP Enabled
@@ -1403,7 +1535,7 @@ xat.config.simpledifficulty.tooltip=
 xat.config.enhancedvisuals=Enhanced Visuals
 xat.config.enhancedvisuals.tooltip=
 xat.config.betterdiving=Better Diving
-xat.config.betterdiving.tooltip=
+xat.config.betterdiving.tooltip=Disable Trinkets swimming mechanics while Better Diving owns player swimming.
 xat.config.mobends=Mo Bends
 xat.config.mobends.tooltip=
 xat.config.iceandfire=Ice and Fire

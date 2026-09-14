@@ -184,7 +184,7 @@ public class AbilitySkilledMiner extends Ability implements IMiningAbility {
     }
 
     private boolean canUsePickaxeOn(ItemStack stack, IBlockState state, int bonusToolLevel) {
-        if (!this.isPickaxe(stack)) {
+        if (!this.isPickaxe(stack) || stack.getItem().getDestroySpeed(stack, state) <= 1F) {
             return false;
         }
 

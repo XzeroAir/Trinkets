@@ -3,6 +3,7 @@ package xzeroair.trinkets.util.helpers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.TrinketsDamageSource;
 import xzeroair.trinkets.traits.elements.Element;
@@ -285,6 +286,8 @@ public class DamageTypeConfigParser {
                 return source.isFireDamage() || isFireDamage(source.getDamageType());
             case "isMagic":
                 return source.isMagicDamage();
+            case "isIndirect":
+                return source instanceof EntityDamageSourceIndirect;
             case "isExplosion":
                 return source.isExplosion();
             case "isProjectile":
@@ -298,28 +301,29 @@ public class DamageTypeConfigParser {
             case "isBleed":
                 return source instanceof TrinketsDamageSource && source.getDamageType().equals(TrinketsDamageSource.bleeding.getDamageType());
             case "isPoison":
-                return source instanceof TrinketsDamageSource && source.getDamageType().equals(TrinketsDamageSource.poison.getDamageType()) || isPoisonDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isPoisonDamage() || isPoisonDamage(source.getDamageType());
             case "isWater":
-                return source instanceof TrinketsDamageSource && source.getDamageType().equals(TrinketsDamageSource.water.getDamageType()) || isWaterDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isWaterDamage() || isWaterDamage(source.getDamageType());
             case "isIce":
-                return isIceDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isIceDamage() || isIceDamage(source.getDamageType());
             case "isLightning":
-                return isLightningDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isLightningDamage() || isLightningDamage(source.getDamageType());
             case "isLight":
-                return isLightDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isLightDamage() || isLightDamage(source.getDamageType());
             case "isDark":
-                return isDarkDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isDarkDamage() || isDarkDamage(source.getDamageType());
             case "isEarth":
-                return isEarthDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isEarthDamage() || isEarthDamage(source.getDamageType());
             case "isAir":
-                return isAirDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isAirDamage() || isAirDamage(source.getDamageType());
             case "isVoid":
-                return isVoidDamage(source.getDamageType());
+                return source instanceof TrinketsDamageSource && ((TrinketsDamageSource) source).isVoidDamage() || isVoidDamage(source.getDamageType());
             case "isNeutral":
             default:
                 return false;
         }
     }
+
 
     public static boolean isFireDamage(String string) {
         for (String damage : TrinketsConfig.SERVER.ELEMENTS.Fire_Damage) {

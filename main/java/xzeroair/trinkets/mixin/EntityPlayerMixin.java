@@ -25,15 +25,15 @@ public abstract class EntityPlayerMixin {
     }
 
     @ModifyVariable(method = "updateSize", at = @At("STORE"), index = 1)
-    private float trinkets_useAdjustedRaceWidth(float vanillaWidth) {
+    private float trinkets_useRaceWidth(float vanillaWidth) {
         final EntityRacePropertiesHandler raceHandler = this.trinkets_getActiveRaceHandler();
-        return raceHandler == null ? vanillaWidth : raceHandler.getAdjustedWidth();
+        return raceHandler == null ? vanillaWidth : raceHandler.getWidth();
     }
 
     @ModifyVariable(method = "updateSize", at = @At("STORE"), index = 2)
-    private float trinkets_useAdjustedRaceHeight(float vanillaHeight) {
+    private float trinkets_useRaceHeight(float vanillaHeight) {
         final EntityRacePropertiesHandler raceHandler = this.trinkets_getActiveRaceHandler();
-        return raceHandler == null ? vanillaHeight : raceHandler.getAdjustedHeight();
+        return raceHandler == null ? vanillaHeight : raceHandler.getHeight();
     }
 
     @Unique

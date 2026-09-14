@@ -11,6 +11,9 @@
     },
     "age=3": {
       "model": "xat:cooled_magma_3"
+    },
+    "age=4": {
+      "model": "xat:cooled_magma_3"
     }
   }
 }

@@ -16,25 +16,29 @@ public class SelectRacePacket extends ThreadSafePacket {
 
     private int raceId;
     private int primaryElementId;
+    private int gender;
 
     public SelectRacePacket() {
     }
 
-    public SelectRacePacket(EntityRace race, Element primaryElement) {
+    public SelectRacePacket(EntityRace race, Element primaryElement, int gender) {
         this.raceId = EntityRace.getIdFromRace(race);
         this.primaryElementId = Element.getIdFromElement(primaryElement);
+        this.gender = gender;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(this.raceId);
         buf.writeInt(this.primaryElementId);
+        buf.writeInt(this.gender);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         this.raceId = buf.readInt();
         this.primaryElementId = buf.readInt();
+        this.gender = buf.readInt();
     }
 
     @Override
@@ -46,7 +50,7 @@ public class SelectRacePacket extends ThreadSafePacket {
     public void handleServerSafe(NetHandlerPlayServer server) {
         final EntityRace race = EntityRace.getRaceById(this.raceId);
         final Element primaryElement = Element.getById(this.primaryElementId);
-        if (!this.isValidSelection(race, primaryElement)) {
+        if (!this.isValidSelection(race, primaryElement, this.gender)) {
             return;
         }
         final EntityPlayerMP player = server.player;
@@ -54,14 +58,14 @@ public class SelectRacePacket extends ThreadSafePacket {
             if (!TrinketsConfig.SERVER.RACES.SELECTION_MENU && !properties.isRaceSelectionAuthorized()) {
                 return;
             }
-            properties.setOriginalRaceCache(new RaceCache(race, primaryElement));
+            properties.setOriginalRaceProfile(new RaceCache(race, primaryElement), this.gender);
             properties.consumeRaceSelectionAuthorization();
             properties.scheduleResync();
         });
     }
 
-    private boolean isValidSelection(EntityRace race, Element primaryElement) {
-        if ((race == null) || race.isNone() || (primaryElement == null)) {
+    private boolean isValidSelection(EntityRace race, Element primaryElement, int gender) {
+        if ((race == null) || race.isNone() || (primaryElement == null) || (gender < 0) || (gender > 2)) {
             return false;
         }
         for (final String blockedRace : TrinketsConfig.SERVER.RACES.BLACKLIST) {

@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.api.TrinketHelper;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
 
@@ -33,31 +34,42 @@ public class TrinketsRenderLayer implements LayerRenderer<EntityPlayer> {
         }
         Minecraft.getMinecraft().profiler.startSection("Trinkets Render Layer");
         Minecraft.getMinecraft().profiler.startSection("Race Render Layer");
-        Capabilities.getEntityProperties(player, prop -> {
+        final EntityRacePropertiesHandler previewHandler = RaceSelectionPreviewContext.getHandler(player);
+        if (previewHandler != null) {
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F, 1F);
-            prop.getClientInfo().updateInfo(player, partialTicks);
-            if (TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_SHADOWS && this.renderer instanceof IRenderShadowSize) {
-                ((IRenderShadowSize) this.renderer).trinkets_setShadowSize(0.5F * (player.width / prop.getDefaultWidth()));
-            }
-            prop.getRaceHandler().getRaceRenderer().doRenderLayer(player, this.renderer, prop.isFake(), this.isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+            previewHandler.getRaceRenderer().doRenderLayer(player, this.renderer, true, this.isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
             GlStateManager.color(1F, 1F, 1F, 1F);
             GlStateManager.popMatrix();
-        });
-        Minecraft.getMinecraft().profiler.endSection();
-
-        Minecraft.getMinecraft().profiler.startSection("Item Render Layer");
-        TrinketHelper.applyToAccessories(player, stack -> {
-            if (stack.getItem() instanceof IAccessoryInterface) {
-                final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+        } else {
+            Capabilities.getEntityProperties(player, prop -> {
                 GlStateManager.pushMatrix();
                 GlStateManager.color(1F, 1F, 1F, 1F);
-                trinket.playerRenderLayer(stack, player, this.renderer, this.isSlim, partialTicks, scale);
+                prop.getClientInfo().updateInfo(player, partialTicks);
+                if (TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_SHADOWS && this.renderer instanceof IRenderShadowSize) {
+                    ((IRenderShadowSize) this.renderer).trinkets_setShadowSize(0.5F * (player.width / prop.getDefaultWidth()));
+                }
+                prop.getRaceHandler().getRaceRenderer().doRenderLayer(player, this.renderer, prop.isFake(), this.isSlim, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
                 GlStateManager.color(1F, 1F, 1F, 1F);
                 GlStateManager.popMatrix();
-            }
-        });
+            });
+        }
         Minecraft.getMinecraft().profiler.endSection();
+
+        if (previewHandler == null) {
+            Minecraft.getMinecraft().profiler.startSection("Item Render Layer");
+            TrinketHelper.applyToAccessories(player, stack -> {
+                if (stack.getItem() instanceof IAccessoryInterface) {
+                    final IAccessoryInterface trinket = (IAccessoryInterface) stack.getItem();
+                    GlStateManager.pushMatrix();
+                    GlStateManager.color(1F, 1F, 1F, 1F);
+                    trinket.playerRenderLayer(stack, player, this.renderer, this.isSlim, partialTicks, scale);
+                    GlStateManager.color(1F, 1F, 1F, 1F);
+                    GlStateManager.popMatrix();
+                }
+            });
+            Minecraft.getMinecraft().profiler.endSection();
+        }
         Minecraft.getMinecraft().profiler.endSection();
     }
 

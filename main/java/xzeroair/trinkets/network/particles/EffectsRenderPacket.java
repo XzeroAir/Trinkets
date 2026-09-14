@@ -77,7 +77,10 @@ public class EffectsRenderPacket extends ThreadSafePacket {
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
-        World world = clientPlayer.getEntityWorld();
+        if (clientPlayer == null || clientPlayer.world == null) {
+            return;
+        }
+        World world = clientPlayer.world;
         try {
             final Entity entity = clientPlayer.getEntityWorld().getEntityByID(this.entityID);
             if (entity != null) {

@@ -1,7 +1,6 @@
 package xzeroair.trinkets.util.compat.tropicraft;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.TrinketsConfig;
 
@@ -17,7 +16,7 @@ public final class TropicraftCompat {
      */
     public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.Tropicraft
-                && TrinketsConfig.getClientStore().MOD_COMPAT_TROPICRAFT_SWIMMING;
+                && (Trinkets.proxy.getSide().isClient() ? TrinketsConfig.getClientStore().MOD_COMPAT_TROPICRAFT_SWIMMING : TrinketsConfig.compat.TROPICRAFT_SWIMMING);
     }
 
     public static boolean isSwimming(EntityLivingBase entity) {

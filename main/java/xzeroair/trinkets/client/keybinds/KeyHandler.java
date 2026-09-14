@@ -7,6 +7,7 @@ public class KeyHandler {
     private static final Function<Boolean, Boolean> ACCEPT = value -> true;
 
     private boolean isDown = true;
+    private boolean keyDown;
     private boolean isPressed = false;
     private boolean isReleased = true;
     private boolean forceRelease;
@@ -22,12 +23,17 @@ public class KeyHandler {
         return this.state;
     }
 
+    public boolean isKeyDown() {
+        return this.keyDown;
+    }
+
     public boolean continueInput() {
         return this.continueInput;
     }
 
     public void reset() {
         this.isDown = true;
+        this.keyDown = false;
         this.isPressed = false;
         this.isReleased = true;
         this.forceRelease = false;
@@ -35,6 +41,7 @@ public class KeyHandler {
     }
 
     public void forceRelease() {
+        this.keyDown = false;
         this.forceRelease = true;
         this.isPressed = true;
         this.isReleased = true;
@@ -46,6 +53,7 @@ public class KeyHandler {
         if ((state < 0) || (state > 2)) {
             return false;
         }
+        this.keyDown = state < 2;
         this.state = state;
         this.continueInput = onState.apply(this);
         return this.continueInput;
@@ -74,6 +82,7 @@ public class KeyHandler {
     //	}
     //
     public <T> boolean handler(T target, boolean keyDown, Function<T, Boolean> onPress, Function<T, Boolean> onDown, Function<T, Boolean> onRelease) {
+        this.keyDown = keyDown;
         this.state = -1;
         this.continueInput = true;
         if (keyDown && this.isDown) {
@@ -125,6 +134,7 @@ public class KeyHandler {
     }
 
     public boolean handler(boolean keyDown, Function<Boolean, Boolean> onPress, Function<Boolean, Boolean> onDown, Function<Boolean, Boolean> onRelease) {
+        this.keyDown = keyDown;
         this.state = -1;
         this.continueInput = true;
         final boolean target = true;

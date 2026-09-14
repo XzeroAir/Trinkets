@@ -14,6 +14,8 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 
 public class ElenaiDodgeCompat extends EventBaseHandler {
 
+    public static final ElenaiDodgeCompat instance = new ElenaiDodgeCompat();
+
     public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.compat.ELENAI_DODGE;
     }

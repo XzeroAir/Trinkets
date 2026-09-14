@@ -46,7 +46,10 @@ public class ConfigFireDragon {
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isFire"};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {
+            "onHurt:*;isFire",
+            "onHurt:*;isIce;1.50"
+    };
     /// Set Fire Dragon immune to fire
 
     @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)

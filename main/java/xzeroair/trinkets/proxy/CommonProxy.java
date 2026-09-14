@@ -49,31 +49,30 @@ public class CommonProxy implements IGuiHandler {
     public void init(FMLInitializationEvent e) {
         OreDictionaryCompat.registerOres();
 
-        MinecraftForge.EVENT_BUS.register(EventHandlerServer.instance);
-
         ModSounds.init();
 
-        MinecraftForge.EVENT_BUS.register(new OnWorldJoinHandler());
+        MinecraftForge.EVENT_BUS.register(OnWorldJoinHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new PlayerEventMC());
+        MinecraftForge.EVENT_BUS.register(PlayerEventMC.instance);
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(EventHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new EnderQueenHandler());
+        MinecraftForge.EVENT_BUS.register(EnderQueenHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new CombatHandler());
+        MinecraftForge.EVENT_BUS.register(CombatHandler.instance);
+        MinecraftForge.EVENT_BUS.register(EntityWrapperLifecycleHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new MovementHandler());
+        MinecraftForge.EVENT_BUS.register(MovementHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new BlockBreakEvents());
-        MinecraftForge.EVENT_BUS.register(new GuideAdvancementHandler());
+        MinecraftForge.EVENT_BUS.register(BlockBreakEvents.instance);
+        MinecraftForge.EVENT_BUS.register(GuideAdvancementHandler.instance);
 
-        MinecraftForge.EVENT_BUS.register(new TrinketEventHandler());
+        MinecraftForge.EVENT_BUS.register(TrinketEventHandler.instance);
         if (Trinkets.MOD_COMPAT.FirstAid) {
-            MinecraftForge.EVENT_BUS.register(new FirstAidDamageEvent());
+            MinecraftForge.EVENT_BUS.register(FirstAidDamageEvent.instance);
         }
         if (Trinkets.MOD_COMPAT.ElenaiDodge1 && TrinketsConfig.getClientStore().MOD_COMPAT_ELENAI_DODGE) {
-            MinecraftForge.EVENT_BUS.register(new ElenaiDodgeCompat());
+            MinecraftForge.EVENT_BUS.register(ElenaiDodgeCompat.instance);
         }
     }
 

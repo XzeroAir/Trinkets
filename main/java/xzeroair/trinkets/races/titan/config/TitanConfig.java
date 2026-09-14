@@ -1,12 +1,14 @@
 package xzeroair.trinkets.races.titan.config;
 
 import net.minecraftforge.common.config.Config;
+import xzeroair.trinkets.races.titan.config.elements.*;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityHeavy;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityLargeHands;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
+import xzeroair.trinkets.util.config.race.ConfigRaceEquipmentWeight;
 
 public class TitanConfig {
 
@@ -97,6 +99,64 @@ public class TitanConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
     public RaceSizeConfig SIZE = new RaceSizeConfig(300, 300);
 
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementsConfig ELEMENTS = new ElementsConfig();
+
+    public class ElementsConfig {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_AIR)
+        public ConfigAirTitan AIR = new ConfigAirTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_DARK)
+        public ConfigDarkTitan DARK = new ConfigDarkTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH)
+        public ConfigEarthTitan EARTH = new ConfigEarthTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireTitan FIRE = new ConfigFireTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceTitan ICE = new ConfigIceTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT)
+        public ConfigLightTitan LIGHT = new ConfigLightTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningTitan LIGHTNING = new ConfigLightningTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_POISON)
+        public ConfigPoisonTitan POISON = new ConfigPoisonTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_VOID)
+        public ConfigVoidTitan VOID = new ConfigVoidTitan();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_WATER)
+        public ConfigWaterTitan WATER = new ConfigWaterTitan();
+    }
+
     /// Default Compat
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
@@ -111,5 +171,10 @@ public class TitanConfig {
         public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
 
     }
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT)
+    public ConfigRaceEquipmentWeight EQUIPMENT_WEIGHT = new ConfigRaceEquipmentWeight();
 
 }

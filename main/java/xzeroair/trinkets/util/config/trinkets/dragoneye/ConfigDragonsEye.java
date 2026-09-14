@@ -5,6 +5,7 @@ import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityNightVision;
+import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsFireParticles;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.trinkets.shared.BaubleCompat;
 
@@ -36,6 +37,20 @@ public class ConfigDragonsEye {
         @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_FIRE)
         public ConfigAbilityImmunityFire FIRE_IMMUNITY = new ConfigAbilityImmunityFire(false);
+
+        @Config.Name(ConstantsConfigLang.CONFIG_EXTERNAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_EXTERNAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_EXTERNAL)
+        public ConfigExternal EXTERNAL = new ConfigExternal();
+
+        public class ConfigExternal {
+
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS)
+            public ConfigAbilityEnhancedVisualsFireParticles CLEAR_FIRE_PARTICLES = new ConfigAbilityEnhancedVisualsFireParticles();
+
+        }
 
     }
 

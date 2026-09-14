@@ -58,6 +58,7 @@ public class KeybindHandler {
 
     private final EntityProperties parent;
     private final Map<String, KeyHandler> storage;
+    private boolean movementSnapshotSent;
 
     public KeybindHandler(EntityProperties parent) {
         this.parent = parent;
@@ -85,6 +86,19 @@ public class KeybindHandler {
         return handler;
     }
 
+    public void updateMovementInput(NBTTagCompound movementStates) {
+        for (final String name : movementStates.getKeySet()) {
+            final keyEnum key = keyEnum.byName(name);
+            if (key != keyEnum.NONE) {
+                this.getKeyHandler(key.getName()).loadState(movementStates.getInteger(name), handler -> true);
+            }
+        }
+    }
+
+    public boolean isMovementInputDown(keyEnum key) {
+        return this.getKeyHandler(key.getName()).isKeyDown();
+    }
+
     /**
      * The event layer calls this once per client tick. Movement transitions are sampled before
      * abilities are visited, so one ability receives its primary and movement input coherently.
@@ -92,6 +106,11 @@ public class KeybindHandler {
     @SideOnly(Side.CLIENT)
     public void handleClientInput() {
         this.initializeMovementSnapshot();
+        final NBTTagCompound movementStates = this.getMovementStates();
+        if (movementStates != null) {
+            this.updateMovementInput(movementStates);
+        }
+        this.movementSnapshotSent = false;
         final Entity entity = this.parent.getObject();
         for (Entry<String, AbilityHolder> entry : this.parent.getAbilityHandler().getActiveAbilities().entrySet()) {
             final String abilityKey = entry.getKey();
@@ -101,12 +120,15 @@ public class KeybindHandler {
             }
             try {
                 if (!this.handleClientAbilityInput(abilityKey, (IKeyBindInterface) ability, entity)) {
-                    return;
+                    break;
                 }
             } catch (final Exception e) {
                 Trinkets.LOGGER.error("Trinkets had an Error with Ability:{}", abilityKey);
                 e.printStackTrace();
             }
+        }
+        if ((movementStates != null) && !this.movementSnapshotSent) {
+            NetworkHandler.sendToServer(new KeybindPacket(movementStates));
         }
     }
 
@@ -157,6 +179,7 @@ public class KeybindHandler {
         }
         final boolean primaryContinues = (primaryHandler == null) || (primaryState < 0) || primaryHandler.loadState(primaryState, keyHandler -> keybind.onKeyState(entity, keyHandler, auxiliaryDown));
         if (movementStates != null) {
+            this.movementSnapshotSent = true;
             NetworkHandler.sendToServer(new KeybindPacket(abilityKey, handlerKey, primaryState, primaryDown, auxiliaryDown, movementStates, payload));
         } else if (primaryState >= 0) {
             NetworkHandler.sendToServer(new KeybindPacket(abilityKey, handlerKey, primaryState, auxiliaryDown));
@@ -168,6 +191,17 @@ public class KeybindHandler {
         if (state >= 0) {
             movementStates.setInteger(key.getName(), state);
         }
+    }
+
+    @Nullable
+    protected NBTTagCompound getMovementStates() {
+        final NBTTagCompound movementStates = new NBTTagCompound();
+        for (final keyEnum key : keyEnum.values()) {
+            if (key != keyEnum.NONE) {
+                this.addMovementState(movementStates, key, this.getKeyHandler(key.getName()).getState());
+            }
+        }
+        return movementStates.getKeySet().isEmpty() ? null : movementStates;
     }
 
     @SideOnly(Side.CLIENT)

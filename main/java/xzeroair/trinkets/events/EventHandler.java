@@ -44,6 +44,8 @@ import java.util.Map.Entry;
 
 public class EventHandler extends EventBaseHandler {
 
+    public static final EventHandler instance = new EventHandler();
+
     //	@SubscribeEvent
     //	public void RaceChanged(RaceChangedEvent event) {
     //		//		System.out.println(event.getEntityLiving().getName() + " Just Transformed From " + event.getCurrentRace().getName() + " To " + event.getNewRace().getName());

@@ -44,7 +44,10 @@ public class SyncManaStatsPacket extends ThreadSafePacket {
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final Minecraft mc = Minecraft.getMinecraft();
-        final World world = mc.player.getEntityWorld();
+        if (mc.player == null || mc.player.world == null) {
+            return;
+        }
+        final World world = mc.player.world;
         final Entity entity = world.getEntityByID(this.entityID);
         Capabilities.getMagicStats(entity, (magic) -> magic.loadFromNBT(this.tag));
     }

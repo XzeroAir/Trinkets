@@ -126,6 +126,7 @@ public class ModItems {
 		public static final Item BaubleDamageShield		= new BaubleDamageShield(TrinketsRegistryNames.ModItems.HONOR_SHIELD);
 		public static final Item BaubleArcingOrb		= new BaubleArcingOrb(TrinketsRegistryNames.ModItems.ARCING_ORB);
 		public static final Item BaubleTeddyBear		= new BaubleTeddyBear(TrinketsRegistryNames.ModItems.TEDDY_BEAR);
+		public static final Item BaubleLinkingLocket	= new BaubleLinkingLocket(TrinketsRegistryNames.ModItems.LINKING_LOCKET);
 		public static final Item BaubleFaelisClaw		= new BaubleFaelisClaws(TrinketsRegistryNames.ModItems.FAELIS_CLAWS);
 		public static final Item BaubleExpDevice		= new BaubleExpDevice(TrinketsRegistryNames.ModItems.LEVELING_DEVICE);
 
@@ -156,6 +157,7 @@ public class ModItems {
 			registerItem(BaubleDamageShield);
 			registerItem(BaubleArcingOrb);
 			registerItem(BaubleTeddyBear);
+			registerItem(BaubleLinkingLocket);
 			registerItem(BaubleFaelisClaw);
 
 			registerItem(BaubleTraitCosmetic);
@@ -192,6 +194,7 @@ public class ModItems {
 		public static final Item TrinketDamageShield	= new TrinketDamageShield(TrinketsRegistryNames.ModItems.HONOR_SHIELD);
 		public static final Item TrinketArcingOrb		= new TrinketArcingOrb(TrinketsRegistryNames.ModItems.ARCING_ORB);
 		public static final Item TrinketTeddyBear		= new TrinketTeddyBear(TrinketsRegistryNames.ModItems.TEDDY_BEAR);
+		public static final Item TrinketLinkingLocket	= new TrinketLinkingLocket(TrinketsRegistryNames.ModItems.LINKING_LOCKET);
 
 		public static final Item TrinketFaelisClaw 		= new TrinketFaelisClaws(TrinketsRegistryNames.ModItems.FAELIS_CLAWS);
 
@@ -213,6 +216,7 @@ public class ModItems {
 			registerItem(TrinketDamageShield);
 			registerItem(TrinketArcingOrb);
 			registerItem(TrinketTeddyBear);
+			registerItem(TrinketLinkingLocket);
 			registerItem(TrinketFaelisClaw);
 //			registerItem(TrinketExpDevice);
 			registerItem(TrinketTraitCosmetic);

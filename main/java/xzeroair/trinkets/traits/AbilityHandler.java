@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 public class AbilityHandler {
 
@@ -45,9 +46,37 @@ public class AbilityHandler {
         return this.parentProperties;
     }
 
+    public EntityLivingBase getOwner() {
+        return this.parentProperties.getEntity();
+    }
+
     // Exposes the active ability map for event handlers and UI code.
     public Map<String, AbilityHolder> getActiveAbilities() {
         return this.active;
+    }
+
+    private void lifeCycleAbility(Consumer<ILifecycleAbility> consumer) {
+        for (AbilityHolder holder : this.active.values()) {
+            if (holder.getAbility() instanceof ILifecycleAbility) {
+                consumer.accept((ILifecycleAbility) holder.getAbility());
+            }
+        }
+    }
+
+    public void onJoinWorld(EntityLivingBase entity) {
+        this.lifeCycleAbility(ability -> ability.onJoinWorld(entity));
+    }
+
+    public void onLogin(EntityLivingBase entity) {
+        this.lifeCycleAbility(ability -> ability.onLogin(entity));
+    }
+
+    public void onLogout(EntityLivingBase entity) {
+        this.lifeCycleAbility(ability -> ability.onLogout(entity));
+    }
+
+    public void onChangedDimension(EntityLivingBase entity, int fromDimension, int toDimension) {
+        this.lifeCycleAbility(ability -> ability.onChangedDimension(entity, fromDimension, toDimension));
     }
 
     // Registers a batch of non-item abilities with a generic OTHER source context.
@@ -186,13 +215,14 @@ public class AbilityHandler {
     }
 
     @Nullable
-    // Returns the active ability instance for the given registry key.
+    // Returns the active ability instance for a full registry key or this mod's ability path.
     public IAbilityInterface getAbility(String ability) {
-        AbilityHolder holder = this.getAbilityHolder(ability);
-        if (holder != null) {
-            return holder.getAbility();
+        if ((ability == null) || ability.isEmpty()) {
+            return null;
         }
-        return null;
+        final String registryName = ability.contains(":") ? ability : Reference.MODID + ":" + ability;
+        final AbilityHolder holder = this.getAbilityHolder(registryName);
+        return holder == null ? null : holder.getAbility();
     }
 
     // Drops abilities already marked for removal and runs start-of-tick ability work.
@@ -294,7 +324,8 @@ public class AbilityHandler {
                         final ItemStack stack = info.getStackFromHandler(player);
                         if (!stack.isEmpty()) {
                             final int slot = info.getSlot();
-                            final boolean selected = info.getHandlerType().equals(ItemHandlerType.MAINHAND) && (inHand == slot);
+                            final boolean selected = info.getHandlerType()
+                                                         .equals(ItemHandlerType.MAINHAND) && (inHand == slot);
                             a.onUpdate(stack, player.world, player, slot, selected);
                         } else {
                             final NonNullList<ItemStack> inventory = player.inventory.mainInventory;
@@ -564,6 +595,10 @@ public class AbilityHandler {
         ability.saveStorage(abilityTag);
     }
 
+    public void saveAbilityStorage(EntityLivingBase entity, IAbilityInterface ability) {
+        this.saveInfoToEntity(entity, ability);
+    }
+
     // Restores saved storage for an ability and applies kill-order state on first load.
     public void loadAbilityFromEntity(EntityLivingBase entity, IAbilityInterface ability) {
         if (ability == null || ability.getRegistryName() == null) {
@@ -682,6 +717,10 @@ public class AbilityHandler {
         // Returns the ability handler that owns this holder.
         public final AbilityHandler getHandler() {
             return this.handler;
+        }
+
+        public final EntityLivingBase getOwner() {
+            return this.handler.getOwner();
         }
 
         // Returns the source id that originally registered this ability.

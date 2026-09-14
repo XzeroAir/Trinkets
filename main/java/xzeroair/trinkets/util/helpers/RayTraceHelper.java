@@ -1,12 +1,10 @@
 package xzeroair.trinkets.util.helpers;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -15,6 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.util.Reference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +69,7 @@ public class RayTraceHelper {
                 end = start.add(lookVec.x * distance, lookVec.y * distance, lookVec.z * distance);
             }
         }
-        final Predicate<Entity> predicate = Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith());
+        final Predicate<Entity> predicate = TargetingPredicates.targetable();
         final Entity hitEntity = findEntityOnPath(entity, start, end, distance, excluding == null ? predicate : excluding);
         if (hitEntity != null) {
             result = new RayTraceResult(hitEntity);
@@ -78,12 +77,14 @@ public class RayTraceHelper {
         return result;
     }
 
-    private static final Predicate<Entity> Targets = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE, ent -> (ent != null) && ent.canBeCollidedWith());
+    private static final Predicate<Entity> Targets = TargetingPredicates.targetable();
 
     @Nullable
     public static Entity findEntityOnPath(@Nonnull EntityLivingBase entity, Vec3d start, Vec3d end, double distance, Predicate<Entity> excluding) {
         final Vec3d lookVec = entity.getLookVec();
-        final List<Entity> targets = entity.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().expand(lookVec.x * distance, lookVec.y * distance, lookVec.z * distance).grow(1.0D, 1.0D, 1.0D), excluding
+        final List<Entity> targets = entity.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox()
+                                                                                           .expand(lookVec.x * distance, lookVec.y * distance, lookVec.z * distance)
+                                                                                           .grow(1.0D, 1.0D, 1.0D), excluding
                 //				Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith())
         );
         final List<Pair<Entity, Double>> hitTargets = new ArrayList<>();
@@ -119,7 +120,9 @@ public class RayTraceHelper {
     @Nullable
     public static Entity findEntityOnPath(@Nonnull EntityLivingBase entity, Vec3d start, Vec3d end) {
         Entity hitEntity = null;
-        final List<Entity> list = entity.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().expand(entity.motionX, entity.motionY, entity.motionZ).grow(1.0D), Targets);
+        final List<Entity> list = entity.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox()
+                                                                                        .expand(entity.motionX, entity.motionY, entity.motionZ)
+                                                                                        .grow(1.0D), Targets);
         double d0 = 0.0D;
 
         for (final Entity entity1 : list) {
@@ -147,7 +150,9 @@ public class RayTraceHelper {
         final double dist = beam.getDist();
         final World world = beam.getWorld();
         final EntityLivingBase player = beam.getEntity();
-        final List<Entity> targets = world.getEntitiesInAABBexcluding(player, player.getEntityBoundingBox().expand(lookVec.x * dist, lookVec.y * dist, lookVec.z * dist).grow(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, ent -> (ent != null) && ent.canBeCollidedWith()));
+        final List<Entity> targets = world.getEntitiesInAABBexcluding(player, player.getEntityBoundingBox()
+                                                                                    .expand(lookVec.x * dist, lookVec.y * dist, lookVec.z * dist)
+                                                                                    .grow(1.0D, 1.0D, 1.0D), TargetingPredicates.targetable());
         final List<Pair<Entity, Double>> hitTargets = new ArrayList<>();
         for (final Entity target : targets) {
             final AxisAlignedBB targetBB = target.getEntityBoundingBox().grow(target.getCollisionBorderSize());
@@ -201,8 +206,8 @@ public class RayTraceHelper {
 
     public static void drawLightning(@Nonnull Vec3d start, @Nonnull Vec3d end, World world, double dist, double density, float intensity) {
         final int color = 2515356;
-        Trinkets.proxy.renderEffect(1, world, start.x, start.y, start.z, end.x, end.y, end.z, color, 0.9F, intensity);
-        Trinkets.proxy.renderEffect(2, world, start.x, start.y, start.z, end.x, end.y, end.z, color, 0.9F, intensity);
+        Trinkets.proxy.renderEffect(Reference.EFFECT_LIGHTNING, world, start.x, start.y, start.z, end.x, end.y, end.z, color, 0.9F, intensity);
+        Trinkets.proxy.renderEffect(Reference.EFFECT_LIGHTNING_ORB, world, start.x, start.y, start.z, end.x, end.y, end.z, color, 0.9F, intensity);
     }
 
     private static final List<Vec3d> points = new ArrayList<>();

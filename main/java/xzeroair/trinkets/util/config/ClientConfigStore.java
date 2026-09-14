@@ -26,11 +26,13 @@ public class ClientConfigStore {
     public boolean MOD_COMPAT_ICE_AND_FIRE = TrinketsConfig.compat.ICE_AND_FIRE;
     public boolean MOD_COMPAT_IDO_SWIMMING = TrinketsConfig.compat.IDO_SWIMMING;
     public boolean MOD_COMPAT_TROPICRAFT_SWIMMING = TrinketsConfig.compat.TROPICRAFT_SWIMMING;
+    public boolean MOD_COMPAT_AQUA_ACROBATICS = TrinketsConfig.compat.AQUA_ACROBATICS;
 
     /**
      * MISC
      */
     public boolean BLOCK_MOVEMENT = TrinketsConfig.SERVER.MISC.MOVEMENT;
+    public boolean SWIMMING = TrinketsConfig.SERVER.MISC.SWIMMING;
     public boolean REACH_FIX = TrinketsConfig.SERVER.MISC.REACH;
 
 }

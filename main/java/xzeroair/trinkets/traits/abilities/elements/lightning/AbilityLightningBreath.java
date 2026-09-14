@@ -14,4 +14,5 @@ public class AbilityLightningBreath extends AbilityBreathBase {
     public AbilityLightningBreath(ConfigAbilityBreath config) {
         super(TrinketsRegistryNames.ModAbilities.BREATH_LIGHTNING, config);
     }
+
 }

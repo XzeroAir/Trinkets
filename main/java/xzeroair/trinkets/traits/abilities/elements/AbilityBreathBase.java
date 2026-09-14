@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -66,15 +67,15 @@ public abstract class AbilityBreathBase extends Ability implements IKeyBindInter
             }
             int bcolor = this.getBreathColor(entity);
             final World world = entity.getEntityWorld();
-            final float headPosX = (float) (entity.posX + (1.8F * 1 * 0.3F * Math.cos(((entity.rotationYaw + 90) * Math.PI) / 180)));
-            final float headPosZ = (float) (entity.posZ + (1.8F * 1 * 0.3F * Math.sin(((entity.rotationYaw + 90) * Math.PI) / 180)));
-            final float headPosY = (float) ((entity.posY + (entity.getEyeHeight() * 0.8)));
+            final Vec3d breathOrigin = this.getBreathOrigin(entity);
             world.playSound((EntityPlayer) null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ENDERDRAGON_SHOOT, SoundCategory.PLAYERS, 0.5F, 0.4F / ((Reference.random.nextFloat() * 0.4F) + 0.8F));
             if (!world.isRemote) {
                 //TODO Have a max life, tick it down, then kill the projectile, use the life to show decide on the look
-                final EntityRangedAttack breath = this.configureBreathProjectile(new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, bcolor).setElement(this.getRequiredElement()).setEffects(this.EFFECTS).setAllowTerrainInteraction(this.INTERACT_WITH_TERRAIN));
+                final EntityRangedAttack breath = this.configureBreathProjectile(new EntityRangedAttack(entity.getEntityWorld(), (EntityLivingBase) entity, bcolor).setElement(this.getRequiredElement())
+                                                                                                                                                                   .setEffects(this.EFFECTS)
+                                                                                                                                                                   .setAllowTerrainInteraction(this.INTERACT_WITH_TERRAIN));
                 breath.setDamage(this.DAMAGE);
-                breath.setPosition(headPosX, headPosY, headPosZ);
+                breath.setPosition(breathOrigin.x, breathOrigin.y, breathOrigin.z);
                 breath.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, 1.5F, 0.0F);
                 world.spawnEntity(breath.setColor(bcolor));
             }
@@ -84,7 +85,13 @@ public abstract class AbilityBreathBase extends Ability implements IKeyBindInter
     }
 
     protected int getBreathColor(Entity entity) {
-        return Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> prop.getRaceHandler().getSecondaryTraitColor());
+        return Capabilities.getEntityProperties(entity, 16711680, (prop, color) -> prop.getRaceHandler()
+                                                                                       .getSecondaryTraitColor());
+    }
+
+    protected Vec3d getBreathOrigin(Entity entity) {
+        final EntityLivingBase caster = (EntityLivingBase) entity;
+        return caster.getPositionEyes(1.0F).add(caster.getLookVec().scale(0.55D)).add(0.0D, -0.15D, 0.0D);
     }
 
     protected EntityRangedAttack configureBreathProjectile(EntityRangedAttack breath) {

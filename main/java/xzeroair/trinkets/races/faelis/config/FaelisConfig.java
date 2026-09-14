@@ -1,6 +1,7 @@
 package xzeroair.trinkets.races.faelis.config;
 
 import net.minecraftforge.common.config.Config;
+import xzeroair.trinkets.races.faelis.config.elements.*;
 import net.minecraftforge.common.config.Config.Name;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
@@ -174,6 +175,64 @@ public class FaelisConfig {
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SIZE_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
     public RaceSizeConfig SIZE = new RaceSizeConfig(85, 85);
+
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementsConfig ELEMENTS = new ElementsConfig();
+
+    public class ElementsConfig {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_AIR)
+        public ConfigAirFaelis AIR = new ConfigAirFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_DARK)
+        public ConfigDarkFaelis DARK = new ConfigDarkFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH)
+        public ConfigEarthFaelis EARTH = new ConfigEarthFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireFaelis FIRE = new ConfigFireFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceFaelis ICE = new ConfigIceFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT)
+        public ConfigLightFaelis LIGHT = new ConfigLightFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningFaelis LIGHTNING = new ConfigLightningFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_POISON)
+        public ConfigPoisonFaelis POISON = new ConfigPoisonFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_VOID)
+        public ConfigVoidFaelis VOID = new ConfigVoidFaelis();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_WATER)
+        public ConfigWaterFaelis WATER = new ConfigWaterFaelis();
+    }
 
     /// Default Compat
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)

@@ -3,6 +3,7 @@ package xzeroair.trinkets.util.config;
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.blocks.ConfigBlocksMain;
+import xzeroair.trinkets.util.config.damage.DamageTypeConfig;
 import xzeroair.trinkets.util.config.elements.TrinketElementsConfig;
 import xzeroair.trinkets.util.config.mana.EntityManaConfig;
 import xzeroair.trinkets.util.config.potions.ConfigPotionMain;
@@ -100,6 +101,11 @@ public class ServerConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
     public TrinketElementsConfig ELEMENTS = new TrinketElementsConfig();
 
+    @Config.Name(ConstantsConfigLang.CONFIG_DAMAGE_PROPERTIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_PROPERTIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_PROPERTIES)
+    public DamageTypeConfig DAMAGE = new DamageTypeConfig();
+
     @Config.Name(ConstantsConfigLang.CONFIG_MISC_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_MISC_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_MISC)
@@ -123,6 +129,12 @@ public class ServerConfig {
         @Config.Name("Prevent Movement while transforming")
         @Config.LangKey(ConstantsConfigLang.CONFIG_MISC + ".movement")
         public boolean MOVEMENT = false;
+
+        @Config.RequiresWorldRestart
+        @Config.Comment(ConstantsConfigLang.CONFIG_MISC_SWIMMING_COMMENT)
+        @Config.Name(ConstantsConfigLang.CONFIG_MISC_SWIMMING_NAME)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_MISC_SWIMMING)
+        public boolean SWIMMING = true;
 
         @Config.Comment("Vanilla MC doesn't handle interaction with increased reach properly, this fixes it")
         @Config.Name("Reach Interaction Fix")

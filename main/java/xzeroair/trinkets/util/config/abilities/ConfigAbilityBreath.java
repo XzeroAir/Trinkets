@@ -11,18 +11,26 @@ public class ConfigAbilityBreath {
         this(1F, 10F);
     }
 
+    public ConfigAbilityBreath(int frequency) {
+        this(1F, 10F, frequency);
+    }
+
     public ConfigAbilityBreath(String... effects) {
         this(1F, 10F, effects);
     }
 
     public ConfigAbilityBreath(float breath_damage, float breath_cost, String... effects) {
+        this(breath_damage, breath_cost, 3, effects);
+    }
+
+    public ConfigAbilityBreath(float breath_damage, float breath_cost, int frequency, String... effects) {
         this.DAMAGE = breath_damage;
         this.COST = breath_cost;
         if (effects == null) {
             effects = new String[0];
         }
         this.EFFECTS = effects;
-        this.FREQUENCY = 3;
+        this.FREQUENCY = frequency;
     }
 
     @Config.RequiresWorldRestart

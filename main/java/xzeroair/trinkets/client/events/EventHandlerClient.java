@@ -3,14 +3,12 @@ package xzeroair.trinkets.client.events;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -21,32 +19,23 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.capabilities.race.KeybindHandler.keyEnum;
-import xzeroair.trinkets.client.keybinds.KeyHandler;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.entity.EntityAlphaWolf;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
-import xzeroair.trinkets.network.keybinds.KeybindPacket;
 import xzeroair.trinkets.network.trinketcontainer.OpenTrinketGui;
-import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
-import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
-import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.ConfigEquipmentObject;
 import xzeroair.trinkets.util.config.ConfigHelper.MPRecoveryItem;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 @SideOnly(Side.CLIENT)
 public class EventHandlerClient {
+
+    public static final EventHandlerClient instance = new EventHandlerClient();
 
     //	@SubscribeEvent
     //	public void mouseEvent(MouseEvent event) {
@@ -84,8 +73,8 @@ public class EventHandlerClient {
         try {
             if (player.isRiding()) {
                 final Entity mount = player.getRidingEntity();
-                if (mount instanceof AlphaWolf) {
-                    final AlphaWolf wolf = (AlphaWolf) mount;
+                if (mount instanceof EntityAlphaWolf) {
+                    final EntityAlphaWolf wolf = (EntityAlphaWolf) mount;
                     if (player.movementInput.jump) {
                         wolf.setJumping(true);
                     }
@@ -142,7 +131,8 @@ public class EventHandlerClient {
                     event.getToolTip().add(ItemMaterial);
                 }
                 if (TrinketsConfig.SERVER.RACES.FAELIS.HEAVY_ARMOR_PENALTY) {
-                    boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRaceCache().compareRace(EntityRaces.faelis));
+                    boolean isFaelis = Capabilities.getEntityProperties(player, false, (prop, rtn) -> prop.getCurrentRaceCache()
+                                                                                                          .compareRace(EntityRaces.faelis));
                     if (isFaelis) {
                         ConfigEquipmentObject entry = null;
                         if (item instanceof ItemArmor) {
@@ -152,7 +142,8 @@ public class EventHandlerClient {
                             if (entry != null) {
                                 String color = entry.getEquipmentWeight() > 0 ? "" + TextFormatting.RED : "" + TextFormatting.BLUE;
                                 //								event.getToolTip().add("Weight: " + color + entry.getEquipmentWeight());
-                                event.getToolTip().add(new TextComponentTranslation("xat.tooltip.weight").getFormattedText() + " " + color + entry.getEquipmentWeight());
+                                event.getToolTip()
+                                     .add(new TextComponentTranslation("xat.tooltip.weight").getFormattedText() + " " + color + entry.getEquipmentWeight());
                             }
                             //						} else if (item instanceof ItemShield) {
                         } else {

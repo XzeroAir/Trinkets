@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import xzeroair.trinkets.Trinkets;
@@ -17,15 +18,20 @@ import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.IPickupExpAbility;
+
 import xzeroair.trinkets.traits.abilities.interfaces.ISleepAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
+
 public class PlayerEventMC {
 
-    @SubscribeEvent
+    public static final PlayerEventMC instance = new PlayerEventMC();
+
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void startTracking(PlayerEvent.StartTracking event) {
         final EntityPlayer player = event.getEntityPlayer();
         final Entity entity = event.getTarget();
@@ -138,7 +144,7 @@ public class PlayerEventMC {
         });
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void playerClone(PlayerEvent.Clone event) {
         final EntityPlayer oldPlayer = event.getOriginal();
         final EntityPlayer newPlayer = event.getEntityPlayer();

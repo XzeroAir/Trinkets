@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -28,6 +29,9 @@ import xzeroair.trinkets.util.TrinketsConfig;
 import javax.annotation.Nonnull;
 
 public class OnWorldJoinHandler {
+
+    public static final OnWorldJoinHandler instance = new OnWorldJoinHandler();
+
 
     @SubscribeEvent
     public void attachAttributes(@Nonnull EntityEvent.EntityConstructing event) {
@@ -51,7 +55,7 @@ public class OnWorldJoinHandler {
     /*
      * Fired on Logical Server and Fired After EntityJoinedWorldEvent
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onPlayerLogin(@Nonnull PlayerLoggedInEvent event) {
         final EntityPlayer player = event.player;
         if ((player instanceof EntityPlayerMP)) {
@@ -67,10 +71,11 @@ public class OnWorldJoinHandler {
             }
             Capabilities.getEntityProperties(playerMP, EntityProperties::onLogin);
             Capabilities.getMagicStats(playerMP, MagicStats::onLogin);
+
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onPlayerLogout(@Nonnull PlayerLoggedOutEvent event) {
         final EntityPlayer player = event.player;
         if ((player instanceof EntityPlayerMP)) {
@@ -80,13 +85,14 @@ public class OnWorldJoinHandler {
             }
             Capabilities.getEntityProperties(playerMP, EntityProperties::onLogoff);
             Capabilities.getMagicStats(playerMP, MagicStats::onLogoff);
+
         }
     }
 
     /**
      * Send Capability Data To the player from Server, Because Client is Incorrect
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void entityJoinWorld(@Nonnull EntityJoinWorldEvent event) {
         final Entity entity = event.getEntity();
         if (entity instanceof EntityPlayer) {
@@ -96,13 +102,14 @@ public class OnWorldJoinHandler {
             }
             Capabilities.getEntityProperties(player, EntityProperties::onJoinWorld);
             Capabilities.getMagicStats(player, MagicStats::onJoinWorld);
+
         }
     }
 
     /**
      * Runs Server Side Only, Runs After EntityjoinWorld
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
         final EntityPlayer player = event.player;
         if (TrinketsConfig.SERVER.MISC.VIPS) {
@@ -110,6 +117,7 @@ public class OnWorldJoinHandler {
         }
         Capabilities.getEntityProperties(player, (prop) -> prop.onChangedDimension(event.fromDim, event.toDim));
         Capabilities.getMagicStats(player, (magic) -> magic.onChangedDimension(event.fromDim, event.toDim));
+
     }
 
 }

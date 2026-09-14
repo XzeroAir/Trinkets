@@ -52,7 +52,10 @@ public class ConfigLightningDragon {
     @Config.Name("03. " + ConstantsConfigLang.CONFIG_DAMAGE_TYPES_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_DAMAGE_TYPES_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_DAMAGE_TYPES)
-    public String[] DAMAGE_TYPES_TO_IGNORE = {"*;isLightning"};
+    public String[] DAMAGE_TYPES_TO_IGNORE = {
+            "onHurt:*;isLightning",
+            "onHurt:*;isEarth;1.50"
+    };
 
 
     @Config.Name("90. " + ConstantsConfigLang.CONFIG_ATTRIBUTES_NAME)

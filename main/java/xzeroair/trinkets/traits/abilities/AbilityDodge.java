@@ -16,9 +16,11 @@ import xzeroair.trinkets.client.keybinds.ModKeyBindings;
 import xzeroair.trinkets.init.ModPotionTypes;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.particles.EffectsRenderPacket;
+import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.traits.abilities.interfaces.IMovementAbility;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
 import xzeroair.trinkets.util.TrinketsConfig;
+import xzeroair.trinkets.util.helpers.TargetingPredicates;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityDodge;
 import xzeroair.trinkets.util.handlers.Counter;
@@ -130,7 +132,7 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
         }
         final World world = entity.getEntityWorld();
         if (world instanceof WorldServer) {
-            NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), new EffectsRenderPacket(entity, entity.posX, entity.posY + (entity.height * 0.5F), entity.posZ, entity.posX, entity.posY, entity.posZ, 12648447, 2, 0.8F, 1));
+            NetworkHandler.sendToClients((WorldServer) world, entity.getPosition(), new EffectsRenderPacket(entity, entity.posX, entity.posY + (entity.height * 0.5F), entity.posZ, entity.posX, entity.posY, entity.posZ, 12648447, Reference.EFFECT_LIGHTNING_ORB, 0.8F, 1));
         }
         if (!this.CONFIG.STUNS) {
             return;
@@ -140,8 +142,9 @@ public class AbilityDodge extends Ability implements ITickableAbility, IMovement
         if (potion == null) {
             return;
         }
+        final boolean pvpEnabled = TargetingPredicates.isPvpEnabled(entity.world, entity);
         for (final EntityLivingBase targetEntity : entity.world.getEntitiesWithinAABB(EntityLivingBase.class, entity.getEntityBoundingBox().grow(distance, 1, distance))) {
-            if (targetEntity != entity) {
+            if (targetEntity != entity && TargetingPredicates.isCombatTarget(targetEntity, pvpEnabled)) {
                 final PotionEffect activeEffect = targetEntity.getActivePotionEffect(potion);
                 final int duration = 3 * 20;
                 if ((activeEffect == null) || (activeEffect.getDuration() < duration)) {

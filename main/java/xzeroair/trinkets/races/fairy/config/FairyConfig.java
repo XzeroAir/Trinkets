@@ -1,6 +1,7 @@
 package xzeroair.trinkets.races.fairy.config;
 
 import net.minecraftforge.common.config.Config;
+import xzeroair.trinkets.races.fairy.config.elements.*;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityClimbing;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
@@ -9,6 +10,7 @@ import xzeroair.trinkets.util.config.abilities.ConfigAbilityHealCloud;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
+import xzeroair.trinkets.util.config.race.ConfigRaceEquipmentWeight;
 
 public class FairyConfig {
 
@@ -116,6 +118,64 @@ public class FairyConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
     public RaceSizeConfig SIZE = new RaceSizeConfig(25, 25);
 
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementsConfig ELEMENTS = new ElementsConfig();
+
+    public class ElementsConfig {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_AIR)
+        public ConfigAirFairy AIR = new ConfigAirFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_DARK)
+        public ConfigDarkFairy DARK = new ConfigDarkFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH)
+        public ConfigEarthFairy EARTH = new ConfigEarthFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireFairy FIRE = new ConfigFireFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceFairy ICE = new ConfigIceFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT)
+        public ConfigLightFairy LIGHT = new ConfigLightFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningFairy LIGHTNING = new ConfigLightningFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_POISON)
+        public ConfigPoisonFairy POISON = new ConfigPoisonFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_VOID)
+        public ConfigVoidFairy VOID = new ConfigVoidFairy();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_WATER)
+        public ConfigWaterFairy WATER = new ConfigWaterFairy();
+    }
+
     /// Default Compat
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
@@ -130,5 +190,10 @@ public class FairyConfig {
         public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
 
     }
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT)
+    public ConfigRaceEquipmentWeight EQUIPMENT_WEIGHT = new ConfigRaceEquipmentWeight();
 
 }

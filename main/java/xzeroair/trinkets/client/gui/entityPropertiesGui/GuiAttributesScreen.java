@@ -11,12 +11,12 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.client.GuiScrollingList;
@@ -28,113 +28,70 @@ import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.api.TrinketHelper.SlotInformation;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
+import xzeroair.trinkets.client.ConstantsTextureResourceLocation;
 import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
 import xzeroair.trinkets.enums.EnumRenderLocation;
+import xzeroair.trinkets.init.Elements;
+import xzeroair.trinkets.races.EntityRacePropertiesHandler;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
+import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.Reference;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
+import xzeroair.trinkets.util.helpers.PotionHelper;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterface {
 
-    private enum SortType implements Comparator<IAbilityInterface> {
-        NORMAL(24), A_TO_Z(25) {
-            @Override
-            protected int compare(String name1, String name2) {
-                return name1.compareTo(name2);
-            }
-        }, Z_TO_A(26) {
-            @Override
-            protected int compare(String name1, String name2) {
-                return name2.compareTo(name1);
-            }
-        };
-
-        private final int buttonID;
-
-        SortType(int buttonID) {
-            this.buttonID = buttonID;
-        }
-
-        @Nullable
-        public static SortType getTypeForButton(GuiButton button) {
-            for (final SortType t : values()) {
-                if (t.buttonID == button.id) {
-                    return t;
-                }
-            }
-            return null;
-        }
-
-        protected int compare(String name1, String name2) {
-            return 0;
-        }
-
-        @Override
-        public int compare(IAbilityInterface o1, IAbilityInterface o2) {
-            final String name1 = StringUtils.stripControlCodes(o1.getDisplayName()).toLowerCase();
-            final String name2 = StringUtils.stripControlCodes(o2.getDisplayName()).toLowerCase();
-            return this.compare(name1, name2);
-        }
-    }
 
     protected final EntityPlayer player;
     @Nullable
     protected final EntityProperties properties;
-    protected GuiPropertiesSlider r, g, b, a;
     public int buttonPressed;
-
-    public int redSlider = 5;
-    public int greenSlider = 6;
-    public int blueSlider = 7;
-    public int alphaSlider = 8;
-
-    protected boolean flip = false;
 
     public GuiAttributesScreen(EntityPlayer player) {
         this.player = player;
         this.properties = Capabilities.getEntityProperties(player);
     }
 
-    public static ResourceLocation background = null;
     private float oldMouseX;
     private float oldMouseY;
 
     private GuiAttributesScrollingList abilitySelectionList;
 
-    //	private GuiScreen mainMenu;
-    private GuiScrollingList abilityDescriptions, raceAttributes, raceBonuses;
+    private GuiScrollingList overviewInfo, abilityDescriptions, raceAttributes, raceProperties, skillTreeInfo, loreInfo;
+    @Nullable
+    private ResourceLocation overviewIcon;
+    private String overviewTitle = "";
     private int selected = -1;
     @Nullable
     private AbilityHolder selectedAbility;
     private int listWidth;
     private ArrayList<AbilityHolder> abilities;
 
-    private final int buttonMargin = 1;
-    private final int numButtons = SortType.values().length;
-
-    private final String lastFilterText = "";
-
-    private final boolean sorted = false;
-
-    private final SortType sortType = SortType.NORMAL;
+    private static final int BACK = 1;
+    private static final int EXIT = 2;
+    private static final int OVERVIEW = 3;
+    private static final int STATS = 4;
+    private static final int ABILITIES = 5;
+    private static final int SKILLS = 6;
+    private static final int LORE = 7;
+    private int selectedTab = OVERVIEW;
 
     public void selectAbilityIndex(int index) {
         if (index == this.selected) {
             return;
         }
         this.selected = index;
-        this.selectedAbility = ((index >= 0) && (index <= this.abilities.size())) ? this.abilities.get(this.selected) : null;
+        this.selectedAbility = ((index >= 0) && (index < this.abilities.size())) ? this.abilities.get(this.selected) : null;
 
         this.updateCache();
     }
@@ -147,22 +104,31 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
     public void initGui() {
         this.buttonList.clear();
         super.initGui();
+        this.listWidth = 0;
+        this.selected = -1;
+        this.selectedAbility = null;
 
-        this.addButton(new GuiPropertiesButton(1, 2, 2, 50, 20, "<--"));
-        this.addButton(new GuiPropertiesButton(2, this.width - 16, 2, 14, 20, TextFormatting.RED + "X"));
+        this.addButton(new GuiPropertiesButton(BACK, 2, 2, 50, 20, "<--"));
+        this.addButton(new GuiPropertiesButton(EXIT, this.width - 16, 2, 14, 20, TextFormatting.RED + "X"));
+        this.addButton(new GuiPropertiesButton(OVERVIEW, 10, 32, 54, 20, I18n.format("gui.xat.race.selection.overview")));
+        this.addButton(new GuiPropertiesButton(STATS, 66, 32, 42, 20, I18n.format("gui.xat.race.selection.stats")));
+        this.addButton(new GuiPropertiesButton(ABILITIES, 110, 32, 54, 20, I18n.format(ConstantsConfigLang.CONFIG_ABILITIES)));
+        this.addButton(new GuiPropertiesButton(SKILLS, 166, 32, 42, 20, I18n.format("gui.xat.profile.skills")));
+        this.addButton(new GuiPropertiesButton(LORE, 210, 32, 42, 20, I18n.format("gui.xat.profile.lore")));
 
         this.abilities = Lists.newArrayList(this.properties.getAbilityHandler().getActiveAbilities().values());
         final int slotHeight = 20;
-        if ((this.abilities == null) || this.abilities.isEmpty()) {
-            return;
-        }
         for (final AbilityHolder ability : this.abilities) {
             String name = ability.getAbility().getDisplayName();
             this.listWidth = Math.max(this.listWidth, this.getFontRenderer().getStringWidth(name) + 10);
         }
         this.listWidth = Math.min(this.listWidth, 150);
-        //        this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
         this.abilitySelectionList = new GuiAttributesScrollingList(0, this, this.abilities, this.listWidth, slotHeight);
+        if (!this.abilities.isEmpty()) {
+            this.selected = 0;
+            this.selectedAbility = this.abilities.get(0);
+        }
+        this.updateTabButtons();
         this.updateCache();
     }
 
@@ -221,11 +187,15 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
     protected void actionPerformed(GuiButton button) throws IOException {
         this.buttonPressed = button.id;
         super.actionPerformed(button);
-        if (button.id == 1) {
+        if (button.id == BACK) {
             this.mc.player.openGui(Trinkets.instance, Reference.GUI_ENTITY, this.mc.player.world, 0, 0, 0);
         }
-        if (button.id == 2) {
+        if (button.id == EXIT) {
             this.displayNormalInventory();
+        }
+        if ((button.id == OVERVIEW) || (button.id == STATS) || (button.id == ABILITIES) || (button.id == SKILLS) || (button.id == LORE)) {
+            this.selectedTab = button.id;
+            this.updateTabButtons();
         }
     }
 
@@ -254,17 +224,27 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
             return;
         }
 
-        if (this.abilitySelectionList != null) {
+        if ((this.selectedTab == OVERVIEW) && (this.overviewInfo != null)) {
+            this.overviewInfo.drawScreen(mouseX, mouseY, partialTicks);
+            this.drawOverviewIcon();
+        }
+        if ((this.selectedTab == ABILITIES) && (this.abilitySelectionList != null)) {
             this.abilitySelectionList.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (this.abilityDescriptions != null) {
+        if ((this.selectedTab == ABILITIES) && (this.abilityDescriptions != null)) {
             this.abilityDescriptions.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (this.raceAttributes != null) {
+        if ((this.selectedTab == STATS) && (this.raceAttributes != null)) {
             this.raceAttributes.drawScreen(mouseX, mouseY, partialTicks);
         }
-        if (this.raceBonuses != null) {
-            this.raceBonuses.drawScreen(mouseX, mouseY, partialTicks);
+        if ((this.selectedTab == STATS) && (this.raceProperties != null)) {
+            this.raceProperties.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        if ((this.selectedTab == SKILLS) && (this.skillTreeInfo != null)) {
+            this.skillTreeInfo.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        if ((this.selectedTab == LORE) && (this.loreInfo != null)) {
+            this.loreInfo.drawScreen(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -277,11 +257,17 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
         final int mouseY = this.height - ((Mouse.getEventY() * this.height) / this.mc.displayHeight) - 1;
 
         super.handleMouseInput();
-        if (this.abilityDescriptions != null) {
+        if ((this.selectedTab == ABILITIES) && (this.abilityDescriptions != null)) {
             this.abilityDescriptions.handleMouseInput(mouseX, mouseY);
         }
-        if (this.abilitySelectionList != null) {
+        if ((this.selectedTab == ABILITIES) && (this.abilitySelectionList != null)) {
             this.abilitySelectionList.handleMouseInput(mouseX, mouseY);
+        }
+        if ((this.selectedTab == STATS) && (this.raceAttributes != null)) {
+            this.raceAttributes.handleMouseInput(mouseX, mouseY);
+        }
+        if ((this.selectedTab == STATS) && (this.raceProperties != null)) {
+            this.raceProperties.handleMouseInput(mouseX, mouseY);
         }
     }
 
@@ -298,54 +284,69 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
         return this.fontRenderer;
     }
 
-    public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
-
     private void updateCache() {
+        this.overviewInfo = null;
         this.abilityDescriptions = null;
         this.raceAttributes = null;
+        this.raceProperties = null;
+        this.skillTreeInfo = null;
+        this.loreInfo = null;
+        this.overviewIcon = null;
+        this.overviewTitle = "";
         final ResourceLocation logoPath2 = null;
         final Dimension logoDims2 = new Dimension(0, 0);
+        final EntityRacePropertiesHandler raceHandler = this.properties.getRaceHandler();
+        final List<String> overviewLines = new ArrayList<>();
+        this.overviewTitle = TextFormatting.GOLD + raceHandler.getDisplayName();
+        this.overviewIcon = ConstantsTextureResourceLocation.getPotionIconForRace(raceHandler.getRace(), raceHandler.getRaceCache()
+                .getPrimaryElement());
+        overviewLines.add(this.overviewTitle);
+        overviewLines.add(null);
+        if (!raceHandler.getRaceCache().comparePrimaryElement(Elements.NEUTRAL)) {
+            overviewLines.add(I18n.format("gui.xat.profile.element") + ": " + raceHandler.getRaceCache()
+                    .getPrimaryElement()
+                    .getDisplayName());
+        }
+        overviewLines.add(I18n.format("gui.xat.race.gender") + ": " + this.getGenderName(raceHandler.getGender()));
+        overviewLines.add(null);
+        raceHandler.getDescription(overviewLines, EnumRenderLocation.ALWAYS.getId(), EnumRenderLocation.GUI.getId());
+        this.overviewInfo = new Info(this.width - 20, overviewLines, logoPath2, logoDims2, 56, this.height - 60, 10);
         final List<String> lines2 = new ArrayList<>();
+        lines2.add(TextFormatting.GOLD + I18n.format(ConstantsConfigLang.CONFIG_ATTRIBUTES));
+        lines2.add(null);
         try {
-            String[] attributeConfig = this.properties.getCurrentRaceCache().getRace().getRaceInformation().getAttributes();
+            final String[] attributeConfig = raceHandler.getAttributes();
             if (attributeConfig != null) {
-                for (String entry : attributeConfig) {
-                    AttributeEntry attributeShell = ConfigHelper.getAttributeEntry(entry);
-                    if (attributeShell != null) {
-                        final String name = attributeShell.getAttribute();
-                        final double amount = attributeShell.getAmount();
-                        final int operation = attributeShell.getOperation();
-                        double d0 = amount;
-                        double d1;
-                        boolean flag = false;
-                        if ((operation != 1) && (operation != 2)) {
-                            d1 = d0;
-                        } else {
-                            d1 = d0 * 100.0D;
-                        }
-                        final TextComponentTranslation AttrName = new TextComponentTranslation("attribute.name." + name);
-                        if (flag) {
-                            final TextComponentTranslation never = new TextComponentTranslation("attribute.modifier.equals." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                            lines2.add(" " + never.getFormattedText());
-                        } else if (d0 > 0.0D) {
-                            final TextComponentTranslation addition = new TextComponentTranslation("attribute.modifier.plus." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                            addition.getStyle().setColor(TextFormatting.BLUE);
-                            String s = addition.getFormattedText();
-                            lines2.add(" " + s);
-                        } else if (d0 < 0.0D) {
-                            d1 = d1 * -1.0D;
-                            final TextComponentTranslation subtraction = new TextComponentTranslation("attribute.modifier.take." + operation, DECIMALFORMAT.format(d1), AttrName.getFormattedText());
-                            subtraction.getStyle().setColor(TextFormatting.RED);
-                            String s = subtraction.getFormattedText();
-                            lines2.add(" " + s);
-                        }
+                for (final String entry : attributeConfig) {
+                    final AttributeEntry attribute = ConfigHelper.getAttributeEntry(entry);
+                    if (attribute != null) {
+                        lines2.add(this.formatAttribute(attribute));
                     }
                 }
             }
         } catch (Exception ignored) {
         }
-
-        this.raceAttributes = new Info(this.listWidth + 40, lines2, logoPath2, logoDims2, 32, (GuiAttributesScreen.this.height - 18) + 4, (this.width - this.listWidth - 50));
+        final List<String> propertyLines = new ArrayList<>();
+        this.addDamageRules(propertyLines, raceHandler.getActiveDamageTypesToIgnore());
+        this.addPotionEffects(propertyLines, ConstantsConfigLang.CONFIG_EFFECTS, raceHandler.getActiveEffectsToAdd());
+        this.addPotionEffects(propertyLines, ConstantsConfigLang.CONFIG_RESISTANCES, raceHandler.getActiveEffectsToRemove());
+        if (propertyLines.isEmpty()) {
+            propertyLines.add(TextFormatting.GRAY + I18n.format("gui.xat.profile.stats.empty"));
+        }
+        final int statsColumnGap = 6;
+        final int statsColumnWidth = (this.width - 20 - statsColumnGap) / 2;
+        this.raceAttributes = new Info(statsColumnWidth, lines2, logoPath2, logoDims2, 56, this.height - 60, 10);
+        this.raceProperties = new Info(statsColumnWidth, propertyLines, logoPath2, logoDims2, 56, this.height - 60, 10 + statsColumnWidth + statsColumnGap);
+        final List<String> skillLines = new ArrayList<>();
+        skillLines.add(TextFormatting.GOLD + I18n.format("gui.xat.profile.skills"));
+        skillLines.add(null);
+        skillLines.add(TextFormatting.GRAY + I18n.format("gui.xat.profile.skills.unavailable"));
+        this.skillTreeInfo = new Info(this.width - 20, skillLines, null, new Dimension(0, 0), 56, this.height - 60, 10);
+        final List<String> loreLines = new ArrayList<>();
+        loreLines.add(TextFormatting.GOLD + I18n.format("gui.xat.profile.lore"));
+        loreLines.add(null);
+        loreLines.add(TextFormatting.GRAY + I18n.format("gui.xat.profile.lore.unavailable"));
+        this.loreInfo = new Info(this.width - 20, loreLines, null, new Dimension(0, 0), 56, this.height - 60, 10);
         if (this.selectedAbility == null) {
             return;
         }
@@ -390,7 +391,163 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
 
         //		lines.addAll(selectedMod.getDescription());
 
-        this.abilityDescriptions = new Info((this.width - this.listWidth - 50) - this.listWidth - 30, lines, logoPath, logoDims);
+        this.abilityDescriptions = new Info(this.width - this.listWidth - 30, lines, logoPath, logoDims, 56, this.height - 60, this.listWidth + 20);
+    }
+
+    private String formatAttribute(AttributeEntry attribute) {
+        final String translationKey = "attribute.name." + attribute.getAttribute();
+        String name = I18n.hasKey(translationKey) ? I18n.format(translationKey) : attribute.getAttribute();
+        if (!I18n.hasKey(translationKey)) {
+            final int namespace = name.lastIndexOf('.');
+            if (namespace >= 0) {
+                name = name.substring(namespace + 1);
+            }
+            name = name.replaceAll("([a-z])([A-Z])", "$1 $2");
+            if (!name.isEmpty()) {
+                name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            }
+        }
+        final TextFormatting amountColor = attribute.getAmount() >= 0 ? TextFormatting.GREEN : TextFormatting.RED;
+        return TextFormatting.GRAY + name + TextFormatting.WHITE + ": " + amountColor + this.formatAttributeAmount(attribute.getAmount(), attribute.getOperation()) + TextFormatting.DARK_GRAY + " (OP:" + attribute.getOperation() + ")";
+    }
+
+    private String formatAttributeAmount(double amount, int operation) {
+        final BigDecimal value = BigDecimal.valueOf(amount);
+        final BigDecimal displayValue = operation == 0 ? value : value.movePointRight(2);
+        final String sign = displayValue.signum() >= 0 ? "+" : "";
+        return sign + displayValue.stripTrailingZeros().toPlainString() + (operation == 0 ? "" : "%");
+    }
+
+    private void addDamageRules(List<String> lines, String[] rules) {
+        if ((rules == null) || (rules.length == 0)) {
+            return;
+        }
+        lines.add(null);
+        lines.add(TextFormatting.GOLD + I18n.format(ConstantsConfigLang.CONFIG_DAMAGE_TYPES));
+        for (String rule : rules) {
+            final String formattedRule = this.formatDamageRule(rule);
+            if (!formattedRule.isEmpty()) {
+                lines.add(formattedRule);
+            }
+        }
+    }
+
+    private void addPotionEffects(List<String> lines, String headingKey, String[] effects) {
+        if ((effects == null) || (effects.length == 0)) {
+            return;
+        }
+        lines.add(null);
+        lines.add(TextFormatting.GOLD + I18n.format(headingKey));
+        for (String effect : effects) {
+            final String formattedEffect = this.formatPotionEffect(effect);
+            if (!formattedEffect.isEmpty()) {
+                lines.add(TextFormatting.GRAY + formattedEffect);
+            }
+        }
+    }
+
+    private String formatPotionEffect(String effectConfig) {
+        final Potion potion = PotionHelper.getPotionFromConfig(effectConfig);
+        if (potion == null) {
+            return ConfigHelper.cleanConfigEntry(effectConfig);
+        }
+        final String translationKey = potion.getName();
+        return I18n.hasKey(translationKey) ? I18n.format(translationKey) : potion.getRegistryName().toString();
+    }
+
+    private String formatDamageRule(String ruleConfig) {
+        final String rule = ConfigHelper.cleanConfigEntry(ruleConfig);
+        if (rule.isEmpty()) {
+            return "";
+        }
+        final String[] parts = rule.replaceFirst("^on(?:Attacked|Hurt|Damaged):", "").split(";");
+        if (parts.length < 2) {
+            return TextFormatting.GRAY + rule;
+        }
+        try {
+            final float multiplier = Float.parseFloat(parts[parts.length - 1]);
+            final int difference = Math.round(Math.abs(1F - multiplier) * 100F);
+            final String condition = this.formatDamageCondition(parts);
+            if (multiplier <= 1F) {
+                return TextFormatting.GRAY + I18n.format("gui.xat.profile.stats.damage.reduced", condition, difference);
+            }
+            return TextFormatting.GRAY + I18n.format("gui.xat.profile.stats.damage.increased", condition, difference);
+        } catch (NumberFormatException ignored) {
+            return TextFormatting.GRAY + rule;
+        }
+    }
+
+    private String formatDamageCondition(String[] parts) {
+        if (parts.length < 2) {
+            return I18n.format("gui.xat.profile.stats.damage.all");
+        }
+        final String condition = parts[1];
+        if ("isMagic".equals(condition)) {
+            return I18n.format("xat.tooltip.magic");
+        }
+        if ("isFire".equals(condition)) {
+            return Elements.FIRE.getDisplayName();
+        }
+        if ("isIce".equals(condition)) {
+            return Elements.ICE.getDisplayName();
+        }
+        if ("isLightning".equals(condition)) {
+            return Elements.LIGHTNING.getDisplayName();
+        }
+        if ("isLight".equals(condition)) {
+            return Elements.LIGHT.getDisplayName();
+        }
+        if ("isDark".equals(condition)) {
+            return Elements.DARK.getDisplayName();
+        }
+        if ("isWater".equals(condition)) {
+            return Elements.WATER.getDisplayName();
+        }
+        if ("isEarth".equals(condition)) {
+            return Elements.EARTH.getDisplayName();
+        }
+        if ("isAir".equals(condition)) {
+            return Elements.AIR.getDisplayName();
+        }
+        if ("isPoison".equals(condition)) {
+            return Elements.POISON.getDisplayName();
+        }
+        if ("isVoid".equals(condition)) {
+            return Elements.VOID.getDisplayName();
+        }
+        return "*".equals(parts[0]) ? I18n.format("gui.xat.profile.stats.damage.all") : parts[0];
+    }
+
+    private String getGenderName(int gender) {
+        switch (gender) {
+            case 1:
+                return I18n.format("gui.xat.race.gender.male");
+            case 2:
+                return I18n.format("gui.xat.race.gender.female");
+            default:
+                return I18n.format("gui.xat.race.gender.normal");
+        }
+    }
+
+    private void drawOverviewIcon() {
+        if (this.overviewIcon == null) {
+            return;
+        }
+        final int x = 14 + this.fontRenderer.getStringWidth(this.overviewTitle) + 4;
+        final int y = 56;
+        GlStateManager.enableBlend();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.renderEngine.bindTexture(this.overviewIcon);
+        this.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 16, 16, 16, 16);
+        GlStateManager.disableBlend();
+    }
+
+    private void updateTabButtons() {
+        for (final GuiButton button : this.buttonList) {
+            if ((button.id == OVERVIEW) || (button.id == STATS) || (button.id == ABILITIES) || (button.id == SKILLS) || (button.id == LORE)) {
+                button.enabled = button.id != this.selectedTab;
+            }
+        }
     }
 
     private class Info extends GuiScrollingList {
@@ -489,7 +646,9 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
                 final int offset = (this.left + (this.listWidth / 2)) - (this.logoDims.width / 2);
                 wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
                 wr.pos(offset, top + this.logoDims.height, GuiAttributesScreen.this.zLevel).tex(0, 1).endVertex();
-                wr.pos(offset + this.logoDims.width, top + this.logoDims.height, GuiAttributesScreen.this.zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + this.logoDims.width, top + this.logoDims.height, GuiAttributesScreen.this.zLevel)
+                        .tex(1, 1)
+                        .endVertex();
                 wr.pos(offset + this.logoDims.width, top, GuiAttributesScreen.this.zLevel).tex(1, 0).endVertex();
                 wr.pos(offset, top, GuiAttributesScreen.this.zLevel).tex(0, 0).endVertex();
                 tess.draw();
@@ -500,7 +659,8 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
             for (final ITextComponent line : this.lines) {
                 if (line != null) {
                     GlStateManager.enableBlend();
-                    GuiAttributesScreen.this.getFontRenderer().drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
+                    GuiAttributesScreen.this.getFontRenderer()
+                            .drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
                     GlStateManager.disableAlpha();
                     GlStateManager.disableBlend();
                 }
@@ -548,7 +708,7 @@ public class GuiAttributesScreen extends GuiScreen implements ITrinketGuiInterfa
         private final int id;
 
         public GuiAttributesScrollingList(int ID, GuiAttributesScreen parent, ArrayList<AbilityHolder> abilities, int listWidth, int slotHeight) {
-            super(parent.mc, listWidth, parent.height, 32, (parent.height - 88) + 4, 10, slotHeight, parent.width, parent.height);
+            super(parent.mc, listWidth, parent.height, 56, parent.height - 60, 10, slotHeight, parent.width, parent.height);
             this.id = ID;
             this.parent = parent;
             this.abilities = abilities;

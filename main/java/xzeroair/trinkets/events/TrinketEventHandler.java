@@ -36,6 +36,7 @@ import xzeroair.trinkets.capabilities.InventoryContainerCapability.TrinketContai
 import xzeroair.trinkets.container.TrinketContainerHandler;
 import xzeroair.trinkets.network.NetworkHandler;
 import xzeroair.trinkets.network.SyncItemDataPacket;
+
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.compat.baubles.BaublesHelper;
 import xzeroair.trinkets.util.interfaces.IAccessoryInterface;
@@ -44,6 +45,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class TrinketEventHandler {
+
+    public static final TrinketEventHandler instance = new TrinketEventHandler();
 
     private boolean shouldHandleBaubles() {
         return Trinkets.MOD_COMPAT.Baubles;
@@ -76,6 +79,7 @@ public class TrinketEventHandler {
         }
     }
 
+
     private void forEachTrinketSlot(EntityLivingBase entity, BiConsumer<ItemStack, Integer> consumer) {
         TrinketHelper.getTrinketHandler(entity, handler -> {
             for (int i = 0; i < handler.getSlots(); i++) {
@@ -96,7 +100,7 @@ public class TrinketEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void PlayerLoggedInEvent(PlayerLoggedInEvent event) {
         final EntityPlayer player = event.player;
         final World world = player.getEntityWorld();
@@ -108,10 +112,11 @@ public class TrinketEventHandler {
                 }
                 item.eventPlayerLogin(stack, player);
             });
+
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void EntityJoinWorld(EntityJoinWorldEvent event) {
         if (!this.shouldHandleTrinkets()) {
             return;
@@ -132,17 +137,19 @@ public class TrinketEventHandler {
                         }
                     }
                 });
+
             }
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void PlayerLoggedOutEvent(PlayerLoggedOutEvent event) {
         final EntityPlayer player = event.player;
         this.forEachAccessory(player, (stack, item) -> item.eventPlayerLogout(stack, player));
+
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void playerStartTracking(PlayerEvent.StartTracking event) {
         final EntityPlayer player = event.getEntityPlayer();
         final Entity target = event.getTarget();
@@ -175,10 +182,11 @@ public class TrinketEventHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void PlayerChangedDimensionEvent(PlayerChangedDimensionEvent event) {
         final EntityPlayer player = event.player;
         this.forEachAccessory(player, (stack, item) -> item.eventPlayerChangedDimension(stack, player, event.fromDim, event.toDim));
+
     }
 
     @SubscribeEvent
@@ -285,7 +293,8 @@ public class TrinketEventHandler {
 
     @SubscribeEvent
     public void playerDeath(PlayerDropsEvent event) {
-        if (this.shouldHandleTrinkets() && (event.getEntity() instanceof EntityPlayer) && !event.getEntity().world.isRemote && !event.getEntity().world.getGameRules().getBoolean("keepInventory")) {
+        if (this.shouldHandleTrinkets() && (event.getEntity() instanceof EntityPlayer) && !event.getEntity().world.isRemote && !event.getEntity().world.getGameRules()
+                                                                                                                                                       .getBoolean("keepInventory")) {
             this.dropItemsAt(event.getEntityPlayer(), event.getDrops(), event.getEntityPlayer());
         }
     }
@@ -309,15 +318,17 @@ public class TrinketEventHandler {
         });
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void PlayerCloneEvent(PlayerEvent.Clone event) {
         if (!this.shouldHandleTrinkets()) {
             return;
         }
         try {
-            final TrinketContainerHandler original = (TrinketContainerHandler) event.getOriginal().getCapability(TrinketContainerProvider.containerCap, null);
+            final TrinketContainerHandler original = (TrinketContainerHandler) event.getOriginal()
+                                                                                    .getCapability(TrinketContainerProvider.containerCap, null);
             final NBTTagCompound nbt = original.serializeNBT();
-            final TrinketContainerHandler clone = (TrinketContainerHandler) event.getEntityPlayer().getCapability(TrinketContainerProvider.containerCap, null);
+            final TrinketContainerHandler clone = (TrinketContainerHandler) event.getEntityPlayer()
+                                                                                 .getCapability(TrinketContainerProvider.containerCap, null);
             clone.deserializeNBT(nbt);
         } catch (final Exception e) {
 

@@ -4,11 +4,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
@@ -16,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -28,21 +32,32 @@ import xzeroair.trinkets.util.interfaces.IsModelLoaded;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class TempBlock extends BlockBreakable implements IsModelLoaded {
 
-    public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 3);
+    public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 4);
+    public static final PropertyBool HEATED_STONE = PropertyBool.create("heated_stone");
 
     public TempBlock(String name) {
         super(Material.ROCK, false);
         this.setRegistryName(Reference.MODID, name);
 //        this.slipperiness = 0.98F;
-        this.setTickRandomly(true);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(AGE, 0));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(AGE, 0).withProperty(HEATED_STONE, false));
         this.setTranslationKey(this.getRegistryName().toString());
+        this.setHardness(0.5F);
         this.setLightLevel(0);
 //        this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+    }
+
+    @Override
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+        if (!entityIn.isImmuneToFire() && (entityIn instanceof EntityLivingBase) && (EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FROST_WALKER, (EntityLivingBase) entityIn) <= 0)) {
+            entityIn.attackEntityFrom(DamageSource.HOT_FLOOR, 1.0F);
+        }
+        super.onEntityWalk(worldIn, pos, entityIn);
     }
 
     @SideOnly(Side.CLIENT)
@@ -56,8 +71,18 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
         player.addStat(StatList.getBlockStats(this));
         player.addExhaustion(0.005F);
 
+        if (state.getValue(HEATED_STONE)) {
+            final List<ItemStack> items = new ArrayList<>();
+            items.add(new ItemStack(Blocks.COBBLESTONE));
+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0F, false, player);
+            for (final ItemStack item : items) {
+                spawnAsEntity(worldIn, pos, item);
+            }
+            return;
+        }
+
         if (this.canSilkHarvest(worldIn, pos, state, player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
-            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
+            List<ItemStack> items = new ArrayList<>();
             items.add(this.getSilkTouchDrop(state));
 
             net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0f, true, player);
@@ -71,8 +96,11 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
 
             int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
             this.harvesters.set(player);
-            this.dropBlockAsItem(worldIn, pos, state, i);
-            this.harvesters.set(null);
+            try {
+                this.dropBlockAsItem(worldIn, pos, state, i);
+            } finally {
+                this.harvesters.remove();
+            }
             Material material = worldIn.getBlockState(pos.down()).getMaterial();
 
             if (material.blocksMovement() || material.isLiquid()) {
@@ -96,10 +124,29 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
 
     @Override
     public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Random rand) {
+        if (state.getValue(HEATED_STONE)) {
+            final int age = state.getValue(AGE);
+            if (age == 4) {
+                worldIn.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState(), 3);
+            } else {
+                worldIn.setBlockState(pos, state.withProperty(AGE, age + 1), 2);
+                worldIn.scheduleUpdate(pos, this, MathHelper.getInt(rand, 20, 40));
+            }
+            return;
+        }
         if ((rand.nextInt(3) == 0 || this.countNeighbors(worldIn, pos) < 4) && worldIn.getLightFromNeighbors(pos) > 11 - state.getValue(AGE) - state.getLightOpacity()) {
             this.slightlyMelt(worldIn, pos, state, rand, true);
         } else {
             worldIn.scheduleUpdate(pos, this, MathHelper.getInt(rand, 20, 40));
+        }
+    }
+
+    public void setHeatedStone(@Nonnull World worldIn, @Nonnull BlockPos pos) {
+        worldIn.setBlockState(pos, this.getDefaultState().withProperty(HEATED_STONE, true), 3);
+        if (this.hasWaterNeighbor(worldIn, pos)) {
+            this.coolHeatedStone(worldIn, pos);
+        } else {
+            worldIn.scheduleUpdate(pos, this, MathHelper.getInt(worldIn.rand, 20, 40));
         }
     }
 
@@ -120,23 +167,41 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
 
     @Override
     public int getMetaFromState(@Nonnull IBlockState state) {
-        return state.getValue(AGE);
+        return state.getValue(AGE) + (state.getValue(HEATED_STONE) ? 5 : 0);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(AGE, MathHelper.clamp(meta, 0, 3));
+        final int normalizedMeta = MathHelper.clamp(meta, 0, 9);
+        return this.getDefaultState().withProperty(AGE, normalizedMeta % 5).withProperty(HEATED_STONE, normalizedMeta >= 5);
     }
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (blockIn == this) {
+        if (state.getValue(HEATED_STONE) && this.hasWaterNeighbor(worldIn, pos)) {
+            this.coolHeatedStone(worldIn, pos);
+            return;
+        }
+        if (!state.getValue(HEATED_STONE) && blockIn == this) {
             int i = this.countNeighbors(worldIn, pos);
 
             if (i < 2) {
                 this.turnIntoLava(worldIn, pos);
             }
         }
+    }
+
+    private boolean hasWaterNeighbor(World worldIn, BlockPos pos) {
+        for (final EnumFacing facing : EnumFacing.values()) {
+            if (worldIn.getBlockState(pos.offset(facing)).getMaterial() == Material.WATER) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void coolHeatedStone(World worldIn, BlockPos pos) {
+        worldIn.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState(), 3);
     }
 
     private int countNeighbors(World worldIn, BlockPos pos) {
@@ -179,7 +244,7 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, AGE);
+        return new BlockStateContainer(this, AGE, HEATED_STONE);
     }
 
     @Override
@@ -190,6 +255,6 @@ public class TempBlock extends BlockBreakable implements IsModelLoaded {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        ModelLoader.setCustomStateMapper(this, new StateMap.Builder().build());
+        ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(HEATED_STONE).build());
     }
 }

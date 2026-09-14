@@ -1,11 +1,13 @@
 package xzeroair.trinkets.races.elf.config;
 
 import net.minecraftforge.common.config.Config;
+import xzeroair.trinkets.races.elf.config.elements.*;
 import xzeroair.trinkets.util.ConstantsConfigLang;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilitySkilledArcher;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
+import xzeroair.trinkets.util.config.race.ConfigRaceEquipmentWeight;
 
 public class ElfConfig {
 
@@ -84,6 +86,64 @@ public class ElfConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SIZE)
     public RaceSizeConfig SIZE = new RaceSizeConfig(100, 100);
 
+    @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS)
+    public ElementsConfig ELEMENTS = new ElementsConfig();
+
+    public class ElementsConfig {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_AIR)
+        public ConfigAirElf AIR = new ConfigAirElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_DARK)
+        public ConfigDarkElf DARK = new ConfigDarkElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH)
+        public ConfigEarthElf EARTH = new ConfigEarthElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_FIRE)
+        public ConfigFireElf FIRE = new ConfigFireElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_ICE_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_ICE)
+        public ConfigIceElf ICE = new ConfigIceElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT)
+        public ConfigLightElf LIGHT = new ConfigLightElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
+        public ConfigLightningElf LIGHTNING = new ConfigLightningElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_POISON)
+        public ConfigPoisonElf POISON = new ConfigPoisonElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_VOID)
+        public ConfigVoidElf VOID = new ConfigVoidElf();
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_WATER)
+        public ConfigWaterElf WATER = new ConfigWaterElf();
+    }
+
     /// Default Compat
     @Config.Name(ConstantsConfigLang.CONFIG_COMPAT_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_COMPAT_COMMENT)
@@ -98,4 +158,9 @@ public class ElfConfig {
         public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
 
     }
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT)
+    public ConfigRaceEquipmentWeight EQUIPMENT_WEIGHT = new ConfigRaceEquipmentWeight();
+
 }

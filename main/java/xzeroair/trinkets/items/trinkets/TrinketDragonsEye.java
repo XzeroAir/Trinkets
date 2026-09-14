@@ -11,6 +11,7 @@ import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.items.base.AccessoryBase;
 import xzeroair.trinkets.traits.abilities.AbilityGreedyEyes;
 import xzeroair.trinkets.traits.abilities.AbilityNightVision;
+import xzeroair.trinkets.traits.abilities.compat.enhancedvisuals.AbilityEnhancedVisualsFireParticles;
 import xzeroair.trinkets.traits.abilities.elements.fire.AbilityFireImmunity;
 import xzeroair.trinkets.traits.abilities.elements.ice.AbilityFrostWalker;
 import xzeroair.trinkets.traits.abilities.elements.ice.AbilityIceImmunity;
@@ -19,6 +20,7 @@ import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
 import xzeroair.trinkets.traits.elements.Element;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.trinkets.dragoneye.ConfigDragonsEye;
+import xzeroair.trinkets.util.compat.enhancedvisuals.EnhancedVisualsCompat;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -35,6 +37,9 @@ public class TrinketDragonsEye extends AccessoryBase {
     @Override
     public void initAbilities(ItemStack stack, EntityLivingBase entity, @Nonnull List<IAbilityInterface> abilities) {
         abilities.add(new AbilityNightVision(this.CONFIG.ABILITIES.NIGHT_VISION));
+        if (EnhancedVisualsCompat.isModEnabled()) {
+            abilities.add(new AbilityEnhancedVisualsFireParticles(this.CONFIG.ABILITIES.EXTERNAL.CLEAR_FIRE_PARTICLES));
+        }
         final Element element = this.getPrimaryElement(stack);
         if (element == Elements.FIRE) {
             this.addFireAbilities(stack, entity, abilities, element);

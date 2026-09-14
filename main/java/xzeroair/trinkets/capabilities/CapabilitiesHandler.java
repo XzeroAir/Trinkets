@@ -25,6 +25,8 @@ import xzeroair.trinkets.util.Reference;
 
 public class CapabilitiesHandler {
 
+    public static final CapabilitiesHandler instance = new CapabilitiesHandler();
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onAddCapabilites(AttachCapabilitiesEvent<Entity> event) {
         final Entity entity = event.getObject();

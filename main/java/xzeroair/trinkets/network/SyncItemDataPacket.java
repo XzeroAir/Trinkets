@@ -148,6 +148,9 @@ public class SyncItemDataPacket extends ThreadSafePacket {
             return;
         }
         final World world = clientPlayer.getEntityWorld();
+        if (world == null) {
+            return;
+        }
         final Entity entity = world.getEntityByID(this.entityID);
         if (entity instanceof EntityLivingBase) {
             this.handlePacket((EntityLivingBase) entity);

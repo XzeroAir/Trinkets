@@ -16,7 +16,10 @@ public class EnhancedVisualsRenderEvent {
 
     @SubscribeEvent
     public void FireParticlesEvent(team.creative.enhancedvisuals.api.event.FireParticlesEvent event) {
-
+        if (EnhancedVisualsCompat.isModEnabled() && (mc.player != null) && hasEnabledAbility(TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_GRITLESS)) {
+            event.setFireSplashes(0);
+            event.setDuration(0, 0);
+        }
     }
 
     @SubscribeEvent

@@ -7,6 +7,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
+import xzeroair.trinkets.client.gui.hud.link.BondedHud;
 import xzeroair.trinkets.client.gui.hud.mana.ManaGui;
 import xzeroair.trinkets.client.gui.hud.mana.ManaHud;
 import xzeroair.trinkets.util.TrinketsConfig;
@@ -17,6 +18,7 @@ public class ScreenOverlayEvents {
 
     private final Minecraft mc = Minecraft.getMinecraft();
     private final ManaGui manaGui = new ManaGui(this.mc);
+    private final BondedHud bondedHud = new BondedHud(this.mc);
 
     private float mana = 0;
     private float maxMana = 0;
@@ -54,6 +56,9 @@ public class ScreenOverlayEvents {
 
     @SubscribeEvent
     public void renderGameOverlayPostEvent(RenderGameOverlayEvent.Post event) {
+        if (!event.isCanceled() && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+            this.bondedHud.render(event.getResolution());
+        }
         if (!TrinketsConfig.CLIENT.MANA_BAR_HUD.rendLocPre) {
             this.renderManaBar(event);
         }

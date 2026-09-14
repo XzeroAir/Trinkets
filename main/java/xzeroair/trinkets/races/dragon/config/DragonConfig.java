@@ -2,15 +2,12 @@ package xzeroair.trinkets.races.dragon.config;
 
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityElytraFlight;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityBreath;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityFlight;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityGreedyEyes;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityImmunityFire;
-import xzeroair.trinkets.util.config.abilities.ConfigAbilityNightVision;
+import xzeroair.trinkets.util.config.abilities.*;
+import xzeroair.trinkets.util.config.abilities.external.enhancedvisuals.ConfigAbilityEnhancedVisualsFireParticles;
 import xzeroair.trinkets.util.config.compat.ConfigSurvivalCompat;
 import xzeroair.trinkets.util.config.race.RaceMagicConfig;
 import xzeroair.trinkets.util.config.race.RaceSizeConfig;
+import xzeroair.trinkets.util.config.race.ConfigRaceEquipmentWeight;
 
 public class DragonConfig {
 
@@ -57,6 +54,20 @@ public class DragonConfig {
         @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_DRAGON)
         public ConfigAbilityBreath DRAGON_BREATH = new ConfigAbilityBreath();
 
+        @Config.Name(ConstantsConfigLang.CONFIG_EXTERNAL_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_EXTERNAL_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_EXTERNAL)
+        public ConfigExternal EXTERNAL = new ConfigExternal();
+
+        public class ConfigExternal {
+
+            @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS)
+            public ConfigAbilityEnhancedVisualsFireParticles CLEAR_FIRE_PARTICLES = new ConfigAbilityEnhancedVisualsFireParticles();
+
+        }
+
     }
 
     /// Elemental Configuration
@@ -85,6 +96,48 @@ public class DragonConfig {
         @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING_COMMENT)
         @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHTNING)
         public ConfigLightningDragon LIGHTNING = new ConfigLightningDragon();
+
+        /// Air
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_AIR_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_AIR)
+        public ConfigAirDragon AIR = new ConfigAirDragon();
+
+        /// Dark
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_DARK_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_DARK)
+        public ConfigDarkDragon DARK = new ConfigDarkDragon();
+
+        /// Earth
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_EARTH)
+        public ConfigEarthDragon EARTH = new ConfigEarthDragon();
+
+        /// Light
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_LIGHT)
+        public ConfigLightDragon LIGHT = new ConfigLightDragon();
+
+        /// Poison
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_POISON_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_POISON)
+        public ConfigPoisonDragon POISON = new ConfigPoisonDragon();
+
+        /// Void
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_VOID_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_VOID)
+        public ConfigVoidDragon VOID = new ConfigVoidDragon();
+
+        /// Water
+        @Config.Name(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ELEMENTS_WATER_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ELEMENTS_WATER)
+        public ConfigWaterDragon WATER = new ConfigWaterDragon();
 
     }
 
@@ -160,5 +213,10 @@ public class DragonConfig {
         public ConfigSurvivalCompat SURVIVAL = new ConfigSurvivalCompat();
 
     }
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_EQUIPMENT_WEIGHT)
+    public ConfigRaceEquipmentWeight EQUIPMENT_WEIGHT = new ConfigRaceEquipmentWeight();
 
 }

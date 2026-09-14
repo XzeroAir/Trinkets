@@ -8,6 +8,7 @@ import xzeroair.trinkets.races.faelis.config.FaelisConfig;
 import xzeroair.trinkets.races.fairy.config.FairyConfig;
 import xzeroair.trinkets.races.goblin.config.GoblinConfig;
 import xzeroair.trinkets.races.human.config.HumanConfig;
+import xzeroair.trinkets.races.slime.config.SlimeConfig;
 import xzeroair.trinkets.races.taurus.config.TaurusConfig;
 import xzeroair.trinkets.races.titan.config.TitanConfig;
 import xzeroair.trinkets.util.ConstantsConfigLang;
@@ -28,6 +29,12 @@ public class ConfigRaces {
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_MENU_BLACKLIST_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_MENU_BLACKLIST)
     public String[] BLACKLIST = {"Dragon", "Taurus"};
+
+    @Config.RequiresWorldRestart
+    @Config.Name("02. " + ConstantsConfigLang.CONFIG_RACES_DEFAULT_HUMAN_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_DEFAULT_HUMAN_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_DEFAULT_HUMAN)
+    public boolean DEFAULT_HUMAN = true;
 
     @Config.Name(ConstantsConfigLang.CONFIG_RACES_HUMAN_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_HUMAN_COMMENT)
@@ -58,6 +65,11 @@ public class ConfigRaces {
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_GOBLIN_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_GOBLIN)
     public GoblinConfig GOBLIN = new GoblinConfig();
+
+    @Config.Name(ConstantsConfigLang.CONFIG_RACES_SLIME_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_RACES_SLIME_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_RACES_SLIME)
+    public SlimeConfig SLIME = new SlimeConfig();
 
     @Config.Name(ConstantsConfigLang.CONFIG_RACES_TITAN_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_TITAN_COMMENT)

@@ -110,6 +110,22 @@ public class ConfigDefaultAbilityStorage {
     public ConfigAbilityImmunityWater WATER_IMMUNITY = new ConfigAbilityImmunityWater();
 
     @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_AIR)
+    public ConfigAbilityImmunityAir AIR_IMMUNITY = new ConfigAbilityImmunityAir();
+
+    @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_EARTH)
+    public ConfigAbilityImmunityEarth EARTH_IMMUNITY = new ConfigAbilityImmunityEarth();
+
+    @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_LIGHT)
+    public ConfigAbilityImmunityLight LIGHT_IMMUNITY = new ConfigAbilityImmunityLight();
+
+    @Config.Ignore
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_IMMUNITY_VOID)
+    public ConfigAbilityImmunityVoid VOID_IMMUNITY = new ConfigAbilityImmunityVoid();
+
+    @Config.Ignore
     @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_BREATH_FIRE)
     public ConfigAbilityBreath FIRE_BREATH = new ConfigAbilityBreath();
     @Config.Ignore

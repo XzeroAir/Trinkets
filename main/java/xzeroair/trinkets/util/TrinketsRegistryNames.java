@@ -56,6 +56,7 @@ public class TrinketsRegistryNames {
         public static final String TITAN                            = "titan";  /// 5
         public static final String FAELIS                           = "faelis"; /// 6
         public static final String DRAGON                           = "dragon"; /// 7
+        public static final String SLIME                            = "slime";
         public static final String TAURUS                           = "taurus"; /// 8
         //@formatter:on
 
@@ -70,6 +71,7 @@ public class TrinketsRegistryNames {
             public static final String REG_TITAN                        = MODID + ":" + TITAN;
             public static final String REG_FAELIS                       = MODID + ":" + FAELIS;
             public static final String REG_DRAGON                       = MODID + ":" + DRAGON;
+            public static final String REG_SLIME                        = MODID + ":" + SLIME;
             public static final String REG_TAURUS                       = MODID + ":" + TAURUS;
             //@formatter:on
         }
@@ -88,7 +90,7 @@ public class TrinketsRegistryNames {
         public static final String BREATH_FIRE					="breath_" + ModElements.FIRE;
         public static final String BREATH_ICE					="breath_" + ModElements.ICE;
         public static final String BREATH_LIGHTNING				="breath_" + ModElements.LIGHTNING;
-        public static final String BREATH_DRAGON					="breath_dragon";
+        public static final String BREATH_DRAGON				="breath_dragon";
 
         public static final String IMMUNITY_VOID				="immunity_" + ModElements.VOID;
         public static final String IMMUNITY_LIGHT				="immunity_" + ModElements.LIGHT;
@@ -113,11 +115,11 @@ public class TrinketsRegistryNames {
         public static final String AFFINITY_LIGHTNING			="affinity_" + ModElements.LIGHTNING;
 
         public static final String CREATIVE_FLIGHT				="creative_flight";
-        public static final String ELYTRA_FLIGHT					="elytra_flight";
+        public static final String ELYTRA_FLIGHT				="elytra_flight";
         public static final String GREEDY_EYES					="greedy_eyes";
         public static final String NIGHT_VISION 				="night_vision";
         public static final String CLIMBING						="climbing";
-        public static final String RESTORATION_FIELD				="mending_bloom";
+        public static final String RESTORATION_FIELD			="mending_bloom";
         public static final String WEIGHTLESS					="weightless";
         public static final String WELL_RESTED					="well_rested";
         public static final String NULLIFY_KINETIC				="nullify_kinetic";
@@ -133,10 +135,14 @@ public class TrinketsRegistryNames {
         public static final String LARGE_HANDS					="large_hands";
         public static final String HEAVY						="heavy";
         public static final String WOLF_RIDER				    ="wolf_rider";
+        public static final String SUMMON_SLIME                 ="summon_slime";
+        public static final String BOUNCY                       ="bouncy";
         public static final String SKILLED_ARCHER				="skilled_archer";
         public static final String SKILLED_MINER				="skilled_miner";
         public static final String SKILLED_RIDER				="skilled_rider";
         public static final String SKILLED_SWIMMER				="skilled_swimmer";
+        public static final String LINKED_VITALITY              ="linked_vitality";
+        public static final String STEAL						="steal";
 
         /// UNUSED
         public static final String STAMPEDE						="stampede";
@@ -153,6 +159,7 @@ public class TrinketsRegistryNames {
         public static final String ENHANCED_VISUALS_BLUR        ="clear_vision";
         public static final String ENHANCED_VISUALS_SPLASH      ="clear_splash";
         public static final String ENHANCED_VISUALS_STATIC      ="ender_eyes";
+        public static final String ENHANCED_VISUALS_GRITLESS    ="gritless_vision";
         //@formatter:on
     }
 
@@ -172,6 +179,7 @@ public class TrinketsRegistryNames {
         public static final String HONOR_SHIELD                 = "damage_shield";
         public static final String ARCING_ORB                   = "arcing_orb";
         public static final String TEDDY_BEAR                   = "teddy_bear";
+        public static final String LINKING_LOCKET               = "linking_locket";
 
         public static final String RING_FAIRY                   = "fairy_ring";
         public static final String RING_TITAN                   = "titan_ring";
@@ -283,9 +291,18 @@ public class TrinketsRegistryNames {
     public static class ModDamageTypes {
 
         //@formatter:off
+        public static final String AIR                          = "damage_air";
+        public static final String DARK                         = "damage_dark";
+        public static final String EARTH                        = "damage_earth";
+        public static final String FIRE                         = "damage_fire";
+        public static final String ICE                          = "damage_ice";
+        public static final String LIGHT                        = "damage_light";
+        public static final String LIGHTNING                    = "damage_lightning";
         public static final String POISON                       = "damage_poison";
+        public static final String VOID                         = "damage_void";
         public static final String WATER                        = "damage_water";
         public static final String BLEED                        = "damage_bleed";
+        public static final String LINKED_VITALITY              = "linked_vitality";
         //@formatter:on
 
     }
@@ -310,9 +327,11 @@ public class TrinketsRegistryNames {
         public static final String ALPHA_WOLF                   = "AlphaWolf";
         public static final String DRAGON_BREATH                = "DragonBreath";
         public static final String AREA_EFFECT                  = "AreaEffect";
+        public static final String ENTITY_WRAPPER               = "Summon";
         public static final String REG_ALPHA_WOLF               = MODID + ":" + ALPHA_WOLF;
         public static final String REG_DRAGON_BREATH            = MODID + ":" + DRAGON_BREATH;
         public static final String REG_AREA_EFFECT              = MODID + ":" + AREA_EFFECT;
+        public static final String REG_ENTITY_WRAPPER           = MODID + ":" + ENTITY_WRAPPER;
         //@formatter:on
 
     }

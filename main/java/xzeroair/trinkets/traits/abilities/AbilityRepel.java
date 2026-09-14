@@ -1,12 +1,10 @@
 package xzeroair.trinkets.traits.abilities;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -25,6 +23,7 @@ import xzeroair.trinkets.util.config.abilities.ConfigAbilityRepel;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.Kinetics;
 import xzeroair.trinkets.util.helpers.StringUtils;
+import xzeroair.trinkets.util.helpers.TargetingPredicates;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
@@ -101,8 +100,7 @@ public class AbilityRepel extends Ability implements ITickableAbility, IHeldAbil
     }
 
     public void blockArrows(EntityLivingBase entity) {
-        final Predicate<EntityLivingBase> filter = Predicates.and(EntitySelectors.CAN_AI_TARGET, EntitySelectors.IS_ALIVE);
-        final boolean flag = filter.apply(entity);
+        final boolean flag = TargetingPredicates.isAiTarget(entity);
         if (flag) {
             if (this.COST > 0F) {
                 final MagicStats magic = Capabilities.getMagicStats(entity);
@@ -124,7 +122,7 @@ public class AbilityRepel extends Ability implements ITickableAbility, IHeldAbil
             try {
                 final AxisAlignedBB bBox = entity.getEntityBoundingBox();
                 final List<String> cfg = Arrays.asList(this.CONFIG.WHITELIST);
-                final Predicate<Entity> Targets = Predicates.and(EntitySelectors.CAN_AI_TARGET, EntitySelectors.IS_ALIVE, ent -> (ent != null) && !(ent instanceof EntityPlayer) && (EntityRegistry.getEntry(ent.getClass()) != null) && (EntityRegistry.getEntry(ent.getClass()).getRegistryName() != null) && cfg.contains(EntityRegistry.getEntry(ent.getClass()).getRegistryName().toString()));
+                final Predicate<Entity> Targets = ent -> TargetingPredicates.isAiTarget(ent) && !(ent instanceof EntityPlayer) && (EntityRegistry.getEntry(ent.getClass()) != null) && (EntityRegistry.getEntry(ent.getClass()).getRegistryName() != null) && cfg.contains(EntityRegistry.getEntry(ent.getClass()).getRegistryName().toString());
                 final List<Entity> entityList = entity.world.getEntitiesWithinAABB(Entity.class, bBox.grow(this.CONFIG.RANGE.RANGE_HORIZONTAL, this.CONFIG.RANGE.RANGE_VERTICAL, this.CONFIG.RANGE.RANGE_HORIZONTAL), Targets);
                 for (final Entity repelledEntity : entityList) {
                     Kinetics.applyForce(entity, repelledEntity, false, this.FORCE, 0.8D, 0.85D);

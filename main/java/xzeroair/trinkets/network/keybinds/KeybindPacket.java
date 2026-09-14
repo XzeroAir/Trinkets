@@ -38,6 +38,11 @@ public class KeybindPacket extends ThreadSafePacket {
     public KeybindPacket() {
     }
 
+    public KeybindPacket(NBTTagCompound movementStates) {
+        this.input = new NBTTagCompound();
+        this.input.setTag(MOVEMENT_STATES_TAG, movementStates);
+    }
+
     public KeybindPacket(String ability, String handlerKey, int primaryState, boolean auxiliaryDown) {
         this.ability = ability == null ? "" : ability;
         this.input = new NBTTagCompound();
@@ -93,6 +98,9 @@ public class KeybindPacket extends ThreadSafePacket {
             return;
         }
         final World world = mc.player.getEntityWorld();
+        if (world == null) {
+            return;
+        }
         final Entity entity = world.getEntityByID(this.entityID);
         if (entity instanceof EntityLivingBase) {
             Capabilities.getEntityProperties(entity, prop -> prop.getKeybindHandler().getKeyHandler(this.input.getString(HANDLER_KEY_TAG)).forceRelease());
@@ -101,6 +109,10 @@ public class KeybindPacket extends ThreadSafePacket {
 
     @Override
     public void handleServerSafe(NetHandlerPlayServer server) {
+        if (this.isGenericMovementInput()) {
+            Capabilities.getEntityProperties(server.player, prop -> prop.getKeybindHandler().updateMovementInput(this.input.getCompoundTag(MOVEMENT_STATES_TAG)));
+            return;
+        }
         if (!this.isValidServerInput()) {
             return;
         }
@@ -119,6 +131,7 @@ public class KeybindPacket extends ThreadSafePacket {
                     return;
                 }
                 if (hasMovementState) {
+                    prop.getKeybindHandler().updateMovementInput(this.input.getCompoundTag(MOVEMENT_STATES_TAG));
                     this.handleMovementInput((IMovementAbility) ability, entity, primaryDown, auxiliaryDown, payload);
                 }
                 if (hasPrimaryState) {
@@ -129,6 +142,10 @@ public class KeybindPacket extends ThreadSafePacket {
                 e.printStackTrace();
             }
         });
+    }
+
+    protected boolean isGenericMovementInput() {
+        return (this.input != null) && this.ability.isEmpty() && (this.input.getKeySet().size() == 1) && this.input.hasKey(MOVEMENT_STATES_TAG, 10) && this.isValidMovementInput(this.input.getCompoundTag(MOVEMENT_STATES_TAG));
     }
 
     protected boolean isValidServerInput() {

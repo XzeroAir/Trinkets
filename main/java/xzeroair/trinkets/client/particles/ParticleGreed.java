@@ -19,7 +19,12 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class ParticleGreed extends Particle {
 
-    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F).addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.COLOR_4UB).addElement(DefaultVertexFormats.TEX_2S).addElement(DefaultVertexFormats.NORMAL_3B).addElement(DefaultVertexFormats.PADDING_1B);
+    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F)
+                                                                          .addElement(DefaultVertexFormats.TEX_2F)
+                                                                          .addElement(DefaultVertexFormats.COLOR_4UB)
+                                                                          .addElement(DefaultVertexFormats.TEX_2S)
+                                                                          .addElement(DefaultVertexFormats.NORMAL_3B)
+                                                                          .addElement(DefaultVertexFormats.PADDING_1B);
 
     private boolean depth = false;
 
@@ -81,7 +86,9 @@ public class ParticleGreed extends Particle {
         if (!this.depth) {
             GlStateManager.disableDepth();
         }
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("xat:textures/particle/greed.png"));
+        Minecraft.getMinecraft()
+                 .getTextureManager()
+                 .bindTexture(new ResourceLocation("xat:textures/particle/greed.png"));
 
         final int i = (int) (((this.particleAge + partialTicks) * 15.0F) / this.particleMaxAge);
 

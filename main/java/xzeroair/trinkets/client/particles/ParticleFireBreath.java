@@ -43,7 +43,9 @@ public class ParticleFireBreath extends ParticleFlame {
         //		particleScale = flameScale * (1.0F - (i * i * 0.5F));
         if (i <= (this.particleMaxAge - 1)) {
             GlStateManager.pushMatrix();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(Reference.MODID, "textures/particle/dragon_breath.png"));
+            Minecraft.getMinecraft()
+                     .getTextureManager()
+                     .bindTexture(new ResourceLocation(Reference.MODID, "textures/particle/dragon_breath.png"));
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             //			float f = particleTextureIndexX % 16.0F;
             //			float f1 = f + 0.0624375F;
@@ -100,13 +102,31 @@ public class ParticleFireBreath extends ParticleFlame {
                 final Vec3d vec3d = new Vec3d(f10, f11, f12);
 
                 for (int l = 0; l < 4; ++l) {
-                    avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d)).add(avec3d[l].scale((f9 * f9) - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(avec3d[l]).scale(2.0F * f9));
+                    avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d))
+                                     .add(avec3d[l].scale((f9 * f9) - vec3d.dotProduct(vec3d)))
+                                     .add(vec3d.crossProduct(avec3d[l]).scale(2.0F * f9));
                 }
             }
-            buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z).tex(uF * tileWidth, vF2 * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z).tex(uF2 * tileWidth, vF2 * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z).tex(uF2 * tileWidth, vF * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            buffer.pos(f5 + avec3d[3].x, f6 + avec3d[3].y, f7 + avec3d[3].z).tex(uF * tileWidth, vF * tileHeight).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z)
+                  .tex(uF * tileWidth, vF2 * tileHeight)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(j, k)
+                  .endVertex();
+            buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z)
+                  .tex(uF2 * tileWidth, vF2 * tileHeight)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(j, k)
+                  .endVertex();
+            buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z)
+                  .tex(uF2 * tileWidth, vF * tileHeight)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(j, k)
+                  .endVertex();
+            buffer.pos(f5 + avec3d[3].x, f6 + avec3d[3].y, f7 + avec3d[3].z)
+                  .tex(uF * tileWidth, vF * tileHeight)
+                  .color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha)
+                  .lightmap(j, k)
+                  .endVertex();
             //			buffer.pos(f5 + avec3d[0].x, f6 + avec3d[0].y, f7 + avec3d[0].z).tex(f1, f3).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
             //			buffer.pos(f5 + avec3d[1].x, f6 + avec3d[1].y, f7 + avec3d[1].z).tex(f1, f2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();
             //			buffer.pos(f5 + avec3d[2].x, f6 + avec3d[2].y, f7 + avec3d[2].z).tex(f, f2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(j, k).endVertex();

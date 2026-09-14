@@ -18,6 +18,8 @@ import xzeroair.trinkets.util.config.gui.ConfigRacePropertiesGui;
 @SideOnly(Side.CLIENT)
 public class GuiScreenEvents {
 
+    public static final GuiScreenEvents instance = new GuiScreenEvents();
+
     @SubscribeEvent
     public void guiPostInit(GuiScreenEvent.InitGuiEvent.Post event) {
         final int ID = TrinketsConfig.CLIENT.GUI.BUTTON.ID;

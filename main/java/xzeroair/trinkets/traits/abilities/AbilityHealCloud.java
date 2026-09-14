@@ -3,16 +3,16 @@ package xzeroair.trinkets.traits.abilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.world.WorldServer;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.magic.MagicStats;
 import xzeroair.trinkets.capabilities.race.EntityProperties;
-import xzeroair.trinkets.entity.AreaEffectEntity;
+import xzeroair.trinkets.entity.EntityAreaEffect;
 import xzeroair.trinkets.traits.abilities.base.AbilityRaceSpecific;
 import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.TrinketsRegistryNames;
@@ -95,7 +95,8 @@ public class AbilityHealCloud extends AbilityRaceSpecific {
     @SideOnly(Side.CLIENT)
     protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
         final TranslationHelper.KeyEntry keybind = new TranslationHelper.KeyBindEntry("racekb", this.getKey());
-        final TranslationHelper.KeyEntry effects = new TranslationHelper.OptionEntry("effects", !this.getPotionEffects().isEmpty(), "");
+        final TranslationHelper.KeyEntry effects = new TranslationHelper.OptionEntry("effects", !this.getPotionEffects()
+                                                                                                     .isEmpty(), "");
         final TranslationHelper.KeyEntry repair = new TranslationHelper.OptionEntry("repair", this.itemRepairAmount > 0, this.itemRepairAmount);
         final TranslationHelper.KeyEntry growth = new TranslationHelper.OptionEntry("growth", this.growthAttemptsPerPulse > 0, this.growthAttemptsPerPulse);
         final TranslationHelper.KeyEntry cost = new TranslationHelper.OptionEntry("cost", true, this.COST);
@@ -172,8 +173,8 @@ public class AbilityHealCloud extends AbilityRaceSpecific {
     }
 
     protected boolean spawnServerHealCloud(EntityLivingBase entity, Vec3d hitLoc, int color) {
-        AreaEffectEntity oldArea = this.getActiveField(entity);
-        AreaEffectEntity newArea = this.createAreaEffect(entity, hitLoc, color);
+        EntityAreaEffect oldArea = this.getActiveField(entity);
+        EntityAreaEffect newArea = this.createAreaEffect(entity, hitLoc, color);
 
         if (!entity.world.spawnEntity(newArea)) {
             return false;
@@ -187,13 +188,13 @@ public class AbilityHealCloud extends AbilityRaceSpecific {
         return true;
     }
 
-    protected AreaEffectEntity getActiveField(EntityLivingBase entity) {
+    protected EntityAreaEffect getActiveField(EntityLivingBase entity) {
         if (entity == null || entity.world.isRemote || this.activeFieldId == null || !(entity.world instanceof WorldServer)) {
             return null;
         }
 
         Entity activeEntity = ((WorldServer) entity.world).getEntityFromUuid(this.activeFieldId);
-        return activeEntity instanceof AreaEffectEntity ? (AreaEffectEntity) activeEntity : null;
+        return activeEntity instanceof EntityAreaEffect ? (EntityAreaEffect) activeEntity : null;
     }
 
     protected int getFieldColor(EntityLivingBase entity) {
@@ -201,12 +202,12 @@ public class AbilityHealCloud extends AbilityRaceSpecific {
         return properties == null ? DEFAULT_FIELD_COLOR : properties.getRaceHandler().getPrimaryTraitColor();
     }
 
-    public AreaEffectEntity createAreaEffect(EntityLivingBase owner, Vec3d position) {
+    public EntityAreaEffect createAreaEffect(EntityLivingBase owner, Vec3d position) {
         return this.createAreaEffect(owner, position, this.getFieldColor(owner));
     }
 
-    public AreaEffectEntity createAreaEffect(EntityLivingBase owner, Vec3d position, int color) {
-        AreaEffectEntity area = new AreaEffectEntity(owner.world, position.x, position.y, position.z);
+    public EntityAreaEffect createAreaEffect(EntityLivingBase owner, Vec3d position, int color) {
+        EntityAreaEffect area = new EntityAreaEffect(owner.world, position.x, position.y, position.z);
         area.setOwner(owner);
         area.setRadius(this.radius);
         area.setVerticalRadius(this.verticalRadius);
@@ -215,17 +216,18 @@ public class AbilityHealCloud extends AbilityRaceSpecific {
         area.setPulseInterval(this.pulseInterval);
         area.setReapplicationDelay(this.reapplicationDelay);
         area.setColor(color);
-        area.blacklistEntityRegistry("minecraft:item_frame", "minecraft:painting");
+        area.setTargetProfile(EntityAreaEffect.TargetProfile.SUPPORT);
+        area.blacklistEntityRegistry("minecraft:item_frame", "minecraft:painting", "minecraft:armor_stand");
 
         for (final PotionEffect effect : this.getPotionEffects()) {
-            area.addAction(new AreaEffectEntity.PotionAreaAction(effect));
+            area.addAction(new EntityAreaEffect.PotionAreaAction(effect));
         }
 
         if (this.itemRepairAmount > 0) {
-            area.addAction(new AreaEffectEntity.RepairItemAreaAction(this.itemRepairAmount));
+            area.addAction(new EntityAreaEffect.RepairItemAreaAction(this.itemRepairAmount));
         }
         if (this.growthAttemptsPerPulse > 0) {
-            area.addAction(new AreaEffectEntity.GrowBlockAreaAction(this.growthAttemptsPerPulse));
+            area.addAction(new EntityAreaEffect.GrowBlockAreaAction(this.growthAttemptsPerPulse));
         }
         return area;
     }

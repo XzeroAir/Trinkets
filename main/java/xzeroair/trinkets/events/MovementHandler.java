@@ -23,11 +23,13 @@ import java.util.Map.Entry;
 
 public class MovementHandler extends EventBaseHandler {
 
+    public static final MovementHandler instance = new MovementHandler();
+
     @SubscribeEvent
     public void onCollideWithBlock(@Nonnull PlayerSPPushOutOfBlocksEvent event) {
         final EntityPlayer player = event.getEntityPlayer();
         Capabilities.getEntityProperties(player, prop -> {
-            if (!prop.isNormalSize()) {
+            if (!TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_DIMENSIONS && !prop.isNormalSize()) {
                 event.setCanceled(true);
             }
         });
@@ -51,9 +53,9 @@ public class MovementHandler extends EventBaseHandler {
 
             if (entity.isSprinting()) {
                 float yaw = entity.rotationYaw * 0.017453292F;
-                double boost = 0.2D * horizontalScale;
-                entity.motionX -= MathHelper.sin(yaw) * boost;
-                entity.motionZ += MathHelper.cos(yaw) * boost;
+                double boostAdjustment = 0.2D * (horizontalScale - 1.0D);
+                entity.motionX -= MathHelper.sin(yaw) * boostAdjustment;
+                entity.motionZ += MathHelper.cos(yaw) * boostAdjustment;
             }
         }
 

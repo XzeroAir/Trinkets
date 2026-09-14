@@ -9,6 +9,7 @@ import xzeroair.trinkets.capabilities.race.RaceCache;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.util.Reference;
+import xzeroair.trinkets.util.TrinketsConfig;
 import xzeroair.trinkets.util.config.ConfigHelper;
 import xzeroair.trinkets.util.config.ConfigHelper.AttributeEntry;
 import xzeroair.trinkets.util.helpers.AttributeHelper;
@@ -52,15 +53,17 @@ public class EmptyHandler extends EntityRacePropertiesHandler {
     public void onTick() {
         if (this.getEntity() instanceof EntityPlayer) {
             if (this.isTransforming()) {
-                this.applyAdjustedSize();
-                this.updateSize();
+                if (!TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_DIMENSIONS) {
+                    this.applySize();
+                    this.updateSize();
+                }
                 this.addNewAttributes();
-                this.modifyEyeHeight();
+                this.updateEyeHeight();
             } else {
                 if (this.firstTransformUpdate) {
                     final EntityRace previous = this.getProperties().getPreviousRaceCache().getRace();
                     AttributeHelper.removeAttributesByUUID(this.getEntity(), previous.getUUID());
-                    this.modifyEyeHeight();
+                    this.updateEyeHeight();
                     this.firstTransformUpdate = false;
                 }
             }

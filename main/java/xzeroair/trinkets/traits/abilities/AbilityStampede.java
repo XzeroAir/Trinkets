@@ -1,10 +1,8 @@
 package xzeroair.trinkets.traits.abilities;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
@@ -23,6 +21,7 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityStampede;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.StringUtils;
+import xzeroair.trinkets.util.helpers.TargetingPredicates;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 import javax.annotation.Nonnull;
@@ -71,37 +70,21 @@ public class AbilityStampede extends AbilityRaceSpecific {
         AxisAlignedBB swept = player.getEntityBoundingBox().union(player.getEntityBoundingBox().offset(player.motionX, player.motionY, player.motionZ)).grow(0.5D);
 
         List<Entity> nearby = player.world.getEntitiesWithinAABBExcludingEntity(player, swept);
+        final boolean pvpEnabled = TargetingPredicates.isPvpEnabled(player.world, player);
 
         for (Entity target : nearby) {
-            if (!this.canChargeHit(player, target)) {
+            if (!this.canChargeHit(player, target, pvpEnabled)) {
                 continue;
             }
             if (!this.hitEntities.contains(target)) {
                 this.hitEntities.add(target);
-                if (target instanceof EntityPlayer) {
-                    boolean pvpEnabled = false;
-                    try {
-                        if (player instanceof EntityPlayerMP) {
-                            pvpEnabled = ((EntityPlayerMP) player).getServer().isPVPEnabled();
-                        }
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (pvpEnabled) {
-                        this.applyChargeHit(player, target, curve, consumer);
-                    }
-                } else {
-                    this.applyChargeHit(player, target, curve, consumer);
-                }
+                this.applyChargeHit(player, target, curve, consumer);
             }
         }
     }
 
-    private boolean canChargeHit(EntityLivingBase player, Entity target) {
-        if ((target == null) || target.isDead || (target.world != player.world)) {
-            return false;
-        }
-        if (target instanceof EntityHanging) {
+    private boolean canChargeHit(EntityLivingBase player, Entity target, boolean pvpEnabled) {
+        if (!TargetingPredicates.isCombatTarget(target, pvpEnabled) || target.world != player.world) {
             return false;
         }
         return this.hasChargeLineOfSight(player, target);

@@ -27,6 +27,7 @@ public class ModCompat {
     public boolean DefiledLands = false;
     public boolean Ido = false;
     public boolean Tropicraft = false;
+    public boolean AquaAcrobatics = false;
 
     // Unnecessary fixes on my end.
     public boolean InventoryHUD = false;
@@ -50,6 +51,7 @@ public class ModCompat {
         this.DefiledLands = Loader.isModLoaded("defiledlands");
         this.Ido = Loader.isModLoaded("ido");
         this.Tropicraft = Loader.isModLoaded("tropicraft");
+        this.AquaAcrobatics = Loader.isModLoaded("aquaacrobatics");
 
         this.InventoryHUD = Loader.isModLoaded("inventoryhud");
 

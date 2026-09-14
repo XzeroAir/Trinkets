@@ -21,7 +21,12 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class ParticleSmell extends Particle {
 
-    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F).addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.COLOR_4UB).addElement(DefaultVertexFormats.TEX_2S).addElement(DefaultVertexFormats.NORMAL_3B).addElement(DefaultVertexFormats.PADDING_1B);
+    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F)
+                                                                          .addElement(DefaultVertexFormats.TEX_2F)
+                                                                          .addElement(DefaultVertexFormats.COLOR_4UB)
+                                                                          .addElement(DefaultVertexFormats.TEX_2S)
+                                                                          .addElement(DefaultVertexFormats.NORMAL_3B)
+                                                                          .addElement(DefaultVertexFormats.PADDING_1B);
 
     private Vec3d start;
     private Vec3d end;

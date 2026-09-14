@@ -39,6 +39,18 @@ import java.util.Map.Entry;
 
 public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties, ItemStack> {
 
+    public enum LinkType {
+        NONE,
+        PLAYER;
+
+        public static LinkType byId(int id) {
+            if (id < 0 || id >= values().length) {
+                return NONE;
+            }
+            return values()[id];
+        }
+    }
+
     private final String TAG_KEY = Capabilities.ITEM_TRINKET_CAP_TAG;
 
     protected int exp;
@@ -52,6 +64,9 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
     protected boolean sync;
     protected String crafter;
     protected String crafterUUID;
+    protected UUID linkedEntityUUID;
+    protected String linkedEntityName;
+    protected LinkType linkType;
     protected ItemElementalAttributes elementalAttributes;
     protected Map<Integer, IAbilityInterface> itemAbilities;
     protected Map<String, IAbilityInterface> activeAbilities;
@@ -67,6 +82,9 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
         this.isFirstEntityUpdate = true;
         this.crafter = "";
         this.crafterUUID = "";
+        this.linkedEntityUUID = null;
+        this.linkedEntityName = "";
+        this.linkType = LinkType.NONE;
         this.elementalAttributes = new ItemElementalAttributes(stack);
         this.slotInfo = new SlotInformation(stack, ItemHandlerType.NONE.getName(), -1);
         this.oldSlotInfo = new SlotInformation(stack, ItemHandlerType.NONE.getName(), -1);
@@ -201,6 +219,44 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
     public void setCrafterUUID(String crafterUUID) {
         if (!crafterUUID.isEmpty() && !this.crafterUUID.contentEquals(crafterUUID)) {
             this.crafterUUID = crafterUUID;
+        }
+    }
+
+    public UUID getLinkedEntityUUID() {
+        return this.linkedEntityUUID;
+    }
+
+    public String getLinkedEntityName() {
+        return this.linkedEntityName;
+    }
+
+    public boolean hasLinkedEntity() {
+        return this.linkedEntityUUID != null;
+    }
+
+    public LinkType getLinkType() {
+        return this.linkType;
+    }
+
+    public boolean isLinkedTo(UUID entityUUID, LinkType type) {
+        return this.linkedEntityUUID != null && this.linkedEntityUUID.equals(entityUUID) && this.linkType == type;
+    }
+
+    public void linkEntity(Entity entity, LinkType type) {
+        if (entity != null && entity.getUniqueID() != null && type == LinkType.PLAYER) {
+            this.linkedEntityUUID = entity.getUniqueID();
+            this.linkedEntityName = entity.getDisplayName().getUnformattedText();
+            this.linkType = LinkType.PLAYER;
+            this.scheduleResync();
+        }
+    }
+
+    public void clearLinkedEntity() {
+        if (this.linkedEntityUUID != null || !this.linkedEntityName.isEmpty() || this.linkType != LinkType.NONE) {
+            this.linkedEntityUUID = null;
+            this.linkedEntityName = "";
+            this.linkType = LinkType.NONE;
+            this.scheduleResync();
         }
     }
 
@@ -525,6 +581,11 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
     public NBTTagCompound saveToNBT(@Nonnull NBTTagCompound compound) {
         compound.setString("crafter.name", this.getCrafter());
         compound.setString("crafter.uuid", this.getCrafterUUID());
+        compound.setString("link.entity.name", this.getLinkedEntityName());
+        compound.setInteger("link.type", this.getLinkType().ordinal());
+        if (this.getLinkedEntityUUID() != null) {
+            compound.setUniqueId("link.entity.uuid", this.getLinkedEntityUUID());
+        }
         if (this.getItem() instanceof AccessoryBase) {
             compound.setInteger("slot", this.getSlotInfo().getSlot());
             compound.setString("handler", this.getSlotInfo().getHandler());
@@ -545,6 +606,9 @@ public class TrinketProperties extends CapabilityItemStackBase<TrinketProperties
     public void loadFromNBT(NBTTagCompound compound) {
         NBTHelper.hasString(compound, "crafter.name", this::setCrafter);
         NBTHelper.hasString(compound, "crafter.uuid", this::setCrafterUUID);
+        NBTHelper.hasUUID(compound, "link.entity.uuid", value -> this.linkedEntityUUID = value);
+        NBTHelper.hasString(compound, "link.entity.name", value -> this.linkedEntityName = value);
+        NBTHelper.hasInteger(compound, "link.type", value -> this.linkType = LinkType.byId(value));
         if (this.getItem() instanceof AccessoryBase) {
             NBTHelper.hasInteger(compound, "slot", (value) -> {
                 this.getSlotInfo().setSlot(value);

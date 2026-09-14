@@ -136,6 +136,11 @@ public class TrinketItemsConfig {
     @Config.LangKey(ConstantsConfigLang.CONFIG_ITEMS_TEDDY_BEAR)
     public ConfigTeddyBear TEDDY_BEAR = new ConfigTeddyBear();
 
+    @Config.Name(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET)
+    public ConfigLinkingLocket LINKING_LOCKET = new ConfigLinkingLocket();
+
     @Config.Name(ConstantsConfigLang.CONFIG_ITEMS_FAELIS_CLAWS_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_ITEMS_FAELIS_CLAWS_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_ITEMS_FAELIS_CLAWS)

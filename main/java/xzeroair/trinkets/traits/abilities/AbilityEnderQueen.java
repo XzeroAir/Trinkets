@@ -182,7 +182,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                     attacked.getEntityWorld().spawnEntity(knight);
                     knight.setAttackTarget(attacker);
                     final String summonEnderman = "Go, my loyal subject!";
-                    StringUtils.sendMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + summonEnderman, false);
+                    StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + summonEnderman, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -205,7 +205,7 @@ public class AbilityEnderQueen extends Ability implements ITickableAbility, IPot
                         }
                     }
                 }
-                StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, false);
+                StringUtils.sendStatusMessageToPlayer(attacked, TextFormatting.BOLD + "" + TextFormatting.GOLD + blockDamage, true);
                 return true;
             }
         }

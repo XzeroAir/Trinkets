@@ -20,7 +20,12 @@ import java.util.List;
 public class ParticleLightning extends Particle {
 
     List<Vec3d> points = new ArrayList<>();
-    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F).addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.COLOR_4UB).addElement(DefaultVertexFormats.TEX_2S).addElement(DefaultVertexFormats.NORMAL_3B).addElement(DefaultVertexFormats.PADDING_1B);
+    private static final VertexFormat VERTEX_FORMAT = (new VertexFormat()).addElement(DefaultVertexFormats.POSITION_3F)
+                                                                          .addElement(DefaultVertexFormats.TEX_2F)
+                                                                          .addElement(DefaultVertexFormats.COLOR_4UB)
+                                                                          .addElement(DefaultVertexFormats.TEX_2S)
+                                                                          .addElement(DefaultVertexFormats.NORMAL_3B)
+                                                                          .addElement(DefaultVertexFormats.PADDING_1B);
     protected double prevPosX2;
     protected double prevPosY2;
     protected double prevPosZ2;
@@ -28,6 +33,7 @@ public class ParticleLightning extends Particle {
     protected double posY2;
     protected double posZ2;
     private boolean depth = false;
+    private boolean stablePath = false;
 
     public ParticleLightning(World world, double x, double y, double z, int color, float a, boolean bool, float scale) {
         super(world, x, y, z);
@@ -65,6 +71,12 @@ public class ParticleLightning extends Particle {
         this.particleScale = scale;
     }
 
+    public ParticleLightning(World world, double x, double y, double z, double x2, double y2, double z2, int color, float a, boolean bool, float scale, int maxAge) {
+        this(world, x, y, z, x2, y2, z2, color, a, bool, scale);
+        this.particleMaxAge = maxAge;
+        this.stablePath = true;
+    }
+
     public ParticleLightning(World world, double x, double y, double z, double x2, double y2, double z2, double xSpeed, double ySpeed, double zSpeed, int color, float a, boolean bool, float scale) {
         super(world, x, y, z, xSpeed, ySpeed, zSpeed);
         this.posX2 = x2;
@@ -99,24 +111,10 @@ public class ParticleLightning extends Particle {
         if (i <= 15) {
             final int lmv = 240;
             final int lmv2 = 240;
-            for (double done = 0; done <= 15.0D; done += 1D) {
-                final double alpha = done / 15.0D;
-                final double x1 = interpolate(this.posX, this.posX2, alpha);
-                final double y1 = interpolate(this.posY, this.posY2, alpha);
-                final double z1 = interpolate(this.posZ, this.posZ2, alpha);
-                final Vec3d test = new Vec3d(x1, y1, z1);
-                if (done < 1) {
-                    //					points.add(test);
-                } else if (done == 1) {
-                    this.points.add(test);
-                } else {
-                    if (done < (15.0D)) {
-                        this.points.add(new LightningVertex(test).getVec());
-                    } else {
-                        this.points.add(test);
-                        this.points.add(new Vec3d(this.posX2, this.posY2, this.posZ2));
-                    }
-                }
+            if (this.stablePath && this.points.isEmpty()) {
+                this.createArcPath();
+            } else if (!this.stablePath) {
+                this.createArcPath();
             }
             GlStateManager.pushMatrix();
             final float r = this.particleRed;
@@ -137,8 +135,8 @@ public class ParticleLightning extends Particle {
                 final float t2 = (float) ((lp.y + ((this.points.get(clamped).y - lp.y) * partialTicks)) - interpPosY);
                 final float t3 = (float) ((lp.z + ((this.points.get(clamped).z - lp.z) * partialTicks)) - interpPosZ);
                 buffer.pos(t1, t2, t3).tex(0, 0).color(r, g, b, a)
-                        //						.lightmap(lmv, lmv2)
-                        .endVertex();
+                      //						.lightmap(lmv, lmv2)
+                      .endVertex();
             }
             Tessellator.getInstance().draw();
 
@@ -151,8 +149,8 @@ public class ParticleLightning extends Particle {
                 final float t2 = (float) ((lp.y + ((this.points.get(clamped).y - lp.y) * partialTicks)) - interpPosY);
                 final float t3 = (float) ((lp.z + ((this.points.get(clamped).z - lp.z) * partialTicks)) - interpPosZ);
                 buffer.pos(t1, t2, t3).tex(0, 0).color(r, g, b, a * 0.5F)
-                        //						.lightmap(lmv, lmv2)
-                        .endVertex();
+                      //						.lightmap(lmv, lmv2)
+                      .endVertex();
             }
             Tessellator.getInstance().draw();
             GlStateManager.enableTexture2D();
@@ -160,7 +158,21 @@ public class ParticleLightning extends Particle {
             GlStateManager.disableBlend();
             GlStateManager.glLineWidth(2F);
             GlStateManager.popMatrix();
-            this.points.clear();
+            if (!this.stablePath) {
+                this.points.clear();
+            }
+        }
+    }
+
+    private void createArcPath() {
+        for (double done = 1.0D; done <= 15.0D; done += 1.0D) {
+            final double alpha = done / 15.0D;
+            final Vec3d point = new Vec3d(interpolate(this.posX, this.posX2, alpha), interpolate(this.posY, this.posY2, alpha), interpolate(this.posZ, this.posZ2, alpha));
+            if (done < 15.0D) {
+                this.points.add(new LightningVertex(point).getVec());
+            } else {
+                this.points.add(point);
+            }
         }
     }
 

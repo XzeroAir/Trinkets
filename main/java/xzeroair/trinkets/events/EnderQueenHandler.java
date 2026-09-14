@@ -32,6 +32,8 @@ import java.util.List;
 
 public class EnderQueenHandler {
 
+    public static final EnderQueenHandler instance = new EnderQueenHandler();
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void soundEvent(PlaySoundEvent event) {

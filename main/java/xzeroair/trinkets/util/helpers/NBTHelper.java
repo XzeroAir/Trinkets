@@ -5,12 +5,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import xzeroair.trinkets.Trinkets;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+import java.util.UUID;
 
 public class NBTHelper {
 
@@ -151,6 +153,12 @@ public class NBTHelper {
         }
     }
 
+    public static void hasUUID(@Nonnull NBTTagCompound tag, @Nonnull String key, @Nullable Consumer<UUID> consumer) {
+        if (tag.hasUniqueId(key) && consumer != null) {
+            consumer.accept(tag.getUniqueId(key));
+        }
+    }
+
     @Nonnull
     public static NBTTagCompound getTag(@Nonnull NBTTagCompound tag, @Nonnull String key) {
         if (hasTagCompound(tag, key)) {
@@ -162,6 +170,16 @@ public class NBTHelper {
     public static void hasTag(@Nonnull NBTTagCompound tag, @Nonnull String key, @Nullable Consumer<NBTTagCompound> consumer) {
         if (hasTagCompound(tag, key) && consumer != null) {
             consumer.accept(tag.getCompoundTag(key));
+        }
+    }
+
+    public static boolean hasTagList(@Nullable NBTTagCompound tag, @Nullable String key) {
+        return hasKey(tag, key, Constants.NBT.TAG_LIST);
+    }
+
+    public static void hasTagList(@Nonnull NBTTagCompound tag, @Nonnull String key, @Nullable Consumer<NBTTagList> consumer) {
+        if (hasTagList(tag, key) && consumer != null) {
+            consumer.accept((NBTTagList) tag.getTag(key));
         }
     }
 

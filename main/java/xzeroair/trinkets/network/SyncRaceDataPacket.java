@@ -40,6 +40,9 @@ public class SyncRaceDataPacket extends ThreadSafePacket {
             return;
         }
         final World world = mc.player.getEntityWorld();
+        if (world == null) {
+            return;
+        }
         final Entity entity = world.getEntityByID(this.entityID);
         if (entity instanceof EntityLivingBase) {
             Capabilities.getEntityProperties(entity, prop -> prop.loadFromNBT(this.tag));

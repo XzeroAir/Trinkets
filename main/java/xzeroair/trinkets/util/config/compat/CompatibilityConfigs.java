@@ -21,6 +21,7 @@ public class CompatibilityConfigs {
         this.FIRST_AID = Trinkets.MOD_COMPAT.FirstAid;
         this.IDO_SWIMMING = Trinkets.MOD_COMPAT.Ido;
         this.TROPICRAFT_SWIMMING = Trinkets.MOD_COMPAT.Tropicraft;
+        this.AQUA_ACROBATICS = Trinkets.MOD_COMPAT.AquaAcrobatics;
 
     }
 
@@ -93,4 +94,9 @@ public class CompatibilityConfigs {
     @Config.Comment(ConstantsConfigLang.CONFIG_TROPICRAFT_SWIMMING_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_TROPICRAFT_SWIMMING)
     public boolean TROPICRAFT_SWIMMING;
+
+    @Config.Name(ConstantsConfigLang.CONFIG_AQUA_ACROBATICS_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_AQUA_ACROBATICS_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_AQUA_ACROBATICS)
+    public boolean AQUA_ACROBATICS;
 }

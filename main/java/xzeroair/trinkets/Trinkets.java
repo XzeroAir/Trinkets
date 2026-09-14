@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilitiesHandler;
 import xzeroair.trinkets.commands.CommandMain;
+import xzeroair.trinkets.dev.DevBondedHudTools;
 import xzeroair.trinkets.compatibility.ModCompat;
 import xzeroair.trinkets.init.ModBlocks;
 import xzeroair.trinkets.init.ModItems;
@@ -122,7 +123,7 @@ public class Trinkets {
         //					new ReskillableTrait()
         //			);
         //		}
-        MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
+        MinecraftForge.EVENT_BUS.register(CapabilitiesHandler.instance);
         proxy.init(event);
     }
 
@@ -152,6 +153,7 @@ public class Trinkets {
             }
         }
         event.registerServerCommand(new CommandMain());
+        DevBondedHudTools.register(event);
     }
 
     //	static {

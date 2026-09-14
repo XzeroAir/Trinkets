@@ -64,6 +64,17 @@ public class Reference {
      */
     public static final int GUI_RACE_SELECTION = 4;
 
+    public static final int EFFECT_LIGHTNING = 1;
+    public static final int EFFECT_LIGHTNING_ORB = 2;
+    public static final int EFFECT_SWEEP_ATTACK = 3;
+    public static final int EFFECT_FIRE_BREATH = 4;
+    public static final int EFFECT_EXPLOSION = 5;
+    public static final int EFFECT_GREED = 6;
+    public static final int EFFECT_LIGHTNING_ORB_SILENT = 7;
+    public static final int EFFECT_SHIELD_AURA = 8;
+    public static final int EFFECT_LIGHT_CHARGE = 10;
+    public static final int EFFECT_LINGERING_SNOW = 11;
+
     public static final int BAUBLES_GUI_BUTTON_ID = 55;
 
     public static final int GUI_TRINKETS_EXIT_BUTTON = 9999;

@@ -27,6 +27,7 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityMagnetic;
 import xzeroair.trinkets.util.helpers.Kinetics;
 import xzeroair.trinkets.util.helpers.StringUtils;
+import xzeroair.trinkets.util.helpers.TargetingPredicates;
 import xzeroair.trinkets.util.helpers.TranslationHelper;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyBindEntry;
 import xzeroair.trinkets.util.helpers.TranslationHelper.KeyEntry;
@@ -87,8 +88,7 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
     }
 
     protected void collectDrops(EntityLivingBase entity) {
-        final Predicate<EntityLivingBase> filter = Predicates.and(EntitySelectors.CAN_AI_TARGET, EntitySelectors.IS_ALIVE);
-        final boolean flag = filter.apply(entity);
+        final boolean flag = TargetingPredicates.isAiTarget(entity);
         if (flag) {
             if (this.CONFIG.COST > 0F) {
                 final MagicStats magic = Capabilities.getMagicStats(entity);
@@ -105,7 +105,7 @@ public class AbilityMagnetic extends Ability implements ITickableAbility, IHeldA
             }
             final AxisAlignedBB bBox = entity.getEntityBoundingBox();
 //            final List<String> cfg = Arrays.asList(CONFIG.WHITELIST);
-            final Predicate<Entity> lootPredicate = Predicates.and(EntitySelectors.IS_ALIVE, ent -> (ent instanceof EntityItem) || ((ent instanceof EntityXPOrb) && this.CONFIG.PICKUP_XP));
+            final Predicate<Entity> lootPredicate = ent -> TargetingPredicates.isCollectible(ent, this.CONFIG.PICKUP_XP);
             final Predicate<EntityPlayer> otherPlayerPredicate = Predicates.and(EntitySelectors.IS_ALIVE, ent -> {
                 if ((ent == null) || (entity == ent) || (entity.getEntityId() == ent.getEntityId())) {
                     return false;

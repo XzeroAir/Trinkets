@@ -42,7 +42,10 @@ public class GenericChatMessage extends ThreadSafePacket {
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final EntityPlayerSP clientPlayer = Minecraft.getMinecraft().player;
-        final World world = clientPlayer.getEntityWorld();
+        if (clientPlayer == null || clientPlayer.world == null) {
+            return;
+        }
+        final World world = clientPlayer.world;
         //		final Entity entity = world.getEntityByID(entityID);
         //		if (entity instanceof EntityPlayer) {
         //			((EntityPlayer) entity).sendStatusMessage(new TextComponentString(stringMsg), onScreen);

@@ -192,8 +192,13 @@ public class MoonRose extends BlockBush implements IsModelLoaded {
 
     @Override
     public void harvestBlock(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, TileEntity te, @Nonnull ItemStack tool) {
-        super.harvestBlock(world, player, pos, state, te, tool);
-        world.setBlockToAir(pos);
+        this.harvesters.set(player);
+        try {
+            super.harvestBlock(world, player, pos, state, te, tool);
+            world.setBlockToAir(pos);
+        } finally {
+            this.harvesters.remove();
+        }
     }
 
     @Override

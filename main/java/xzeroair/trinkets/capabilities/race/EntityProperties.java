@@ -28,7 +28,7 @@ import xzeroair.trinkets.attributes.JumpAttribute;
 import xzeroair.trinkets.attributes.UpdatingAttribute;
 import xzeroair.trinkets.capabilities.Capabilities;
 import xzeroair.trinkets.capabilities.CapabilityEntityBase;
-import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.entity.EntityAlphaWolf;
 import xzeroair.trinkets.init.Elements;
 import xzeroair.trinkets.init.EntityRaces;
 import xzeroair.trinkets.network.NetworkHandler;
@@ -93,11 +93,6 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         this.defaultHeight = e.height;
         this.defaultWidth = e.width;
         this.isChild = e.isChild();
-        this.originalRace = new RaceCache();
-        this.imbuedRace = this.originalRace;
-        this.potionRace = this.originalRace;
-        this.previousRace = this.originalRace;
-        this.currentRace = this.originalRace;
         this.abilities = new AbilityHandler(this);
         this.properties = this.currentRace.getRace().getRaceHandler(e, this, this.currentRace);
         this.clientInfo = new ClientInfo();
@@ -122,6 +117,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     @Override
     public void onUpdatePre() {
         this.getAbilityHandler().onUpdatePre(this.getEntity());
+        this.getRaceHandler().updateSwimming();
     }
 
     @Override
@@ -139,7 +135,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             return;
         }
 
-        if (!isClient && !this.isNormalSize() && !this.getEntity().onGround && !TrinketsConfig.EXPERIMENTAL_MIXINS.VANILLA_PLAYER_SIZE_UPDATES) {
+        if (!isClient && !this.isNormalSize() && !this.getEntity().onGround && !TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_DIMENSIONS) {
             final boolean groundProbe = this.isGrounded();
             if (groundProbe) {
                 this.getEntity().onGround = true;
@@ -237,13 +233,17 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 final EntityRacePropertiesHandler oldProperties = this.getRaceHandler();
                 // RUn all the end race transformation methods and remove attributes.
                 oldProperties.onTransformEnd();
-                AttributeHelper.removeAttributesByUUID(this.getEntity(), this.getPreviousRaceCache().getRace().getUUID(), oldProperties.getRace().getUUID());
+                AttributeHelper.removeAttributesByUUID(this.getEntity(), this.getPreviousRaceCache()
+                        .getRace()
+                        .getUUID(), oldProperties.getRace().getUUID());
                 this.setPreviousRaceCache(this.getCurrentRaceCache());
                 final Entity mount = this.getEntity().getRidingEntity();
-                if (mount instanceof AlphaWolf) {
+                if (mount instanceof EntityAlphaWolf) {
                     this.getEntity().dismountRidingEntity();
                 }
-                final IAttributeInstance stepHeight = this.getEntity().getAttributeMap().getAttributeInstance(JumpAttribute.stepHeight);
+                final IAttributeInstance stepHeight = this.getEntity()
+                        .getAttributeMap()
+                        .getAttributeInstance(JumpAttribute.stepHeight);
                 if ((stepHeight != null)) {
                     if (this.getEntity().stepHeight != stepHeight.getBaseValue()) {
                         this.getEntity().stepHeight = (float) stepHeight.getBaseValue();
@@ -257,7 +257,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
                 this.properties.onTransform();
 
                 if (newRace.isTemporary() && newRace.getDuration() > 0) {
-                    Counter tempPot = this.getTickHandler().getCounter("TempRace", newRace.getDuration(), true, true, true, true);
+                    Counter tempPot = this.getTickHandler()
+                            .getCounter("TempRace", newRace.getDuration(), true, true, true, true);
                     tempPot.resetTick();
                 }
 
@@ -303,7 +304,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         }
         ItemStack provider = this.getRaceProvider();
         if (!provider.isEmpty()) {
-            return new RaceCache(((IRaceProvider) provider.getItem()).getRace(), Capabilities.getTrinketProperties(provider, Elements.NEUTRAL, (prop, ele) -> prop.getElementalAttributes().getPrimaryElement()));
+            return new RaceCache(((IRaceProvider) provider.getItem()).getRace(), Capabilities.getTrinketProperties(provider, Elements.NEUTRAL, (prop, ele) -> prop.getElementalAttributes()
+                    .getPrimaryElement()));
         }
         this.setFake(false);
         final RaceCache imbuedRace = this.getImbuedRaceCache();
@@ -356,7 +358,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
             if (player.isCreative() || player.isSpectator()) {
                 return;
             }
-            final IAttributeInstance attribute = player.getAttributeMap().getAttributeInstance(FlyingAttribute.Fly_Speed);
+            final IAttributeInstance attribute = player.getAttributeMap()
+                    .getAttributeInstance(FlyingAttribute.Fly_Speed);
             if ((attribute != null) && !attribute.getModifiers().isEmpty()) {
                 if (player.getEntityWorld().isRemote) {
                     final float flySpeed = player.capabilities.getFlySpeed();
@@ -405,14 +408,11 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         final EntityLivingBase entity = this.getEntity();
         final EntityRacePropertiesHandler handler = this.getRaceHandler();
 
-        if ((Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.ARTEMIS_LIB)
-                || this.isChild()
-                || TrinketsConfig.EXPERIMENTAL_MIXINS.VANILLA_PLAYER_SIZE_UPDATES
-                || (!handler.isTransforming() && !handler.isTransformed())) {
+        if ((Trinkets.MOD_COMPAT.ArtemisLib && TrinketsConfig.compat.ARTEMIS_LIB) || this.isChild() || TrinketsConfig.EXPERIMENTAL_MIXINS.RACE_SCALED_PLAYER_DIMENSIONS || (!handler.isTransforming() && !handler.isTransformed())) {
             return EntityHelper.isGrounded(entity);
         }
 
-        return EntityHelper.isGrounded(entity, handler.getAdjustedBoundingBox());
+        return EntityHelper.isGrounded(entity, handler.getBoundingBox());
     }
 
     /**
@@ -424,13 +424,15 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         final World world = this.getEntity().getEntityWorld();
         if (!world.isRemote && (this.getEntity() instanceof EntityPlayerMP)) {
             if (this.isFirstLogin()) {
+                if (TrinketsConfig.SERVER.RACES.DEFAULT_HUMAN) {
+                    this.setOriginalRaceCache(null);
+                }
                 if (TrinketsConfig.SERVER.RACES.SELECTION_MENU) {
                     this.authorizeRaceSelection();
                     NetworkHandler.sendTo(new OpenTrinketGui(Reference.GUI_RACE_SELECTION), (EntityPlayerMP) this.getEntity());
                 }
-//            } else {
-//                this.sendInformationToPlayer(this.getEntity(), this.getTag());
             }
+            this.getAbilityHandler().onLogin((EntityPlayer) this.getEntity());
         }
     }
 
@@ -438,12 +440,14 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     public void onJoinWorld() {
         this.sendInformationToPlayer(this.getEntity(), this.saveToNBT(this.getTag()));
         this.sendHealthStateToPlayer();
+        this.getAbilityHandler().onJoinWorld(this.getEntity());
     }
 
     @Override
     public void onChangedDimension(int from, int to) {
         this.activePlayerWorld = null;
         this.scheduleResync();
+        this.getAbilityHandler().onChangedDimension(this.getEntity(), from, to);
     }
 
     /**
@@ -454,10 +458,11 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     public void onLogoff() {
         this.activePlayerWorld = null;
         if (this.getCurrentRaceCache().compareRace(EntityRaces.goblin)) {
-            if (this.getEntity().getRidingEntity() instanceof AlphaWolf) {
+            if (this.getEntity().getRidingEntity() instanceof EntityAlphaWolf) {
                 this.getEntity().dismountRidingEntity();
             }
         }
+        this.getAbilityHandler().onLogout(this.getEntity());
     }
 
     public void sendInformationToPlayer() {
@@ -489,7 +494,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         final World world = this.getEntity().getEntityWorld();
         if (!world.isRemote && (world instanceof WorldServer)) {
             final WorldServer w = (WorldServer) world;
-            NetworkHandler.sendToClients(w, this.getEntity().getPosition(), new SyncRaceDataPacket(this.getEntity(), tag));
+            NetworkHandler.sendToClients(w, this.getEntity()
+                    .getPosition(), new SyncRaceDataPacket(this.getEntity(), tag));
         }
     }
 
@@ -608,9 +614,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     }
 
     /**
-     * Get the entities original race. By default, this is EntityRaces.none.
-     * This changes based on if the race selection menu is enabled.
-     *
+     * Gets the player's persistent baseline race. A null baseline reset follows the configured default.
      */
     public RaceCache getOriginalRaceCache() {
         return this.originalRace;
@@ -618,11 +622,20 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
 
     public void setOriginalRaceCache(@Nullable RaceCache cache) {
         if (cache == null) {
-            cache = new RaceCache();
+            cache = TrinketsConfig.SERVER.RACES.DEFAULT_HUMAN ? new RaceCache(EntityRaces.human) : new RaceCache();
         }
         if (!this.originalRace.compare(cache)) {
             this.originalRace = cache;
         }
+    }
+
+    public void setOriginalRaceProfile(@Nonnull RaceCache cache, int gender) {
+        this.setOriginalRaceCache(cache);
+        final NBTTagCompound root = this.getTag();
+        final String profileKey = cache.getRace().getRegistryName().toString();
+        final NBTTagCompound profile = root.hasKey(profileKey, 10) ? root.getCompoundTag(profileKey) : new NBTTagCompound();
+        profile.setInteger("Gender", gender);
+        root.setTag(profileKey, profile);
     }
 
     /**
@@ -755,7 +768,8 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
     }
 
     private void sendHealthStateToPlayer() {
-        UpdatingAttribute.syncMaxHealthState(this.getEntity(), this.getEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH));
+        UpdatingAttribute.syncMaxHealthState(this.getEntity(), this.getEntity()
+                .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH));
     }
 
     @Override
@@ -788,6 +802,7 @@ public class EntityProperties extends CapabilityEntityBase<EntityProperties, Ent
         }
 
         this.getRaceHandler().copyFrom(source.getRaceHandler(), wasDeath, keepInv);
+        this.getRaceHandler().initializeState();
         this.getAbilityHandler().copyFrom(source.getAbilityHandler(), wasDeath, keepInv);
         this.scheduleResync();
     }

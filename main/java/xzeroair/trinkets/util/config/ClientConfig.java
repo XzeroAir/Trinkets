@@ -2,6 +2,7 @@ package xzeroair.trinkets.util.config;
 
 import net.minecraftforge.common.config.Config;
 import xzeroair.trinkets.util.ConstantsConfigLang;
+import xzeroair.trinkets.util.config.abilities.ConfigAbilityLinkedVitality;
 import xzeroair.trinkets.util.config.debug.ConfigDebug;
 import xzeroair.trinkets.util.config.gui.ConfigClientTrinketsContainer;
 import xzeroair.trinkets.util.config.gui.ConfigRacePropertiesGui;
@@ -25,6 +26,19 @@ public class ClientConfig {
     @Config.Comment(ConstantsConfigLang.CONFIG_MAGIC_HUD_COMMENT)
     @Config.LangKey(ConstantsConfigLang.CONFIG_MAGIC_HUD)
     public ConfigManaBarHud MANA_BAR_HUD = new ConfigManaBarHud();
+
+    @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_NAME)
+    @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_COMMENT)
+    @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES)
+    public ConfigAbilities ABILITIES = new ConfigAbilities();
+
+    public static class ConfigAbilities {
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ABILITIES_LINKED_VITALITY_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ABILITIES_LINKED_VITALITY_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ABILITIES_LINKED_VITALITY)
+        public ConfigAbilityLinkedVitality.ClientSettings LINKED_VITALITY = new ConfigAbilityLinkedVitality.ClientSettings();
+    }
 
     @Config.Name(ConstantsConfigLang.CONFIG_RACES_GUI_NAME)
     @Config.Comment(ConstantsConfigLang.CONFIG_RACES_GUI_COMMENT)
@@ -107,6 +121,20 @@ public class ClientConfig {
         public ClientConfigFaelisClaw FAELIS_CLAW = new ClientConfigFaelisClaw();
 
         public class ClientConfigFaelisClaw {
+
+            @Config.Name(ConstantsConfigLang.CONFIG_RENDERING_NAME)
+            @Config.Comment(ConstantsConfigLang.CONFIG_RENDERING_COMMENT)
+            @Config.LangKey(ConstantsConfigLang.CONFIG_RENDERING)
+            public boolean RENDER = true;
+
+        }
+
+        @Config.Name(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET_NAME)
+        @Config.Comment(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET_COMMENT)
+        @Config.LangKey(ConstantsConfigLang.CONFIG_ITEMS_LINKING_LOCKET)
+        public ClientConfigLinkingLocket LINKING_LOCKET = new ClientConfigLinkingLocket();
+
+        public class ClientConfigLinkingLocket {
 
             @Config.Name(ConstantsConfigLang.CONFIG_RENDERING_NAME)
             @Config.Comment(ConstantsConfigLang.CONFIG_RENDERING_COMMENT)

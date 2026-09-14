@@ -13,7 +13,9 @@ import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xzeroair.trinkets.Trinkets;
+import xzeroair.trinkets.init.TrinketsDamageSource;
 import xzeroair.trinkets.capabilities.Capabilities;
+import xzeroair.trinkets.entity.EntitySummonWrapper;
 import xzeroair.trinkets.traits.AbilityHandler.AbilityHolder;
 import xzeroair.trinkets.traits.abilities.interfaces.*;
 
@@ -21,6 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class CombatHandler extends EventBaseHandler {
+
+    public static final CombatHandler instance = new CombatHandler();
 
     @SubscribeEvent
     public void arrowLooseEvent(ArrowLooseEvent event) {
@@ -468,6 +472,9 @@ public class CombatHandler extends EventBaseHandler {
                 this.cancelEvent(event);
             }
         });
+        if (!event.isCanceled() && !attacked.world.isRemote && source.getTrueSource() instanceof EntitySummonWrapper) {
+            ((EntitySummonWrapper) source.getTrueSource()).killedEntity(attacked);
+        }
     }
 
     @SubscribeEvent

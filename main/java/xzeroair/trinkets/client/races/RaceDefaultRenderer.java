@@ -13,13 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import xzeroair.trinkets.client.gui.ITrinketGuiInterface;
-import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.entity.EntityAlphaWolf;
 import xzeroair.trinkets.races.EntityRacePropertiesHandler;
-import xzeroair.trinkets.traits.abilities.AbilityElytraFlight;
-import xzeroair.trinkets.traits.abilities.interfaces.IAbilityInterface;
-import xzeroair.trinkets.util.TrinketsConfig;
-import xzeroair.trinkets.util.TrinketsRegistryNames;
-import xzeroair.trinkets.util.compat.mobends.MoBendsCompat;
 
 public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H extends EntityRacePropertiesHandler> implements IRenderRaceHandler<T> {
 
@@ -48,17 +43,20 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
         if ((screen != null) && !((screen instanceof GuiChat) || screen instanceof GuiIngameMenu || (screen instanceof ITrinketGuiInterface))) {
             return;
         }
-        boolean customGlide = false;
-        final IAbilityInterface ability = this.getHandler().getAbility(TrinketsRegistryNames.MODID + ":" + TrinketsRegistryNames.ModAbilities.ELYTRA_FLIGHT);
-        if (ability instanceof AbilityElytraFlight && ((AbilityElytraFlight) ability).isGliding()) {
-            customGlide = true;
+        boolean flatPose = false;
+        if (this.getHandler().isSwimming() || this.getHandler().isGliding()) {
+            flatPose = true;
+        }
+        if (flatPose) {
             this.previousLimbSwingAmount = entity.prevLimbSwingAmount;
             this.limbSwingAmount = entity.limbSwingAmount;
             this.limbSwingAmountModified = true;
             entity.prevLimbSwingAmount = 0F;
             entity.limbSwingAmount = 0F;
         }
-        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
+        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler()
+                                                                                              .getProperties()
+                                                                                              .isNormalSize()) {
             final double hScale = this.getHandler().getProperties().getHeightValue() * 0.01D;
             final double wScale = this.getHandler().getProperties().getWidthValue() * 0.01D;
             final double xLoc = (x / wScale) - x;
@@ -72,20 +70,20 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
             //			final double offsetDifference = entity.isRiding() && (mount != null) ? (mount.height - mountedOffset) : 0;
             //						final double retMountedOffset = mountedOffset - ((offsetDifference) * 0.66D);
             final double retMountedOffset = -(mountedOffset + yOffset) - 0.1D;
-            if (entity.isRiding() && !(mount instanceof AlphaWolf)) {
+            if (entity.isRiding() && !(mount instanceof EntityAlphaWolf)) {
                 GlStateManager.translate(0, mountedOffset, 0);
                 GlStateManager.translate(0, -yOffset, 0);
                 GlStateManager.translate(0, retMountedOffset, 0);
             }
             GlStateManager.scale(wScale, hScale, wScale);
-            if (entity.isRiding() && !(mount instanceof AlphaWolf)) {
+            if (entity.isRiding() && !(mount instanceof EntityAlphaWolf)) {
                 GlStateManager.translate(0, -retMountedOffset, 0);
                 GlStateManager.translate(0, yOffset, 0);
                 GlStateManager.translate(0, -mountedOffset, 0);
             }
             GlStateManager.translate(xLoc, yLoc, zLoc);
         }
-        if (customGlide) {
+        if (flatPose) {
             this.applyCustomGlidePose(entity, partialTick);
         }
     }
@@ -147,7 +145,9 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
     @Override
     public <E extends EntityLivingBase> void doRenderLivingSpecialsPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
         if (entity instanceof EntityPlayer) {
-            if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
+            if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler()
+                                                                                                  .getProperties()
+                                                                                                  .isNormalSize()) {
                 GlStateManager.pushMatrix();
                 final float t2 = this.getHandler().getProperties().getDefaultHeight() - (entity.height);
                 GlStateManager.translate(0, t2, 0);
@@ -161,7 +161,9 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
     @Override
     public <E extends EntityLivingBase> void doRenderLivingSpecialsPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
         if (entity instanceof EntityPlayer) {
-            if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
+            if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler()
+                                                                                                  .getProperties()
+                                                                                                  .isNormalSize()) {
                 GlStateManager.popMatrix();
             }
         }
@@ -172,7 +174,9 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
      */
     @Override
     public <E extends EntityLivingBase> void doRenderLivingPre(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
-        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
+        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler()
+                                                                                              .getProperties()
+                                                                                              .isNormalSize()) {
             GlStateManager.pushMatrix();
             final double hScale = this.getHandler().getProperties().getHeightValue() * 0.01D;
             final double wScale = this.getHandler().getProperties().getWidthValue() * 0.01D;
@@ -209,7 +213,9 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
      */
     @Override
     public <E extends EntityLivingBase> void doRenderLivingPost(EntityLivingBase entity, double x, double y, double z, RenderLivingBase<E> renderer, float partialTick) {
-        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler().getProperties().isNormalSize()) {
+        if ((this.getHandler().isTransforming() || this.getHandler().isTransformed()) && !this.getHandler()
+                                                                                              .getProperties()
+                                                                                              .isNormalSize()) {
             GlStateManager.popMatrix();
         }
     }

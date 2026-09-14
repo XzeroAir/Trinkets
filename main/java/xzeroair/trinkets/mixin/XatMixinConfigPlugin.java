@@ -36,7 +36,7 @@ public class XatMixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.endsWith("EntityPlayerMixin")) {
-            return this.isEnabled(ConstantsConfigLang.CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES_NAME);
+            return this.isEnabled(ConstantsConfigLang.CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_DIMENSIONS_NAME);
         }
 
         if (mixinClassName.endsWith("PlayerShadowMixin")) {

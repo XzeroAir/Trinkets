@@ -35,7 +35,10 @@ public class OpenTrinketGui extends ThreadSafePacket {
     @Override
     public void handleClientSafe(NetHandlerPlayClient client) {
         final Minecraft mc = Minecraft.getMinecraft();
-        final World world = mc.player.getEntityWorld();
+        if (mc.player == null || mc.player.world == null) {
+            return;
+        }
+        final World world = mc.player.world;
         mc.player.openGui(Trinkets.instance, this.guiID, world, 0, 0, 0);
     }
 

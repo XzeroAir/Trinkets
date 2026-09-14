@@ -1,7 +1,6 @@
 package xzeroair.trinkets.util.compat.ido;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import xzeroair.trinkets.Trinkets;
 import xzeroair.trinkets.util.TrinketsConfig;
 
@@ -17,7 +16,7 @@ public final class IdoCompat {
      */
     public static boolean isModEnabled() {
         return Trinkets.MOD_COMPAT.Ido
-                && TrinketsConfig.getClientStore().MOD_COMPAT_IDO_SWIMMING;
+                && (Trinkets.proxy.getSide().isClient() ? TrinketsConfig.getClientStore().MOD_COMPAT_IDO_SWIMMING : TrinketsConfig.compat.IDO_SWIMMING);
     }
 
     public static boolean isSwimming(EntityLivingBase entity) {

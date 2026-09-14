@@ -70,6 +70,7 @@ public class TrinketsConfig {
         tag.setTag("RACE_BLACKLIST", races);
         tag.setBoolean("COMPAT_IDO_SWIMMING", TrinketsConfig.compat.IDO_SWIMMING);
         tag.setBoolean("COMPAT_TROPICRAFT_SWIMMING", TrinketsConfig.compat.TROPICRAFT_SWIMMING);
+        tag.setBoolean("COMPAT_AQUA_ACROBATICS", TrinketsConfig.compat.AQUA_ACROBATICS);
 
         // Most of these are probably not needed.
         if (Trinkets.MOD_COMPAT.ToughAsNails) {
@@ -88,6 +89,7 @@ public class TrinketsConfig {
             tag.setBoolean("COMPAT_BD", TrinketsConfig.compat.BETTER_DIVING);
         }
         tag.setBoolean("MISC_MOVEMENT", TrinketsConfig.SERVER.MISC.MOVEMENT);
+        tag.setBoolean("MISC_SWIMMING", TrinketsConfig.SERVER.MISC.SWIMMING);
         tag.setBoolean("MISC_REACH_FIX", TrinketsConfig.SERVER.MISC.REACH);
         return tag;
     }
@@ -107,6 +109,7 @@ public class TrinketsConfig {
             });
             NBTHelper.hasBoolean(tag, "COMPAT_IDO_SWIMMING", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_IDO_SWIMMING = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_TROPICRAFT_SWIMMING", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_TROPICRAFT_SWIMMING = bool);
+            NBTHelper.hasBoolean(tag, "COMPAT_AQUA_ACROBATICS", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_AQUA_ACROBATICS = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_TAN", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_TOUGHASNAILS = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_SD", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_SIMPLEDIFFICULTY = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_ELENAI1", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ELENAI_DODGE = bool);
@@ -114,6 +117,7 @@ public class TrinketsConfig {
             NBTHelper.hasBoolean(tag, "COMPAT_EV", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_ENHANCED_VISUALS = bool);
             NBTHelper.hasBoolean(tag, "COMPAT_BD", (bool) -> ClientConfigStore.INSTANCE.MOD_COMPAT_BETTER_DIVING = bool);
             NBTHelper.hasBoolean(tag, "MISC_MOVEMENT", (bool) -> ClientConfigStore.INSTANCE.BLOCK_MOVEMENT = bool);
+            NBTHelper.hasBoolean(tag, "MISC_SWIMMING", (bool) -> ClientConfigStore.INSTANCE.SWIMMING = bool);
             NBTHelper.hasBoolean(tag, "MISC_REACH_FIX", (bool) -> ClientConfigStore.INSTANCE.REACH_FIX = bool);
         }
     }

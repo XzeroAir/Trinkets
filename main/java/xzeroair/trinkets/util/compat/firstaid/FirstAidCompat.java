@@ -1,6 +1,7 @@
 package xzeroair.trinkets.util.compat.firstaid;
 
 import ichttt.mods.firstaid.api.CapabilityExtendedHealthSystem;
+import ichttt.mods.firstaid.api.damagesystem.AbstractDamageablePart;
 import ichttt.mods.firstaid.api.damagesystem.AbstractPlayerDamageModel;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,6 +34,48 @@ public class FirstAidCompat {
             return false;
         }
         return (entity.ticksExisted % TRANSFORM_RESCALE_INTERVAL_TICKS) == 0;
+    }
+
+    public static boolean canSpendSummonHealth(EntityLivingBase entity, float healthCost) {
+        if (!isModEnabled() || !(entity instanceof EntityPlayer)) {
+            return true;
+        }
+        final AbstractPlayerDamageModel model = entity.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
+        if (model == null) {
+            return true;
+        }
+        final float healthFraction = healthCost / entity.getMaxHealth();
+        if (healthFraction < 0F || healthFraction >= 1F || Float.isNaN(healthFraction)) {
+            return false;
+        }
+        for (AbstractDamageablePart part : getBodyParts(model)) {
+            final float minimumHealth = part == model.HEAD || part == model.BODY ? 1F : 0F;
+            if (part.currentHealth - part.getMaxHealth() * healthFraction < minimumHealth) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean spendSummonHealth(EntityLivingBase entity, float healthCost) {
+        if (!isModEnabled() || !(entity instanceof EntityPlayer)) {
+            return false;
+        }
+        final AbstractPlayerDamageModel model = entity.getCapability(CapabilityExtendedHealthSystem.INSTANCE, null);
+        if (model == null || !canSpendSummonHealth(entity, healthCost)) {
+            return false;
+        }
+        final float healthFraction = healthCost / entity.getMaxHealth();
+        for (AbstractDamageablePart part : getBodyParts(model)) {
+            part.currentHealth -= part.getMaxHealth() * healthFraction;
+        }
+        model.scheduleResync();
+        return true;
+    }
+
+    public static AbstractDamageablePart[] getBodyParts(AbstractPlayerDamageModel model) {
+        return new AbstractDamageablePart[] {model.HEAD, model.BODY, model.LEFT_ARM, model.RIGHT_ARM,
+                model.LEFT_LEG, model.RIGHT_LEG, model.LEFT_FOOT, model.RIGHT_FOOT};
     }
 
     public static void rescale(EntityLivingBase entity) {

@@ -23,6 +23,8 @@ import xzeroair.trinkets.races.goblin.RaceGoblin;
 import xzeroair.trinkets.races.goblin.RaceGoblinDefaultInformation;
 import xzeroair.trinkets.races.human.RaceHuman;
 import xzeroair.trinkets.races.human.RaceHumanDefaultInformation;
+import xzeroair.trinkets.races.slime.RaceSlime;
+import xzeroair.trinkets.races.slime.RaceSlimeDefaultInformation;
 import xzeroair.trinkets.races.taurus.RaceTaurus;
 import xzeroair.trinkets.races.taurus.RaceTaurusDefaultInformation;
 import xzeroair.trinkets.races.titan.RaceTitan;
@@ -203,6 +205,8 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
                 return new RaceElf(e, properties, raceCache);
             case "Faelis":
                 return new RaceFaelis(e, properties, raceCache);
+            case "Slime":
+                return new RaceSlime(e, properties, raceCache);
             case "Dragon":
                 return new RaceDragon(e, properties, raceCache);
             case "Human":
@@ -228,6 +232,8 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
                 return RaceElfDefaultInformation.INSTANCE;
             case "Faelis":
                 return RaceFaelisDefaultInformation.INSTANCE;
+            case "Slime":
+                return RaceSlimeDefaultInformation.INSTANCE;
             case "Dragon":
                 return RaceDragonDefaultInformation.INSTANCE;
             case "Human":
@@ -256,7 +262,7 @@ public class EntityRace extends IForgeRegistryEntry.Impl<EntityRace> implements 
 		registerRace((new EntityRace("Goblin"		, "d917999a-0399-4c39-bfc5-79784dfff6ed", 6588004, 3096367, true)).setRaceSize(50).setRaceHeight(TrinketsConfig.SERVER.RACES.GOBLIN.SIZE.height).setRaceWidth(TrinketsConfig.SERVER.RACES.GOBLIN.SIZE.width).setMagicAffinity(TrinketsConfig.SERVER.RACES.GOBLIN.MAGIC.affinity));
 		registerRace((new EntityRace("Faelis"		, "cdccefa8-6a67-4394-b70d-c737953887a2", 16571252, 4465933, true)).setRaceSize(85).setRaceHeight(TrinketsConfig.SERVER.RACES.FAELIS.SIZE.height).setRaceWidth(TrinketsConfig.SERVER.RACES.FAELIS.SIZE.width).setMagicAffinity(TrinketsConfig.SERVER.RACES.FAELIS.MAGIC.affinity));
 		registerRace((new EntityRace("Dragon"		, "3b75821e-6ec6-4dfe-9612-b7a988a7b30b", 3289650, 9509561, true)).setRaceSize(120).setRaceHeight(TrinketsConfig.SERVER.RACES.DRAGON.SIZE.height).setRaceWidth(TrinketsConfig.SERVER.RACES.DRAGON.SIZE.width).setMagicAffinity(TrinketsConfig.SERVER.RACES.DRAGON.MAGIC.affinity).setCanFly(true));
-//		registerRace((new EntityRace("Slime"		, "5db9c85c-f830-44c7-b02f-8368ee5eca8a", 0, 0, true)).setRaceSize(100).setMagicAffinity(500));
+		registerRace((new EntityRace("Slime"		, "5db9c85c-f830-44c7-b02f-8368ee5eca8a", 5349437, 5349437, true)).setRaceSize(100).setRaceHeight(TrinketsConfig.SERVER.RACES.SLIME.SIZE.height).setRaceWidth(TrinketsConfig.SERVER.RACES.SLIME.SIZE.width).setMagicAffinity(TrinketsConfig.SERVER.RACES.SLIME.MAGIC.affinity));
 		registerRace((new EntityRace("Taurus"		, "07f0d6c2-4177-412e-8de5-07c401209e44", 1315860, 4271658, true)).setRaceSize(120).setRaceHeight(TrinketsConfig.SERVER.RACES.TAURUS.SIZE.height).setRaceWidth(TrinketsConfig.SERVER.RACES.TAURUS.SIZE.width).setMagicAffinity(TrinketsConfig.SERVER.RACES.TAURUS.MAGIC.affinity));
 //		registerRace((new EntityRace("Orc"		, "591d7d19-dd46-471f-b24f-e9967b1b95ef", 0, 0, true)).setRaceSize(150).setMagicAffinity(25));
 //		registerRace((new EntityRace("Succubus"	, "cce3a5ca-134e-40ed-a27d-a89e1f05dc5f", 0, 0, true)).setRaceSize(100).setMagicAffinity(250));

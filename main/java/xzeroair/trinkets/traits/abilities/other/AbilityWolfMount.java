@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import xzeroair.trinkets.client.keybinds.ModKeyBindings;
-import xzeroair.trinkets.entity.AlphaWolf;
+import xzeroair.trinkets.entity.EntityAlphaWolf;
 import xzeroair.trinkets.traits.abilities.Ability;
 import xzeroair.trinkets.traits.abilities.interfaces.IKeyBindInterface;
 import xzeroair.trinkets.traits.abilities.interfaces.ITickableAbility;
@@ -22,6 +22,7 @@ import xzeroair.trinkets.util.TrinketsRegistryNames;
 import xzeroair.trinkets.util.config.abilities.ConfigAbilityWolfRider;
 import xzeroair.trinkets.util.handlers.Counter;
 import xzeroair.trinkets.util.helpers.RayTraceHelper;
+import xzeroair.trinkets.util.helpers.TranslationHelper;
 
 public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyBindInterface {
 
@@ -35,6 +36,13 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
         super(TrinketsRegistryNames.ModAbilities.WOLF_RIDER);
         this.CONFIG = config;
         this.setAbilityEnabled(config.ENABLED);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String addCustomDescriptionTags(TranslationHelper helper, String key, int rendMod, int renderID, int compatID) {
+        final TranslationHelper.KeyEntry raceKey = new TranslationHelper.KeyBindEntry("racekb", this.getKey());
+        return helper.formatAddVariables(key, renderID, raceKey);
     }
 
     @Override
@@ -57,9 +65,9 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
             if (reachAttribe != null) {
                 reachDistance = reachAttribe.getAttributeValue();
             }
-            if (player.isRiding() && (player.getRidingEntity() instanceof AlphaWolf)) {
+            if (player.isRiding() && (player.getRidingEntity() instanceof EntityAlphaWolf)) {
                 final Counter counter = tickHandler.getCounter("mountAtkCooldown", 40, true, true, false, true, false);
-                final AlphaWolf wolf = (AlphaWolf) player.getRidingEntity();
+                final EntityAlphaWolf wolf = (EntityAlphaWolf) player.getRidingEntity();
                 if (counter.Tick()) {
                     wolf.MountedAttack(player, reachDistance);
                     counter.resetTick();
@@ -67,7 +75,7 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
             } else if (!player.isRiding()) {
                 RayTraceResult result = RayTraceHelper.rayTrace(world, player, reachDistance * 0.5D, true);
                 if ((result != null) && (result.typeOfHit == Type.ENTITY)) {
-                    if ((result.entityHit instanceof EntityWolf) && !(result.entityHit instanceof AlphaWolf)) {
+                    if ((result.entityHit instanceof EntityWolf) && !(result.entityHit instanceof EntityAlphaWolf)) {
                         this.MountWolf(player, (EntityWolf) result.entityHit);
                     }
                 }
@@ -94,7 +102,7 @@ public class AbilityWolfMount extends Ability implements ITickableAbility, IKeyB
         }
         if (!world.isRemote) {
             if (!entity.isRiding()) {
-                final AlphaWolf newWolf = new AlphaWolf(world);
+                final EntityAlphaWolf newWolf = new EntityAlphaWolf(world);
                 newWolf.setCustomNameTag(wolf.getCustomNameTag());
                 newWolf.setLocationAndAngles(wolf.posX, wolf.posY, wolf.posZ, wolf.rotationYaw, 0F);
                 newWolf.setTamedBy(entity);

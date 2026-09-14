@@ -37,9 +37,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_EXPERIMENTAL_MIXINS = CONFIG + ".experimental_mixins";
     public static final String CONFIG_EXPERIMENTAL_MIXINS_NAME = "Experimental Mixins";
     public static final String CONFIG_EXPERIMENTAL_MIXINS_COMMENT = "Optional Mixin-based behavior changes. All options require a game restart.";
-    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES = CONFIG_EXPERIMENTAL_MIXINS + ".vanilla_player_size_updates";
-    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES_NAME = "Vanilla Player Size Updates";
-    public static final String CONFIG_EXPERIMENTAL_MIXINS_VANILLA_PLAYER_SIZE_UPDATES_COMMENT = "Let vanilla update player dimensions using Trinkets' race-adjusted width and height, including collision and bounding boxes. Requires restart.";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_DIMENSIONS = CONFIG_EXPERIMENTAL_MIXINS + ".race_scaled_player_dimensions";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_DIMENSIONS_NAME = "Race-Scaled Player Dimensions";
+    public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_DIMENSIONS_COMMENT = "Apply race-adjusted player dimensions through the Player Size Mixin, including collision and bounding boxes. Requires restart.";
 
     public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_SHADOWS = CONFIG_EXPERIMENTAL_MIXINS + ".race_scaled_player_shadows";
     public static final String CONFIG_EXPERIMENTAL_MIXINS_RACE_SCALED_PLAYER_SHADOWS_NAME = "Race-Scaled Player Shadows";
@@ -318,6 +318,13 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ELEMENTS_LIGHTNING_DAMAGE_NAME = "Lightning";
     public static final String CONFIG_ELEMENTS_LIGHTNING_DAMAGE_COMMENT = "";
 
+    public static final String CONFIG_DAMAGE_PROPERTIES = CONFIG + ".damage_properties";
+    public static final String CONFIG_DAMAGE_PROPERTIES_NAME = "Damage Properties";
+    public static final String CONFIG_DAMAGE_PROPERTIES_COMMENT = "Configuration for generic damage properties.";
+    public static final String CONFIG_DAMAGE_INDIRECT = CONFIG_DAMAGE_PROPERTIES + ".indirect";
+    public static final String CONFIG_DAMAGE_INDIRECT_NAME = "Indirect Damage";
+    public static final String CONFIG_DAMAGE_INDIRECT_COMMENT = "Damage-type patterns treated as indirect by Trinkets abilities. Examples: *;isIndirect, *;isExplosion, *;isMagic, *;isProjectile, or a specific damage type such as modid.damage;isMagic.";
+
     /**
      * xat.config.abilities
      */
@@ -586,6 +593,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_BREATH_LIGHTNING = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_LIGHTNING;
     public static final String CONFIG_ABILITIES_BREATH_LIGHTNING_NAME = "Lightning Breath";
     public static final String CONFIG_ABILITIES_BREATH_LIGHTNING_COMMENT = "";
+    public static final String CONFIG_ABILITIES_BREATH_LIGHT = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_LIGHT;
+    public static final String CONFIG_ABILITIES_BREATH_LIGHT_NAME = "Light Breath";
+    public static final String CONFIG_ABILITIES_BREATH_LIGHT_COMMENT = "";
     public static final String CONFIG_ABILITIES_BREATH_FIRE = CONFIG_ABILITIES_BREATH + "." + TrinketsRegistryNames.ModAbilities.BREATH_FIRE;
     public static final String CONFIG_ABILITIES_BREATH_FIRE_NAME = "Fire Breath";
     public static final String CONFIG_ABILITIES_BREATH_FIRE_COMMENT = "";
@@ -614,6 +624,18 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_IMMUNITY_WATER = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_WATER;
     public static final String CONFIG_ABILITIES_IMMUNITY_WATER_NAME = "Water Immunity";
     public static final String CONFIG_ABILITIES_IMMUNITY_WATER_COMMENT = "";
+    public static final String CONFIG_ABILITIES_IMMUNITY_AIR = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_AIR;
+    public static final String CONFIG_ABILITIES_IMMUNITY_AIR_NAME = "Air Immunity";
+    public static final String CONFIG_ABILITIES_IMMUNITY_AIR_COMMENT = "";
+    public static final String CONFIG_ABILITIES_IMMUNITY_EARTH = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_EARTH;
+    public static final String CONFIG_ABILITIES_IMMUNITY_EARTH_NAME = "Earth Immunity";
+    public static final String CONFIG_ABILITIES_IMMUNITY_EARTH_COMMENT = "";
+    public static final String CONFIG_ABILITIES_IMMUNITY_LIGHT = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_LIGHT;
+    public static final String CONFIG_ABILITIES_IMMUNITY_LIGHT_NAME = "Light Immunity";
+    public static final String CONFIG_ABILITIES_IMMUNITY_LIGHT_COMMENT = "";
+    public static final String CONFIG_ABILITIES_IMMUNITY_VOID = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.IMMUNITY_VOID;
+    public static final String CONFIG_ABILITIES_IMMUNITY_VOID_NAME = "Void Immunity";
+    public static final String CONFIG_ABILITIES_IMMUNITY_VOID_COMMENT = "";
 
     public static final String CONFIG_ABILITIES_AFFINITY_WATER = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.AFFINITY_WATER;
     public static final String CONFIG_ABILITIES_AFFINITY_WATER_NAME = "Water Affinity";
@@ -704,6 +726,43 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_STAMPEDE_NAME = "Stampede";
     public static final String CONFIG_ABILITIES_STAMPEDE_COMMENT = "";
 
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.LINKED_VITALITY;
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_NAME = "Linked Vitality";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_COMMENT = "";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DAMAGE_SHARE = CONFIG_ABILITIES_LINKED_VITALITY + ".damage_share";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DAMAGE_SHARE_NAME = "Partner Damage Share";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DAMAGE_SHARE_COMMENT = "The percentage of incoming damage transferred to the linked partner.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_BALANCE_HEALTH = CONFIG_ABILITIES_LINKED_VITALITY + ".balance_health";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_BALANCE_HEALTH_NAME = "Balance Health";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_BALANCE_HEALTH_COMMENT = "Continuously transfers health from the healthier linked partner until their health matches or the lower-health partner is full.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PROTECT_PARTNER = CONFIG_ABILITIES_LINKED_VITALITY + ".protect_partner";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PROTECT_PARTNER_NAME = "Protect Linked Partner";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PROTECT_PARTNER_COMMENT = "When enabled, overflow damage returns to the wearer if it can prevent lethal linked-partner damage. When disabled, the partner always receives its configured damage share.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_EXPERIENCE_BONUS = CONFIG_ABILITIES_LINKED_VITALITY + ".experience_bonus";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_EXPERIENCE_BONUS_NAME = "Nearby Experience Bonus";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_EXPERIENCE_BONUS_COMMENT = "Additional experience earned from kills while your bound partner is within 32 blocks. Set to 0 to disable.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_DAMAGE = CONFIG_ABILITIES_LINKED_VITALITY + ".direct_damage";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_DAMAGE_NAME = "Direct Partner Damage";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_DAMAGE_COMMENT = "Deduct shared damage directly from the linked partner's health to avoid damage-triggered effects. Lethal shared damage still uses the normal damage path for death and Totem handling.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_REQUIRE_NEARBY_PARTNER = CONFIG_ABILITIES_LINKED_VITALITY + ".require_nearby_partner";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_REQUIRE_NEARBY_PARTNER_NAME = "Require Nearby Partner";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_REQUIRE_NEARBY_PARTNER_COMMENT = "Require the linked partner to be within 32 blocks in the same world before sharing damage or balancing health.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PARTNER_DAMAGE_MULTIPLIER = CONFIG_ABILITIES_LINKED_VITALITY + ".partner_damage_multiplier";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PARTNER_DAMAGE_MULTIPLIER_NAME = "Partner Damage Multiplier";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_PARTNER_DAMAGE_MULTIPLIER_COMMENT = "Multiply the linked partner's share of incoming damage. The wearer still receives the remaining original damage.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_SHARE_HEALING = CONFIG_ABILITIES_LINKED_VITALITY + ".share_healing";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_SHARE_HEALING_NAME = "Share Healing";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_SHARE_HEALING_COMMENT = "Split healing between linked partners. Any portion the partner cannot receive remains with the original recipient.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_HEAL_SHARE = CONFIG_ABILITIES_LINKED_VITALITY + ".heal_share";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_HEAL_SHARE_NAME = "Partner Healing Share";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_HEAL_SHARE_COMMENT = "The percentage of received healing redirected to the linked partner.";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_HEAL = CONFIG_ABILITIES_LINKED_VITALITY + ".direct_heal";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_HEAL_NAME = "Direct Partner Healing";
+    public static final String CONFIG_ABILITIES_LINKED_VITALITY_DIRECT_HEAL_COMMENT = "Apply shared healing directly to the linked partner instead of using the normal healing-event path.";
+    public static final String CONFIG_ABILITIES_BOUNCY_FALL_DAMAGE_MULTIPLIER = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.BOUNCY + ".fall_damage_multiplier";
+    public static final String CONFIG_ABILITIES_BOUNCY_FALL_DAMAGE_MULTIPLIER_NAME = "Bounce Fall Damage Multiplier";
+    public static final String CONFIG_ABILITIES_BOUNCY_FALL_DAMAGE_MULTIPLIER_COMMENT = "The fraction of normal fall damage taken when a landing triggers a bounce. Set to 0 to prevent fall damage.";
+
     /// External
 
     /// SURVIVAL
@@ -741,6 +800,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_BLUR;
     public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_NAME = "Clear Vision";
     public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_CLEAR_VISION_COMMENT = "Removed the Enhanved Visuals Blur Effect";
+    public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS = CONFIG_ABILITIES + "." + TrinketsRegistryNames.ModAbilities.ENHANCED_VISUALS_GRITLESS;
+    public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_NAME = "Gritless Vision";
+    public static final String CONFIG_ABILITIES_ENHANCED_VISUALS_GRITLESS_COMMENT = "Removes Enhanced Visuals on-screen fire and smoke effects.";
 
     /**
      * xat.config.races
@@ -757,6 +819,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_RACES_MENU_BLACKLIST = CONFIG_RACES_MENU + ".blacklist";
     public static final String CONFIG_RACES_MENU_BLACKLIST_NAME = "Blacklisted Races";
     public static final String CONFIG_RACES_MENU_BLACKLIST_COMMENT = "These are races which are blacklisted from the Race Selection Menu if Enabled";
+    public static final String CONFIG_RACES_DEFAULT_HUMAN = CONFIG_RACES + ".default_human";
+    public static final String CONFIG_RACES_DEFAULT_HUMAN_NAME = "Default Human";
+    public static final String CONFIG_RACES_DEFAULT_HUMAN_COMMENT = "Sets Human as the original race for new players. Requires restart.";
 
     public static final String CONFIG_RACES_SIZE = CONFIG_RACES + ".size";
     public static final String CONFIG_RACES_SIZE_NAME = "Size";
@@ -770,6 +835,15 @@ public class ConstantsConfigLang {
     public static final String CONFIG_RACES_MOUNT_CONTROL_BLACKLIST = CONFIG_RACES_MOUNT_CONTROL + ".blacklist";
     public static final String CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_NAME = "Mount Blacklist";
     public static final String CONFIG_RACES_MOUNT_CONTROL_BLACKLIST_COMMENT = "If the race can mount entities, which ones are excluded";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT = CONFIG_RACES + ".equipment.weight";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_NAME = "Equipment Weight";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_COMMENT = "Configure movement and jump penalties from weighted equipment for this race.";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_ENABLED = CONFIG_RACES_EQUIPMENT_WEIGHT + ".enabled";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_ENABLED_NAME = "Enabled";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_ENABLED_COMMENT = "Should this race receive movement and jump penalties from configured equipment weight.";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_LIST = CONFIG_RACES_EQUIPMENT_WEIGHT + ".list";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_LIST_NAME = "Weighted Equipment";
+    public static final String CONFIG_RACES_EQUIPMENT_WEIGHT_LIST_COMMENT = "List of equipment entries and their weight values.";
 
     public static final String CONFIG_RACES_HUMAN = CONFIG_RACES + "." + TrinketsRegistryNames.ModRaces.HUMAN;
     public static final String CONFIG_RACES_HUMAN_NAME = "Human";
@@ -796,6 +870,13 @@ public class ConstantsConfigLang {
     public static final String CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE = CONFIG_RACES_GOBLIN + ".creeper.explode";
     public static final String CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE_NAME = "Creepers Instantly Explode";
     public static final String CONFIG_RACES_GOBLIN_CREEPERS_EXPLODE_COMMENT = "Should Creepers Explode instantly when hit as a Goblin";
+
+    public static final String CONFIG_RACES_SLIME = CONFIG_RACES + "." + TrinketsRegistryNames.ModRaces.SLIME;
+    public static final String CONFIG_RACES_SLIME_NAME = "Slime";
+    public static final String CONFIG_RACES_SLIME_COMMENT = "";
+    public static final String CONFIG_RACES_SLIME_HEALTH_SIZE = CONFIG_RACES_SLIME + ".size.health";
+    public static final String CONFIG_RACES_SLIME_HEALTH_SIZE_NAME = "Scale Size With Health";
+    public static final String CONFIG_RACES_SLIME_HEALTH_SIZE_COMMENT = "Scale the Slime's configured size from 25% at 10% health or lower to 100% at full health.";
 
 
     public static final String CONFIG_RACES_FAELIS = CONFIG_RACES + "." + TrinketsRegistryNames.ModRaces.FAELIS;
@@ -850,7 +931,7 @@ public class ConstantsConfigLang {
 
     public static final String CONFIG_DAMAGE_TYPES = CONFIG + ".damagetypes";
     public static final String CONFIG_DAMAGE_TYPES_NAME = "Damage Types";
-    public static final String CONFIG_DAMAGE_TYPES_COMMENT = "Immune to all Damage Types. Syntax Example\nonHurt:type;isFire;isTrue:minecraft:blaze;5.0;0.1\nonHurt:*;isFire;*;5.0;0.1";
+    public static final String CONFIG_DAMAGE_TYPES_COMMENT = "Rules that modify incoming damage. A multiplier below 1 reduces damage; a multiplier above 1 increases it. Rules are evaluated in order, and the first matching rule applies. Syntax Example\nonHurt:type;isFire;isTrue:minecraft:blaze;5.0;0.1\nonHurt:*;isFire;*;5.0;0.1";
 
     public static final String CONFIG_EFFECTS = CONFIG + ".effects";
     public static final String CONFIG_EFFECTS_NAME = "Potion Effects";
@@ -900,6 +981,7 @@ public class ConstantsConfigLang {
     public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y = CONFIG_MAGIC_HUD + ".position.y";
     public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_NAME = "Y Position (Pixels)";
     public static final String CONFIG_MAGIC_HUD_POSITION_PIXELS_Y_COMMENT = "Absolute Y position in scaled-screen pixels";
+
     public static final String CONFIG_MAGIC_COST = CONFIG_MAGIC + ".cost";
     public static final String CONFIG_MAGIC_COST_NAME = "Mana Cost";
     public static final String CONFIG_MAGIC_COST_COMMENT = "";
@@ -1027,6 +1109,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ITEMS_TEDDY_BEAR = CONFIG_ITEMS + "." + TrinketsRegistryNames.ModItems.TEDDY_BEAR;
     public static final String CONFIG_ITEMS_TEDDY_BEAR_COMMENT = "";
     public static final String CONFIG_ITEMS_TEDDY_BEAR_NAME = "Teddy Bear";
+    public static final String CONFIG_ITEMS_LINKING_LOCKET = CONFIG_ITEMS + "." + TrinketsRegistryNames.ModItems.LINKING_LOCKET;
+    public static final String CONFIG_ITEMS_LINKING_LOCKET_COMMENT = "";
+    public static final String CONFIG_ITEMS_LINKING_LOCKET_NAME = "Linking Locket";
     public static final String CONFIG_ITEMS_WEIGHTLESS_STONE = CONFIG_ITEMS + "." + TrinketsRegistryNames.ModItems.WEIGHTLESS_STONE;
     public static final String CONFIG_ITEMS_WEIGHTLESS_STONE_COMMENT = "";
     public static final String CONFIG_ITEMS_WEIGHTLESS_STONE_NAME = "Stone of Weightlessness";
@@ -1181,6 +1266,9 @@ public class ConstantsConfigLang {
     public static final String CONFIG_MISC = CONFIG + ".misc";
     public static final String CONFIG_MISC_NAME = "Misc Settings";
     public static final String CONFIG_MISC_COMMENT = "";
+    public static final String CONFIG_MISC_SWIMMING = CONFIG_MISC + ".swimming";
+    public static final String CONFIG_MISC_SWIMMING_NAME = "Swimming";
+    public static final String CONFIG_MISC_SWIMMING_COMMENT = "Enable Trinkets sprint-swimming, including the swimming pose, size, buoyancy, and movement. Disable when another mod owns swimming.";
 
     public static final String CONFIG_FIRE_TIERS = CONFIG + ".firetiers";
     public static final String CONFIG_FIRE_TIERS_NAME = "Fire Resistance Tiers";
@@ -1205,16 +1293,19 @@ public class ConstantsConfigLang {
     public static final String CONFIG_ENHANCED_VISUALS_COMMENT = "";
     public static final String CONFIG_BETTER_DIVING = CONFIG + ".betterdiving";
     public static final String CONFIG_BETTER_DIVING_NAME = "Better Diving";
-    public static final String CONFIG_BETTER_DIVING_COMMENT = "";
+    public static final String CONFIG_BETTER_DIVING_COMMENT = "Disable Trinkets swimming mechanics while Better Diving owns player swimming.";
+    public static final String CONFIG_AQUA_ACROBATICS = CONFIG_COMPAT + ".aqua_acrobatics";
+    public static final String CONFIG_AQUA_ACROBATICS_NAME = "Aqua Acrobatics Compatibility";
+    public static final String CONFIG_AQUA_ACROBATICS_COMMENT = "Let Aqua Acrobatics control player movement and temporary player dimensions.";
     public static final String CONFIG_MO_BENDS = CONFIG + ".mobends";
     public static final String CONFIG_MO_BENDS_NAME = "Mo Bends";
     public static final String CONFIG_MO_BENDS_COMMENT = "";
     public static final String CONFIG_IDO_SWIMMING = CONFIG_COMPAT + ".ido_swimming";
     public static final String CONFIG_IDO_SWIMMING_NAME = "Ido Swimming Compatibility";
-    public static final String CONFIG_IDO_SWIMMING_COMMENT = "Let Ido control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Ido.";
+    public static final String CONFIG_IDO_SWIMMING_COMMENT = "Let Ido control player swimming and temporary swimming dimensions.";
     public static final String CONFIG_TROPICRAFT_SWIMMING = CONFIG_COMPAT + ".tropicraft_swimming";
     public static final String CONFIG_TROPICRAFT_SWIMMING_NAME = "Tropicraft Swimming Compatibility";
-    public static final String CONFIG_TROPICRAFT_SWIMMING_COMMENT = "Let Tropicraft control temporary player dimensions while it handles swimming. Prevents Trinkets swimming size changes from competing with Tropicraft.";
+    public static final String CONFIG_TROPICRAFT_SWIMMING_COMMENT = "Let Tropicraft control player swimming and temporary swimming dimensions.";
     /**
      * xat.config.debug
      */

@@ -86,8 +86,12 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
     @Override
     public void updateScreen() {
         super.updateScreen();
-        this.color1.getColorField().updateCursorCounter();
-        this.color2.getColorField().updateCursorCounter();
+        if (this.color1 != null) {
+            this.color1.getColorField().updateCursorCounter();
+        }
+        if (this.color2 != null) {
+            this.color2.getColorField().updateCursorCounter();
+        }
         if (this.color3 != null) {
             this.color3.getColorField().updateCursorCounter();
         }
@@ -100,6 +104,7 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
         if (this.properties == null) {
             return;
         }
+        this.colorOption = this.properties.getColorOption();
 
         int buttonID = 0;
         /// Close Button
@@ -158,10 +163,8 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
 
         int sliderWidth = 50;
         int sliderHeight = 20;
-        int bX = this.width - (sliderWidth + 50);
-        int bY = 34;
-        bX = 70;
-        bY = 40;
+        int bX = 70;
+        int bY = 40;
         this.addButton(new GuiPropertiesButton(buttonID++, bX, bY, sliderWidth + 22, sliderHeight, ColorOption.color(this.properties.getColorOption()).name(), (button, pressed) -> {
             this.colorOption++;
             if (this.colorOption >= ColorOption.getMaxLength()) {
@@ -219,10 +222,10 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
     @Override
     protected void keyTyped(char par1, int par2) throws IOException {
         super.keyTyped(par1, par2);
-        if (this.color1.getColorField().isFocused()) {
+        if ((this.color1 != null) && this.color1.getColorField().isFocused()) {
             this.color1.keyTyped(par1, par2);
             this.properties.setPrimaryTraitColor(this.color1.getColor());
-        } else if (this.color2.getColorField().isFocused()) {
+        } else if ((this.color2 != null) && this.color2.getColorField().isFocused()) {
             this.color2.keyTyped(par1, par2);
             this.properties.setSecondaryTraitColor(this.color2.getColor());
         } else if (this.color3 != null && this.color3.getColorField().isFocused()) {
@@ -239,8 +242,12 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        this.color1.mouseClicked(mouseX, mouseY, mouseButton);
-        this.color2.mouseClicked(mouseX, mouseY, mouseButton);
+        if (this.color1 != null) {
+            this.color1.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        if (this.color2 != null) {
+            this.color2.mouseClicked(mouseX, mouseY, mouseButton);
+        }
         if (this.color3 != null) {
             this.color3.mouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -249,7 +256,9 @@ public class GuiEntityProperties extends GuiScreen implements ITrinketGuiInterfa
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        NetworkHandler.sendToServer(new UpdateRaceProfilePacket(this.properties));
+        if (this.properties != null) {
+            NetworkHandler.sendToServer(new UpdateRaceProfilePacket(this.properties));
+        }
     }
 
     /**

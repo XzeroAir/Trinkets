@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 
 public class FirstAidDamageEvent extends EventBaseHandler {
 
+    public static final FirstAidDamageEvent instance = new FirstAidDamageEvent();
+
     /**
      * This is Triggered on the
      * net.minecraftforge.event.entity.living.LivingHurtEvent and Cancels the Normal

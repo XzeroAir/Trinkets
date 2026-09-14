@@ -1,22 +1,30 @@
 package xzeroair.trinkets.util.compat;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import xzeroair.trinkets.util.compat.aquaacrobatics.AquaAcrobaticsCompat;
+import xzeroair.trinkets.util.compat.betterdiving.BetterDivingCompat;
 import xzeroair.trinkets.util.compat.ido.IdoCompat;
 import xzeroair.trinkets.util.compat.tropicraft.TropicraftCompat;
 
 /**
- * Resolves temporary player-size ownership without linking Trinkets to an
- * optional mod's classes. Ido and Tropicraft take ownership of their own
- * temporary swimming dimensions while their compatibility toggles are on.
+ * Lets enabled external swimming compatibility own temporary player dimensions
+ * and swimming mechanics without directly linking their APIs.
  */
 public final class SwimmingSizeCompat {
 
     private SwimmingSizeCompat() {
     }
 
+    public static boolean hasExternalSwimmingMod() {
+        return BetterDivingCompat.isModEnabled()
+                || IdoCompat.isModEnabled()
+                || TropicraftCompat.isModEnabled()
+                || AquaAcrobaticsCompat.isModEnabled();
+    }
+
     public static boolean isSwimming(EntityLivingBase entity) {
         return IdoCompat.isSwimming(entity)
-                || TropicraftCompat.isSwimming(entity);
+                || TropicraftCompat.isSwimming(entity)
+                || AquaAcrobaticsCompat.isSwimming(entity);
     }
 }
