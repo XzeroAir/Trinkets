@@ -84,7 +84,7 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
             GlStateManager.translate(xLoc, yLoc, zLoc);
         }
         if (flatPose) {
-            this.applyCustomGlidePose(entity, partialTick);
+            this.applyCustomGlidePose(entity, x, y, z, partialTick);
         }
     }
 
@@ -100,12 +100,14 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
         }
     }
 
-    private void applyCustomGlidePose(EntityPlayer entity, float partialTick) {
+    private void applyCustomGlidePose(EntityPlayer entity, double x, double y, double z, float partialTick) {
         final float bodyYaw = this.getRenderBodyYaw(entity, partialTick);
         final float vanillaRotation = 180F - bodyYaw;
         final float glideTicks = Math.max(entity.getTicksElytraFlying(), 10) + partialTick;
         final float glideProgress = MathHelper.clamp((glideTicks * glideTicks) / 100F, 0F, 1F);
 
+        // Pre runs before the renderer moves to the player, so pivot on the player, not the camera
+        GlStateManager.translate(x, y, z);
         GlStateManager.rotate(vanillaRotation, 0F, 1F, 0F);
         GlStateManager.rotate(glideProgress * (-90F - entity.rotationPitch), 1F, 0F, 0F);
 
@@ -118,6 +120,7 @@ public abstract class RaceDefaultRenderer<T extends RaceDefaultRenderer, H exten
             GlStateManager.rotate((float) (Math.signum(strafeMotion) * Math.acos(facingMotion) * (180D / Math.PI)), 0F, 1F, 0F);
         }
         GlStateManager.rotate(-vanillaRotation, 0F, 1F, 0F);
+        GlStateManager.translate(-x, -y, -z);
     }
 
     private float getRenderBodyYaw(EntityPlayer entity, float partialTick) {
